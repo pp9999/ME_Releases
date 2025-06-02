@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.051
+API.VERSION = 1.052
 
 --[[
 Known shortcuts
@@ -542,6 +542,41 @@ end
 
 -----------------------------------
 
+
+
+
+---@return table|string
+function API.ReturnConsoleLog()
+	return ReturnConsoleLog()
+end
+
+---@return table|string
+function API.ReturnScriptLog()
+	return ReturnScriptLog()
+end
+
+-- @param path string expects cpp format // double slashes
+---@return table|string
+function API.ReadTextString(path)
+	return ReadTextString(path)
+end
+
+-- @param append bool either to clear or add
+-- @param text string
+-- @param path string expects cpp format // double slashes
+---@return void
+function API.StoreTextString(path, text, append)
+	return StoreTextString(path, text, append)
+end
+
+-- @param append bool either to clear or add
+-- @param text table|string
+-- @param path string expects cpp format // double slashes
+---@return void
+function API.StoreTextStringArray(path, text, append)
+	return StoreTextStringArray(path, text, append)
+end
+
 -- returns 4 strings per player, name, prev name, full world name, note
 -- its NOT interface read, it is own separate table
 ---@return table|string
@@ -971,14 +1006,14 @@ function API.DrawComboBox(data,ondbl)
 	return DrawComboBox(data,ondbl)
 end
 
---- draw ImGui table<br>
---- <b>data format</b>
+--- draw ImGui table
+--- data format
 --[[
-	<br>local runs = 10
-	<br>local metrics = {
-    <br><i>{"Script","Necro Essence"},
-    <br>{"Runs",tostring(10)},</i>
-	<br>}
+	local runs = 10
+	local metrics = {
+		{"Script","Necro Essence"},
+		{"Runs",tostring(10)},
+	}
 ]]
 ---@param data table
 ---@return void
@@ -1252,13 +1287,13 @@ end
 
 --- Create FFPOINT vector
 function API.CreateFFPointArray(points)
-    local arr = CreateArrayFFPOINT()
+	local arr = CreateArrayFFPOINT()
 
-    for i,v in ipairs(points) do
-        arr:add(FFPOINT:new(v[1], v[2], v[3]))
-    end
+	for i,v in ipairs(points) do
+		arr:add(FFPOINT:new(v[1], v[2], v[3]))
+	end
 
-    return arr
+	return arr
 end
 
 
@@ -1488,22 +1523,6 @@ function API.PlayerLoggedIn()
 end
 
 ---dosent work
----@param worldtohop string
----@return boolean
-function API.World_Hopper(worldtohop)
-	return World_Hopper(worldtohop)
-end
-
----dosent work
----@param name string
----@param password string
----@param world string
----@return boolean
-function API.LoginFunction(name, password, world)
-	return LoginFunction(name, password, world)
-end
-
----dosent work
 ---@param text string
 ---@return boolean
 function API.Select_Option(text)
@@ -1561,82 +1580,6 @@ end
 ---@return boolean
 function API.FindGItemBool_(item)
 	return FindGItemBool_(item)
-end
-
----@param Except_item table|number
----@param maxdistance number
----@param accuracy number
----@param tilespot WPOINT
----@param maxdistance2 number
----@param items_to_eat table|number
----@return boolean
-function API.FindGItem_AllBut2(Except_item, maxdistance, accuracy, tilespot, maxdistance2, items_to_eat)
-	return FindGItem_AllBut2(Except_item, maxdistance, accuracy, tilespot, maxdistance2, items_to_eat)
-end
-
----@param npc table|number
----@param maxdistance number
----@param accuracy number
----@param lifepoint number
----@param tilespot WPOINT
----@param maxdistance2 number
----@param action number
----@param sidetext string
----@return boolean
-function API.FindNPCss(npc, maxdistance, accuracy, lifepoint, tilespot, maxdistance2, action, sidetext)
-	return FindNPCss(npc, maxdistance, accuracy, lifepoint, tilespot, maxdistance2, action, sidetext)
-end
-
----@param npc table|number
----@param maxdistance number
----@param accuracy number
----@param lifepoints number
----@param tilespot WPOINT
----@param maxdistance2 number
----@param action number
----@param sidetext table|string
----@return boolean
-function API.FindNPCssMulti(npc, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-	return FindNPCssMulti(npc, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-end
-
----@param NPC_name string
----@param maxdistance number
----@param accuracy number
----@param lifepoints number
----@param tilespot WPOINT
----@param maxdistance2 number
----@param action number
----@param sidetext string
----@return boolean
-function API.FindNPCssSTRRem(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-	return FindNPCssSTRRem(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-end
-
----@param NPC_name string
----@param maxdistance number
----@param accuracy number
----@param lifepoints number
----@param tilespot WPOINT
----@param maxdistance2 number
----@param action number
----@param sidetext string
----@return boolean
-function API.FindNPCssSTR(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-	return FindNPCssSTR(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-end
-
----@param NPC_names table|string
----@param maxdistance number
----@param accuracy number
----@param lifepoints number
----@param tilespot WPOINT
----@param maxdistance2 number
----@param action number
----@param sidetext string
----@return boolean
-function API.FindNPCssSTRs(NPC_names, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-	return FindNPCssSTRs(NPC_names, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
 end
 
 ---@param NPC_name string
@@ -1760,31 +1703,6 @@ function API.ReadPlayerMovin2()
 end
 
 -- old
----@param obj table|number
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@param highlight table|number
----@return boolean
-function API.FindHl(obj, maxdistance, accuracy, usemap, action, sidetext, highlight)
-	return FindHl(obj, maxdistance, accuracy, usemap, action, sidetext, highlight)
-end
-
--- old
----@param obj table|number
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@return boolean
-function API.FindObjCheck(obj, maxdistance, accuracy, usemap, action, sidetext)
-	return FindObjCheck(obj, maxdistance, accuracy, usemap, action, sidetext)
-end
-
--- old
 --[[AllObject Types 
 0 obj
 1 npc
@@ -1830,19 +1748,6 @@ function API.CheckTileforItems(tile, item)
 	return CheckTileforItems(tile, item)
 end
 
--- old
----@param obj table|number
----@param maxdistance number
----@param accuracy number
----@param objtile WPOINT
----@param usemap boolean
----@param action number
----@param sidetext string
----@return boolean
-function API.FindObjTile(obj, maxdistance, accuracy, objtile, usemap, action, sidetext)
-	return FindObjTile(obj, maxdistance, accuracy, objtile, usemap, action, sidetext)
-end
-
 ---@return table|number
 function API.MousePos_()
 	return MousePos_()
@@ -1856,75 +1761,6 @@ function API.GetMLoc()
 	return GetMLoc()
 end
 
----@param cursor table|number c POINT
----@param type boolean
----@return void
-function API.MouseCLRS(cursor, type)
-	return MouseCLRS(cursor, type)
-end
-
----@param cursor table|number c POINT
----@param cursor2 table|number c POINT
----@return void
----function API.MouseDrag_RS(cursor, cursor2)
----	return MouseDrag_RS(cursor, cursor2)
----end
-
----@param cursor table|number c POINT
----@return void
-function API.MouseMove_(cursor)
-	return MouseMove_(cursor)
-end
-
----@param x number
----@param y number
----@param rx number
----@param ry number
----@return void
-function API.MouseMove_2(x, y, rx, ry)
-	return MouseMove_2(x, y, rx, ry)
-end
-
----@param dx number
----@param dy number
----@return number
-function API.Hypot(dx, dy)
-	return Hypot(dx, dy)
-end
-
----@param x number
----@param y number
----@param rx number
----@param ry number
----@return void
-function API.MoveMouse2(x, y, rx, ry)
-	return MoveMouse2(x, y, rx, ry)
-end
-
----@param x number
----@param y number
----@param rx number
----@param ry number
----@param updown boolean
----@return void
-function API.MoveMouse3(x, y, rx, ry, updown)
-	return MoveMouse3(x, y, rx, ry, updown)
-end
-
----@param sleep number
----@param rand number
----@return void
-function API.MouseLeftClick(sleep, rand)
-	return MouseLeftClick(sleep, rand)
-end
-
----@param sleep number
----@param rand number
----@return void
-function API.MouseRightClick(sleep, rand)
-	return MouseRightClick(sleep, rand)
-end
-
 ---@param mK number --char
 ---@return void
 function API.KeyPress_(mK)
@@ -1935,38 +1771,6 @@ end
 ---@return void
 function API.KeyPress_2(mK)
 	return KeyPress_2(mK)
-end
-
----@param sleep number
----@param random number
----@return void
-function API.Send_MouseLeftClick(sleep, random)
-	return Send_MouseLeftClick(sleep, random)
-end
-
----@param sleep number
----@param random number
----@return void
-function API.Send_MouseRightClick(sleep, random)
-	return Send_MouseRightClick(sleep, random)
-end
-
----@param x number
----@param y number
----@param sleep number
----@param random number
----@return void
-function API.Post_MouseLeftClick(x, y, sleep, random)
-	return Post_MouseLeftClick(x, y, sleep, random)
-end
-
----@param x number
----@param y number
----@param sleep number
----@param random number
----@return void
-function API.Post_MouseRightClick(x, y, sleep, random)
-	return Post_MouseRightClick(x, y, sleep, random)
 end
 
 ---@param item string
@@ -2025,16 +1829,6 @@ function API.ReadInvArrays33()
 	return ReadInvArrays33()
 end
 
----@return boolean
-function API.OpenEquipInterface2()
-	return OpenEquipInterface2()
-end
-
----@return boolean
-function API.OpenInventoryInterface2()
-	return OpenInventoryInterface2()
-end
-
 ---@return void
 function API.Get_shop()
 	return Get_shop()
@@ -2048,6 +1842,14 @@ end
 ---@return number
 function API.GetPrayMax_()
 	return GetPrayMax_()
+end
+
+-- Read from VBs
+---@param id number
+---@param pos number --0-31
+---@return number
+function API.VB_GetBit(id,pos)
+	return VB_GetBit(id,pos)
 end
 
 -- number to bitset booleans and then check bit value at pos
@@ -2206,12 +2008,6 @@ function API.KeyboardPress2(codes, sleep, rand)
 	return KeyboardPress2(codes, sleep, rand)
 end
 
----@param action number
----@return boolean
-function API.InvRandom_(action)
-	return InvRandom_(action)
-end
-
 ---@return boolean
 function API.InvCheck1_()
 	return InvCheck1_()
@@ -2229,20 +2025,6 @@ end
 ---@return FFPOINT
 function API.ToMapFFPOINT(ItemCoord, map_limit)
 	return ToMapFFPOINT(ItemCoord, map_limit)
-end
-
----old
----@param ItemCoord2 FFPOINT
----@return boolean
-function API.ClickMapTile_(ItemCoord2)
-	return ClickMapTile_(ItemCoord2)
-end
-
----old
----@param ItemCoord2 table|number --c POINT
----@return boolean
-function API.ClickMapTile_2(ItemCoord2)
-	return ClickMapTile_2(ItemCoord2)
 end
 
 ---@param id number
@@ -2312,45 +2094,6 @@ end
 ---@return number
 function API.LootWindow_space_needed(Except_item, Inventory_stacks)
 	return LootWindow_space_needed(Except_item, Inventory_stacks)
-end
-
----@param Except_itemv table|number
----@return boolean
-function API.LootWindow_Loot(Except_itemv)
-	return LootWindow_Loot(Except_itemv)
-end
-
----@param choice string
----@return boolean
-function API.SelectCOption_(choice)
-	return SelectCOption_(choice)
-end
-
----@param choice string
----@param user string
----@return WPOINT
-function API.SelectCOption2(choice, user)
-	return SelectCOption2(choice, user)
-end
-
----@param choice string
----@param user string
----@return boolean
-function API.SelectCOption2_(choice, user)
-	return SelectCOption2_(choice, user)
-end
-
----@param choice string
----@return WPOINT
-function API.SelectCOption(choice)
-	return SelectCOption(choice)
-end
-
----@param choice string
----@param move boolean
----@return boolean
-function API.SelectCOption_Click(choice, move)
-	return SelectCOption_Click(choice, move)
 end
 
 ---@param to string
@@ -2616,19 +2359,6 @@ function API.Bresenham_step(tilexy)
 	return Bresenham_step(tilexy)
 end
 
----@param objIds table|number
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@param hlIds table|number
----@param localp_dist number --float
----@return boolean
-function API.FindHLvsLocalPlayer(objIds, maxdistance, accuracy, usemap, action, sidetext, hlIds, localp_dist)
-	return FindHLvsLocalPlayer(objIds, maxdistance, accuracy, usemap, action, sidetext, hlIds, localp_dist)
-end
-
 ---@param obj table|number
 ---@param maxdistance number
 ---@param sens number --float
@@ -2647,37 +2377,6 @@ end
 
 ---@param obj table|number
 ---@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@return boolean
-function API.FindHObj(obj, maxdistance, accuracy, usemap, action, sidetext)
-	return FindHObj(obj, maxdistance, accuracy, usemap, action, sidetext)
-end
-
----@param items table|number
----@param randomelement number
----@param action number
----@return boolean
-function API.ClickInv_Multi(items, randomelement, action)
-	return ClickInv_Multi(items, randomelement, action)
-end
-
----@param item number
----@param action number
----@param randx number
----@param randy number
----@param offsetx number
----@param offsety number
----@param sidetext string
----@return boolean
-function API.ClickInvOffset_(item, action, randx, randy, offsetx, offsety, sidetext)
-	return ClickInvOffset_(item, action, randx, randy, offsetx, offsety, sidetext)
-end
-
----@param obj table|number
----@param maxdistance number
 ---@return FFPOINT
 function API.FindObjTileName(obj, maxdistance)
 	return FindObjTileName(obj, maxdistance)
@@ -2690,27 +2389,6 @@ function API.GetChatMessage(Line_index, size)
 	return GetChatMessage(Line_index, size)
 end
 
----@param tilexy FFPOINT
----@param distance number
----@return void
-function API.Map_Walker1(tilexy, distance)
-	return Map_Walker1(tilexy, distance)
-end
-
----@param tilexy2 WPOINT
----@param distance number
----@return void
-function API.Map_Walker1NT(tilexy2, distance)
-	return Map_Walker1NT(tilexy2, distance)
-end
-
----@param tilexy FFPOINT
----@param distance number
----@return void
-function API.Map_Walker2(tilexy, distance)
-	return Map_Walker2(tilexy, distance)
-end
-
 ---@param ascii_num string
 ---@return number
 function API.AsciiToNumbers32(ascii_num)
@@ -2721,49 +2399,6 @@ end
 ---@return number
 function API.AsciiToNumbers64(ascii_num)
 	return AsciiToNumbers64(ascii_num)
-end
-
----@return boolean
-function API.BankAllItems()
-	return BankAllItems()
-end
-
----@param Except_item table|number
----@return boolean
-function API.BankAllItem_InvExceptintM(Except_item)
-	return BankAllItem_InvExceptintM(Except_item)
-end
-
----@param Except_item table|string
----@return boolean
-function API.BankAllItem_InvExceptstrM(Except_item)
-	return BankAllItem_InvExceptstrM(Except_item)
-end
-
----@param id number
----@param mouse number
----@return boolean
-function API.BankClickItem(id, mouse)
-	return BankClickItem(id, mouse)
-end
-
----@param id number
----@param mouse number
----@return boolean
-function API.BankClickItem_Inv(id, mouse)
-	return BankClickItem_Inv(id, mouse)
-end
-
----@param id number
----@param choose_text string
----@return boolean
-function API.BankClickItem_InvChoose(id, choose_text)
-	return BankClickItem_InvChoose(id, choose_text)
-end
-
----@return void
-function API.BankClose()
-	return BankClose()
 end
 
 ---@param item number
@@ -3119,11 +2754,6 @@ function API.print_GetABarInfo(bar_nr)
 	return print_GetABarInfo(bar_nr)
 end
 
----@return void
-function API.RandomEvents()
-	return RandomEvents()
-end
-
 --use containers instead
 ---@return table|IInfo
 function API.ReadEquipment()
@@ -3155,12 +2785,6 @@ end
 ---@return table --<NAMEdata> prob not needed never
 function API.ScriptDialogWindow_input(boxtext, password, arrtype, filename)
 	return ScriptDialogWindow_input(boxtext, password, arrtype, filename)
-end
-
----@param txt_to_find string
----@return boolean
-function API.SelectToolOpen(txt_to_find)
-	return SelectToolOpen(txt_to_find)
 end
 
 ---@param input table|string
@@ -3311,7 +2935,7 @@ end
 ---@param normal_tile WPOINT
 ---@return boolean
 function API.DoAction_BDive_Tile(normal_tile)
-    return DoAction_BDive_Tile(normal_tile)
+	return DoAction_BDive_Tile(normal_tile)
 end
 
 --For Bladed Dive and just Dive
@@ -3605,8 +3229,8 @@ end
 ---@param sleepTime number sleep time AFTER interacting
 ---@return boolean
 function API.DoRandomEvents(waitTime, sleepTime)
-    waitTime = waitTime or 600
-    sleepTime = sleepTime or 1200
+	waitTime = waitTime or 600
+	sleepTime = sleepTime or 1200
 	return DoRandomEvents(waitTime, sleepTime)
 end
 
@@ -3635,48 +3259,6 @@ end
 ---@return WPOINT
 function API.InvFindItem2(item, action)
 	return InvFindItem(item, action)
-end
-
----@param obj table|number
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@return boolean
-function API.FindObj1(obj, maxdistance, accuracy, usemap, action, sidetext)
-	return FindObj(obj, maxdistance, accuracy, usemap, action, sidetext)
-end
-
----@param obj table|number
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext table|string
----@return boolean
-function API.FindObj2(obj, maxdistance, accuracy, usemap, action, sidetext)
-	return FindObj(obj, maxdistance, accuracy, usemap, action, sidetext)
-end
-
----@param AllStuff2 table|AllObject
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@return boolean
-function API.ClickAllObj1(AllStuff2, accuracy, usemap, action, sidetext)
-	return ClickAllObj(AllStuff2, accuracy, usemap, action, sidetext)
-end
-
----@param AllStuff2 table|AllObject
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext table|string
----@return boolean
-function API.ClickAllObj2(AllStuff2, accuracy, usemap, action, sidetext)
-	return ClickAllObj(AllStuff2, accuracy, usemap, action, sidetext)
 end
 
 --[[AllObject Types 
@@ -3765,69 +3347,6 @@ end
 ---@return boolean
 function API.CheckTileforObjects2(tile, object, thresh)
 	return CheckTileforObjects(tile, object, thresh)
-end
-
----@param obj table|number
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@return boolean
-function API.FindObjCheck_1(obj, maxdistance, accuracy, usemap, action, sidetext)
-	return FindObjCheck_(obj, maxdistance, accuracy, usemap, action, sidetext)
-end
-
----@param obj table|number
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@param tile WPOINT
----@return boolean
-function API.FindObjCheck_2(obj, maxdistance, accuracy, usemap, action, sidetext, tile)
-	return FindObjCheck_(obj, maxdistance, accuracy, usemap, action, sidetext, tile)
-end
-
---int input
----@param item number
----@param randomelement number --0 default
----@param action number --0 left
----@param xrand number
----@param yrand number
----@return boolean
-function API.ClickInv_1(item, randomelement, action, xrand, yrand)
-	return ClickInv_(item, randomelement, action, xrand, yrand)
-end
-
---text input
----@param item string
----@param randomelement number --0 default
----@param action number --0 left
----@param xrand number
----@param yrand number
----@return boolean
-function API.ClickInv_2(item, randomelement, action, xrand, yrand)
-	return ClickInv_(item, randomelement, action, xrand, yrand)
-end
-
---old
----@param xy table|number c POINT
----@param mouse number
----@return void
-function API.ClickTile_1(xy, mouse)
-	return ClickTile_(xy, mouse)
-end
-
---old
----@param x number
----@param y number
----@param z number
----@param mouse number
----@return void
-function API.ClickTile_2(x, y, z, mouse)
-	return ClickTile_(x, y, z, mouse)
 end
 
 ---@param item number
@@ -4249,7 +3768,7 @@ end
 ---@param tile WPOINT
 ---@return boolean
 function API.DoAction_Object2(action, offset, obj, maxdistance, tile)
-    return DoAction_Object(action, offset, obj, maxdistance, tile)
+	return DoAction_Object(action, offset, obj, maxdistance, tile)
 end
 
 ---@param action number
@@ -4369,9 +3888,15 @@ function API.SetDrawLogs(val)
 	return SetDrawLogs(val)
 end
 
----@param tiles WPOINT[] table of WPOINT
-function API.MarkTiles(tiles)
-	MarkTiles(tiles)
+---@param fortime number ms
+---@param tiles FFPOINT[] table of FFPOINT
+function API.MarkTiles(tiles,fortime)
+	MarkTiles(tiles,fortime)
+end
+
+--- clear table
+function API.ClearMarkTiles()
+	ClearMarkTiles()
 end
 
 ---@param val boolean
@@ -4384,7 +3909,7 @@ end
 ---@return number|table price of table of prices with itemid as key, price as value
 ---@overload fun(itemids: table): table
 function API.GetExchangePrice(itemid)
-    return GetExchangePrice(itemid)
+	return GetExchangePrice(itemid)
 end
 
 ---Logs to a file with the character name into Drops folder in your ME directory
@@ -4763,6 +4288,11 @@ function Equipment:ContainsOnly(items) end
 ---@return boolean `true` if the item was successfully unequipped, `false` otherwise.
 function Equipment:Unequip(item) end
 
+---@param item number|string The equipment slot to perform the action on.
+---@param action number The action to perform (1,2,3 etc. Take from doAction debug).
+---@return boolean `true` if the action was successful, `false` otherwise.
+function Equipment:DoAction(item,action) end
+
 --- Retrieves the item data from a specific slot.
 ---@param slot ESlot The equipment slot; e.g., ESlot.HEAD or ESlot.OFFHAND.
 ---@return EquipmentItem The item data in the specified slot.
@@ -4839,12 +4369,14 @@ function Interact:SetSleep(wait, sleep, sleep2) end
 ---@param name string The Name of the NPC
 ---@param action string The Action to do against the NPC (e.g. "Attack")
 ---@param distance number Optional - max distance to search across. defaults to 60 if not specified.
+---@retun boolean If action was sent or not
 function Interact:NPC(name, action, distance) end
 
 --- Carries out DoAction to the specified Object (in place of DoAction_Object)
 ---@param name string The Name of the Object
 ---@param action string The Action to do against the Object (e.g. "Search")
 ---@param distance number Optional - max distance to search across. defaults to 60 if not specified.
+---@retun boolean If action was sent or not
 function Interact:Object(name, action, distance) end
 
 --- Represents the Familiars class.
@@ -4916,16 +4448,17 @@ Item = Item
 
 --- Accepts an item ID or name.
 ---@param item number|string The Item ID or Name of the item to search for
----@param boolean tradeable Optional filter - if not specified, it will not care if tradeable or not. Otherwise it will filter for tradeable=true/false
+---@param tradeable boolean filter - if not specified, it will not care if tradeable or not. Otherwise it will filter for tradeable=true/false
 ---@return ItemData
 function Item:Get(item, tradeable) end
 
 ---@param item string Input Item Name here
+---@param partial_match boolean optional flag to partially match item name (defaults to strict match)
 ---@return table Returns a table of ItemData objects that matched your search string
-function Item:GetAll(item) end
+function Item:GetAll(item, partial_match) end
 
 ---@class DiscordEmbed
-DiscordEmbed = DiscordEmbed
+local DiscordEmbed = {}
 
 ---@return DiscordEmbed a new DiscordEmbed object
 function DiscordEmbed.new() end
@@ -5032,5 +4565,711 @@ Quest = Quest
 ---@param quest number|string The Quest ID or exact name to search for
 ---@return QuestData
 function Quest:Get(quest) end
+
+--- *Cache required* Looks up a varbit value
+--- E.g VB lookup for SoulSplit would now be API.GetVarbitValue(16779)
+--- But using our traditional varp/vb functions it would have to look like API.VB_FindPSettinOrder(3275, 0).state >> 18 & 1
+---@param id number varbit ID
+---@return number varbit current value
+function API.GetVarbitValue(id)
+	return GetVarbitValue(id)
+end
+
+---- CAUTION THESE FUNCTIONS USE MOUSE ----
+---- DEPRECATED FUNCTIONS ----
+---- UNCOMMENT IF YOU REALLY WANNA USE ----
+
+--[[
+
+---@return boolean
+function API.BankAllItems()
+	return BankAllItems()
+end
+
+---@param Except_item table|number
+---@return boolean
+function API.BankAllItem_InvExceptintM(Except_item)
+	return BankAllItem_InvExceptintM(Except_item)
+end
+
+---@param Except_item table|string
+---@return boolean
+function API.BankAllItem_InvExceptstrM(Except_item)
+	return BankAllItem_InvExceptstrM(Except_item)
+end
+
+---@param id number
+---@param mouse number
+---@return boolean
+function API.BankClickItem(id, mouse)
+	return BankClickItem(id, mouse)
+end
+
+---@param id number
+---@param mouse number
+---@return boolean
+function API.BankClickItem_Inv(id, mouse)
+	return BankClickItem_Inv(id, mouse)
+end
+
+---@param id number
+---@param choose_text string
+---@return boolean
+function API.BankClickItem_InvChoose(id, choose_text)
+	return BankClickItem_InvChoose(id, choose_text)
+end
+
+---@return void
+function API.BankClose()
+	return BankClose()
+end
+
+---@param txt_to_find string
+---@return boolean
+function API.SelectToolOpen(txt_to_find)
+	return SelectToolOpen(txt_to_find)
+end
+
+---@param Except_itemv table|number
+---@return boolean
+function API.LootWindow_Loot(Except_itemv)
+	return LootWindow_Loot(Except_itemv)
+end
+
+---@param choice string
+---@return boolean
+function API.SelectCOption_(choice)
+	return SelectCOption_(choice)
+end
+
+---@param choice string
+---@param user string
+---@return WPOINT
+function API.SelectCOption2(choice, user)
+	return SelectCOption2(choice, user)
+end
+
+---@param choice string
+---@param user string
+---@return boolean
+function API.SelectCOption2_(choice, user)
+	return SelectCOption2_(choice, user)
+end
+
+---@param choice string
+---@return WPOINT
+function API.SelectCOption(choice)
+	return SelectCOption(choice)
+end
+
+---@param choice string
+---@param move boolean
+---@return boolean
+function API.SelectCOption_Click(choice, move)
+	return SelectCOption_Click(choice, move)
+end
+
+---@param items table|number
+---@param randomelement number
+---@param action number
+---@return boolean
+function API.ClickInv_Multi(items, randomelement, action)
+	return ClickInv_Multi(items, randomelement, action)
+end
+
+---@param item number
+---@param action number
+---@param randx number
+---@param randy number
+---@param offsetx number
+---@param offsety number
+---@param sidetext string
+---@return boolean
+function API.ClickInvOffset_(item, action, randx, randy, offsetx, offsety, sidetext)
+	return ClickInvOffset_(item, action, randx, randy, offsetx, offsety, sidetext)
+end
+
+---@return boolean
+function API.OpenEquipInterface2()
+	return OpenEquipInterface2()
+end
+
+---@return boolean
+function API.OpenInventoryInterface2()
+	return OpenInventoryInterface2()
+end
+
+--int input
+---@param item number
+---@param randomelement number --0 default
+---@param action number --0 left
+---@param xrand number
+---@param yrand number
+---@return boolean
+function API.ClickInv_1(item, randomelement, action, xrand, yrand)
+	return ClickInv_(item, randomelement, action, xrand, yrand)
+end
+
+--text input
+---@param item string
+---@param randomelement number --0 default
+---@param action number --0 left
+---@param xrand number
+---@param yrand number
+---@return boolean
+function API.ClickInv_2(item, randomelement, action, xrand, yrand)
+	return ClickInv_(item, randomelement, action, xrand, yrand)
+end
+
+--old
+---@param xy table|number c POINT
+---@param mouse number
+---@return void
+function API.ClickTile_1(xy, mouse)
+	return ClickTile_(xy, mouse)
+end
+
+--old
+---@param x number
+---@param y number
+---@param z number
+---@param mouse number
+---@return void
+function API.ClickTile_2(x, y, z, mouse)
+	return ClickTile_(x, y, z, mouse)
+end
+
+---@param Except_item table|number
+---@param maxdistance number
+---@param accuracy number
+---@param tilespot WPOINT
+---@param maxdistance2 number
+---@param items_to_eat table|number
+---@return boolean
+function API.FindGItem_AllBut2(Except_item, maxdistance, accuracy, tilespot, maxdistance2, items_to_eat)
+	return FindGItem_AllBut2(Except_item, maxdistance, accuracy, tilespot, maxdistance2, items_to_eat)
+end
+
+---@param action number
+---@return boolean
+function API.InvRandom_(action)
+	return InvRandom_(action)
+end
+
+---dosent work
+---@param worldtohop string
+---@return boolean
+function API.World_Hopper(worldtohop)
+	return World_Hopper(worldtohop)
+end
+
+---dosent work
+---@param name string
+---@param password string
+---@param world string
+---@return boolean
+function API.LoginFunction(name, password, world)
+	return LoginFunction(name, password, world)
+end
+
+---old
+---@param ItemCoord2 FFPOINT
+---@return boolean
+function API.ClickMapTile_(ItemCoord2)
+	return ClickMapTile_(ItemCoord2)
+end
+
+---old
+---@param ItemCoord2 table|number --c POINT
+---@return boolean
+function API.ClickMapTile_2(ItemCoord2)
+	return ClickMapTile_2(ItemCoord2)
+end
+
+---@param tilexy FFPOINT
+---@param distance number
+---@return void
+function API.Map_Walker1(tilexy, distance)
+	return Map_Walker1(tilexy, distance)
+end
+
+---@param tilexy2 WPOINT
+---@param distance number
+---@return void
+function API.Map_Walker1NT(tilexy2, distance)
+	return Map_Walker1NT(tilexy2, distance)
+end
+
+---@param tilexy FFPOINT
+---@param distance number
+---@return void
+function API.Map_Walker2(tilexy, distance)
+	return Map_Walker2(tilexy, distance)
+end
+
+---@param obj table|number
+---@param maxdistance number
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.FindObj1(obj, maxdistance, accuracy, usemap, action, sidetext)
+	return FindObj(obj, maxdistance, accuracy, usemap, action, sidetext)
+end
+
+---@param obj table|number
+---@param maxdistance number
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext table|string
+---@return boolean
+function API.FindObj2(obj, maxdistance, accuracy, usemap, action, sidetext)
+	return FindObj(obj, maxdistance, accuracy, usemap, action, sidetext)
+end
+
+---@param AllStuff2 table|AllObject
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.ClickAllObj1(AllStuff2, accuracy, usemap, action, sidetext)
+	return ClickAllObj(AllStuff2, accuracy, usemap, action, sidetext)
+end
+
+---@param AllStuff2 table|AllObject
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext table|string
+---@return boolean
+function API.ClickAllObj2(AllStuff2, accuracy, usemap, action, sidetext)
+	return ClickAllObj(AllStuff2, accuracy, usemap, action, sidetext)
+end
+
+---@param cursor table|number c POINT
+---@param type boolean
+---@return void
+function API.MouseCLRS(cursor, type)
+	return MouseCLRS(cursor, type)
+end
+
+---@param cursor table|number c POINT
+---@param cursor2 table|number c POINT
+---@return void
+---function API.MouseDrag_RS(cursor, cursor2)
+---	return MouseDrag_RS(cursor, cursor2)
+---end
+
+---@param cursor table|number c POINT
+---@return void
+function API.MouseMove_(cursor)
+	return MouseMove_(cursor)
+end
+
+---@param x number
+---@param y number
+---@param rx number
+---@param ry number
+---@return void
+function API.MouseMove_2(x, y, rx, ry)
+	return MouseMove_2(x, y, rx, ry)
+end
+
+---@param dx number
+---@param dy number
+---@return number
+function API.Hypot(dx, dy)
+	return Hypot(dx, dy)
+end
+
+---@param x number
+---@param y number
+---@param rx number
+---@param ry number
+---@return void
+function API.MoveMouse2(x, y, rx, ry)
+	return MoveMouse2(x, y, rx, ry)
+end
+
+---@param x number
+---@param y number
+---@param rx number
+---@param ry number
+---@param updown boolean
+---@return void
+function API.MoveMouse3(x, y, rx, ry, updown)
+	return MoveMouse3(x, y, rx, ry, updown)
+end
+
+---@param sleep number
+---@param rand number
+---@return void
+function API.MouseLeftClick(sleep, rand)
+	return MouseLeftClick(sleep, rand)
+end
+
+---@param sleep number
+---@param rand number
+---@return void
+function API.MouseRightClick(sleep, rand)
+	return MouseRightClick(sleep, rand)
+end
+
+---@param sleep number
+---@param random number
+---@return void
+function API.Send_MouseLeftClick(sleep, random)
+	return Send_MouseLeftClick(sleep, random)
+end
+
+---@param sleep number
+---@param random number
+---@return void
+function API.Send_MouseRightClick(sleep, random)
+	return Send_MouseRightClick(sleep, random)
+end
+
+---@param x number
+---@param y number
+---@param sleep number
+---@param random number
+---@return void
+function API.Post_MouseLeftClick(x, y, sleep, random)
+	return Post_MouseLeftClick(x, y, sleep, random)
+end
+
+---@param x number
+---@param y number
+---@param sleep number
+---@param random number
+---@return void
+function API.Post_MouseRightClick(x, y, sleep, random)
+	return Post_MouseRightClick(x, y, sleep, random)
+end
+
+-- old
+---@param obj table|number
+---@param maxdistance number
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@param highlight table|number
+---@return boolean
+function API.FindHl(obj, maxdistance, accuracy, usemap, action, sidetext, highlight)
+	return FindHl(obj, maxdistance, accuracy, usemap, action, sidetext, highlight)
+end
+
+-- old
+---@param obj table|number
+---@param maxdistance number
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.FindObjCheck(obj, maxdistance, accuracy, usemap, action, sidetext)
+	return FindObjCheck(obj, maxdistance, accuracy, usemap, action, sidetext)
+end
+
+-- old
+---@param obj table|number
+---@param maxdistance number
+---@param accuracy number
+---@param objtile WPOINT
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.FindObjTile(obj, maxdistance, accuracy, objtile, usemap, action, sidetext)
+	return FindObjTile(obj, maxdistance, accuracy, objtile, usemap, action, sidetext)
+end
+
+---@param obj table|number
+---@param maxdistance number
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.FindObjCheck_1(obj, maxdistance, accuracy, usemap, action, sidetext)
+	return FindObjCheck_(obj, maxdistance, accuracy, usemap, action, sidetext)
+end
+
+---@param obj table|number
+---@param maxdistance number
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@param tile WPOINT
+---@return boolean
+function API.FindObjCheck_2(obj, maxdistance, accuracy, usemap, action, sidetext, tile)
+	return FindObjCheck_(obj, maxdistance, accuracy, usemap, action, sidetext, tile)
+end
+
+---@param objIds table|number
+---@param maxdistance number
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@param hlIds table|number
+---@param localp_dist number --float
+---@return boolean
+function API.FindHLvsLocalPlayer(objIds, maxdistance, accuracy, usemap, action, sidetext, hlIds, localp_dist)
+	return FindHLvsLocalPlayer(objIds, maxdistance, accuracy, usemap, action, sidetext, hlIds, localp_dist)
+end
+
+---@param obj table|number
+---@param maxdistance number
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.FindHObj(obj, maxdistance, accuracy, usemap, action, sidetext)
+	return FindHObj(obj, maxdistance, accuracy, usemap, action, sidetext)
+end
+
+---@param npc table|number
+---@param maxdistance number
+---@param accuracy number
+---@param lifepoint number
+---@param tilespot WPOINT
+---@param maxdistance2 number
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.FindNPCss(npc, maxdistance, accuracy, lifepoint, tilespot, maxdistance2, action, sidetext)
+	return FindNPCss(npc, maxdistance, accuracy, lifepoint, tilespot, maxdistance2, action, sidetext)
+end
+
+---@param npc table|number
+---@param maxdistance number
+---@param accuracy number
+---@param lifepoints number
+---@param tilespot WPOINT
+---@param maxdistance2 number
+---@param action number
+---@param sidetext table|string
+---@return boolean
+function API.FindNPCssMulti(npc, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
+	return FindNPCssMulti(npc, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
+end
+
+---@param NPC_name string
+---@param maxdistance number
+---@param accuracy number
+---@param lifepoints number
+---@param tilespot WPOINT
+---@param maxdistance2 number
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.FindNPCssSTRRem(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
+	return FindNPCssSTRRem(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
+end
+
+---@param NPC_name string
+---@param maxdistance number
+---@param accuracy number
+---@param lifepoints number
+---@param tilespot WPOINT
+---@param maxdistance2 number
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.FindNPCssSTR(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
+	return FindNPCssSTR(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
+end
+
+---@param NPC_names table|string
+---@param maxdistance number
+---@param accuracy number
+---@param lifepoints number
+---@param tilespot WPOINT
+---@param maxdistance2 number
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.FindNPCssSTRs(NPC_names, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
+	return FindNPCssSTRs(NPC_names, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
+end
+
+---@return void
+function API.RandomEvents()
+	return RandomEvents()
+end
+
+---- END OF DEPRECATED SHIT ----
+
+--]]
+
+--- Represents the Perks system for managing augmented items and invention perks
+---@class Perks
+Perks = Perks
+
+--- Gets all augmented items from both inventory and equipment
+---@return AugmentedItem[] Array of all augmented items
+function Perks:GetAllAugmentedItems() end
+
+--- Gets all augmented items from equipment only
+---@return AugmentedItem[] Array of augmented items in equipment
+function Perks:GetEquipmentPerks() end
+
+--- Gets all augmented items from inventory only
+---@return AugmentedItem[] Array of augmented items in inventory
+function Perks:GetInventoryPerks() end
+
+--- Checks if a specific perk is currently equipped
+---@param perkIdOrName number|string The ID or name of the perk to check
+---@return boolean True if the perk is equipped, false otherwise
+function Perks:IsPerkEquipped(perkIdOrName) end
+
+--- Checks if a specific perk is in the inventory
+---@param perkIdOrName number|string The ID or name of the perk to check
+---@return boolean True if the perk is in inventory, false otherwise
+function Perks:IsPerkInInventory(perkIdOrName) end
+
+--- Gets all perks from the main hand weapon
+---@return PerkInfo[] Array of perks on the main hand weapon
+function Perks:GetMainHandPerks() end
+
+--- Gets all perks from the off-hand weapon/shield
+---@return PerkInfo[] Array of perks on the off-hand item
+function Perks:GetOffHandPerks() end
+
+--- Gets all perks from the chest armor
+---@return PerkInfo[] Array of perks on the chest armor
+function Perks:GetChestPerks() end
+
+--- Gets all perks from the leg armor
+---@return PerkInfo[] Array of perks on the leg armor
+function Perks:GetLegsPerks() end
+
+--- Gets the augmented item from a specific slot
+---@param slot number The slot number to check
+---@param fromEquipment boolean True to check equipment, false for inventory
+---@return AugmentedItem The augmented item in the specified slot
+function Perks:GetAugmentedItemFromSlot(slot, fromEquipment) end
+
+--- Gets the item experience from a specific slot
+---@param slot number The slot number to check
+---@param fromEquipment boolean True to check equipment, false for inventory
+---@return number The item experience value
+function Perks:GetItemExpFromSlot(slot, fromEquipment) end
+
+--- Finds all items that have a specific perk
+---@param perkIdOrName number|string The ID or name of the perk to search for
+---@return AugmentedItem[] Array of items containing the specified perk
+function Perks:FindItemsWithPerk(perkIdOrName) end
+
+--- Gets the perk ID by its name
+---@param perkName string The name of the perk
+---@return number The perk ID, or -1 if not found
+function Perks:GetPerkIdByName(perkName) end
+
+--- Represents the Script Manager configuration system for creating dynamic script UIs
+---@class SM
+SM = SM
+
+--- Creates a new tab in the configuration window
+--- Subsequent configuration elements will be grouped under this tab until another tab is created
+---@param tabName string The display name for the tab
+function SM:AddTab(tabName) end
+
+--- Creates a dropdown selection element with predefined options
+--- The selected value is passed to scripts as an index (0-based)
+---@param label string The display label for the dropdown
+---@param key string The unique key used to access the value in the CONFIG table
+---@param options string[] Array of option strings to display in the dropdown
+---@param defaultValue string The default selected option (must match one of the options)
+function SM:Dropdown(label, key, options, defaultValue) end
+
+--- Creates a checkbox element for boolean values
+--- The value is passed to scripts as a boolean
+---@param label string The display label for the checkbox
+---@param key string The unique key used to access the value in the CONFIG table
+---@param defaultValue boolean The default checked state (true or false)
+function SM:Checkbox(label, key, defaultValue) end
+
+--- Creates a text input field for string values
+--- The value is passed to scripts as a string
+---@param label string The display label for the text input
+---@param key string The unique key used to access the value in the CONFIG table
+---@param defaultValue string The default text content
+function SM:TextInput(label, key, defaultValue) end
+
+--- Creates a password input field with masked characters
+--- The value is passed to scripts as a string
+---@param label string The display label for the password input
+---@param key string The unique key used to access the value in the CONFIG table
+---@param defaultValue string The default password content
+function SM:PasswordInput(label, key, defaultValue) end
+
+--- Creates a number input field for integer values
+--- The value is passed to scripts as an integer
+---@param label string The display label for the number input
+---@param key string The unique key used to access the value in the CONFIG table
+---@param defaultValue number The default numeric value
+---@param minValue number|nil Optional minimum allowed value
+---@param maxValue number|nil Optional maximum allowed value
+function SM:NumberInput(label, key, defaultValue, minValue, maxValue) end
+
+--- Creates a slider element for numeric values with visual range selection
+--- The value is passed to scripts as a float
+---@param label string The display label for the slider
+---@param key string The unique key used to access the value in the CONFIG table
+---@param minValue number The minimum value of the slider range
+---@param maxValue number The maximum value of the slider range
+---@param defaultValue number The default slider position
+function SM:Slider(label, key, minValue, maxValue, defaultValue) end
+
+--[[
+Configuration System Usage:
+
+1. Create a config.lua file in your script's directory
+2. Use SM: functions to define configuration elements
+3. Access values in your script via the global CONFIG table
+
+Example config.lua:
+```lua
+SM:AddTab("Combat")
+SM:Dropdown("Prayer Type", "prayerType", {"Curses", "Prayers"}, "Curses")
+SM:Checkbox("Hard Mode", "hardMode", false)
+
+SM:AddTab("Settings")
+SM:TextInput("Player Name", "playerName", "")
+SM:Slider("Wait Time", "waitTime", 100, 5000, 1000)
+```
+
+Example script usage:
+```lua
+if CONFIG then
+    if CONFIG.prayerType == 0 then
+        -- User selected "Curses" (first option)
+    elseif CONFIG.prayerType == 1 then
+        -- User selected "Prayers" (second option)
+    end
+    
+    if CONFIG.hardMode then
+        -- Hard mode is enabled
+    end
+    
+    local playerName = CONFIG.playerName or "DefaultName"
+    local waitTime = CONFIG.waitTime or 1000
+end
+```
+
+Notes:
+- Dropdown values are 0-based indices
+- All values are optional and should be checked before use
+- Configuration is automatically saved/loaded per script
+- Each script can have its own independent configuration
+--]]
 
 return API
