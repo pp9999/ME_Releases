@@ -160,6 +160,25 @@
 ---@field ID_stack number
 ---@field Extra inv_Container_struct
 
+---@class PerkInfo
+---@field perkId number
+---@field perkName string
+
+---@class GizmoInfo
+---@field gizmoNumber number
+---@field perks PerkInfo[]
+
+---@class AugmentedItem
+---@field itemId number
+---@field itemName string
+---@field slot number
+---@field itemExp number
+---@field itemLevel number
+---@field gizmoCount number
+---@field gizmos GizmoInfo[]
+---@field isEquipped boolean
+---@field containerType number
+
 ---@class TrackedSkill
 ---@field id number
 ---@field name string
@@ -216,3 +235,12 @@
 ---@field name? string
 ---@field value? string
 ---@field inline? boolean
+
+---@class SM
+---@field AddTab fun(self: SM, tabName: string): nil Creates a new tab in the configuration window
+---@field Dropdown fun(self: SM, label: string, key: string, options: string[], defaultValue: string): nil Creates a dropdown selection element
+---@field Checkbox fun(self: SM, label: string, key: string, defaultValue: boolean): nil Creates a checkbox element for boolean values
+---@field TextInput fun(self: SM, label: string, key: string, defaultValue: string): nil Creates a text input field for string values
+---@field PasswordInput fun(self: SM, label: string, key: string, defaultValue: string): nil Creates a password input field with masked characters
+---@field NumberInput fun(self: SM, label: string, key: string, defaultValue: number, minValue?: number, maxValue?: number): nil Creates a number input field for integer values
+---@field Slider fun(self: SM, label: string, key: string, minValue: number, maxValue: number, defaultValue: number): nil Creates a slider element for numeric values
