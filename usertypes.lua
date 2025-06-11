@@ -1,9 +1,7 @@
 --define members of userdata here
---some notes: Lua stores all numbers in 8 bytes size. number vs integer = same thing.
---string for text.
+--some notes: Lua stores all numbers in 8 bytes size. In double actually
+--string is text.
 --any type: just pass any kind of data object, basically a pointer pass,
---can even peek at members if we exactly know what we are dealing with.
---boolean: c++ != bool here, I dont understand
 
 ---@class returntext
 ---@field Name string
