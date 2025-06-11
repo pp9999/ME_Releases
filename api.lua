@@ -565,17 +565,19 @@ end
 
 
 
-
+-- if it still can reset returns true
 ---@return bool
 function API.IsAuraResetAvailable()
 	return IsAuraResetAvailable()
 end
 
+-- if it still can reset returns true
 ---@return bool
 function API.IsAuraXPAvailable()
 	return IsAuraXPAvailable()
 end
 
+-- if it is then returns true
 ---@return bool
 function API.IsPremiumMember()
 	return IsPremiumMember()
@@ -5304,5 +5306,3 @@ Notes:
 - Configuration is automatically saved/loaded per script
 - Each script can have its own independent configuration
 --]]
-
-return API
