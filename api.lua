@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.052
+API.VERSION = 1.053
 
 --[[
 Known shortcuts
@@ -544,6 +544,42 @@ end
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---@return bool
+function API.IsAuraResetAvailable()
+	return IsAuraResetAvailable()
+end
+
+---@return bool
+function API.IsAuraXPAvailable()
+	return IsAuraXPAvailable()
+end
+
+---@return bool
+function API.IsPremiumMember()
+	return IsPremiumMember()
+end
 
 ---@return table|string
 function API.ReturnConsoleLog()
@@ -1295,10 +1331,6 @@ function API.CreateFFPointArray(points)
 
 	return arr
 end
-
-
-
-
 
 --- open and use 1 to withdraw
 ---@param id number ---portable id
@@ -4560,6 +4592,7 @@ Quest = Quest
 ---@field getProgress function Returns the progress of the quest as a number
 ---@field isStarted function Returns true if the quest is started
 ---@field isComplete function Returns true if the quest is complete
+---@field getVarbits function Returns a table of IDs, represting the varbit IDs linked to this Quest indirectly
 
 --- Accepts a quest ID or exact name.
 ---@param quest number|string The Quest ID or exact name to search for
