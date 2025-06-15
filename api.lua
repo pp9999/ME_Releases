@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.053
+API.VERSION = 1.054
 
 --[[
 Known shortcuts
@@ -563,7 +563,12 @@ end
 
 
 
-
+-- Dont let selection reset, using ability on action or item on item
+-- Before selective doAction
+---@return bool
+function API.DoAction_DontResetSelection()
+	return DoAction_DontResetSelection()
+end
 
 -- if it still can reset returns true
 ---@return bool
@@ -5306,3 +5311,5 @@ Notes:
 - Configuration is automatically saved/loaded per script
 - Each script can have its own independent configuration
 --]]
+
+return API
