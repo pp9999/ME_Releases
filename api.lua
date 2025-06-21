@@ -570,6 +570,11 @@ function API.DoAction_DontResetSelection()
 	return DoAction_DontResetSelection()
 end
 
+---@return void
+function API.UnhookRs3Hook()
+	return UnhookRs3Hook()
+end
+
 -- if it still can reset returns true
 ---@return bool
 function API.IsAuraResetAvailable()
@@ -1787,11 +1792,6 @@ function API.CheckTileforItems(tile, item)
 	return CheckTileforItems(tile, item)
 end
 
----@return table|number
-function API.MousePos_()
-	return MousePos_()
-end
-
 ---@return WPOINT
 --[[
 returns x,y coords of the mouse cusor relative to the game window
@@ -2034,7 +2034,7 @@ end
 ---@param codes number --char
 ---@param sleep number
 ---@param rand number
----@return void
+---@return boolean
 function API.KeyboardPress(codes, sleep, rand)
 	return KeyboardPress(codes, sleep, rand)
 end
@@ -2042,7 +2042,7 @@ end
 ---@param codes number
 ---@param sleep number
 ---@param rand number
----@return void
+---@return boolean
 function API.KeyboardPress2(codes, sleep, rand)
 	return KeyboardPress2(codes, sleep, rand)
 end
@@ -3482,15 +3482,15 @@ end
 ---@param codes number
 ---@param sleep number
 ---@param rand number
----@return void
+---@return boolean
 function API.KeyboardPress31(codes, sleep, rand)
 	return KeyboardPress31(codes, sleep, rand)
 end
 
 --- Ascii numeric values, 1 is 49, enter is 17, space is 32
 ---@param codes number
----@param keymod number
----@return void
+---@param keymod number 0 = non, 1 = shift, 2 = ctrl, 3 = alt 
+---@return boolean
 function API.KeyboardPress32(codes, keymod)
 	return KeyboardPress32(codes, keymod)
 end
@@ -4796,22 +4796,6 @@ function API.InvRandom_(action)
 	return InvRandom_(action)
 end
 
----dosent work
----@param worldtohop string
----@return boolean
-function API.World_Hopper(worldtohop)
-	return World_Hopper(worldtohop)
-end
-
----dosent work
----@param name string
----@param password string
----@param world string
----@return boolean
-function API.LoginFunction(name, password, world)
-	return LoginFunction(name, password, world)
-end
-
 ---old
 ---@param ItemCoord2 FFPOINT
 ---@return boolean
@@ -4889,35 +4873,6 @@ function API.ClickAllObj2(AllStuff2, accuracy, usemap, action, sidetext)
 	return ClickAllObj(AllStuff2, accuracy, usemap, action, sidetext)
 end
 
----@param cursor table|number c POINT
----@param type boolean
----@return void
-function API.MouseCLRS(cursor, type)
-	return MouseCLRS(cursor, type)
-end
-
----@param cursor table|number c POINT
----@param cursor2 table|number c POINT
----@return void
----function API.MouseDrag_RS(cursor, cursor2)
----	return MouseDrag_RS(cursor, cursor2)
----end
-
----@param cursor table|number c POINT
----@return void
-function API.MouseMove_(cursor)
-	return MouseMove_(cursor)
-end
-
----@param x number
----@param y number
----@param rx number
----@param ry number
----@return void
-function API.MouseMove_2(x, y, rx, ry)
-	return MouseMove_2(x, y, rx, ry)
-end
-
 ---@param dx number
 ---@param dy number
 ---@return number
@@ -4929,7 +4884,7 @@ end
 ---@param y number
 ---@param rx number
 ---@param ry number
----@return void
+---@return boolean
 function API.MoveMouse2(x, y, rx, ry)
 	return MoveMouse2(x, y, rx, ry)
 end
@@ -4939,44 +4894,30 @@ end
 ---@param rx number
 ---@param ry number
 ---@param updown boolean
----@return void
+---@return boolean
 function API.MoveMouse3(x, y, rx, ry, updown)
 	return MoveMouse3(x, y, rx, ry, updown)
 end
 
 ---@param sleep number
 ---@param rand number
----@return void
+---@return boolean
 function API.MouseLeftClick(sleep, rand)
 	return MouseLeftClick(sleep, rand)
 end
 
 ---@param sleep number
 ---@param rand number
----@return void
+---@return boolean
 function API.MouseRightClick(sleep, rand)
 	return MouseRightClick(sleep, rand)
-end
-
----@param sleep number
----@param random number
----@return void
-function API.Send_MouseLeftClick(sleep, random)
-	return Send_MouseLeftClick(sleep, random)
-end
-
----@param sleep number
----@param random number
----@return void
-function API.Send_MouseRightClick(sleep, random)
-	return Send_MouseRightClick(sleep, random)
 end
 
 ---@param x number
 ---@param y number
 ---@param sleep number
 ---@param random number
----@return void
+---@return boolean
 function API.Post_MouseLeftClick(x, y, sleep, random)
 	return Post_MouseLeftClick(x, y, sleep, random)
 end
@@ -4985,7 +4926,7 @@ end
 ---@param y number
 ---@param sleep number
 ---@param random number
----@return void
+---@return boolean
 function API.Post_MouseRightClick(x, y, sleep, random)
 	return Post_MouseRightClick(x, y, sleep, random)
 end
@@ -5145,7 +5086,7 @@ function API.RandomEvents()
 	return RandomEvents()
 end
 
----- END OF DEPRECATED SHIT ----
+---- END OF DEPRECATED GOODNESS ----
 
 --]]
 
