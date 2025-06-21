@@ -32,6 +32,7 @@
 ---@field info IInfo
 ---@field action string
 ---@field enabled boolean
+---@field modkey number
 
 ---@class AllObject
 ---@field Mem number
