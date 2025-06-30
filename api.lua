@@ -619,6 +619,12 @@ function API.HasDeathItemsReclaim()
 	return HasDeathItemsReclaim()
 end
 
+-- in area, normal area not quests
+---@return bool
+function API.IsInDeathOffice()
+	return IsInDeathOffice()
+end
+
 -- if it is then returns true
 ---@return bool
 function API.IsPremiumMember()
