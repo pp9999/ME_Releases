@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.054
+API.VERSION = 1.057
 
 --[[
 Known shortcuts
@@ -102,9 +102,11 @@ API.I_slides = I_slides
 ---@return number
 API.I_buffb = I_buffb
 
---- checks if enableCacheLoading is enabled for Interact
+--- checks if bool is true. it is now always enabled so means nothing now. IsCacheLoaded check is more sensible nows
 ---@return boolean
 API.CacheEnabled = CacheEnabled
+
+
 
 -------osrs test-------------------
 
@@ -563,6 +565,30 @@ end
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--Check if Cache is successfully loaded
+---@return bool
+function API.IsCacheLoaded()
+	return IsCacheLoaded()
+end
+
 -- Dont let selection reset, using ability on action or item on item
 -- Before selective doAction
 ---@return bool
@@ -585,6 +611,12 @@ end
 ---@return bool
 function API.IsAuraXPAvailable()
 	return IsAuraXPAvailable()
+end
+
+-- check if has items to reclaim from death
+---@return bool
+function API.HasDeathItemsReclaim()
+	return HasDeathItemsReclaim()
 end
 
 -- if it is then returns true
@@ -3493,6 +3525,14 @@ end
 ---@return boolean
 function API.KeyboardPress32(codes, keymod)
 	return KeyboardPress32(codes, keymod)
+end
+
+--- Ascii numeric values, 1 is 49, enter is 17, space is 32
+---@param codes number
+---@param keymod number 0 = non, 1 = shift, 2 = ctrl, 3 = alt 
+---@return boolean
+function API.KeyboardPress33(codes, keymod, sleep, rand)
+	return KeyboardPress33(codes, keymod, sleep, rand)
 end
 
 ---@param value number
