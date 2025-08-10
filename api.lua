@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.057
+API.VERSION = 1.059
 
 --[[
 Known shortcuts
@@ -73,6 +73,9 @@ API.OFF_ACT_Vs_player_follow_route = Vs_player_follow_route
 
 ---
 API.OFF_ACT_Vs_player_trade_route = Vs_player_trade_route
+
+---
+API.OFF_ACT_Vs_player_examine_route = Vs_player_examine_route
 
 --- Bladed dive teleport
 API.OFF_ACT_Special_walk_route = Special_walk_route
@@ -3163,6 +3166,38 @@ function API.DoAction_NPC(action, offset, objects, maxdistance, ignore_star, hea
 	return DoAction_NPC(action, offset, objects, maxdistance, ignore_star, health)
 end
 
+---Do action on player, find by name, attack
+---@param obj table player names to search for
+---@param maxdistance number maximum distance to search
+---@return boolean
+function API.DoAction_VS_Player_Attack(obj, maxdistance)
+	return DoAction_VS_Player_Attack(obj, maxdistance)
+end
+
+---Do action on player, find by name, trade
+---@param obj table player names to search for
+---@param maxdistance number maximum distance to search
+---@return boolean
+function API.DoAction_VS_Player_Trade(obj, maxdistance)
+	return DoAction_VS_Player_Trade(obj, maxdistance)
+end
+
+---Do action on player, find by name, examine
+---@param obj table player names to search for
+---@param maxdistance number maximum distance to search
+---@return boolean
+function API.DoAction_VS_Player_Examine(obj, maxdistance)
+	return DoAction_VS_Player_Examine(obj, maxdistance)
+end
+
+---Do action on player, find by name, follow
+---@param obj table player names to search for
+---@param maxdistance number maximum distance to search
+---@return boolean
+function API.DoAction_VS_Player_Follow(obj, maxdistance)
+	return DoAction_VS_Player_Follow(obj, maxdistance)
+end
+
 ---@param action number
 ---@param offset number
 ---@param obj table|number
@@ -3238,20 +3273,6 @@ end
 ---@return boolean
 function API.DoAction_VS_Player_action_Direct(obj, offset)
 	return DoAction_VS_Player_action_Direct(obj, offset)
-end
-
----@param obj table|string
----@param maxdistance number
----@return boolean
-function API.DoAction_VS_Player_Follow(obj, maxdistance)
-	return DoAction_VS_Player_Follow(obj, maxdistance)
-end
-
----@param obj table|string
----@param maxdistance number
----@return boolean
-function API.DoAction_VS_Player_Trade(obj, maxdistance)
-	return DoAction_VS_Player_Trade(obj, maxdistance)
 end
 
 ---@param normal_tile FFPOINT
@@ -3900,13 +3921,6 @@ end
 
 ---@param obj table|string
 ---@param maxdistance number
----@return boolean
-function API.DoAction_VS_Player_Attack1(obj, maxdistance)
-	return DoAction_VS_Player_Attack(obj, maxdistance)
-end
-
----@param obj table|string
----@param maxdistance number
 ---@param checkcombat boolean
 ---@param xstart number
 ---@param xend number
@@ -4472,6 +4486,14 @@ Familiars = Familiars
 ---@return boolean
 function Familiars:HasFamiliar() end
 
+--- Returns whether you have a familiar summoned or not. VB check
+---@return boolean
+function Familiars:HasFamiliar2() end
+
+--- Returns whether you have a familiar summoned or not. VB check
+---@return boolean
+function Familiars:HasFamiliarBOB() end
+
 --- Returns the name of the familiar you have summoned.
 ---@return string
 function Familiars:GetName() end
@@ -4479,14 +4501,6 @@ function Familiars:GetName() end
 --- Returns the amount of seconds (in chunks of 30) that the familiar has remaining.
 ---@return number
 function Familiars:GetTimeRemaining() end
-
---- Returns whether or not you have scrolls stored in the familiar.
----@return boolean
-function Familiars:HasScrollsStored() end
-
---- Returns the amount of scrolls stored in the familiar.
----@return number
-function Familiars:GetStoredScrollAmount() end
 
 --- Returns whether or not you have a pouch available in your inventory to renew the familiar.
 ---@return boolean
@@ -4496,13 +4510,61 @@ function Familiars:CanRenew() end
 ---@return number
 function Familiars:GetSpellPoints() end
 
+--- Returns Summoning points left.
+---@return number
+function Familiars:GetSummoningPoints() end
+
+--- Returns Summoning level
+---@return number
+function Familiars:GetSummoningLevel() end
+
 --- Returns the health of your familiar
 ---@return number
 function Familiars:GetHealth() end
 
+--- Returns the health of your familiar
+---@return number
+function Familiars:GetHealthMax() end
+
 --- Casts the familiar's special attack
 ---@return boolean
 function Familiars:CastSpecialAttack() end
+
+--- Returns number slots from, 32 always even your bob dont have that much
+---@return number
+function Familiars:Storage_FreeAm() end
+
+--- Returns list of stored items, 32 always even your bob dont have that much
+---@return number[]
+function Familiars:Storage_List() end
+
+--- Checks if item is on familiar
+---@return boolean
+function Familiars:Storage_Contains(item) end
+
+--- Checks if it is open
+---@return boolean
+function Familiars:FamiliarTabOpen() end
+
+--- Checks if it is open
+---@return boolean
+function Familiars:Storage_InterfaceOpen() end
+
+--- Checks if open if not then open
+---@return boolean
+function Familiars:SwitchToStorage() end
+
+--- Checks if open then does it
+---@return boolean
+function Familiars:GiveAllBurden() end
+
+--- Checks if open then does it
+---@return boolean
+function Familiars:TakeAllBurden() end
+
+--- Checks if open then does it
+---@return boolean
+function Familiars:Storage_InterfaceTake(item) end
 
 ---@class TickEvent
 TickEvent = TickEvent
@@ -4660,6 +4722,67 @@ function Quest:Get(quest) end
 function API.GetVarbitValue(id)
 	return GetVarbitValue(id)
 end
+
+--- Represents the SOC class.
+---@class SOC
+SOC = SOC
+
+-- Message minimum size is 24 bytes, 23 bytes are reserved for info, after that is THE message
+-- 0-7 bytes are PID in string form
+-- 8-12 is player name
+-- 21 byte 1 is hide debug text
+-- 22 byte is operation code, not used
+-- to send from other systems to ME server write 23 zero bytes and then message bytes
+
+--- Starts a server for the SOC (Socket Object Communication) system.
+---@param port number The port to start the server on.
+---@return boolean if successful
+function SOC:StartServer(port) end
+
+--- Sees only local status
+---@return boolean True if the server was successfully started, false otherwise.
+function SOC:IsServerStarted() end
+
+--- Asks form server. Returns false if it cant find server.
+---@return boolean True if the server was successfully started, false otherwise.
+function SOC:AskIsServerStarted() end
+
+---@param type number 0 all clients, 1 player, 2 PID
+---@param ident string player name or PID
+---@param stext string message to send
+---@return boolean if successful
+function SOC:MessageClients(type, ident, stext) end
+
+--- Starts a client for the SOC (Socket Object Communication) system.
+---@param port number The port to start the server on.
+---@return boolean if successful
+function SOC:StartClient(port) end
+
+--- Sees only local status
+---@return boolean True if the client was successfully started, false otherwise.
+function SOC:IsClientStarted() end
+
+---@param stext string message to send
+---@return boolean if successful
+function SOC:MessageServer(stext) end
+
+--- Get whole message that are stored here but server sent a while ago
+---@return string
+function SOC:ClientAskMessage() end
+
+--- Get whole messages that are stored here but server sent a while ago
+---@return string[]
+function SOC:ClientAskMessages() end
+
+--- Client sent message on server
+---@return string
+function SOC:ServerAskMessage() end
+
+--- Client sent messages on server
+---@return string[]
+function SOC:ServerAskMessages() end
+
+
 
 ---- CAUTION THESE FUNCTIONS USE MOUSE ----
 ---- DEPRECATED FUNCTIONS ----
