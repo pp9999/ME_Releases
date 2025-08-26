@@ -940,6 +940,7 @@ function UTILS.NoteItem(item)
 
   API.DoAction_Interface(0x24, notepaper.itemid1, 0, notepaper.id1, notepaper.id2, notepaper.id3,
     API.OFF_ACT_Bladed_interface_route)
+    API.DoAction_DontResetSelection()
   API.RandomSleep2(50, 100, 200)
   API.DoAction_Interface(0x24, itemToNote.itemid1, 0, itemToNote.id1, itemToNote.id2, itemToNote.id3,
     API.OFF_ACT_GeneralInterface_route1)
