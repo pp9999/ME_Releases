@@ -941,6 +941,14 @@ function API.Container_Get_s(cont_id,item_id)
 	return Container_Get_s(cont_id,item_id)
 end
 
+--- Check if items are there by table of ids
+---@param item_ids number[] -- find items
+---@param cont_id number -- container id
+---@return boolean
+function API.Container_Check_Items(cont_id,item_ids)
+	return Container_Check_Items(cont_id,item_ids)
+end
+
 --- get container data, get all items with those ids
 ---@param item_id table|number -- find items
 ---@param cont_id number -- container id
