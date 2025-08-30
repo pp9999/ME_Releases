@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.059
+API.VERSION = 1.060
 
 --[[
 Known shortcuts
@@ -298,7 +298,7 @@ function API.OSRS_GetCurrentMenuOpen()
 	return OSRS_GetCurrentMenuOpen()
 end
 
---from 0-12
+--from 0-12 uses quick keys
 ---@param menunr number
 ---@return number
 function API.OSRS_OpenMenu(menunr)
@@ -584,17 +584,21 @@ end
 
 
 
+-- 
+---@return number
+function API.GetWorldNR()
+	return GetWorldNR()
+end
 
-
---Check if Cache is successfully loaded
----@return bool
+-- Check if Cache is successfully loaded
+---@return boolean
 function API.IsCacheLoaded()
 	return IsCacheLoaded()
 end
 
 -- Dont let selection reset, using ability on action or item on item
 -- Before selective doAction
----@return bool
+---@return boolean
 function API.DoAction_DontResetSelection()
 	return DoAction_DontResetSelection()
 end
