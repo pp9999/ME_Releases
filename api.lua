@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.062
+API.VERSION = 1.063
 
 --[[
 Known shortcuts
@@ -108,8 +108,6 @@ API.I_buffb = I_buffb
 --- checks if bool is true. it is now always enabled so means nothing now. IsCacheLoaded check is more sensible nows
 ---@return boolean
 API.CacheEnabled = CacheEnabled
-
-
 
 -------osrs test-------------------
 
@@ -4056,7 +4054,7 @@ function API.SetDrawTrackedSkills(val)
 end
 
 ---Get item price from exchange API
----@param number|table itemid or table of itemids to lookup
+---@param itemid number|table itemid or table of itemids to lookup
 ---@return number|table price of table of prices with itemid as key, price as value
 ---@overload fun(itemids: table): table
 function API.GetExchangePrice(itemid)
@@ -4064,8 +4062,8 @@ function API.GetExchangePrice(itemid)
 end
 
 ---Logs to a file with the character name into Drops folder in your ME directory
----@param number itemid
----@param number qty
+---@param itemId number
+---@param qty number
 ---@return boolean
 function API.LogDrop(itemId,qty)
 	return LogDrop(itemId,qty)
@@ -4098,7 +4096,7 @@ function GrandExchange:DelayOffset(offset) end
 
 -- Retrieves the data for a specific slot from the GrandExchange table.
 ---@function GrandExchange:GetSlotData
----@param slot (number) The index of the slot to retrieve data for.
+---@param slot number The index of the slot to retrieve data for.
 ---@return ExchangeEntry ExchangeEntry data associated with the specified slot.
 function GrandExchange:GetSlotData(slot) end
 
@@ -4213,47 +4211,46 @@ function GrandExchange:CancelOrder(slot) end
 Inventory = Inventory
 
 --- Checks whether the Inventory interface is currently open.
----@return boolean `true` if the Inventory is open, `false` otherwise.
+---@return boolean true if the Inventory is open, false otherwise.
 function Inventory:IsOpen() end
 
 --- Checks whether the Inventory is full.
----@return boolean `true` if the Inventory is full, `false` otherwise.
+---@return boolean true if the Inventory is full, false otherwise.
 function Inventory:IsFull() end
 
 --- Checks whether the Inventory is empty.
----@return boolean `true` if the Inventory is empty, `false` otherwise.
+---@return boolean true if the Inventory is empty, false otherwise.
 function Inventory:IsEmpty() end
 
 ---Checks if the Inventory contains a specific item or multiple items.
 ---Accepts a single item ID, a single item name, a table of item IDs, or a table of item names.
----@param item number|string|table<number|string> The item ID (number), item name (string),  
----or a table containing multiple item IDs/names to check for.
----@return boolean `true` if the Inventory contains the specified item(s), `false` otherwise.
+---@param item number|string|table
+---@return boolean true if the Inventory contains the specified item(s), false otherwise.
 function Inventory:Contains(item) end
 
 --- Checks if the Inventory contains all of the specified items.
 ---
 --- Accepts a list of item IDs or a list of item names.
----@param items table<number|string> The item IDs (number) or item names (string) to check for.
----@return boolean `true` if the Inventory contains all of the items, `false` otherwise.
+---@param items table|number|string
+---@return boolean true if the Inventory contains all of the items, `false otherwise.
 function Inventory:ContainsAll(items) end
 
 --- Checks if the Inventory contains any of the specified items.
 ---
 --- Accepts a list of item IDs or a list of item names.
----@param items table<number|string>] The item IDs (number) or item names (string) to check for.
----@return boolean `true` if the Inventory contains any of the items, `false` otherwise.
+---@param items table|number|string
+---@return boolean true if the Inventory contains any of the items, false otherwise.
 function Inventory:ContainsAny(items) end
 
 --- Checks if the Inventory contains only the specified items.
 ---
 --- Accepts a list of item IDs or a list of item names.
----@param items table<number|string> The item IDs (number) or item names (string) to check for.
----@return boolean `true` if the Inventory contains only the specified items, `false` otherwise.
+---@param items table|number|string
+---@return boolean true if the Inventory contains only the specified items, false otherwise.
 function Inventory:ContainsOnly(items) end
 
 --- Checks whether an item is currently selected in the Inventory.
----@return boolean `true` if an item is selected, `false` otherwise.
+---@return boolean true if an item is selected, false otherwise.
 function Inventory:IsItemSelected() end
 
 --- Retrieves the number of free spaces in the Inventory.
@@ -4264,7 +4261,7 @@ function Inventory:FreeSpaces() end
 ---
 --- Accepts an item ID or item name.
 ---@param item number|string The item ID (number) or item name (string) to check.
----@return number itemXP The experience of the item. Returns `-1` if not found or an error occurs.
+---@return number itemXP The experience of the item. Returns -1 if not found or an error occurs.
 function Inventory:GetItemXp(item) end
 
 --- Gets the current amount of a specific item in the Inventory.
@@ -4278,42 +4275,42 @@ function Inventory:GetItemAmount(item) end
 ---
 --- Accepts an item ID or item name.
 ---@param item number|string The item ID (number) or item name (string) to eat.
----@return boolean `true` if the item was eaten, `false` otherwise.
+---@return boolean true if the item was eaten, false otherwise.
 function Inventory:Eat(item) end
 
 --- Uses a specified item from the Inventory.
 ---
 --- Accepts an item ID or item name.
 ---@param item number|string The item ID (number) or item name (string) to use.
----@return boolean `true` if the item was used, `false` otherwise.
+---@return boolean true if the item was used, false otherwise.
 function Inventory:Use(item) end
 
 --- Rubs a piece of jewelry from the Inventory.
 ---
 --- Accepts an item ID or item name.
 ---@param item number|string The item ID (number) or item name (string) to rub.
----@return boolean `true` if the item was rubbed, `false` otherwise.
+---@return boolean true if the item was rubbed, false otherwise.
 function Inventory:Rub(item) end
 
 --- Equips a specified item from the Inventory.
 ---
 --- Accepts an item ID or item name.
 ---@param item number|string The item ID (number) or item name (string) to equip.
----@return boolean `true` if the item was equipped, `false` otherwise.
+---@return boolean true if the item was equipped, false otherwise.
 function Inventory:Equip(item) end
 
 --- Drops a specified item from the Inventory.
 ---
 --- Accepts an item ID or item name.
 ---@param item number|string The item ID (number) or item name (string) to drop.
----@return boolean `true` if the item was successfully dropped, `false` otherwise.
+---@return boolean true if the item was successfully dropped, false otherwise.
 function Inventory:Drop(item) end
 
 --- Notes a specified item in the Inventory.
 ---
 --- Accepts an item ID or item name.
 ---@param item number|string The item ID (number) or item name (string) to note.
----@return boolean `true` if the item was noted, `false` otherwise.
+---@return boolean true if the item was noted, false otherwise.
 function Inventory:NoteItem(item) end
 
 --- Uses one item on another in the Inventory.
@@ -4321,7 +4318,7 @@ function Inventory:NoteItem(item) end
 --- Accepts either an item ID or an item name for both source and target.
 ---@param source number|string The item ID (number) or item name (string) to use.
 ---@param target number|string The item ID (number) or item name (string) to use the source on.
----@return boolean `true` if the items were used successfully, `false` otherwise.
+---@return boolean true if the items were used successfully, false otherwise.
 function Inventory:UseItemOnItem(source, target) end
 
 --- Retrieves all items currently in the Inventory.
@@ -4339,7 +4336,7 @@ function Inventory:GetItem(item) end
 
 --- Retrieves the item information for the given slot.
 ---
---- @param slot number The slot index to retrieve the item from.
+---@param slot number The slot index to retrieve the item from.
 ---@return InventoryItem The item information for the specified slot.
 function Inventory:GetSlotData(slot) end
 
@@ -4347,9 +4344,9 @@ function Inventory:GetSlotData(slot) end
 ---
 --- Accepts an item ID or item name along with action parameters.
 ---@param target number|string The item ID (number) or item name (string) to perform the action on.
----@param action number The action identifier (`m_action`).
----@param offset number The offset value, typically an `OFF_ACT`.
----@return boolean `true` if the action was successful, `false` otherwise.
+---@param action number The action identifier (m_action).
+---@param offset number The offset value, typically an OFF_ACT.
+---@return boolean true if the action was successful, false otherwise.
 function Inventory:DoAction(target, action, offset) end
 
 
@@ -4389,59 +4386,58 @@ Equipment = Equipment
 function Equipment:GetItemXp(slot) end
 
 --- Checks whether the Equipment interface is currently open.
----@return boolean `true` if the Equipment is open, `false` otherwise.
+---@return boolean true if the Equipment is open, false otherwise.
 function Equipment:IsOpen() end
 
 --- Attempts to open the Equipment interface.
----@return boolean `true` if the Equipment was successfully opened, `false` otherwise.
+---@return boolean true if the Equipment was successfully opened, false otherwise.
 function Equipment:OpenInterface() end
 
 --- Checks whether the Equipment is empty.
----@return boolean `true` if the Equipment is empty, `false` otherwise.
+---@return boolean true if the Equipment is empty, false otherwise.
 function Equipment:IsEmpty() end
 
 --- Checks whether the Equipment is full.
----@return boolean `true` if the Equipment is full, `false` otherwise.
+---@return boolean true if the Equipment is full, false otherwise.
 function Equipment:IsFull() end
 
 ---Checks if the Equipment contains a specific item or multiple items.
 ---Accepts a single item ID, a single item name, a table of item IDs, or a table of item names.
----@param item number|string|table<number|string> The item ID (number), item name (string),  
----or a table containing multiple item IDs/names to check for.
----@return boolean `true` if the Equipment contains the specified item(s), `false` otherwise.
+---@param item number|string|table The item ID, item name
+---@return boolean true if the Equipment contains the specified item(s), false otherwise.
 function Equipment:Contains(item) end
 
 --- Checks if the Equipment contains all items in the provided list.
 ---
 --- Accepts a list of item IDs or names.
 ---@param items number[]|string[] A table containing item IDs (number) or names (string).
----@return boolean `true` if the Equipment contains all the specified items, `false` otherwise.
+---@return boolean true if the Equipment contains all the specified items, false otherwise.
 function Equipment:ContainsAll(items) end
 
 --- Checks if the Equipment contains any item in the provided list.
 ---
 --- Accepts a list of item IDs or names.
 ---@param items number[]|string[] A table containing item IDs (number) or names (string).
----@return boolean `true` if the Equipment contains any of the specified items, `false` otherwise.
+---@return boolean true if the Equipment contains any of the specified items, false otherwise.
 function Equipment:ContainsAny(items) end
 
 --- Checks if the Equipment contains only the items in the provided list.
 ---
 --- Accepts a list of item IDs or names.
 ---@param items number[]|string[] A table containing item IDs (number) or names (string).
----@return boolean `true` if the Equipment contains only the specified items, `false` otherwise.
+---@return boolean true if the Equipment contains only the specified items, false otherwise.
 function Equipment:ContainsOnly(items) end
 
 --- Unequips a specified item.
 ---
 --- Accepts an item ID or name.
 ---@param item number|string The item ID (number) or name (string) to unequip.
----@return boolean `true` if the item was successfully unequipped, `false` otherwise.
+---@return boolean true if the item was successfully unequipped, false otherwise.
 function Equipment:Unequip(item) end
 
 ---@param item number|string The equipment slot to perform the action on.
 ---@param action number The action to perform (1,2,3 etc. Take from doAction debug).
----@return boolean `true` if the action was successful, `false` otherwise.
+---@return boolean true if the action was successful, false otherwise.
 function Equipment:DoAction(item,action) end
 
 --- Retrieves the item data from a specific slot.
