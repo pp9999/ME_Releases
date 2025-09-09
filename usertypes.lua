@@ -208,38 +208,29 @@
 ---@field Buff_stack table
 
 ---@class EmbedFooter
----@field text? string
----@field icon_url? string
----@field proxy_icon_url? string
+---@field text string
+---@field icon_url string
+---@field proxy_icon_url string
 
 ---@class EmbedImage
----@field url? string
----@field proxy_url? string
----@field height? number
----@field width? number
+---@field url string
+---@field proxy_url string
+---@field height number
+---@field width number
 
 ---@class EmbedThumbnail
----@field url? string
----@field proxy_url? string
----@field height? number
----@field width? number
+---@field url string
+---@field proxy_url string
+---@field height number
+---@field width number
 
 ---@class EmbedAuthor
----@field name? string
----@field url? string
----@field icon_url? string
----@field proxy_icon_url? string
+---@field name string
+---@field url string
+---@field icon_url string
+---@field proxy_icon_url string
 
 ---@class EmbedField
----@field name? string
----@field value? string
----@field inline? boolean
-
----@class SM
----@field AddTab fun(self: SM, tabName: string): nil Creates a new tab in the configuration window
----@field Dropdown fun(self: SM, label: string, key: string, options: string[], defaultValue: string): nil Creates a dropdown selection element
----@field Checkbox fun(self: SM, label: string, key: string, defaultValue: boolean): nil Creates a checkbox element for boolean values
----@field TextInput fun(self: SM, label: string, key: string, defaultValue: string): nil Creates a text input field for string values
----@field PasswordInput fun(self: SM, label: string, key: string, defaultValue: string): nil Creates a password input field with masked characters
----@field NumberInput fun(self: SM, label: string, key: string, defaultValue: number, minValue?: number, maxValue?: number): nil Creates a number input field for integer values
----@field Slider fun(self: SM, label: string, key: string, minValue: number, maxValue: number, defaultValue: number): nil Creates a slider element for numeric values
+---@field name string
+---@field value string
+---@field inline boolean
