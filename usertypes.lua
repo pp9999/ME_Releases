@@ -3,7 +3,7 @@
 --string is text.
 --any type: just pass any kind of data object, basically a pointer pass,
 
----@class returntext
+---@class reaturntext
 ---@field Name string
 ---@field Nr number
 
@@ -151,13 +151,23 @@
 ---@field item_id number
 ---@field item_stack number
 ---@field item_slot number
----@field Extra_mem table
----@field Extra_ints table
+---@field item_name string
+---@field item_cat number
+---@field item_gelimit number
+---@field item_highalch number
+---@field item_noted boolean
+---@field item_stackable boolean
+---@field item_tradeable boolean
+---@field item_bankable boolean
+---@field item_interface WPOINT
+---@field item_xyz WPOINT
+---@field Pmap table<number>
+---@field Extra_mem table<number>
+---@field Extra_ints table<number>
 
----@class inv_Container
+---@class General_Container
 ---@field id number
----@field ID_stack number
----@field Extra inv_Container_struct
+---@field ID_stack inv_Container_struct
 
 ---@class PerkInfo
 ---@field perkId number
