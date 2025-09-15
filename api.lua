@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.064
+API.VERSION = 1.065
 
 --[[
 Known shortcuts
@@ -4157,7 +4157,7 @@ function Inventory:InvItemFound(item) end
 
 ---@param items number[]
 ---@return boolean
-function Inventory:InvItemFounds(items) end
+--function Inventory:InvItemFounds(items) end
 
 ---@param item number
 ---@return number
@@ -4165,7 +4165,7 @@ function Inventory:InvItemcount_String(item) end
 
 ---@param items number[]
 ---@return number
-function Inventory:InvItemcountStack_Strings(items) end
+--function Inventory:InvItemcountStack_Strings(items) end
 
 ---@param items number[]
 ---@return number
