@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.063
+API.VERSION = 1.064
 
 --[[
 Known shortcuts
@@ -922,14 +922,14 @@ end
 
 --- get container data
 ---@param cont_id number -- container id
----@return table|inv_Container_struct
+---@return inv_Container_struct[]
 function API.Container_Get_all(cont_id)
 	return Container_Get_all(cont_id)
 end
 
 --- get container data
 ---@param item_id number -- find item
----@param cont_vec table|inv_Container_struct -- container
+---@param cont_vec inv_Container_struct[] -- container
 ---@return inv_Container_struct
 function API.Container_Findfrom(cont_vec,item_id)
 	return Container_Findfrom(cont_vec,item_id)
@@ -952,9 +952,9 @@ function API.Container_Check_Items(cont_id,item_ids)
 end
 
 --- get container data, get all items with those ids
----@param item_id table|number -- find items
+---@param item_id number[] -- find items
 ---@param cont_id number -- container id
----@return table|inv_Container_struct
+---@return inv_Container[]_struct
 function API.Container_Get_AllItems(cont_id,item_ids)
 	return Container_Get_AllItems(cont_id,item_ids)
 end
@@ -968,9 +968,10 @@ function API.Container_Get_Check(cont_id)
 end
 
 --- get container data
----@return table|inv_Container --vectors of custom tables
-function API.GetContainerSettings()
-	return GetContainerSettings()
+---@param targetID number can be -1
+---@return General_Container[] --vectors of custom tables
+function API.GetContainerSettings(targetID)
+	return GetContainerSettings(targetID)
 end
 
 --- Encodes a Lua table to a JSON string
@@ -1395,44 +1396,6 @@ function API.CreateFFPointArray(points)
 	return arr
 end
 
---- open and use 1 to withdraw
----@param id number ---portable id
----@param text string ---sidetext
----@return boolean
-function API.DoPortables0(id, text)
-	return DoPortables(id, text)
-end
-
---- open and use 1 to withdraw
----@param id number
----@return boolean
-function API.OpenBankChest0(id)
-	return OpenBankChest(id)
-end
-
---- open with number --char press
----@param id number
----@param char number ---to press number --char code
----@return boolean
-function API.OpenBankChest1(id,char)
-	return OpenBankChest(id,char)
-end
-
---- check 1 inv item
----@param check1 number
----@return boolean
-function API.CheckInvStuff0(check1)
-	return CheckInvStuff(check1)
-end
-
---- heck 2 inv items
----@param check1 number
----@param check2 number
----@return boolean
-function API.CheckInvStuff1(check1,check2)
-	return CheckInvStuff(check1,check2)
-end
-
 --- Random number
 ---@param numbersize number
 ---@return number
@@ -1689,11 +1652,6 @@ function API.ReadPlayerAnim()
 	return ReadPlayerAnim()
 end
 
----@return boolean
-function API.IsSelectingItem()
-	return IsSelectingItem()
-end
-
 ---@param forcerefresh boolean -- force to update buffs
 ---@return Target_data
 function API.ReadTargetInfo(forcerefresh)
@@ -1778,16 +1736,6 @@ function API.CheckAnim(Loops)
 end
 
 ---@return boolean
-function API.InvFull_()
-	return InvFull_()
-end
-
----@return number
-function API.Invfreecount_()
-	return Invfreecount_()
-end
-
----@return boolean
 function API.ReadPlayerMovin()
 	return ReadPlayerMovin()
 end
@@ -1863,24 +1811,6 @@ function API.KeyPress_2(mK)
 	return KeyPress_2(mK)
 end
 
----@param item string
----@return number
-function API.InvItemcount_String(item)
-	return InvItemcount_String(item)
-end
-
----@param item string
----@return number --item stack size
-function API.InvItemcountStack_String(item)
-	return InvItemcountStack_String(item)
-end
-
----@param item number
----@return number
-function API.InvStackSize(item)
-	return InvStackSize(item)
-end
-
 ---@return number
 function API.SystemTime()
 	return SystemTime()
@@ -1914,6 +1844,7 @@ function API.ReadAllObjectsArray(types, ids, names)
 	return ReadAllObjectsArray(types, ids, names)
 end
 
+-- legacy, use Inventory class one instead
 ---@return table|IInfo
 function API.ReadInvArrays33()
 	return ReadInvArrays33()
@@ -2136,11 +2067,6 @@ end
 -- Inspect current held keys (array of KeyHoldInfo)
 function API.KeyboardHoldInspect()
 	return KeyboardHoldInspect()
-end
-
----@return boolean
-function API.InvCheck1_()
-	return InvCheck1_()
 end
 
 ---@param sleeptime number
@@ -2559,6 +2485,7 @@ function API.BankGetVisItemsPrint()
 	return BankGetVisItemsPrint()
 end
 
+-- check is the bank open
 ---@return boolean
 function API.BankOpen2()
 	return BankOpen2()
@@ -2844,33 +2771,6 @@ end
 ---@return boolean
 function API.ModelCompare(entity_base, model_ids)
 	return ModelCompare(entity_base, model_ids)
-end
-
----@param item number
----@return boolean
-function API.Notestuff(item)
-	return Notestuff(item)
-end
-
----@param item number
----@return boolean
-function API.DoNotestuff(item)
-	return DoNoteStuff(item)
-end
-
----@param item number
----@return boolean
-function API.NotestuffInvfull(item)
-	return NotestuffInvfull(item)
-end
-
----@param chest number
----@param pushnumber number --char
----@param content_ids table|number
----@param size number
----@return table|number
-function API.OpenBankChest_am(chest, pushnumber, content_ids, size)
-	return OpenBankChest_am(chest, pushnumber, content_ids, size)
 end
 
 ---@return void
@@ -3395,20 +3295,6 @@ function API.Math_ValueEquals(value, arrayof)
 	return Math_ValueEquals(value, arrayof)
 end
 
----@param item number
----@param action number
----@return WPOINT
-function API.InvFindItem1(item, action)
-	return InvFindItem(item, action)
-end
-
----@param item string
----@param action number
----@return WPOINT
-function API.InvFindItem2(item, action)
-	return InvFindItem(item, action)
-end
-
 --[[AllObject Types 
 0 obj
 1 npc
@@ -3495,30 +3381,6 @@ end
 ---@return boolean
 function API.CheckTileforObjects2(tile, object, thresh)
 	return CheckTileforObjects(tile, object, thresh)
-end
-
----@param item number
----@return number
-function API.InvItemcount_1(item)
-	return InvItemcount_(item)
-end
-
----@param item table|number
----@return table|number
-function API.InvItemcount_2(item)
-	return InvItemcount_(item)
-end
-
----@param item number
----@return boolean
-function API.InvItemFound1(item)
-	return InvItemFound(item)
-end
-
----@param items table|number
----@return boolean
-function API.InvItemFound2(items)
-	return InvItemFound(items)
 end
 
 ---@param text string
@@ -3717,53 +3579,6 @@ function API.BankGetItemStack2(item)
 	return BankGetItemStack(item)
 end
 
----@param item1 number
----@param item2 number
----@return boolean
-function API.CheckInvStuff1(item1, item2)
-	return CheckInvStuff(item1, item2)
-end
-
----@param item1 number
----@return boolean
-function API.CheckInvStuff2(item1)
-	return CheckInvStuff(item1)
-end
-
----@param item1 table|number
----@return table|number
-function API.CheckInvStuff3(item1)
-	return CheckInvStuff(item1)
-end
-
----@param items table|number
----@return boolean
-function API.CheckInvStuffCheckAll1(items)
-	return CheckInvStuffCheckAll(items)
-end
-
----@param items table|number
----@param size number
----@return boolean
-function API.CheckInvStuffCheckAll2(items, size)
-	return CheckInvStuffCheckAll(items, size)
-end
-
----@param port number
----@param checktext string
----@return boolean
-function API.DoPortables1(port, checktext)
-	return DoPortables(port, checktext)
-end
-
----@param port number
----@param settID number
----@param checktext string
----@return boolean
-function API.DoPortables2(port, settID, checktext)
-	return DoPortables(port, settID, checktext)
-end
-
 ---@param slot number
 ---@param id number
 ---@return boolean
@@ -3820,27 +3635,6 @@ end
 ---@return Abilitybar --single slot
 function API.GetAB_ids(ability_ids)
 	return GetAB_ids(ability_ids)
-end
-
----@param chest number
----@return boolean
-function API.OpenBankChest1(chest)
-	return OpenBankChest(chest)
-end
-
----@param chest number
----@param pushnumber number --char
----@return boolean
-function API.OpenBankChest2(chest, pushnumber)
-	return OpenBankChest(chest, pushnumber)
-end
-
----@param chest number
----@param pushnumber number --char
----@param content_ids table|number
----@return boolean
-function API.OpenBankChest3(chest, pushnumber, content_ids)
-	return OpenBankChest(chest, pushnumber, content_ids)
 end
 
 ---@param action number
@@ -4340,6 +4134,62 @@ function Inventory:GetItem(item) end
 ---@return InventoryItem The item information for the specified slot.
 function Inventory:GetSlotData(slot) end
 
+--@param coords bool get pixels coords, not needed if you dont plan use this data for clicking
+---@return number
+function Inventory:ReadInvArrays33(coords) end
+
+---@return number
+function Inventory:Invfreecount() end
+
+---@return boolean
+function Inventory:IsEmpty() end
+
+---@return boolean
+function Inventory:IsItemSelected() end
+
+---@param item number
+---@return number
+function Inventory:InvItemcount(item) end
+
+---@param item number
+---@return boolean
+function Inventory:InvItemFound(item) end
+
+---@param items number[]
+---@return boolean
+function Inventory:InvItemFounds(items) end
+
+---@param item number
+---@return number
+function Inventory:InvItemcount_String(item) end
+
+---@param items number[]
+---@return number
+function Inventory:InvItemcountStack_Strings(items) end
+
+---@param items number[]
+---@return number
+function Inventory:InvItemcounts(items) end
+
+---@param item number
+---@return number
+function Inventory:InvStackSize(item) end
+
+---@param item number
+---@return boolean
+function Inventory:NoteStuff(item) end
+
+---@param items number[]
+---@return boolean
+function Inventory:CheckInvStuffCheckAll(items) end
+
+---@param items number[]
+---@param size number
+---@param sizeorstack number
+---@return boolean
+function Inventory:CheckInvStuffCheckAllSS(items, size, sizeorstack) end
+
+
 --- Generic DoAction function to perform a custom action on an item.
 ---
 --- Accepts an item ID or item name along with action parameters.
@@ -4636,7 +4486,21 @@ function TickEvent.GetCounter() end
 ---@field low_alch number Low alch value
 ---@field value number Item value
 ---@field stackable boolean if item is stackable or not
+---@field bankable boolean if item is bankable or not
+---@field alchable boolean if item is alchable or not
 ---@field noted boolean if the item is the noted version or not
+---@field HasParam fun(self: ItemData, param: number|string): boolean @ Checks if item has a parameter by ID or name
+---@field GetParam fun(self: ItemData, param: number): string|number @ Gets raw parameter value by ID 
+---@field GetParamInt fun(self: ItemData, param: number): number @ Gets integer parameter value by ID
+---@field GetParamString fun(self: ItemData, param: number): string @ Gets string parameter value by ID
+---@field GetAllParams fun(self: ItemData): table<number, string|number> @ Gets table of all parameters
+
+--[[
+Common Item Parameter Names (for HasParam):
+  "bankable", "alchable"
+Usage:
+  item:HasParam("bankable")   -- by param name
+]]
 
 ---@class item
 Item = Item
@@ -4953,26 +4817,6 @@ function API.SelectCOption_Click(choice, move)
 	return SelectCOption_Click(choice, move)
 end
 
----@param items table|number
----@param randomelement number
----@param action number
----@return boolean
-function API.ClickInv_Multi(items, randomelement, action)
-	return ClickInv_Multi(items, randomelement, action)
-end
-
----@param item number
----@param action number
----@param randx number
----@param randy number
----@param offsetx number
----@param offsety number
----@param sidetext string
----@return boolean
-function API.ClickInvOffset_(item, action, randx, randy, offsetx, offsety, sidetext)
-	return ClickInvOffset_(item, action, randx, randy, offsetx, offsety, sidetext)
-end
-
 ---@return boolean
 function API.OpenEquipInterface2()
 	return OpenEquipInterface2()
@@ -4981,28 +4825,6 @@ end
 ---@return boolean
 function API.OpenInventoryInterface2()
 	return OpenInventoryInterface2()
-end
-
---int input
----@param item number
----@param randomelement number --0 default
----@param action number --0 left
----@param xrand number
----@param yrand number
----@return boolean
-function API.ClickInv_1(item, randomelement, action, xrand, yrand)
-	return ClickInv_(item, randomelement, action, xrand, yrand)
-end
-
---text input
----@param item string
----@param randomelement number --0 default
----@param action number --0 left
----@param xrand number
----@param yrand number
----@return boolean
-function API.ClickInv_2(item, randomelement, action, xrand, yrand)
-	return ClickInv_(item, randomelement, action, xrand, yrand)
 end
 
 --old
@@ -5032,12 +4854,6 @@ end
 ---@return boolean
 function API.FindGItem_AllBut2(Except_item, maxdistance, accuracy, tilespot, maxdistance2, items_to_eat)
 	return FindGItem_AllBut2(Except_item, maxdistance, accuracy, tilespot, maxdistance2, items_to_eat)
-end
-
----@param action number
----@return boolean
-function API.InvRandom_(action)
-	return InvRandom_(action)
 end
 
 ---old
