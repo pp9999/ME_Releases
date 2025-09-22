@@ -1,2 +1,2 @@
 # ME_Releases
-Binary only
+Scripts backup nows
