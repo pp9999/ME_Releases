@@ -1,0 +1,228 @@
+--[[
+# Script Name:  <Divination Auto-Hall of memories>
+# Description:  <Hall of Memories Divination, Handles {jars,corefrags,Knowledge swarm,Harvest centre, and keeps one slot empty for any drops.}>
+# Version:      <2>
+# Datum:        <2025.02.03>
+# Author:       <Frank-key>
+
+changelog:
+<2025.02.11>
+--Optimisation
+--]]
+
+-- includes
+local API = require("api")
+API.Write_fake_mouse_do(false)
+-- variables
+local MAX_IDLE_TIME_MINUTES = 5
+local startTime, afk = os.time(), os.time()
+local player = API.GetLocalPlayerName()
+
+local MEMORY_TYPES = {
+    {level = 95, ids = {25549, 25550}},  -- Incandescent
+    {level = 90, ids = {25547, 25548}},  -- Luminous
+    {level = 85, ids = {25545, 25546}},  -- Radiant
+    {level = 80, ids = {25543, 25544}},  -- Brilliant
+    {level = 75, ids = {25542, 25541}},  -- Lustrous
+    {level = 70, ids = {25540, 25539}}   -- Faded
+}
+
+local JAR = {
+    JAR_DISPENSER = 111374,
+    MEMORY_ARCHIVE = 111375,
+    PLINT = 111376 ,
+    }
+
+local inventoryitems = {
+    {JAR = 42899, 
+    CORE = 42901,
+    FULLJAR = 42900,
+    EMPTYJAR = 42898,
+    EMPTYSLOT = -1 
+    }
+}
+
+
+
+
+-- functions
+local function idleCheck()
+    local timeDiff = os.difftime(os.time(), afk)
+    local randomTime = math.random((MAX_IDLE_TIME_MINUTES * 60) * 0.6, (MAX_IDLE_TIME_MINUTES * 60) * 0.9)
+
+    if timeDiff > randomTime then
+        API.PIdle2()
+        afk = os.time()
+    end
+    API.DoRandomEvents()
+    
+end
+
+local function getMemoryType(currentLevel)
+    local selectedMemory = nil
+    for _, memory in ipairs(MEMORY_TYPES) do
+        if currentLevel >= memory.level then
+            selectedMemory = memory
+            break  -- Exit the loop once a suitable memory type is found
+        end
+    end
+    
+    if selectedMemory then
+        return selectedMemory.ids  -- Return the entire table of IDs
+    else
+        print("Level too low for any memory type (min 70)")
+        API.Write_LoopyLoop(0)
+        return nil
+    end
+end
+
+local function getAllMemoryIds()
+    local allIds = {}
+    for _, memory in ipairs(MEMORY_TYPES) do
+        for _, id in ipairs(memory.ids) do
+            table.insert(allIds, id)
+        end
+    end
+    return allIds
+end
+
+local function INVENTORYFULL()
+    if API.InvFull_() then
+        repeat
+            API.DoAction_Inventory1(42898,0,8,API.OFF_ACT_GeneralInterface_route2)
+            API.RandomSleep2(2000, 1500, 1000)
+            API.DoAction_Interface(0xffffffff,0xffffffff,0,1183,5,-1,API.OFF_ACT_GeneralInterface_Choose_option)
+            print(API.Invfreecount_())
+        until (API.Invfreecount_() == 1 ) or not API.Read_LoopyLoop()
+    end
+end
+
+
+
+local function handleJarCollection()
+
+    print("Starting jar collection")
+    API.DoAction_Object_r(0x29, 0, {JAR.JAR_DISPENSER}, 70, WPOINT.new(2230, 9116, 0), 74)
+    API.RandomSleep2(1000, 500, 1000)
+    API.WaitUntilMovingandAnimEnds(5,5)
+    INVENTORYFULL()
+    
+end
+
+
+local fulltick = math.random(1,10)
+local function handleJarDeposit()
+    local fulljar1 = API.InvItemcount_1(inventoryitems[1].FULLJAR)
+    repeat
+        local fulljar2 = API.InvItemcount_1(inventoryitems[1].FULLJAR)
+    print("Starting jar deposit")
+    API.DoAction_Object_r(0x29, 0, {JAR.MEMORY_ARCHIVE}, 74, WPOINT.new(2204, 9134, 0), 74)
+    API.RandomSleep2(3000, 2500, 4000)
+    until API.IsPlayerAnimating_(player,20) or fulljar1 > fulljar2
+   
+    fulltick = math.random(1,10)
+    repeat
+        API.RandomSleep2(3000, 2500, 4000)
+    
+    print("NEW Fulltick: " .. fulltick)
+    until (API.InvItemcount_1(inventoryitems[1].FULLJAR) == 0 ) or not API.Read_LoopyLoop()
+    print("Jar deposit completed")
+    
+end
+
+print("NEW Fulltick: " .. fulltick)
+
+local function checkitems()
+    print("Checking items")
+  
+        if API.InvItemcount_1(inventoryitems[1].CORE) > 0 then
+            API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,{ JAR.PLINT },50);
+            API.WaitUntilMovingandAnimEnds(5,2)
+            print("Core fragments deposited")
+        end
+        print(API.InvItemcount_1(inventoryitems[1].CORE))
+
+
+end
+
+local function handleswarm()
+
+
+    repeat
+    API.DoAction_NPC(0x29,API.OFF_ACT_InteractNPC_route,{ 25564 },50) -- knwoeldge fragment swarm
+    API.WaitUntilMovingandAnimEnds(2,2)
+    until (API.DoAction_NPC(0x29,API.OFF_ACT_InteractNPC_route,{ 25564 },50) == false ) or not API.Read_LoopyLoop()
+    print("Swarm completed")
+
+end
+
+local function handleMemoryConversion()
+    --checkitems()
+    local currentLevel = API.XPLevelTable(API.GetSkillXP("DIVINATION"))
+
+    
+    local memoryIds = getMemoryType(currentLevel)
+    if not memoryIds then return end
+
+    -- action logic
+
+
+    if not API.DoAction_NPC(0xc8, API.OFF_ACT_InteractNPC_route, {25551, 25555, 25554, 25553, 25552}, 100) then
+        if not API.DoAction_NPC(0xc8, API.OFF_ACT_InteractNPC_route, {25563}, 100) then  -- corefrags 
+            if not handleswarm() then -- knwoeldge fragment swarm
+                API.DoAction_NPC(0xc8, API.OFF_ACT_InteractNPC_route, memoryIds, 100) -- memory
+            end
+        end
+    end
+
+    repeat
+        print("Waiting for memory conversion")
+        API.RandomSleep2(2000, 1500, 1000)
+    until (API.IsPlayerAnimating_(player,20) == false ) or not API.Read_LoopyLoop()
+
+
+end
+
+
+
+
+local function takeBreak()
+    local breakDuration = math.random(10, 30)
+    print("Taking a break for", breakDuration, "seconds")
+    API.RandomSleep2(breakDuration * 1000, 0, 0)
+end
+
+-- main loop
+while API.Read_LoopyLoop() do
+    local currentTime = os.time()
+    local runDuration = os.difftime(currentTime, startTime)
+
+--break handlers
+    if runDuration > math.random(60*1000, 90*1000) then  -- 10-30 seconds
+        takeBreak()
+        startTime = os.time()  -- Reset start time after the break
+    end
+--Login handlers
+    if API.PlayerLoggedIn() == false then
+        API.Write_LoopyLoop(0)
+    end
+    API.SetDrawTrackedSkills(true)
+  
+    idleCheck()
+    local allMemoryIds = getAllMemoryIds()
+    --print("All memory IDs: " .. table.concat(allMemoryIds, ", "))
+    INVENTORYFULL()
+    
+        
+        --print(fulltick)
+        if API.InvItemcount_1(inventoryitems[1].FULLJAR) >= fulltick then
+            handleJarDeposit()
+        elseif API.Invfreecount_() >= 14 then
+            handleJarCollection()
+        elseif API.InvItemcount_1(inventoryitems[1].EMPTYJAR) >= 1 then
+            handleMemoryConversion()
+        end
+
+end
+
+API.SetDrawTrackedSkills(false)

@@ -1,0 +1,534 @@
+
+local API = require("api")
+local UTILS = require("utils")
+
+--[[
+    Title: RS3 Cooking Script
+    Author: Mr. Frank
+
+    Description:
+    This script automates fish cooking in RuneScape.
+    Features include bank withdrawal of raw fish, inventory management, 
+    cooking at ranges, and anti-idle functions.
+
+    Optimization and recalibration powered by AI assistance.
+
+    Contributions and improvements are welcome!
+
+-- DESCRIPTION
+- Only cooks fishes
+* Have raw fish in bank
+* Start script near a forty bank or GE bank
+* Configure MAX_IDLE_TIME_MINUTES for anti-logout timing
+* X items in Bank should be set to 28
+* Required API and DEAD UTILS libraries
+
+
+--Changelog:
+
+Version: 1.0
+  Date: 2025-04-23
+  Changes:
+    - Initial version with basic cooking functionality
+    - Added bank withdrawal system for raw fish
+    - Implemented anti-idle function to prevent logout
+
+Version: 1.1
+  Date: 2025-04-23
+  Changes:
+    - Improved withdrawal logic to prevent duplicate actions
+    - Added inventory status tracking
+    - Enhanced sleep timers to prevent spamming
+
+Version: 1.2
+  Date: 2025-04-23
+  Changes:
+    - Consolidated fish level definitions
+    - Rewrote main loop to remove redundant checks
+    - Added proper error handling for bank operations
+
+Version: 1.3
+  Date: 2025-04-23
+  Changes:
+    - Added formatted inventory display showing remaining fish
+    - Improved withdrawal messages with clearer status
+    - Optimized sleep timers between actions
+
+Version: 1.4
+  Date: 2025-04-23
+  Changes:
+    - Added cookable/uncookable fish separation
+    - Added depletion messages for fish types
+    - Enhanced anti-idle timing with random intervals
+
+Version: 1.5
+  Date: 2025-04-24
+  Changes:
+    - Added real-time level-up detection
+    - Automatic fish table refresh when cooking level increases
+    - Improved level tracking system
+    - Enhanced debug messages for level changes
+--]]
+
+-- ===== CONFIGURATION =====
+local DEBUG_LEVEL = 1  -- 0=Off, 1=Normal, 2=Verbose
+local MAX_IDLE_TIME_MINUTES = 10
+-- =========================
+
+-- Initialize tracking variables
+local afk = os.time()
+local startTime = os.time()
+local fishTable = {}
+local lastFishingLevel = 0
+local initialXWithdrawalDone = false
+local lastInventoryPrint = 0
+
+-- Debug print function that only prints based on debug level
+local function debugPrint(message, level)
+    level = level or 1  -- Default to level 1 if not specified
+    if DEBUG_LEVEL >= level then
+        print(message)
+    end
+end
+
+-- Fish level requirements
+local FISH_LEVELS = {
+    ["Raw minnow"] = 1,
+    ["Raw crayfish"] = 1,
+    ["Raw shrimps"] = 1,
+    ["Raw karambwanji"] = 1,
+    ["Raw sardine"] = 1,
+    ["Raw anchovies"] = 1,
+    ["Raw poison karambwan"] = 1,
+    ["Raw herring"] = 5,
+    ["Raw mackerel"] = 10,
+    ["Raw trout"] = 15,
+    ["Raw cod"] = 18,
+    ["Raw pike"] = 20,
+    ["Raw salmon"] = 25,
+    ["Raw slimy eel"] = 28,
+    ["Raw tuna"] = 30,
+    ["Raw karambwan"] = 30,
+    ["Raw rainbow fish"] = 35,
+    ["Raw cave eel"] = 38,
+    ["Raw lobster"] = 40,
+    ["Raw bass"] = 43,
+    ["Raw swordfish"] = 45,
+    ["Raw desert sole"] = 52,
+    ["Raw lava eel"] = 53,
+    ["Raw catfish"] = 60,
+    ["Raw monkfish"] = 62,
+    ["Raw ghostly sole"] = 66,
+    ["Raw beltfish"] = 72,
+    ["Raw green blubber jellyfish"] = 72,
+    ["Raw shark"] = 80,
+    ["Raw sea turtle"] = 82,
+    ["Raw great white shark"] = 84,
+    ["Raw great maki"] = 84,
+    ["Raw cavefish"] = 88,
+    ["Raw great gunkan"] = 91,
+    ["Raw fish oil"] = 91,
+    ["Raw manta ray"] = 91,
+    ["Raw rocktail"] = 93,
+    ["Raw rocktail soup"] = 93,
+    ["Raw arc gumbo"] = 94,
+    ["Raw tiger shark"] = 95,
+    ["Raw blue blubber jellyfish"] = 95,
+    ["Raw wobbegong oil"] = 96,
+    ["Raw shark soup"] = 96,
+    ["Raw sailfish"] = 99,
+    ["Raw sailfish soup"] = 99
+}
+
+-- Performs random actions to prevent idle logout
+local function idleCheck()
+    debugPrint("Running idleCheck", 1)
+    local timeDiff = os.difftime(os.time(), afk)
+    local randomTime = math.random((MAX_IDLE_TIME_MINUTES * 60) * 0.6, (MAX_IDLE_TIME_MINUTES * 60) * 0.9)
+
+    debugPrint("timeDiff: " .. timeDiff .. ", randomTime: " .. randomTime, 2)
+
+    if timeDiff > randomTime then
+        debugPrint("Idle time exceeded, performing idle action", 1)
+        API.PIdle2()
+        afk = os.time()
+    end
+end
+
+-- Fetch raw fish from bank based on fishing level
+local function fetchRawFish()
+    debugPrint("Fetching raw fish from bank...", 1)
+    fishTable = {}
+    
+    -- Get current fishing and cooking levels
+    local currentFishingLevel = API.XPLevelTable(API.GetSkillXP("FISHING"))
+    local currentCookingLevel = API.XPLevelTable(API.GetSkillXP("COOKING"))
+    debugPrint("Current fishing level: " .. currentFishingLevel, 1)
+    debugPrint("Current cooking level: " .. currentCookingLevel, 1)
+    
+    -- Only proceed if bank is open
+    if not API.BankOpen2() then
+        debugPrint("Bank not open, cannot fetch items", 1)
+        return false
+    end
+    
+    local bankItems = API.FetchBankArray()
+    if not bankItems or #bankItems == 0 then 
+        debugPrint("Warning: No items found in bank!", 1)
+        return false 
+    end
+    
+    -- Process bank items
+    local cookableFish = {}
+    local uncookableFish = {}
+    
+    for _, item in ipairs(bankItems) do
+        if item.textitem then
+            local cleanName = string.gsub(item.textitem, "<col=%x%x%x%x%x%x>", "")
+            local size = item.itemid1_size or 0
+            
+            -- Check if it's a raw fish and player has level to catch it
+            if string.find(cleanName, "Raw ") and size > 0 then
+                local fishLevel = FISH_LEVELS[cleanName] or 99
+                if fishLevel <= currentFishingLevel then
+                    local fishData = {name = cleanName, id = item.itemid1, size = size, level = fishLevel}
+                    
+                    -- Separate into cookable and uncookable based on cooking level
+                    if fishLevel <= currentCookingLevel then
+                        table.insert(cookableFish, fishData)
+                    else
+                        table.insert(uncookableFish, fishData)
+                    end
+                end
+            end
+        end
+    end
+    
+    -- Sort both tables by level (lowest first)
+    table.sort(cookableFish, function(a, b) return a.level < b.level end)
+    table.sort(uncookableFish, function(a, b) return a.level < b.level end)
+    
+    -- Print fish inventory status with levels (only once per refresh)
+    debugPrint("\n=== Raw Fish Inventory ===", 1)
+    debugPrint("Your Cooking Level: " .. currentCookingLevel, 1)
+    debugPrint("\nCookable Fish:", 1)
+    debugPrint("---------------------------------------------------", 1)
+    debugPrint("| Fish Name             | Lvl | Quantity | Status |", 1)
+    debugPrint("---------------------------------------------------", 1)
+    
+    if #cookableFish == 0 then
+        debugPrint("| No cookable fish found in bank                 |", 1)
+    else
+        for i, item in ipairs(cookableFish) do
+            -- Truncate fish name if too long
+            local displayName = item.name
+            if #displayName > 21 then
+                displayName = string.sub(displayName, 1, 18) .. "..."
+            end
+            
+            if i == 1 then
+                debugPrint(string.format("| %-21s | %-3d | %-8d | %-6s |", 
+                    displayName, item.level, item.size, "NEXT"), 1)
+            else
+                debugPrint(string.format("| %-21s | %-3d | %-8d | %-6s |", 
+                    displayName, item.level, item.size, ""), 1)
+            end
+            table.insert(fishTable, item)
+        end
+    end
+    
+    debugPrint("---------------------------------------------------", 1)
+    debugPrint("\nUncookable Fish (Need higher cooking level):", 1)
+    debugPrint("---------------------------------------------------", 1)
+    debugPrint("| Fish Name             | Lvl | Quantity | Need + |", 1)
+    debugPrint("---------------------------------------------------", 1)
+    
+    if #uncookableFish == 0 then
+        debugPrint("| No uncookable fish found in bank               |", 1)
+    else
+        for _, item in ipairs(uncookableFish) do
+            -- Truncate fish name if too long
+            local displayName = item.name
+            if #displayName > 21 then
+                displayName = string.sub(displayName, 1, 18) .. "..."
+            end
+            
+            local levelsNeeded = item.level - currentCookingLevel
+            debugPrint(string.format("| %-21s | %-3d | %-8d | %-6d |", 
+                displayName, item.level, item.size, levelsNeeded), 1)
+        end
+    end
+    debugPrint("---------------------------------------------------", 1)
+    
+    debugPrint(string.format("Found %d types of cookable fish and %d types of uncookable fish", 
+        #cookableFish, #uncookableFish), 1)
+    
+    -- Update last fishing level
+    lastFishingLevel = currentFishingLevel
+    lastInventoryPrint = os.time()
+    
+    return true
+end
+
+-- Withdraws raw fish from bank
+-- Modify the withdrawRawFish function to properly check for level ups
+local function withdrawRawFish()
+    debugPrint("Withdrawing raw fish...", 1)
+    
+    -- Get current levels before proceeding
+    local currentFishingLevel = API.XPLevelTable(API.GetSkillXP("FISHING"))
+    local currentCookingLevel = API.XPLevelTable(API.GetSkillXP("COOKING"))
+    
+    -- Check if we leveled up since last check
+    if currentCookingLevel > lastFishingLevel then
+        debugPrint("Cooking level increased! Refreshing fish table...", 1)
+        if not fetchRawFish() then
+            return false
+        end
+    end
+
+    -- Only proceed if bank is open
+    if not API.BankOpen2() then
+        debugPrint("Bank not open, cannot withdraw items", 1)
+        return false
+    end
+    
+    -- Deposit inventory if not empty
+    if API.Invfreecount_() < 28 then
+        debugPrint("Inventory not empty, depositing items...", 1)
+        API.DoAction_Interface(0xffffffff, 0xffffffff, 1, 517, 39, -1, API.OFF_ACT_GeneralInterface_route)
+        API.RandomSleep2(800, 1200, 1500)
+    end
+    
+    -- Check if fishing level changed or table is empty
+    local currentFishingLevel = API.XPLevelTable(API.GetSkillXP("FISHING"))
+    local currentCookingLevel = API.XPLevelTable(API.GetSkillXP("COOKING"))
+    if currentFishingLevel > lastFishingLevel or #fishTable == 0 then 
+        debugPrint("Fishing level changed or fish table empty, refreshing from bank...", 1)
+        if not fetchRawFish() then
+            return false
+        end
+    end
+    
+    -- Re-sort fish table by level to guarantee lowest level first
+    table.sort(fishTable, function(a, b) return a.level < b.level end)
+    
+    -- Only print inventory status occasionally (once per minute)
+    if os.difftime(os.time(), lastInventoryPrint) > 60 then
+        debugPrint("\nRaw Fish Inventory (Sorted by Level):", 1)
+        debugPrint("---------------------------------------------------", 1)
+        debugPrint("| Fish Name             | Lvl | Remaining | Status |", 1)
+        debugPrint("---------------------------------------------------", 1)
+        for i, item in ipairs(fishTable) do
+            -- Truncate fish name if too long
+            local displayName = item.name
+            if #displayName > 21 then
+                displayName = string.sub(displayName, 1, 18) .. "..."
+            end
+            
+            if i == 1 then
+                debugPrint(string.format("| *%-21s | %-3d | %-9d | %-6s |", 
+                    displayName, item.level, item.size, "NEXT"), 1)
+            else
+                debugPrint(string.format("| %-21s | %-3d | %-9d | %-6s |", 
+                    displayName, item.level, item.size, ""), 1)
+            end
+        end
+        debugPrint("---------------------------------------------------", 1)
+        lastInventoryPrint = os.time()
+    end
+    
+    -- Withdraw items all items
+    if not initialXWithdrawalDone then
+        debugPrint("Setting up withdrawal mode (X)", 2)
+        API.DoAction_Interface(0x2e,0xffffffff,1,517,103,-1,API.OFF_ACT_GeneralInterface_route)
+        initialXWithdrawalDone = true
+        API.RandomSleep2(1500, 1500, 1000)
+    end
+    
+    -- Withdrawal logic - always use first item (lowest level)
+    local fishItem = fishTable[1]
+    
+    if fishItem and fishItem.size > 0 then
+        local withdrawAmount = math.min(28, fishItem.size)
+        debugPrint(string.format("\nWithdrawing %d %s (Level %d)", 
+            withdrawAmount, fishItem.name, fishItem.level), 1)
+        
+        -- Withdraw fish using exact ID to ensure we get the right one
+        API.DoAction_Bank(fishItem.id, 1, API.OFF_ACT_GeneralInterface_route)
+        fishItem.size = fishItem.size - withdrawAmount
+        if fishItem.size <= 0 then 
+            table.remove(fishTable, 1)
+            debugPrint("This type of fish is now depleted, will move to next lowest level", 1)
+        end
+        API.RandomSleep2(1000, 500, 1000)
+    else
+        debugPrint("No suitable fish found in bank", 1)
+        return false
+    end
+    
+    -- No need to close bank manually as it closes automatically after withdrawal
+    API.RandomSleep2(500, 500, 1000)
+    return true
+end
+
+-- Opens bank and withdraws fish
+-- Update the Bank function to properly track levels
+local function Bank()
+    debugPrint("Starting Bank function", 1)
+    -- Get current levels before proceeding
+    local currentFishingLevel = API.XPLevelTable(API.GetSkillXP("FISHING"))
+    local currentCookingLevel = API.XPLevelTable(API.GetSkillXP("COOKING"))
+    
+    -- Check if we leveled up since last check
+    if currentCookingLevel > lastFishingLevel then
+        debugPrint("Cooking level increased! Refreshing fish table...", 1)
+        lastFishingLevel = currentFishingLevel
+        if not fetchRawFish() then
+            return
+        end
+    end
+
+    repeat
+        if not API.DoAction_NPC(0x5, API.OFF_ACT_InteractNPC_route, {3418}, 50) then  
+            API.DoAction_Object_string1(0x2e, API.OFF_ACT_GeneralObject_route1, {"Bank chest"}, 20, true) 
+        end
+        API.RandomSleep2(1000, 500, 1500)
+        repeat
+            if API.Read_LoopyLoop() == false then
+                debugPrint("Exiting Bank function - Read_LoopyLoop is false", 1)
+                break
+            end
+        until not API.ReadPlayerMovin()
+    until API.BankOpen2()
+
+    if API.BankOpen2() then
+        withdrawRawFish()
+    end
+end
+
+-- Cooks the fish in inventory
+local function Cook()
+    debugPrint("Starting cooking function", 1)
+    
+    repeat
+        -- Check if the looping condition is still true
+        if API.Read_LoopyLoop() == false then
+            debugPrint("Exiting cooking function - Read_LoopyLoop is false", 1)
+            break
+        end
+
+        -- Attempt to interact with object with more safety checks
+        if API.DoAction_Object1(0x40, API.OFF_ACT_GeneralObject_route0, {89768}, 50) then -- click range
+            debugPrint("Clicked on range, waiting for response", 2)
+            API.RandomSleep2(1000, 500, 1500)
+            
+            -- Wait until player is not moving with timeout
+            local moveTimeout = os.time() + 10 -- 10 second timeout
+            repeat
+                debugPrint("Waiting to stop moving", 2)
+                API.RandomSleep2(500, 500, 500)
+                if os.time() > moveTimeout then
+                    debugPrint("Movement timeout reached", 1)
+                    break
+                end
+            until not API.ReadPlayerMovin()
+            
+            -- Additional check before interface interaction
+            if API.Read_LoopyLoop() == false then
+                debugPrint("Loop stopped during movement wait", 1)
+                break
+            end
+
+            -- More robust interface interaction
+            local interfaceResult = API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1370, 30, -1, API.OFF_ACT_GeneralInterface_Choose_option)
+            if interfaceResult == false then
+                debugPrint("Interface action failed, performing idle action", 2)
+                API.PIdle2()
+                local idleTime = math.random(10, 20) * 1000 -- Reduced from 10-40 to 10-20
+                API.RandomSleep2(idleTime, 0, 0)
+            else
+                debugPrint("Interface action successful, cooking started", 1)
+                API.RandomSleep2(2000, 1500, 3500)
+            end
+        else
+            debugPrint("Failed to click on range", 1)
+            API.RandomSleep2(2000, 1500, 3500)
+        end
+        
+        debugPrint("Waiting for cooking to complete", 1)
+    until API.isProcessing() or not API.Read_LoopyLoop()
+    
+    debugPrint("Ending cooking function", 1)
+    
+    -- Wait for cooking to finish with timeout
+    local cookTimeout = os.time() + 300 -- 5 minute timeout
+    repeat
+        API.RandomSleep2(1000, 500, 1500)
+        if os.time() > cookTimeout then
+            debugPrint("Cooking timeout reached", 1)
+            break
+        end
+    until not API.isProcessing() or not API.Read_LoopyLoop()
+    
+    API.RandomSleep2(1000, 500, 1500)
+end
+
+-- Takes a random break to simulate human behavior
+local function takeBreak()
+    local breakDuration = math.random(10, 30)
+    debugPrint("Taking a break for " .. breakDuration .. " seconds", 1)
+    API.RandomSleep2(breakDuration * 1000, 0, 0)
+end
+
+-- Main loop
+debugPrint("Starting main loop", 1)
+debugPrint("Debug level: " .. DEBUG_LEVEL, 1)
+API.Write_LoopyLoop(true)
+-- Add this near the top with other variables
+local lastCookingLevel = 0
+
+-- Modified main loop
+while (API.Read_LoopyLoop()) do
+    local currentTime = os.time()
+    local runDuration = os.difftime(currentTime, startTime)
+    
+    -- Get current cooking level
+    local currentCookingLevel = API.XPLevelTable(API.GetSkillXP("COOKING"))
+    
+    -- Check if we leveled up
+    if currentCookingLevel > lastCookingLevel then
+        debugPrint("Cooking level increased from "..lastCookingLevel.." to "..currentCookingLevel.."! Refreshing fish tables...", 1)
+        lastCookingLevel = currentCookingLevel
+        lastFishingLevel = API.XPLevelTable(API.GetSkillXP("FISHING")) -- Also update fishing level
+        fetchRawFish() -- Refresh the fish list
+    end
+
+    if runDuration > math.random(600, 900) then  -- 10-15 minutes in seconds
+        takeBreak()
+        startTime = os.time()  -- Reset start time after the break
+    end
+
+    idleCheck()
+    Bank()
+    
+    if API.Read_LoopyLoop() == false then
+        debugPrint("Exiting main loop - Read_LoopyLoop is false", 1)
+        break
+    end
+    if API.Invfreecount_() == 0 then
+        debugPrint("Inventory full, ready to cook", 1)
+        Cook()
+        debugPrint("Ending cooking session", 1)
+        if API.Read_LoopyLoop() == false then
+            debugPrint("Exiting main loop - Read_LoopyLoop is false", 1)
+            break
+        end
+    else
+        debugPrint("Inventory not full, returning to bank", 1)
+    
+        API.RandomSleep2(1000, 500, 1500)
+    end
+end
+
+debugPrint("Script finished", 1)

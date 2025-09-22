@@ -1,0 +1,335 @@
+--[[
+# Script Name:   Citadel Runner
+# Description:   Weekly Citadel boost and skill
+# Author:        Mr.frank
+# Version:       1.0
+# Date:          2025.08.31
+--]]
+
+--[[
+Changelog:
+v1.0 - 31-08-2025
+    - Initial release
+    - Implemented multi-skill support with configurable true/false toggles
+    - Added XP tracking and fail detection system
+    - Smart teleport system to minimize plot changes
+    - Persistent action selection per skill
+
+v1.1 - 31-08-2025
+    - Added exit portal functionality (Plot 172)
+    - Implemented automatic script switching to ShopRunner
+    - Fixed inconsistent object interactions using Interact:Object
+    - Added "Quick Teleport" option for portal exit
+    - Optimized fail detection and skill switching
+    - Removed unused module imports
+    - Fixed portal teleport sequence
+    - Added proper error handling for skill failures
+--]]
+
+-- TAG: Module Imports and Initialization
+local API = require("libraries.api")
+local WoodBox = require("libraries.WoodBox")
+
+-- TAG: Configuration
+
+-- Skill name mapping (API skill names)
+local skillMap = {
+    SUMMONING = "SUMMONING",
+    MINING = "MINING",
+    WOODCUTTING = "WOODCUTTING",
+    COOKING = "COOKING",
+    CRAFTING = "CRAFTING",
+    SMITHING = "SMITHING",
+    FIREMAKING = "FIREMAKING",
+}
+
+-- Enable/disable skills (maximum 2 skills should be true)
+local SKILL_STATUS = {
+    SUMMONING = true,    -- Will be first priority if enabled
+    MINING = true,
+    -- WOODCUTTING = true,
+    -- COOKING = true,
+    -- CRAFTING = true,
+    -- SMITHING = true,
+    -- FIREMAKING = true
+}
+
+-- Plot teleport IDs
+local PLOT_IDS = {
+    TOWN_SQUARE = 174,
+    COOKING = 166,
+    SUMMONING = 164,
+    MINING = 160,
+    WOODCUTTING = 4,
+    CRAFTING = 163,
+    SMITHING = 161,
+    FIREMAKING = 162,
+    EXIT_PORTAL = 172
+}
+
+-- Skilling objects and actions
+local SKILL_OBJECTS = {
+    COOKING = {
+        {name = "Grill", action = "Use"},
+        {name = "Large Chopping Board", action = "Chop"},
+        {name = "Stewing Pot", action = "Stew"}
+    },
+    MINING = {
+        {name = "Stone", action = "Mine"},
+        {name = "Precious ore", action = "Mine"},
+        {name = "Ore", action = "Mine"}
+    },
+    WOODCUTTING = {
+        {name = "Root", action = "Chop"}
+    },
+    SUMMONING = {
+        {name = "Obelisk", action = "Summon"}
+    },
+    CRAFTING = {
+        {name = "Loom", action = "Weave"}
+    },
+    SMITHING = {
+        {name = "Ore container", action = "Shovel"},
+        {name = "Precious ore container", action = "Shovel"}
+    },
+    FIREMAKING = {
+        {name = "Woodchip", action = "Shovel"}
+    }
+}
+
+-- TAG: Local Variables
+local player = API.GetLocalPlayerName()
+local currentMode = nil
+local currentPlot = nil
+local fails = 0
+local maxFails = 2
+
+-- Store selected action for each skill
+local selectedActions = {}
+
+-- Helper function to count enabled skills
+local function countEnabledSkills()
+    local count = 0
+    for _, enabled in pairs(SKILL_STATUS) do
+        if enabled then count = count + 1 end
+    end
+    return count
+end
+
+-- Validate skill configuration
+if countEnabledSkills() > 2 then
+    print("Error: More than 2 skills enabled. Please disable some skills.")
+    return
+end
+
+-- TAG: Utility Functions
+local function checker()
+    repeat
+        API.RandomSleep2(1000, 500, 1500)
+        API.WaitUntilMovingEnds(5,5)
+    until not API.ReadPlayerMovin() or not API.Read_LoopyLoop()
+    if API.IsPlayerAnimating_(player, 10) then
+        repeat
+            API.RandomSleep2(1000, 500, 1500)
+            API.DoRandomEvents()
+        until API.WaitUntilMovingandAnimEnds(2,2) or not API.Read_LoopyLoop()
+    end
+end
+
+-- TAG: Teleport Functions
+local function teleportToPlot(plotId)
+    print("Teleporting to plot " .. plotId)
+    -- Open teleport interface
+    API.DoAction_Interface(0xffffffff, 0xffffffff, 1, 1465, 9, -1, API.OFF_ACT_GeneralInterface_route)
+    API.RandomSleep2(2000, 1000, 3000)
+    -- Select plot
+    
+    API.DoAction_Interface(0xb3, 0xffffffff, 1, 1259, plotId, -1, API.OFF_ACT_GeneralInterface_route)
+    API.RandomSleep2(2000, 1000, 3000)
+    checker()
+end
+
+local function getTownSquareBoost()
+    print("Getting town square boost")
+    teleportToPlot(PLOT_IDS.TOWN_SQUARE)
+    API.RandomSleep2(1500, 1000, 2000)
+    
+    Interact:Object("Avatar Control Stone", "Attune to Avatar")
+    API.RandomSleep2(1500, 1000, 2000)
+    
+    API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1188, 13, -1, API.OFF_ACT_GeneralInterface_Choose_option)
+    API.RandomSleep2(1500, 1000, 2000)
+    
+    API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1186, 8, -1, API.OFF_ACT_GeneralInterface_Choose_option)
+    API.RandomSleep2(1500, 1000, 2000)
+    
+    checker()
+end
+
+-- TAG: Skilling Functions
+local function getRandomObject(skillObjects)
+    return skillObjects[math.random(#skillObjects)]
+end
+
+local function performSkillAction(skill)
+    local objects = SKILL_OBJECTS[skill]
+    if not objects then return false end
+    
+    -- If we haven't selected an action for this skill yet, pick one randomly
+    if not selectedActions[skill] then
+        selectedActions[skill] = getRandomObject(objects)
+        print("Selected action for " .. skill .. ": " .. selectedActions[skill].name)
+    end
+    
+    -- Use the stored action
+    local obj = selectedActions[skill]
+    Interact:Object(obj.name, obj.action)
+    checker()
+    return true
+end
+
+local function doSkill(skillName)
+    print("Performing " .. skillName)
+    
+    -- Only teleport if we're at a different plot
+    if currentPlot ~= PLOT_IDS[skillName] then
+        print("Teleporting to new plot for " .. skillName)
+        teleportToPlot(PLOT_IDS[skillName])
+        currentPlot = PLOT_IDS[skillName]
+    end
+    
+    return performSkillAction(skillName)
+end
+
+-- TAG: XP Tracking
+local xpTotals = {}
+for skillName, _ in pairs(SKILL_STATUS) do
+    xpTotals[skillName] = 0
+end
+
+local fails = 0
+local maxFails = 2
+
+local function xpcheck(startXp, currentSkill)
+    -- Use skillMap to get the proper API skill name
+    local apiSkillName = skillMap[currentSkill]
+    if not apiSkillName then
+        print("Error: Invalid skill name " .. currentSkill)
+        return
+    end
+
+    local newXP = API.GetSkillXP(apiSkillName)
+    local diff = newXP - startXp
+    print("XP Gained (" .. apiSkillName .. "): " .. diff)
+    if diff > 0 then
+        xpTotals[currentSkill] = xpTotals[currentSkill] + diff
+        fails = 0
+    else
+        fails = fails + 1
+        print("No XP gained in " .. apiSkillName .. ", incrementing fails to " .. fails)
+    end
+end
+
+-- TAG: Skill Selection Logic
+local function getNextSkill()
+    -- Summoning gets priority if enabled
+    if SKILL_STATUS.SUMMONING then
+        return "SUMMONING"
+    end
+    
+    -- Get the first non-summoning enabled skill
+    for skill, enabled in pairs(SKILL_STATUS) do
+        if enabled and skill ~= "SUMMONING" then
+            return skill
+        end
+    end 
+    
+    return nil
+end
+
+-- TAG: Exit Function
+local function exitCitadel()
+    print("All skills complete or failed, exiting citadel...")
+
+    -- Teleport to exit portal plot
+    teleportToPlot(PLOT_IDS.EXIT_PORTAL)
+    API.RandomSleep2(2000, 1000, 3000)
+    
+    -- Use the portal to exit
+    Interact:Object("Portal", "Quick Teleport")
+    API.RandomSleep2(3000, 2000, 4000)
+    
+    -- Wait for teleport animation
+    API.WaitUntilMovingEnds()
+    
+    -- Execute ShopRunner script
+    local scriptPath = "scripts/ShopRunner copy.lua"
+    print("Launching ShopRunner script...")
+    API.RunScript(scriptPath)
+end
+
+-- TAG: Main Loop
+API.Write_LoopyLoop(true)
+
+-- Initial town square boost
+-- getTownSquareBoost()
+
+
+currentPlot = PLOT_IDS.TOWN_SQUARE  -- Set initial plot location
+
+while API.Read_LoopyLoop() do
+    currentMode = getNextSkill()
+    
+    if not currentMode then
+        print("No available skills to perform")
+        exitCitadel()
+        break
+    end
+    
+    print("Current mode: " .. currentMode)
+    local apiSkillName = skillMap[currentMode]
+    local startXp = API.GetSkillXP(apiSkillName)
+    
+    -- Perform skill action
+    doSkill(currentMode)
+    
+    -- Check XP gains and handle fails
+    xpcheck(startXp, currentMode)
+    
+    if fails >= maxFails then
+        -- If summoning fails, disable it
+        if currentMode == "SUMMONING" then
+            print("Summoning failed, disabling it")
+            SKILL_STATUS.SUMMONING = false
+            -- Check if we have another skill enabled
+            currentMode = getNextSkill()
+            if currentMode then
+                print("Switching to next skill: " .. currentMode)
+                fails = 0
+                goto continue
+            end
+        end
+        
+        -- If we reach here, either summoning failed with no other skills
+        -- or another skill failed, so we should exit
+        exitCitadel()
+        -- Exit the script
+        API.Write_LoopyLoop(false)
+        break
+    end
+    
+    ::continue::
+    
+    API.RandomSleep2(1000, 500, 1500)
+end
+
+-- Print final XP totals
+print("\n=== XP Totals ===")
+local totalXP = 0
+for skill, xp in pairs(xpTotals) do
+    if SKILL_STATUS[skill] then  -- Only show enabled skills
+        print(skill .. ": " .. xp)
+        totalXP = totalXP + xp
+    end
+end
+print("Total XP Gained: " .. totalXP)
