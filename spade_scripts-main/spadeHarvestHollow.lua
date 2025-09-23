@@ -89,21 +89,21 @@ local function summon()
 end
 
 local function excavate()
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route2, { EEP }, 50)
         waitForStillness()
 
-        local preFreeCount = API.Invfreecount_()
+        local preFreeCount = Inventory:FreeSpaces()
         local postFreeCount = nil
         while (postFreeCount ~= preFreeCount) and API.Read_LoopyLoop() do
-            preFreeCount = API.Invfreecount_()
+            preFreeCount = Inventory:FreeSpaces()
             API.DoAction_Interface(0x24,0xffffffff, 1, 656, 25, 0, API.OFF_ACT_GeneralInterface_route)
             API.RandomSleep2(1000, 500, 1000)
-            postFreeCount = API.Invfreecount_()
+            postFreeCount = Inventory:FreeSpaces()
         end
 
         -- Load preset from bank if inventory is still too full after turning in artifacts
-        if API.Invfreecount_() <= 5 then
+        if Inventory:FreeSpaces() <= 5 then
             print("Banking!")
 
             if API.DoAction_Inventory1(COMPLETE_TOME, 0, 8, API.OFF_ACT_GeneralInterface_route2) then
@@ -170,7 +170,7 @@ local function completeMaze()
     end
 
     print("Waiting for first 3 zombie implings! Standing still is normal.")
-    while API.InvItemcount_1(BONE_CLUB) < 3 and API.Read_LoopyLoop() do
+    while Inventory:InvItemcount(BONE_CLUB) < 3 and API.Read_LoopyLoop() do
         if API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, { ZOMBIE_IMPLING }, 2) then
             waitForStillness()
         end
@@ -257,12 +257,12 @@ local function completeMaze()
 
     ::collectImplings::
     local bonesToKill = (getBossHealth() / 10)
-    if API.InvItemcount_1(BONE_CLUB) < bonesToKill then
+    if Inventory:InvItemcount(BONE_CLUB) < bonesToKill then
         print("Going to catch remaining implings!")
         API.DoAction_TileF(FFPOINT.new(math.random(700, 707), math.random(1726, 1727), 0))
         waitForStillness()
 
-        while API.InvItemcount_1(BONE_CLUB) < bonesToKill and API.Read_LoopyLoop() do
+        while Inventory:InvItemcount(BONE_CLUB) < bonesToKill and API.Read_LoopyLoop() do
             if API.DoAction_NPC_In_Area(0x29, API.OFF_ACT_InteractNPC_route, { ZOMBIE_IMPLING }, 5, WPOINT.new(700, 1726, 0), WPOINT.new(707, 1727, 0), true, 0) then
                 waitForStillness()
             end
@@ -277,8 +277,8 @@ local function completeMaze()
     API.DoAction_Object1(0xb5, API.OFF_ACT_GeneralObject_route0, { FENCE }, 50)
     waitForStillness()
 
-    local targetBoneCount = API.InvItemcount_1(BONE_CLUB) - bonesToKill
-    while API.InvItemcount_1(BONE_CLUB) > targetBoneCount and API.Read_LoopyLoop() do
+    local targetBoneCount = Inventory:InvItemcount(BONE_CLUB) - bonesToKill
+    while Inventory:InvItemcount(BONE_CLUB) > targetBoneCount and API.Read_LoopyLoop() do
         API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, { BOSS }, 50)
         API.RandomSleep2(500, 500, 500)
     end

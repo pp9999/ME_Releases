@@ -92,7 +92,7 @@ end
 local function getPorter()
     local porterId = nil
     for _, id in ipairs(PORTERS) do
-        if API.InvItemcount_1(id) > 0 then
+        if Inventory:InvItemcount() > 0 then
             porterId = id
             break
         end
@@ -133,7 +133,7 @@ local function destroyTomes()
     if API.DoAction_Inventory1(COMPLETE_TOME, 0, 8, API.OFF_ACT_GeneralInterface_route2) then
         API.RandomSleep2(2000, 500, 1000)
 
-        if API.InvItemcount_1(COMPLETE_TOME) > 1 then
+        if Inventory:InvItemcount(COMPLETE_TOME) > 1 then
             API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1183, 7, -1, API.OFF_ACT_GeneralInterface_Choose_option)
         else
             API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1183, 5, -1, API.OFF_ACT_GeneralInterface_Choose_option)
@@ -192,10 +192,10 @@ local function excavate()
 end
 
 local function getCollectionsPerHour()
-    local collections = math.min(ringCount + API.InvItemcount_1(RING),
-                                 gatestoneCount + API.InvItemcount_1(GATESTONE),
-                                 totemCount + API.InvItemcount_1(TOTEM),
-                                 mineCount + API.InvItemcount_1(MINE))
+    local collections = math.min(ringCount + Inventory:InvItemcount(RING),
+                                 gatestoneCount + Inventory:InvItemcount(GATESTONE),
+                                 totemCount + Inventory:InvItemcount(TOTEM),
+                                 mineCount + Inventory:InvItemcount(MINE))
     local runtimeHrs = API.ScriptRuntime() / 3600.0
     return collections / runtimeHrs
 end
@@ -240,7 +240,7 @@ local function getArtifacts()
     end
 
     -- Deposit all
-    if API.Invfreecount_() < 28 then
+    if Inventory:FreeSpaces() < 28 then
         API.DoAction_Interface(0xffffffff,0xffffffff,1,517,39,-1,API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(500, 500, 500)
     end
@@ -311,13 +311,13 @@ local function turnInArtifacts()
     API.DoAction_Interface(0x24, 0xffffffff, 1, 656, 31, 4, API.OFF_ACT_GeneralInterface_route)
     API.RandomSleep2(500, 500, 500)
 
-    local preFreeCount = API.Invfreecount_()
+    local preFreeCount = Inventory:FreeSpaces()
     local postFreeCount = nil
     while (postFreeCount ~= preFreeCount) and API.Read_LoopyLoop() do
-        preFreeCount = API.Invfreecount_()
+        preFreeCount = Inventory:FreeSpaces()
         API.DoAction_Interface(0x24,0xffffffff, 1, 656, 25, 0, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(1000, 500, 1000)
-        postFreeCount = API.Invfreecount_()
+        postFreeCount = Inventory:FreeSpaces()
     end
 
     API.KeyboardPress32(0x1B, 0)
@@ -327,12 +327,12 @@ local function turnInArtifacts()
     API.DoAction_Inventory1(CHRONOTE, 0, 3, API.OFF_ACT_GeneralInterface_route)
     API.RandomSleep2(500, 1000, 1000)
 
-    while API.InvItemcount_1(TOKEN_BOX) > 0  and API.Read_LoopyLoop() do
+    while Inventory:InvItemcount(TOKEN_BOX) > 0  and API.Read_LoopyLoop() do
         API.DoAction_Inventory1(TOKEN_BOX, 0, 1, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(500, 1000, 1000)
     end
 
-    if API.Invfreecount_() < 28 then
+    if Inventory:FreeSpaces() < 28 then
         print("Couldn't turn everything in!")
         return false
     end
@@ -364,7 +364,7 @@ while API.Read_LoopyLoop() do
     maintainPrayer()
     destroyTomes()
 
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         if redeemArtifacts and itr % BANK_INCREMENT == 0 then
             API.RandomSleep2(1000, 1000, 1000)
             goToAnachronia()
@@ -387,10 +387,10 @@ while API.Read_LoopyLoop() do
                 goToDaemonheim()
             end
         else
-            totemCount = totemCount + API.InvItemcount_1(TOTEM)
-            mineCount = mineCount + API.InvItemcount_1(MINE)
-            ringCount = ringCount + API.InvItemcount_1(RING)
-            gatestoneCount = gatestoneCount + API.InvItemcount_1(GATESTONE)
+            totemCount = totemCount + Inventory:InvItemcount(TOTEM)
+            mineCount = mineCount + Inventory:InvItemcount(MINE)
+            ringCount = ringCount + Inventory:InvItemcount(RING)
+            gatestoneCount = gatestoneCount + Inventory:InvItemcount(GATESTONE)
         end
 
         if not bank() then
@@ -403,10 +403,10 @@ while API.Read_LoopyLoop() do
     end
 
     local metrics = {
-        {"Engraved ring of kinship", ringCount + API.InvItemcount_1(RING)},
-        {"Castle gatestone", gatestoneCount + API.InvItemcount_1(GATESTONE)},
-        {"Exploratory totem", totemCount + API.InvItemcount_1(TOTEM)},
-        {"Excavator portal mine", mineCount + API.InvItemcount_1(MINE)},
+        {"Engraved ring of kinship", ringCount + Inventory:InvItemcount(RING)},
+        {"Castle gatestone", gatestoneCount + Inventory:InvItemcount(GATESTONE)},
+        {"Exploratory totem", totemCount + Inventory:InvItemcount(TOTEM)},
+        {"Excavator portal mine", mineCount + Inventory:InvItemcount(MINE)},
         {"Collections per hour", getCollectionsPerHour()}
     }
     API.DrawTable(metrics)

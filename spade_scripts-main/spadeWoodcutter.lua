@@ -48,7 +48,7 @@ end
 local STATES = {
     {
         desc = "Banking",
-        pre = function() return API.InvFull_() end,
+        pre = function() return Inventory:IsFull() end,
         callback = function() API.DoAction_Object1(0x33, API.OFF_ACT_GeneralObject_route3, { BANK_CHEST }, 50) end
     },
     {

@@ -70,7 +70,7 @@ while API.Read_LoopyLoop() do
     handleElidinisEvents()
 
     if not (API.CheckAnim(25) or API.ReadPlayerMovin2() or API.isProcessing()) then
-        if not API.InvFull_() then
+        if not Inventory:IsFull() then
             local bambooObj = chooseBamboo()
             if bambooObj then
                API.DoAction_Object_Direct(0x3b, API.OFF_ACT_GeneralObject_route0, bambooObj)

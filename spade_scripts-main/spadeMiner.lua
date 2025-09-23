@@ -24,7 +24,7 @@ local function setupMenu()
     local uniqueTable = {}
     local objects = API.ReadAllObjectsArray({0, 12}, {-1}, {})
     for _, o in ipairs(objects) do
-        if o.Name and (string.find(o.Name, 'rock') or o.Name == 'Seren stone')and o.Distance <= 50 then
+        if o.Name and (string.find(o.Name, 'rock') or o.Name == 'Seren stone') and o.Distance <= 50 then
             uniqueTable[o.Name] = true
         end
     end
@@ -52,7 +52,7 @@ end
 local function getPorter()
     local porterId = nil
     for _, id in ipairs(PORTERS) do
-        if API.InvItemcount_1(id) > 0 then
+        if Inventory:InvItemcount(id) > 0 then
             porterId = id
             break
         end
@@ -71,7 +71,7 @@ local function chargeGOTE()
 
     local porterId = getPorter()
     if porterId and stacks and stacks <= 50 then
-        print ("Recharging GOTE")
+        print("Recharging GOTE")
         API.DoAction_Ability("Grace of the elves", 5, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(500, 250, 500)
     end
@@ -83,7 +83,7 @@ local function takeMiningPot()
     end
 
     for _, pot in ipairs(POTIONS) do
-        if API.InvItemcount_1(pot) > 0 then
+        if Inventory:InvItemcount(pot) > 0 then
             print("Drinking potion!")
             API.DoAction_Inventory1(pot, 0, 1, API.OFF_ACT_GeneralInterface_route)
             break
@@ -132,12 +132,12 @@ while API.Read_LoopyLoop() do
     takeMiningPot()
     chargeGOTE()
 
-    if API.InvFull_() and not getPorter() then
+    if Inventory:IsFull() and not getPorter() then
         print("Out of porters!")
         break
     end
 
-    if (menu.return_click) then
+    if menu.return_click then
         menu.return_click = false
         print("Selected " .. menu.string_value)
         selectedRock = menu.string_value

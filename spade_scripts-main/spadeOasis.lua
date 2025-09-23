@@ -133,7 +133,7 @@ local function cultivateFlowers(useCompost)
         if findNpcOrObject(flowerStages[i], 30, 0) then
             if i == 1 and useCompost then
                 if not fertilized then
-                    if API.InvItemcount_1(ultraCompostId) <= 0 then
+                    if Inventory:InvItemcount(ultraCompostId) <= 0 then
                         print("Banking for more ultracompost")
                         API.DoAction_Object1(0x2e, API.OFF_ACT_GeneralObject_route1, {115427}, 50)
                         while not API.BankOpen2() and API.Read_LoopyLoop() do
@@ -214,7 +214,7 @@ local function catchWhirlis()
         local sleep = 500
 
         if useFlowers then
-            if API.InvItemcount_1(flowerId) > 0 then
+            if Inventory:InvItemcount(flowerId) > 0 then
                 fillBaskets()
             else
                 print("No more flowers!")

@@ -14,15 +14,15 @@ API.SetDrawTrackedSkills(true)
 API.SetMaxIdleTime(MAX_IDLE_TIME_MINUTES)
 
 local function usingRefinedPlanks()
-    local firstItem = API.ReadInvArrays33()[1].textitem
+    local firstItem =Inventory:ReadInvArrays33()[1].textitem
     return string.find(firstItem, "Refined") ~= nil
 end
 
 local function needBank()
     if usingRefinedPlanks() then
-        return API.Invfreecount_() > 21
+        return Inventory:FreeSpaces() > 21
     end
-    return API.Invfreecount_() >= 18
+    return Inventory:FreeSpaces() >= 18
 end
 
 state = 1
@@ -31,7 +31,7 @@ local STATES = {
         desc = "Loading preset",
         pre = function() return needBank() end,
         callback = function() API.DoAction_Object1(0x33, API.OFF_ACT_GeneralObject_route3, { 125115 }, 20) end,
-        post = function() API.RandomSleep2(2500, 500, 500) return API.InvFull_() end
+        post = function() API.RandomSleep2(2500, 500, 500) return Inventory:IsFull() end
     },
     {
         desc = "Using mill",

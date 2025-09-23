@@ -60,7 +60,7 @@ end
 
 local function checkState()
     API.logDebug("checking state") 
-    local firstItem = API.ReadInvArrays33()[1].textitem
+    local firstItem = Inventory:ReadInvArrays33()[1].textitem
     firstItem = string.upper(firstItem)
     if string.find(firstItem, types.Refined) ~= nil then 
         if state ~= states.Refined then 
@@ -119,7 +119,7 @@ local function startCraft()
 end
 
 local function hasMaterials() 
-    return API.Invfreecount_() < 5
+    return Inventory:FreeSpaces() < 5
 end
 
 while API.Read_LoopyLoop() do 

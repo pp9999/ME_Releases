@@ -15,7 +15,7 @@ API.SetMaxIdleTime(MAX_IDLE_TIME_MINUTES)
 while API.Read_LoopyLoop() do
     API.DoRandomEvents()
 
-    local item = API.ReadInvArrays33()[1].itemid1
+    local item = Inventory:ReadInvArrays33()[1].itemid1
     if item == -1 then break end
 
     if not API.isProcessing() then

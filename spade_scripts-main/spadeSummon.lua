@@ -21,7 +21,7 @@ local STATES = {
     {
         desc = "Banking",
         callback = function() API.DoAction_Object1(0x33, API.OFF_ACT_GeneralObject_route3, { BANK_CHEST }, 50) end,
-        post = function() return API.InvFull_() end
+        post = function() return Inventory:IsFull() end
     },
     {
         desc = "Opening Obelisk",

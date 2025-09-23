@@ -22,7 +22,7 @@ local STATES = {
         desc = "Loading preset",
         -- callback = function() API.DoAction_Object1(0x33, API.OFF_ACT_GeneralObject_route3, { BANK_CHEST }, 20) end,
         callback = function() API.DoAction_NPC(0x33, API.OFF_ACT_InteractNPC_route4, { 3418 }, 50) end,
-        post = function() API.RandomSleep2(500, 500, 500) return API.InvFull_() end
+        post = function() API.RandomSleep2(500, 500, 500) return Inventory:IsFull() end
     },
     {
         desc = "Cleaning herbs",

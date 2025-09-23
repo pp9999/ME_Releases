@@ -50,7 +50,7 @@ local function takePots()
         if (buff.buffId and not API.Buffbar_GetIDstatus(buff.buffId).found) or 
             (buff.debuffId and not API.DeBuffbar_GetIDstatus(buff.debuffId).found) then
             for _, pot in ipairs(buff.potionIds) do
-                if API.InvItemcount_1(pot) > 0 then
+                if Inventory:InvItemcount(pot) > 0 then
                     print(string.format("Drinking %s potion!", name))
                     API.DoAction_Inventory1(pot, 0, 1, API.OFF_ACT_GeneralInterface_route)
                     API.RandomSleep2(1000, 500, 750)
@@ -148,7 +148,7 @@ local masterwork = (BAR_SELECTION == "MASTERWORK" or ITEM_SELECTION == "MASTERWO
 -- Returns the number of items to forge when accounting for pre-existing items in inventory
 local function getItemsToMake(level)
     local item = OPTIONS[BAR_SELECTION].items[ITEM_SELECTION]
-    local itemsToMake = (quantity - API.InvItemcount_1(UNFINISHED_ITEM))
+    local itemsToMake = (quantity - Inventory:InvItemcount(UNFINISHED_ITEM))
     if level == 0 or item.stack then
         return itemsToMake
     end
@@ -168,7 +168,7 @@ local function getItemsToMake(level)
             end
         end
 
-        for _, v in ipairs(API.ReadInvArrays33()) do
+        for _, v in ipairs(Inventory:ReadInvArrays33()) do
             if not masterwork then
                 if string.find(v.textitem, tempItemName .. "$") then
                     itemsToMake = itemsToMake - 1
@@ -204,9 +204,9 @@ local function updateBacklog()
         end
 
         quantity = 1 + finishedItems
-    elseif itemsToMake > API.Invfreecount_() then
+    elseif itemsToMake > Inventory:FreeSpaces() then
         -- Backlog count excludes pre-made items in inventory and free inventory space
-        backlogCount = itemsToMake - API.Invfreecount_()
+        backlogCount = itemsToMake - Inventory:FreeSpaces()
         quantity = quantity - backlogCount
     end
 
@@ -226,7 +226,7 @@ end
 local function makeUnfinishedItems()
     local bar = OPTIONS[BAR_SELECTION].bar
     local item = OPTIONS[BAR_SELECTION].items[ITEM_SELECTION]
-    local unfinishedItemCount = API.InvItemcount_1(UNFINISHED_ITEM)
+    local unfinishedItemCount = Inventory:InvItemcount(UNFINISHED_ITEM)
 
     if currentLevelIdx >= ITEM_LEVELS[GOAL_LEVEL][1] then
         if backlogCount <= 0 then
@@ -343,17 +343,17 @@ local previousState = nil
 local STATES = {
     {
         desc = "Making unfinished items",
-        pre = function() return not API.CheckAnim(50) and API.InvItemcount_1(UNFINISHED_ITEM) <= 0 end,
+        pre = function() return not API.CheckAnim(50) and Inventory:InvItemcount(UNFINISHED_ITEM) <= 0 end,
         callback = makeUnfinishedItems
     },
     {
         desc = "Smithing item",
-        pre = function() return not API.CheckAnim(25) and API.InvItemcount_1(UNFINISHED_ITEM) > 0 end,
+        pre = function() return not API.CheckAnim(25) and Inventory:InvItemcount(UNFINISHED_ITEM) > 0 end,
         callback = smithItem
     },
     {
         desc = "Heating item",
-        pre = function() return API.InvItemcount_1(UNFINISHED_ITEM) > 0 and getProgress(5) < math.random(165, 175) and API.CheckAnim(50) end,
+        pre = function() return Inventory:InvItemcount(UNFINISHED_ITEM) > 0 and getProgress(5) < math.random(165, 175) and API.CheckAnim(50) end,
         callback = heatItem
     },
 }
