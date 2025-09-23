@@ -687,14 +687,14 @@ end
 
 local function collectEssence()
     if API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, {floatingEssenceID}, 50) then
-        sleepUntil(function() return API.InvStackSize(ITEM_IDS.essence) > minimumEssenceAmount end, 10, "Gathered essence")
+        sleepUntil(function() return Inventory:InvStackSize(ITEM_IDS.essence) > minimumEssenceAmount end, 10, "Gathered essence")
     end
 end
 
 local function trainRC()
     local playerLevel = getRunecraftingLevel()
     local currentIsland = islands[mapNumber][islandIndex]
-    local essence = API.InvStackSize(ITEM_IDS.essence)
+    local essence = Inventory:InvStackSize(ITEM_IDS.essence)
 
     local entityType
     if essence > objectEssenceAmount and findHighestLevelEntity(OBJECT_IDS, playerLevel, currentIsland, ENTITY_TYPES.object) then
@@ -703,7 +703,7 @@ local function trainRC()
         entityType = ENTITY_TYPES.npc
     end
 
-     if entityType then
+    if entityType then
         siphonEntity(entityType)
     else
         collectEssence()
@@ -734,9 +734,7 @@ API.SetDrawTrackedSkills(true)
 API.ScriptRuntimeString()
 API.GetTrackedSkills()
 
-
 API.Write_ScripCuRunning1("Current Task: Runespan")
-
 
 while API.Read_LoopyLoop() do
     API.Write_ScripCuRunning2("Elapsed Time: " .. API.ScriptRuntimeString() .. " | LVL: " .. getRunecraftingLevel())
@@ -749,7 +747,6 @@ while API.Read_LoopyLoop() do
     end
 
     API.RandomSleep2(300, 300, 300)
-
 end
 
 API.SetDrawTrackedSkills(false)

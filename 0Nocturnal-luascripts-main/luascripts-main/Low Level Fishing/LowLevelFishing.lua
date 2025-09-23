@@ -29,7 +29,7 @@ end
 
 local function dropInventory()
     print("inventory full, trying to drop Fishes")
-    for _, item in ipairs(API.ReadInvArrays33()) do
+    for _, item in ipairs(Inventory:ReadInvArrays33()) do
         for _, v in pairs({13435, 335, 331, 317}) do
             if (item.itemid1 == v) then
                 API.DoAction_Interface(0x24,0x14f,8,1473,5,item.index, API.OFF_ACT_GeneralInterface_route2)
@@ -57,12 +57,12 @@ while API.Read_LoopyLoop() do
     gameStateChecks()
     
     if not API.CheckAnim(20) then
-        if API.InvFull_() then
+        if Inventory:IsFull() then
             dropInventory()
         end
         local spots = API.GetAllObjArrayInteract_str({"Fishing spot"}, 50, {1})
         if #spots > 0 then
-            if spots[1].Action == "Lure" and API.InvStackSize(314) < 1 then
+            if spots[1].Action == "Lure" and Inventory:InvItemcount(314) < 1 then
                 API.Write_LoopyLoop(false)
                 print("No more feathers")
                 break

@@ -232,7 +232,7 @@ end
 
 local function dropInventory()
     print("inventory full, trying to drop logs")
-    for _, item in ipairs(API.ReadInvArrays33()) do
+    for _, item in ipairs(Inventory:ReadInvArrays33()) do
         for _, v in pairs(logIds) do
             if (item.itemid1 == v) then
                 API.DoAction_Interface(0x24, 0x5ed, 8, 1473, 5, item.index, API.OFF_ACT_GeneralInterface_route2)
@@ -258,7 +258,7 @@ end
 
 local function chopChop()
     if not API.CheckAnim(20) then
-        if API.InvFull_() then
+        if Inventory:IsFull() then
             if shouldBank then
                 bank()
             else
