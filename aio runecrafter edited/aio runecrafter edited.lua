@@ -1145,18 +1145,16 @@ local function InventoryCheck()
         end
         if Necro == false then
             API.RandomSleep2(250,500,300)
-            if API.InvItemcount_1(55667) >= 16  or API.InvItemcount_1(7936) >= 16 or API.InvItemcount_1(18178) >= 16 then
+            if Inventory:InvItemcount(55667) >= 16 or Inventory:InvItemcount(7936) >= 16 or Inventory:InvItemcount(18178) >= 16 then
                 if not API.ReadPlayerMovin2() then
-                    if SurgeDiveAbillity  then
+                    if SurgeDiveAbillity then
                         API.DoAction_Object1(0xb5, API.OFF_ACT_GeneralObject_route0, { 65084, 65082 }, 65)
                     end
                     Interact:Object("Wilderness wall", "Cross")
-                    -- API.DoAction_Object1(0xb5, API.OFF_ACT_GeneralObject_route0, { 5076, 65078, 65077, 65080, 65079, 65082, 65081, 65084, 65083, 65087, 65085, 65105, 65096, 65088, 65102, 65090, 65089, 65092, 65091, 65094, 65093, 65101, 65095, 65103, 65104, 65100, 65099, 65098, 65097, 1440, 1442, 1441, 1444, 1443 },65)
                     API.logDebug("Doaction: Wildy wall")
                     if needDemonicSkull then
                         API.RandomSleep2(5000, 500, 1000)
                     end
-                    -- API.RandomSleep2(500, 150, 150)
                     if needDemonicSkull and isWildernissInterfacePresent() then
                         API.logDebug("Found wildy warning! (Demonic Skull)")
                         API.RandomSleep2(500, 150, 150)
@@ -1164,7 +1162,7 @@ local function InventoryCheck()
                     banking = 0
                     fail = 0
                     API.logDebug("Banking state:" .. banking .. "")
-                    API.logDebug("Fail cound: " .. fail .. "")
+                    API.logDebug("Fail count: " .. fail .. "")
                 end
             else
                 if not API.ReadPlayerMovin2() then
@@ -1202,22 +1200,22 @@ local function InventoryCheck()
                 banking = 0
                 fail = 0
                 API.logDebug("Banking state:" .. banking .. "")
-                API.logDebug("Fail cound: " .. fail .. "")
+                API.logDebug("Fail count: " .. fail .. "")
             end
         end
         if banking == 2 then
-            if API.InvItemcount_1(55667) >= 16  or API.InvItemcount_1(7936) >= 16 or API.InvItemcount_1(18178) >= 16 then
+            if Inventory:InvItemcount(55667) >= 16 or Inventory:InvItemcount(7936) >= 16 or Inventory:InvItemcount(18178) >= 16 then
                 banking = 0
                 fail = 0
                 API.logDebug("Banking state:" .. banking .. "")
-                API.logDebug("Fail cound: " .. fail .. "")
+                API.logDebug("Fail count: " .. fail .. "")
             end
-            if API.Invfreecount_() > 5 then
+            if Inventory:FreeSpaces() > 5 then
                 API.logError("Didn't get a full inventory!")
                 fail = fail + 1
                 banking = 1
                 API.logDebug("Banking state:" .. banking .. "")
-                API.logDebug("Fail cound: " .. fail .. "")
+                API.logDebug("Fail count: " .. fail .. "")
                 return
             end
         end

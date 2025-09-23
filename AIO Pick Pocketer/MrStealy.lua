@@ -68,9 +68,8 @@ end
 
 setupGUI()
 
-
 function PickPocket()
-    API.DoAction_NPC(0x29,3328,{ 32 },50);
+    API.DoAction_NPC(0x29,API.OFF_ACT_InteractNPC_route2,{ 32 },50);
 end
 
 while(API.Read_LoopyLoop()) do
@@ -78,7 +77,7 @@ while(API.Read_LoopyLoop()) do
     API.DoRandomEvents()
 
     if not API.CheckAnim(40) then
-    PickPocket()
+        PickPocket()
     end
 
     printProgressReport()

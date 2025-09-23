@@ -240,7 +240,7 @@ local function RenewFamiliar()
             API.DoAction_Object1(0x2e, API.OFF_ACT_GeneralObject_route1, {ID.WAR_BANK}, 50)
             API.RandomSleep2(1000, 500, 1000)
             API.WaitUntilMovingEnds()
-            if API.Invfreecount_() < 2 then
+            if Inventory:FreeSpaces() < 2 then
                 API.logDebug("Info: Summoning: make more room in your invt.")
                 API.KeyboardPress2(0x33,0,50)
                 API.RandomSleep2(1000, 500, 1000)
@@ -251,7 +251,7 @@ local function RenewFamiliar()
                 API.RandomSleep2(1000, 500, 1000)
             end 
         end
-        if API.InvStackSize(selectedFamiliar) < 1 then
+        if Inventory:InvStackSize(selectedFamiliar) < 1 then
             API.logError("didn't find any pouches")
             fail = fail + 1
             return
@@ -302,16 +302,16 @@ while API.Read_LoopyLoop() do
         API.logDebug("Waiting until a familiar is summond!")
     end
     
-    if API.InvFull_() and isAtLocation(AREA.UM_SMITH, 50) then
+    if Inventory:IsFull() and isAtLocation(AREA.UM_SMITH, 50) then
         print("Teleporting to Hill")
         teleportHauntHill()
         API.RandomSleep2(1000, 300, 300)
-    elseif not API.InvFull_() then
+    elseif not Inventory:IsFull() then
         loadLastPreset()
         API.RandomSleep2(900, 300, 120)
     end
 
-    if API.InvFull_() and isAtLocation(AREA.HILL, 50) then
+    if Inventory:IsFull() and isAtLocation(AREA.HILL, 50) then
             print ("Go to portal")
             API.RandomSleep2(2000, 300, 300)
             interactDarkPortal()
@@ -321,7 +321,7 @@ while API.Read_LoopyLoop() do
             API.RandomSleep2(1400, 300, 300)
     end
         
-    if API.InvFull_() and isAtLocation(AREA.ALTARS, 50) then
+    if Inventory:IsFull() and isAtLocation(AREA.ALTARS, 50) then
         print ("Making runes")
         surgeToAltar(SELECTEDRUNETOMAKE)
            if canUsePowerburst() and findPowerburst() then
@@ -336,7 +336,7 @@ while API.Read_LoopyLoop() do
             API.RandomSleep2(3000, 500, 500)
     end
 
-    if API.InvItemcount_2(impureEss) <= 1 and isAtLocation(AREA.ALTARS, 50) then
+    if Inventory:InvItemcount(impureEss) <= 1 and isAtLocation(AREA.ALTARS, 50) then
         print("Runes done, time to rebank")
         bankTeleport()
         API.RandomSleep2(3000, 500, 500)

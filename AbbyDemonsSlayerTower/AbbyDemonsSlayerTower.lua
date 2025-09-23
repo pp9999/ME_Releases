@@ -26,7 +26,7 @@ end
 
 function inventoryCheck()
     if API.PInArea(3407, 10, 3549, 10, 3) then
-        if API.InvItemcount_1(50877) == 0 then 
+        if Inventory:InvItemcount(50877) == 0 then 
             API.DoAction_Ability("War's Retreat Teleport", 1, 5392)
         end
     end
