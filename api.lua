@@ -3831,10 +3831,16 @@ function API.SetDrawLogs(val)
 	return SetDrawLogs(val)
 end
 
----@param fortime number ms
----@param tiles FFPOINT[] table of FFPOINT
-function API.MarkTiles(tiles,fortime)
-	MarkTiles(tiles,fortime)
+---@param tiles FFPOINT[] table of FFPOINT Tile_XYZ from object tiles
+---@param fortime number millisec how long hold it on screen
+---@param color number hex number 0xnumber https://www.rapidtables.com/web/color/RGB_Color.html
+---@param thick number line thickness in float
+---@param filled boolean true filled
+---@param square boolean true not square
+---@param pixelshape WPOINT if pixel numbers here are present then use these as boxsize
+---@param pixellocation WPOINT if numbers here then use these instead of tile calculations
+function API.MarkTiles(tiles, fortime, color, thick, filled, square, pixelshape, pixellocation)
+	MarkTiles(tiles, fortime, color, thick, filled, square, pixelshape, pixellocation)
 end
 
 --- clear table
@@ -4157,15 +4163,15 @@ function Inventory:InvItemFound(item) end
 
 ---@param items number[]
 ---@return boolean
---function Inventory:InvItemFounds(items) end
+function Inventory:InvItemFounds(items) end
 
----@param item number
+---@param item string
 ---@return number
 function Inventory:InvItemcount_String(item) end
 
----@param items number[]
+---@param items string[]
 ---@return number
---function Inventory:InvItemcountStack_Strings(items) end
+function Inventory:InvItemcountStack_Strings(items) end
 
 ---@param items number[]
 ---@return number
