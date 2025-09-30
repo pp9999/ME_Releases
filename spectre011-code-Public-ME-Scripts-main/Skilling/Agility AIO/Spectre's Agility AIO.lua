@@ -1410,7 +1410,7 @@ API.ScriptRuntimeString()
 API.GetTrackedSkills()
 
 API.Write_LoopyLoop(true)
-API.Write_fake_mouse_do(false)
+API.Write_fake_mouse_do(true)
 while (API.Read_LoopyLoop()) do
     UTILS:antiIdle()
     GUIDraw()
