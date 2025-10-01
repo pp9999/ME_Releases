@@ -3275,11 +3275,13 @@ end
 --- wide array of randoms
 ---@param waitTime number wait time before interacting
 ---@param sleepTime number sleep time AFTER interacting
+---@param catchpengs boolean catch pengs
 ---@return boolean
-function API.DoRandomEvents(waitTime, sleepTime)
+function API.DoRandomEvents(waitTime, sleepTime, catchpengs)
 	waitTime = waitTime or 600
 	sleepTime = sleepTime or 1200
-	return DoRandomEvents(waitTime, sleepTime)
+	catchpengs = catchpengs or false
+	return DoRandomEvents(waitTime, sleepTime, catchpengs)
 end
 
 --- single random ncp
@@ -3831,6 +3833,7 @@ function API.SetDrawLogs(val)
 	return SetDrawLogs(val)
 end
 
+--  API.MarkTiles({FFPOINT.new(3179,2705,0)},0,0,2,false,false,WPOINT.new(0,0,0),WPOINT.new(0,0,0)) something like this
 ---@param tiles FFPOINT[] table of FFPOINT Tile_XYZ from object tiles
 ---@param fortime number millisec how long hold it on screen
 ---@param color number hex number 0xnumber https://www.rapidtables.com/web/color/RGB_Color.html
