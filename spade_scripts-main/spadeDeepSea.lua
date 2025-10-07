@@ -94,7 +94,7 @@ if not chooseFish() then
 end
 
 while API.Read_LoopyLoop() do
-    API.DoRandomEvents()
+    API.DoRandomEvents(1400, 800, true)
 
     if (not (API.CheckAnim(25) or API.ReadPlayerMovin2() or API.isProcessing())) or API.DeBuffbar_GetIDstatus(33045, false).conv_text > 0 then
         local timeout = os.time() + 30
