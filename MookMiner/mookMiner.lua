@@ -21,7 +21,7 @@ ADDITIONAL CREDITS
 
 local version = "v1.1.4"
 local API = require("api")
-local MINER = require("data/ores")
+local MINER = require("ores")--move manually to next of api.lua
 
 API.SetMaxIdleTime(15)
 MINER.Version = version
