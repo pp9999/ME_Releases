@@ -21,7 +21,7 @@ ADDITIONAL CREDITS
 
 local version = "v1.1.4"
 local API = require("api")
-local MINER = require("ores")--move manually to next of api.lua
+local MINER = require("ores")--move manually to next of api.lua if not found
 
 API.SetMaxIdleTime(15)
 MINER.Version = version
@@ -119,7 +119,7 @@ while API.Read_LoopyLoop() do
             print("Inventory full, checking ore box")
             MINER:FillOreBox()
 
-            if API.InvFull_() then
+            if Inventory:InvFull() then
                 print("Ore box full, banking")
                 MINER:SetStatus("Banking")
                 MINER.Selected:Bank()
