@@ -230,7 +230,7 @@ local function hasAllItems()
             API.Write_LoopyLoop(false)
             return false
         end
-        if API.InvItemcount_1(itemList[i].id) < itemList[i].amount and API.InvStackSize(itemList[i].id) < itemList[i].amount then
+        if Inventory:InvItemcount(itemList[i].id) < itemList[i].amount and Inventory:InvStackSize(itemList[i].id) < itemList[i].amount then
             print("Not enough of item:", itemList[i].id)
             return false
         end
