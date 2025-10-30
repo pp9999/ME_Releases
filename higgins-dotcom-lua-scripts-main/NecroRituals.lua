@@ -368,7 +368,7 @@ while (API.Read_LoopyLoop()) do
     end
 
     if API.VB_FindPSettinOrder(10937, -1).state > 0 then
-        if API.Math_RandomNumber(100) > 95 then
+        if API.Math_RandomNumber(100) > 97 then
             if watchForDisturbances() then
                 goto continue
             end

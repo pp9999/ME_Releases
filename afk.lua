@@ -12,6 +12,9 @@ while API.Read_LoopyLoop() do
     --print(API.IsCacheLoaded())
     --Inventory:InvItemcount({999})
     print(#Inventory:ReadInvArrays33(true))
+    if API.Check_continue_Open() then
+        API.KeyboardPress31(0x20, 40, 100)
+    end
   
 API.RandomSleep2(5600, 10300, 300)
 end
