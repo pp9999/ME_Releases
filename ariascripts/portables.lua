@@ -69,7 +69,7 @@ if not itemList[1] then
     local vec = API.ReadInvArrays33()
     for i = 1, #vec do
       if not added[vec[i].itemid1] and vec[i].itemid1 > 0 then
-        local amt = math.max(API.InvItemcount_1(vec[i].itemid1), API.InvStackSize(vec[i].itemid1))
+        local amt = math.max(Inventory:InvItemcount(vec[i].itemid1), Inventory:InvStackSize(vec[i].itemid1))
         itemList[#itemList + 1] = { id = vec[i].itemid1, amount = amt }
         print("Added item: " .. vec[i].textitem .. " (" .. vec[i].itemid1 .. ") with amount " .. amt)
         added[vec[i].itemid1] = true
