@@ -92,7 +92,7 @@ end
 -- Attempts to fill the wood box if inventory is full
 function FillBox(itemID)
     print("filling wood box")
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         if not isWoodboxFull(itemID) then
             -- Directly transfer logs to wood box via interface action
             local transferred = API.DoAction_Inventory1(58253,0,1,API.OFF_ACT_GeneralInterface_route)
@@ -141,10 +141,10 @@ local function ChopTree()
     -- Only proceed if the player isn't currently animating (e.g., already chopping)
     if not API.CheckAnim(20) then
         -- If inventory is full, try to fill the wood box first
-        if API.InvFull_() then
+        if Inventory:IsFull() then
             FillBox(logItemId)
             -- After FillBox, check if inventory is still full
-            if API.InvFull_() then
+            if Inventory:IsFull() then
                 print("Inventory still full after attempting to fill wood box. Not chopping.")
                 return -- Stop here, do not chop
             end

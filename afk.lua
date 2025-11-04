@@ -15,6 +15,7 @@ while API.Read_LoopyLoop() do
     if API.Check_continue_Open() then
         API.KeyboardPress31(0x20, 40, 100)
     end
+
   
-API.RandomSleep2(5600, 10300, 300)
+API.RandomSleep2(8600, 10300, 300)
 end
