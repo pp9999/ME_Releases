@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.065
+API.VERSION = 1.068
 
 --[[
 Known shortcuts
@@ -82,6 +82,10 @@ API.OFF_ACT_Special_walk_route = Special_walk_route
 
 --- use on fire
 API.GeneralObject_route_useon = GeneralObject_route_useon
+
+API.GeneralObject_route_examine = GeneralObject_route_examine
+API.InteractNPC_route_examine = InteractNPC_route_examine
+API.Grounditems_route_examine = Grounditems_route_examine
 
 --- somtimes text on interface
 ---@return number
@@ -572,15 +576,40 @@ end
 
 
 
+-- Turn on/off default on, Limit actions 1 per frame
+---@param state boolean
+---@return void
+function API.SetDoActionLimit(state)
+	return SetDoActionLimit(state)
+end
 
+-- Turn on/off default off, Simulate mouse movement pre click
+---@param state boolean
+---@return void
+function API.SetMouseMove(state)
+	return SetMouseMove(state)
+end
 
+-- Turn on/off default on, disable doaction
+---@param state boolean
+---@return void
+function API.SetDoAction(state)
+	return SetDoAction(state)
+end
 
+-- Turn on/off default on, disable software flag override
+---@param state boolean
+---@return void
+function API.SetHookModifaction(state)
+	return SetHookModifaction(state)
+end
 
-
-
-
-
-
+-- Turn on/off default on. FM random movement
+---@param state boolean
+---@return void
+function API.SetFMRandom(state)
+	return SetFMRandom(state)
+end
 
 -- current world of localplayer
 ---@return number
@@ -601,6 +630,7 @@ function API.DoAction_DontResetSelection()
 	return DoAction_DontResetSelection()
 end
 
+-- Unhhook THE hook
 ---@return void
 function API.UnhookRs3Hook()
 	return UnhookRs3Hook()
@@ -747,11 +777,6 @@ end
 ---@return table|WPOINT 4 corner points of the cube
 function API.InterfacesCombineFullFM(mad)
 	return InterfacesCombineFullFM(mad)
-end
-
----@param frames number How long it says disabled in frames. Current in code is 100, but can be anywhere from 1-1000
-function API.SetDoActionTimeOut(frames)
-	return SetDoActionTimeOut(frames)
 end
 
 -- Disable ImGui for script runtime so it dosent mess with script. Page down to enable again or if script ends it gets enabled again
@@ -3563,6 +3588,14 @@ function API.ScanForInterfaceTest2Get(target_under, lv_ID)
 	return ScanForInterfaceTest2Get(target_under, lv_ID)
 end
 
+--- Checks if an interface is open by its size/ID. 
+--- Used for determining if interfaces with no VB and floating popup windows are open.
+---@param ID number The interface ID to check
+---@return boolean True if the interface is open (has size > 0), false otherwise
+function API.GetInterfaceOpenBySize(ID)
+	return GetInterfaceOpenBySize(ID)
+end
+
 ---@param item number
 ---@return number
 function API.BankGetItemStack1(item)
@@ -4149,9 +4182,6 @@ function Inventory:ReadInvArrays33(coords) end
 
 ---@return number
 function Inventory:Invfreecount() end
-
----@return boolean
-function Inventory:IsEmpty() end
 
 ---@return boolean
 function Inventory:IsItemSelected() end
@@ -4960,12 +4990,9 @@ end
 
 ---@param x number
 ---@param y number
----@param rx number
----@param ry number
----@param updown boolean
 ---@return boolean
-function API.MoveMouse3(x, y, rx, ry, updown)
-	return MoveMouse3(x, y, rx, ry, updown)
+function API.MoveMouse3(x, y)
+	return MoveMouse3(x, y,)
 end
 
 ---@param sleep number
@@ -5279,6 +5306,49 @@ function SM:NumberInput(label, key, defaultValue, minValue, maxValue) end
 ---@param defaultValue number The default slider position
 function SM:Slider(label, key, minValue, maxValue, defaultValue) end
 
+--- Creates a string array element where users can add/remove string values
+--- The value is passed to scripts as a Lua table array of strings
+---@param label string The display label for the array
+---@param key string The unique key used to access the value in the CONFIG table
+---@param customArray string[]|nil Optional initial custom array values
+---@param defaultArray string[]|nil Optional default values shown as reference
+function SM:AddStringArray(label, key, customArray, defaultArray) end
+
+--- Creates a number array element where users can add/remove integer values
+--- The value is passed to scripts as a Lua table array of numbers
+---@param label string The display label for the array
+---@param key string The unique key used to access the value in the CONFIG table
+---@param customArray number[]|nil Optional initial custom array values
+---@param defaultArray number[]|nil Optional default values shown as reference
+function SM:AddNumberArray(label, key, customArray, defaultArray) end
+
+--- Creates a standalone tile coordinate input with X, Y, Z fields
+--- The value is passed to scripts as a Lua table {x=, y=, z=}
+---@param label string The display label for the tile
+---@param key string The unique key used to access the value in the CONFIG table
+---@param defaultValue table|nil Optional default tile {x=, y=, z=} or nil for 0,0,0
+function SM:Tile(label, key, defaultValue) end
+
+--- Creates a tile array element where users can add/remove XYZ coordinate values
+--- The value is passed to scripts as a Lua table array of {x=, y=, z=} tables
+---@param label string The display label for the array
+---@param key string The unique key used to access the value in the CONFIG table
+---@param customArray table[]|nil Optional initial custom array values
+---@param defaultArray table[]|nil Optional default values shown as reference
+function SM:AddTileArray(label, key, customArray, defaultArray) end
+
+--- Creates a custom array element with mixed field types per row
+--- The value is passed to scripts as a Lua table array of arrays
+--- Field types: "text", "number", "checkbox", "dropdown", "slider", "tile"
+---@param label string The display label for the array
+---@param key string The unique key used to access the value in the CONFIG table
+---@param fieldTypes table Array of field type strings: {"text", "number", "checkbox", "dropdown", "slider", "tile"}
+---@param fieldLabels table|nil Optional array of labels for each field: {"Item", "Count", "Enabled"}
+---@param extraParams table|nil Optional table of tables for dropdown/slider params (one per field, empty {} if not needed). Tile stored as "x,y,z" string
+---@param customArray table[]|nil Optional initial custom array values
+---@param defaultArray table[]|nil Optional default values shown as reference
+function SM:AddCustomArray(label, key, fieldTypes, fieldLabels, extraParams, customArray, defaultArray) end
+
 --[[
 Configuration System Usage:
 
@@ -5295,6 +5365,21 @@ SM:Checkbox("Hard Mode", "hardMode", false)
 SM:AddTab("Settings")
 SM:TextInput("Player Name", "playerName", "")
 SM:Slider("Wait Time", "waitTime", 100, 5000, 1000)
+SM:Tile("Tile to move", "tileToMove", {x=3000, y=3000, z=0})
+
+SM:AddTab("Arrays")
+SM:AddStringArray("Item Names", "itemNames", {}, {"Oak logs", "Raw lobster"})
+SM:AddNumberArray("Item IDs", "itemIds", {}, {1511, 377})
+SM:AddTileArray("Bank Tiles", "bankTiles", {}, {})
+
+-- Simple CustomArray without labels or extra params
+SM:AddCustomArray("Simple List", "simpleList", {"text", "number", "checkbox"}, {}, {}, {}, {})
+
+-- CustomArray with labels
+SM:AddCustomArray("Basic Config", "basicConfig", {"text", "number", "checkbox"}, {"Item Name", "Min Value", "Loot?"}, {}, {}, {})
+
+-- CustomArray with dropdown and slider
+SM:AddCustomArray("Advanced Config", "advancedConfig", {"dropdown", "number", "slider"}, {"Mode", "Count", "Speed"}, {{"Easy", "Medium", "Hard"}, {}, {"0", "100", "50"}}, {}, {})
 ```
 
 Example script usage:
@@ -5305,13 +5390,50 @@ if CONFIG then
     elseif CONFIG.prayerType == 1 then
         -- User selected "Prayers" (second option)
     end
-    
+
     if CONFIG.hardMode then
         -- Hard mode is enabled
     end
-    
+
     local playerName = CONFIG.playerName or "DefaultName"
     local waitTime = CONFIG.waitTime or 1000
+
+    -- Tile example
+    if CONFIG.tileToMove then
+        print("Tile: X=" .. CONFIG.tileToMove.x .. " Y=" .. CONFIG.tileToMove.y .. " Z=" .. CONFIG.tileToMove.z)
+    end
+
+    -- Array examples
+    if CONFIG.itemNames then
+        for i, name in ipairs(CONFIG.itemNames) do
+            print("Item " .. i .. ": " .. name)
+        end
+    end
+
+    if CONFIG.bankTiles then
+        for i, tile in ipairs(CONFIG.bankTiles) do
+            print("Tile " .. i .. ": X=" .. tile.x .. " Y=" .. tile.y .. " Z=" .. tile.z)
+        end
+    end
+
+    -- CustomArray examples
+    if CONFIG.basicConfig then
+        for i, config in ipairs(CONFIG.basicConfig) do
+            local itemName = config[1]    -- text field
+            local minValue = config[2]    -- number field
+            local shouldLoot = config[3]  -- checkbox (boolean)
+            print("Config " .. i .. ": " .. itemName .. " (min: " .. minValue .. ", enabled: " .. tostring(shouldLoot) .. ")")
+        end
+    end
+
+    if CONFIG.advancedConfig then
+        for i, config in ipairs(CONFIG.advancedConfig) do
+            local mode = config[1]     -- dropdown index (0=Easy, 1=Medium, 2=Hard)
+            local count = config[2]    -- number field
+            local speed = config[3]    -- slider value (float 0-100)
+            print("Advanced " .. i .. ": mode=" .. mode .. ", count=" .. count .. ", speed=" .. speed)
+        end
+    end
 end
 ```
 
@@ -5320,6 +5442,57 @@ Notes:
 - All values are optional and should be checked before use
 - Configuration is automatically saved/loaded per script
 - Each script can have its own independent configuration
+- Arrays are 1-indexed Lua tables
+- Default arrays are shown as reference but not editable
+- Users can add/remove items using +/- buttons in the UI
 --]]
+
+--- Represents an HTTP response from a request.
+---@class HttpResponse
+---@field statusCode number The HTTP status code (200 = success, 403 = forbidden, 404 = not found, 500 = server error).
+---@field body string The response body content from the server.
+
+
+---@class Http
+Http = Http
+
+--- Sends an HTTP POST request with JSON data to an allowed host.
+--- 
+--- Examples:
+--- -- Basic POST request
+--- local data = API.JsonEncode({message = "Hello", player = API.GetLocalPlayerName()})
+--- local response = Http:Post("http://localhost:3000/api/data", data)
+--- 
+--- -- POST request with headers
+--- local headers = {"Authorization: Bearer your-token", "X-Custom-Header: value"}
+--- local response = Http:Post("http://api.example.com/data", data, headers)
+--- 
+--- if response.statusCode == 200 then
+---     print("Success: " .. response.body)
+--- end
+---@param url string The complete URL to send the request to.
+---@param jsonData string JSON-formatted string containing the data to send.
+---@param headers? string[] Optional array of header strings in "Name: Value" format.
+---@return HttpResponse The response table with statusCode and body fields.
+function Http:Post(url, jsonData, headers) end
+
+--- Sends an HTTP GET request to an allowed host.
+--- 
+--- Examples:
+--- -- Basic GET request
+--- local response = Http:Get("http://api.example.com/player/stats")
+--- 
+--- -- GET request with headers
+--- local headers = {"Authorization: Bearer your-token", "X-API-Key: your-key"}
+--- local response = Http:Get("http://api.example.com/player/stats", headers)
+--- 
+--- if response.statusCode == 200 then
+---     local data = API.JsonDecode(response.body)
+---     print("Level: " .. data.level)
+--- end
+---@param url string The complete URL to send the request to.
+---@param headers? string[] Optional array of header strings in "Name: Value" format.
+---@return HttpResponse The response table with statusCode and body fields.
+function Http:Get(url, headers) end
 
 return API

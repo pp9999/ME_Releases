@@ -244,3 +244,8 @@
 ---@field name string
 ---@field value string
 ---@field inline boolean
+
+---@class HttpResponse
+---@field statusCode number
+---@field body string
+---@field GetBodyAsJson fun(): table
