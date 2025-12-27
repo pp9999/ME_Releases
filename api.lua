@@ -571,10 +571,12 @@ end
 
 
 
-
-
-
-
+-- Turn on/off default on
+---@param state boolean
+---@return void
+function API.TurnOffMrHasselhoff(state)
+	return TurnOffMrHasselhoff(state)
+end
 
 -- Turn on/off default on, Limit actions 1 per frame
 ---@param state boolean
@@ -793,9 +795,9 @@ function API.ReadDCColor(at_x,at_y)
 end
 
 -- check tiles in list against tile +- range
----@param occtiles table|FFPOINT will be trunc
----@param size number
----@param range number
+---@param occtiles table|FFPOINT will be trunc, tiles to avoid
+---@param size number, dangerous tile area size to avoid, 0 is 1 tile, 1 is 3x3, 2 is 5x5 etc
+---@param range number, how big virtual area to generate tiles
 ---@param BlockedTiles table|FFPOINT 1 tile size extra blocked tiles
 ---@return  table|FFPOINT tiles that isnt near our occtiles 
 function API.Math_FreeTilesTile(tile,occtiles,size,range,BlockedTiles,DrawDebugTiles)

@@ -15,12 +15,19 @@ while API.Read_LoopyLoop() do
             end
         end
     end
+    --local OBJECTS_table = API.ReadAllObjectsArray({-1},{-1},{})
 
-
+    local obj = API.ReadAllObjectsArray({12}, {66875}, {})
+    if #obj > 0 then
+        local freetiles = API.Math_FreeTiles({obj[1].Tile_XYZ},1,10,{},true)
+        if #freetiles > 0 then
+            print("ClosestTile" .. tostring(freetiles[1].x) .. "," .. tostring(freetiles[1].y))
+        end
+    end
     print("Inventory:IsFull():" .. tostring(Inventory:IsFull()))
     print("Inventory:IsEmpty():" .. tostring(Inventory:IsEmpty()))
     print("Inventory:Invfreecount():" .. tostring(Inventory:Invfreecount()))
-    print("Inventory:Contains():" .. tostring(Inventory:Contains(44472)))
+    print("Inventory:Contains():" .. tostring(Inventory:Contains(44472)))   
 
 API.RandomSleep2(600, 7300, 300)
 end
