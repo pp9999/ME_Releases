@@ -1,3 +1,5 @@
 ## Ignore all .git directories
 */.git
 **/.git
+*/.roo
+**/.roo

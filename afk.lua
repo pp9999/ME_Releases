@@ -1,6 +1,7 @@
 local API = require("api")
 print("Run Lua port fish script afker.")
-
+API.TurnOffMrHasselhoff(true)
+API.Write_fake_mouse_do(true)
 while API.Read_LoopyLoop() do
     API.DoRandomEvents()
 
@@ -15,19 +16,13 @@ while API.Read_LoopyLoop() do
             end
         end
     end
-    --local OBJECTS_table = API.ReadAllObjectsArray({-1},{-1},{})
 
-    local obj = API.ReadAllObjectsArray({12}, {66875}, {})
-    if #obj > 0 then
-        local freetiles = API.Math_FreeTiles({obj[1].Tile_XYZ},1,10,{},true)
-        if #freetiles > 0 then
-            print("ClosestTile" .. tostring(freetiles[1].x) .. "," .. tostring(freetiles[1].y))
+    if not API.CheckAnim(120) then
+        API.DoAction_Object1(0x33,API.OFF_ACT_GeneralObject_route0,{ 106601 },10)
+        API.RandomSleep2(5400, 1300, 400)
+        if not Inventory:Contains(1511) then
+            API.Write_LoopyLoop(false)
         end
     end
-    print("Inventory:IsFull():" .. tostring(Inventory:IsFull()))
-    print("Inventory:IsEmpty():" .. tostring(Inventory:IsEmpty()))
-    print("Inventory:Invfreecount():" .. tostring(Inventory:Invfreecount()))
-    print("Inventory:Contains():" .. tostring(Inventory:Contains(44472)))   
-
-API.RandomSleep2(600, 7300, 300)
+API.RandomSleep2(5600, 2300, 300)
 end

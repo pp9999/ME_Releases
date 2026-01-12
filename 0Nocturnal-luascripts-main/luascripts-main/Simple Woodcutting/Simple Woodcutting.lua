@@ -220,7 +220,7 @@ local function cutNearestTree()
     local trees = API.GetAllObjArrayInteract_str({itemToGather}, 50, {0, 12})
 
     for _, tree in ipairs(trees) do
-        if API.DoAction_Object_valid2(0x3B, 0, {tree.Id}, 50, WPOINT.new(tree.TileX / 512, tree.TileY / 512, 1), true) then
+        if API.DoAction_Object_valid2(0x3B, API.OFF_ACT_GeneralObject_route0, {tree.Id}, 50, WPOINT.new(tree.TileX / 512, tree.TileY / 512, 1), true) then
             API.RandomSleep2(1200, 100, 200)
             API.WaitUntilMovingEnds()
             return true
