@@ -3136,11 +3136,12 @@ end
 ---@param offset number
 ---@param obj table|number
 ---@param maxdistance number
+---@param tile WPOINT
 ---@param ignore_star boolean
 ---@param health number
 ---@return boolean
-function API.DoAction_NPC(action, offset, objects, maxdistance, ignore_star, health)
-	return DoAction_NPC(action, offset, objects, maxdistance, ignore_star, health)
+function API.DoAction_NPC(action, offset, objects, maxdistance, tile, ignore_star, health)
+	return DoAction_NPC(action, offset, objects, maxdistance, tile, ignore_star, health)
 end
 
 ---Do action on player, find by name, attack
@@ -4406,16 +4407,18 @@ function Interact:SetSleep(wait, sleep, sleep2) end
 --- Carries out DoAction to the specified NPC (in place of DoAction_NPC)
 ---@param name string The Name of the NPC
 ---@param action string The Action to do against the NPC (e.g. "Attack")
+---@param tile WPOINT Optional - coordinate to search around. if not specified will use player location.
 ---@param distance number Optional - max distance to search across. defaults to 60 if not specified.
 ---@retun boolean If action was sent or not
-function Interact:NPC(name, action, distance) end
+function Interact:NPC(name, action, tile, distance) end
 
 --- Carries out DoAction to the specified Object (in place of DoAction_Object)
 ---@param name string The Name of the Object
 ---@param action string The Action to do against the Object (e.g. "Search")
+---@param tile WPOINT Optional - coordinate to search around. if not specified will use player location.
 ---@param distance number Optional - max distance to search across. defaults to 60 if not specified.
 ---@retun boolean If action was sent or not
-function Interact:Object(name, action, distance) end
+function Interact:Object(name, action, tile, distance) end
 
 --- Represents the Familiars class.
 ---@class Familiars
