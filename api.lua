@@ -4743,6 +4743,11 @@ function SOC:ClientAskMessages() end
 ---@return string
 function SOC:ServerAskMessage() end
 
+--- Client sent message on server
+---@param timeoutMs number timeout in milliseconds
+---@return string
+function SOC:ServerAskMessage2(timeoutMs) end
+
 --- Client sent messages on server
 ---@return string[]
 function SOC:ServerAskMessages() end
