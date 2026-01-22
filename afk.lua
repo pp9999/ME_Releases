@@ -4,7 +4,6 @@ API.TurnOffMrHasselhoff(true)
 API.Write_fake_mouse_do(true)
 while API.Read_LoopyLoop() do
     API.DoRandomEvents()
-    API.DoAction_Interface(0x2e,0xffffffff,1,906,95,-1,API.OFF_ACT_GeneralInterface_route)
 
     if API.WaitUntilMovingandAnimEnds(4,2) then
         if API.Buffbar_GetIDstatus(51490,false).conv_text > 0 then
@@ -28,5 +27,6 @@ while API.Read_LoopyLoop() do
             API.Write_LoopyLoop(false)
         end
     end
-API.RandomSleep2(5600, 2300, 300)
+
+API.RandomSleep2(8600, 2300, 300)
 end

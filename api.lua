@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.068
+API.VERSION = 1.069
 
 --[[
 Known shortcuts
@@ -569,6 +569,52 @@ end
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Get those from "Splats diagnosis"
+---@param clear boolean clean array
+---@return SPLAT
+function API.GatherEvents_splat_check(clear)
+	return GatherEvents_splat_check(clear)
+end
 
 
 -- Turn on/off default on
@@ -1679,10 +1725,10 @@ function API.ReadPlayerAnim()
 	return ReadPlayerAnim()
 end
 
----@param forcerefresh boolean -- force to update buffs
+---@param GetCombatData boolean if true get hp and name
 ---@return Target_data
-function API.ReadTargetInfo(forcerefresh)
-	return ReadTargetInfo(forcerefresh)
+function API.ReadTargetInfo(GetCombatData)
+	return ReadTargetInfo(GetCombatData)
 end
 
 ---@return AllObject
@@ -2620,6 +2666,18 @@ end
 ---@return Bbar
 function API.DeBuffbar_GetIDstatus(id, debug)
 	return DeBuffbar_GetIDstatus(id, debug)
+end
+
+---@param debug? boolean
+---@return table|TargetBuff[]
+function API.ReadTargetBuffsDetailed(debug)
+	return ReadTargetBuffsDetailed(debug or false)
+end
+
+---@param id number|string varbit ID, sprite/buff ID, or name. Use API.TargetBuffs enum for known buffs.
+---@return boolean
+function API.TargetHasBuff(id)
+	return TargetHasBuff(id)
 end
 
 ---@return boolean

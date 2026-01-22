@@ -210,13 +210,6 @@
 ---@field ItemID number
 ---@field ItemAM number
 
----@class Target_data
----@field Target_Name string
----@field Hit_percent number
----@field Cmb_lv number
----@field Hitpoints number
----@field Buff_stack table
-
 ---@class EmbedFooter
 ---@field text string
 ---@field icon_url string
@@ -249,3 +242,25 @@
 ---@field statusCode number
 ---@field body string
 ---@field GetBodyAsJson fun(): table
+
+---@class Target_data
+---@field Target_Name string -- Target entity name
+---@field Hit_percent number -- Hit chance percentage
+---@field Cmb_lv number -- Combat level
+---@field Hitpoints number -- Current hitpoints
+---@field Buff_stack TargetBuff[] -- All buffs/debuffs on target
+
+---@class TargetBuff
+---@field id number -- Varbit value (stack count, duration, etc.)
+---@field varbitId number -- Varbit ID
+---@field spriteId number -- Sprite/icon ID (BuffID)
+---@field name string -- Buff/debuff name
+---@field isDebuff boolean -- true = debuff, false = buff
+
+---@class SPLAT
+---@field Type number
+---@field Amount number
+---@field EInfo1 number
+---@field EInfo2 number
+---@field Time number
+---@field Slot number
