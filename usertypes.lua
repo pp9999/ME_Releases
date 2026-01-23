@@ -264,3 +264,10 @@
 ---@field EInfo2 number
 ---@field Time number
 ---@field Slot number
+
+---@class Varbit
+---@field id number
+---@field varp number
+---@field startBit number
+---@field endBit number
+---@field domain number

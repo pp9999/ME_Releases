@@ -4737,6 +4737,14 @@ function API.GetVarbitValue(id)
 	return GetVarbitValue(id)
 end
 
+
+--- Takes the top level varp ID and returns all of the associated varbit objects for that Varp
+---@param id number varp ID
+---@return table|Varbit
+function API.GetVarbitsFromVarp(id)
+	return GetVarbitsFromVarp(id)
+end
+
 --- Represents the SOC class.
 ---@class SOC
 SOC = SOC
