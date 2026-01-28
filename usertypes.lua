@@ -17,6 +17,7 @@
 ---@field x number
 ---@field y number
 ---@field z number
+---@field fromLocal fun(localX: number, localY: number, plane: number): WPOINT -- Convert local coords (0-63) to world coords
 
 ---@class FFPOINT
 ---@field x number

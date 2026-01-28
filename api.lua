@@ -2459,6 +2459,12 @@ function API.PlayerRegion()
 	return PlayerRegion()
 end
 
+--- Check if player is in an instanced area (x >= 6400 or y >= 6400)
+---@return boolean
+function API.InInstancedArea()
+	return InInstancedArea()
+end
+
 ---@param x1 number
 ---@param y1 number
 ---@param x2 number
