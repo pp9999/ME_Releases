@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.069
+API.VERSION = 1.070
 
 --[[
 Known shortcuts
@@ -1727,8 +1727,9 @@ end
 
 ---@param GetCombatData boolean if true get hp and name
 ---@return Target_data
-function API.ReadTargetInfo(GetCombatData)
-	return ReadTargetInfo(GetCombatData)
+function API.ReadTargetInfo99(GetCombatData)
+GetCombatData = GetCombatData or true
+	return ReadTargetInfo99(GetCombatData)
 end
 
 ---@return AllObject
