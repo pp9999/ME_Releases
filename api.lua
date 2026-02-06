@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.070
+API.VERSION = 1.071
 
 --[[
 Known shortcuts
@@ -112,502 +112,6 @@ API.I_buffb = I_buffb
 --- checks if bool is true. it is now always enabled so means nothing now. IsCacheLoaded check is more sensible nows
 ---@return boolean
 API.CacheEnabled = CacheEnabled
-
--------osrs test-------------------
-
----Sleep ticks
-function API.OSRS_SleepTick(count)
-	return OSRS_SleepTick(count)
-end
-
----Random empty action
-function API.OSRS_DoAction_Empty()
-	return OSRS_DoAction_Empty()
-end
-
---actions for npcs
---[[
-//9 talk
-//10 attack
-//11 pickpock or trade/rewards/bank
-//12 collect
-//13 ask
-]]--
----@param id number look from all debug NPC[1]
----@param operation number Look from doaction debug
----@param distance number distance from localplayer
----@return boolean
-function API.OSRS_DoAction_NPC(id,operation,distance)
-	return OSRS_DoAction_NPC(id,operation,distance)
-end
-
---actions for other players
---[[
-]]--
----@param id number look from all debug
----@param operation number Look from doaction debug
----@param distance number distance from localplayer
----@return boolean
-function API.OSRS_DoAction_Player(id,operation,distance)
-	return OSRS_DoAction_Player(id,operation,distance)
-end
-
---[[
-//4 use
-//5 collect
-]]--
----@param id number look from all debug [12]
----@param operation number Look from doaction debug
----@param distance number distance from localplayer
----@return boolean
-function API.OSRS_DoAction_DOBJ(id,operation,distance)
-	return OSRS_DoAction_DOBJ(id,operation,distance)
-end
-
---[[
-//20 take
-//21 light
-]]--
----@param id number look from all debug [3]
----@param operation number Look from doaction debug
----@param distance number distance from localplayer
----@return boolean
-function API.OSRS_DoAction_GI(id,operation,distance)
-	return OSRS_DoAction_GI(id,operation,distance)
-end
-
---[[
-]]--
----@param id1 number
----@param id2 number
----@param id3 number
----@param operation number
----@param menu number
----@param x number
----@param y number
----@param itemid number somehas some dont
----@return boolean
-function API.OSRS_DoAction_Interface(id1,id2,id3,operation,menu,x,y,itemid)
-	return OSRS_DoAction_Interface(id1,id2,id3,operation,menu,x,y,itemid)
-end
-
----@param Tile WPOINT Global tile
----@return boolean
-function API.OSRS_DoAction_Tile(Tile)
-	return OSRS_DoAction_Tile(Tile)
-end
-
----@return number
-function API.OSRS_GetHPoints()
-	return OSRS_GetHPoints()
-end
-
----@return number
-function API.OSRS_GetPrayPoints()
-	return OSRS_GetPrayPoints()
-end
-
----@return number
-function API.OSRS_GetHPointPerc()
-	return OSRS_GetHPointPerc()
-end
-
----@return number
-function API.OSRS_GetPrayPointsPerc()
-	return OSRS_GetPrayPointsPerc()
-end
-
----@return number
-function API.OSRS_GetRunEnergy()
-	return OSRS_GetRunEnergy()
-end
-
----@return boolean
-function API.OSRS_GetRunEnergyStatus()
-	return OSRS_GetRunEnergyStatus()
-end
-
----@return number
-function API.OSRS_GetSpecialEnergy()
-	return OSRS_GetSpecialEnergy()
-end
-
----@return boolean
-function API.OSRS_GetQuickPrayStatus()
-	return OSRS_GetQuickPrayStatus()
-end
-
----@return boolean
-function API.OSRS_DoQuickPray()
-	return OSRS_DoQuickPray()
-end
-
----@return boolean
-function API.OSRS_DoRunEnergy()
-	return OSRS_DoRunEnergy()
-end
-
----@return boolean
-function API.OSRS_DoSpecialAttack()
-	return OSRS_DoSpecialAttack()
-end
-
---[[
-1	Thick Skin
-4	Burst of Strength
-7	Clarity of Thought
-8	Sharp Eye
-9	Mystic Will
-10	Rock Skin
-13	Superhuman Strength
-16	Improved Reflexes
-19	Rapid Restore
-22	Rapid Heal
-25	Protect Item
-26	Hawk Eye
-27	Mystic Lore
-28	Steel Skin
-31	Ultimate Strength
-34	Incredible Reflexes
-37	Protect from Magic
-40	Protect from Missiles
-43	Protect from Melee
-44	Eagle Eye
-45	Mystic Might
-46	Retribution
-49	Redemption
-52	Smite
-55	Preserve
-60	Chivalry
-70	Piety
-74	Rigour
-77	Augury
-]]--
----@param praytocheck number
----@return boolean
-function API.OSRS_GetPrayProtect(praytocheck)
-	return OSRS_GetPrayProtect(praytocheck)
-end
-
----@param praytocheck number
----@return number
-function API.OSRS_DoPrayProtect(praytocheck)
-	return OSRS_DoPrayProtect(praytocheck)
-end
-
----@return number
-function API.OSRS_GetCurrentMenuOpen()
-	return OSRS_GetCurrentMenuOpen()
-end
-
---from 0-12 uses quick keys
----@param menunr number
----@return number
-function API.OSRS_OpenMenu(menunr)
-	return OSRS_OpenMenu(menunr)
-end
-
----@return table|IInfo
-function API.OSRS_ReadInvArrays()
-	return OSRS_ReadInvArrays()
-end
-
----@return table|IInfo
-function API.OSRS_ReadBankArrays()
-	return OSRS_ReadBankArrays()
-end
-
----@return table|IInfo
-function API.OSRS_ReadBankInvArrays()
-	return OSRS_ReadBankInvArrays()
-end
-
---check if loaded
----@return boolean
-function API.OSRS_GetBankOpenStatus()
-	return OSRS_GetBankOpenStatus()
-end
-
----@param items table|number
----@return table|IInfo
-function API.OSRS_GetBankItems(items)
-	return OSRS_GetBankItems(items)
-end
-
----@param items table|number
----@return table|IInfo
-function API.OSRS_GetBankItemsInv(items)
-	return OSRS_GetBankItemsInv(items)
-end
-
---check if items there
----@param items table|number
----@param minimalstack number item stack size
----@return boolean
-function API.OSRS_CheckBankItems(items,minimalstack)
-	return OSRS_CheckBankItems(items,minimalstack)
-end
-
---check if items there
----@param items table|number
----@param minimalstack number item stack size
----@return boolean
-function API.OSRS_CheckBankItemsInv(items,minimalstack)
-	return OSRS_CheckBankItemsInv(items,minimalstack)
-end
-
----@param item number
----@param op number
----@param menu number
----@return boolean
-function API.OSRS_DoBankItems(item,op,menu)
-	return OSRS_DoBankItems(item,op,menu)
-end
-
----@param item number
----@param op number
----@param menu number
----@return boolean
-function API.OSRS_DoBankItemsInv(item,op,menu)
-	return OSRS_DoBankItemsInv(item,op,menu)
-end
-
---get all found
----@param items table|number
----@return table|IInfo
-function API.OSRS_GetInventorys(items)
-	return OSRS_GetInventorys(items)
-end
-
---empty slots amount
----@return number
-function API.OSRS_GetInventoryEmptySlots()
-	return OSRS_GetInventoryEmptySlots()
-end
-
---full slots amount
----@return number
-function API.OSRS_GetInventoryFullSlots()
-	return OSRS_GetInventoryFullSlots()
-end
-
---get if full
----@return boolean
-function API.OSRS_GetInventoryFull()
-	return OSRS_GetInventoryFull()
-end
-
----@param items table|number
----@return IInfo
-function API.OSRS_GetInventory(items)
-	return OSRS_GetInventory(items)
-end
-
---check if items there
----@param items table|number
----@param minimalstack number item stack size
----@return boolean
-function API.OSRS_CheckInventory(items,minimalstack)
-	return OSRS_CheckInventory(items,minimalstack)
-end
-
----@param item number
----@param op number
----@param menu number
----@return boolean
-function API.OSRS_DoInventory(item,op,menu)
-	return OSRS_DoInventory(item,op,menu)
-end
-
---[[
-0 sara brews
-1 super restore
-2 bligthted super restore
-3 prayer restore
-4 sanfew
-5 antipoison
-6 attack
-7 strength
-8 defence
-9 magic
-10 ranged
-11 combset
-12 energy
-13 antifire
-14 aggro
-15 prayer regen
-]]--
----@param pottype number
----@return boolean
-function API.OSRS_DoDrinkpot(pottype)
-	return OSRS_DoDrinkpot(pottype)
-end
-
----@param howmanytickstosleep number
----@return void
-function API.howmanytickstosleep(howmanytickstosleep)
-	return howmanytickstosleep(howmanytickstosleep)
-end
-
---this is for preparing for a fight, pot up
----@param boostset boolean
----@param antipoison boolean
----@param antifire boolean
----@param magic boolean
----@param range boolean
----@return boolean
-function API.OSRS_DoDrinkpotboost(boostset,antipoison,antifire,magic,range)
-	return OSRS_DoDrinkpotboost(boostset,antipoison,antifire,magic,range)
-end
-
---common foods, eat 1 lowest food
----@return boolean
-function API.OSRS_DoEatFoods()
-	return OSRS_DoEatFoods()
-end
-
---common foods + pot type from list, generally meant for food + brew
----@param pottype number
----@return boolean
-function API.OSRS_DoEatFoodsPot(pottype)
-	return OSRS_DoEatFoodsPot(pottype)
-end
-
---common foods + pot type from list, generally meant for food + brew + karambwan
----@param pottype number
----@return boolean
-function API.OSRS_DoEatFoodsPotKarabwan(pottype)
-	return OSRS_DoEatFoodsPotKarabwan(pottype)
-end
-
---common foods + pot type from list, generally meant for brew + karambwan
----@param pottype number
----@return boolean
-function API.OSRS_DoEatPotKarabwan(pottype)
-	return OSRS_DoEatPotKarabwan(pottype)
-end
-
----@return number
-function API.OSRS_ReadPlayerAnim()
-	return OSRS_ReadPlayerAnim()
-end
-
----@param Loops number
----@return boolean
-function API.OSRS_CheckAnim(Loops)
-	return OSRS_CheckAnim(Loops)
-end
-
----@return boolean
-function API.OSRS_ReadPlayerMov()
-	return OSRS_ReadPlayerMov()
-end
-
---player has health bar if he is attacked, has target if is attacking
----@param hashealthbar boolean
----@param hastarget boolean
----@return boolean
-function API.OSRS_ReadPlayerCombat(hashealthbar,hastarget)
-	return OSRS_ReadPlayerCombat(hashealthbar,hastarget)
-end
-
---readinfo about target, only there if u have a target
----@return boolean
-function API.OSRS_ReadPlayerCombatTarget()
-	return OSRS_ReadPlayerCombatTarget()
-end
-
---only for old login
---read player name in loginscreen, name must be visible,
----@return string
-function API.OSRS_ReadUsername()
-	return OSRS_ReadUsername()
-end
-
---only for old login
---write name, direclty onto memory
----@param name string
----@return boolean
-function API.OSRS_WriteUsername(name)
-	return OSRS_WriteUsername(name)
-end
-
---only for old login
---write password, direclty onto memory
----@param pass string
----@return boolean
-function API.OSRS_WritePassword(pass)
-	return OSRS_WritePassword(pass)
-end
-
---0 Hide localplayer, 1 npc, 2 effects, 3 other players
--- @param type number 
--- @param state boolean 
-function API.OSRS_SetRenderPlayer(type,state)
-	return OSRS_SetRenderPlayer(type,state)
-end
-
------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- Get those from "Splats diagnosis"
 ---@param clear boolean clean array
@@ -5577,5 +5081,1123 @@ function Http:Post(url, jsonData, headers) end
 ---@param headers? string[] Optional array of header strings in "Name: Value" format.
 ---@return HttpResponse The response table with statusCode and body fields.
 function Http:Get(url, headers) end
+
+-------------------------------------------------------------------------------
+-- ImGui Direct Bindings
+-------------------------------------------------------------------------------
+-- These bindings expose Dear ImGui functions directly to Lua scripts.
+-- Use DrawImGui(function() ... end) to register a render callback, then call
+-- ImGui.Begin(), ImGui.Text(), ImGui.Button() etc. inside it.
+--
+-- Out-parameter pattern: widgets that modify a value return (changed, newValue).
+--   local changed, value = ImGui.Checkbox("Enable", myBool)
+--   if changed then myBool = value end
+--
+-- Example usage:
+--   local speed = 50.0
+--   local enabled = true
+--   DrawImGui(function()
+--       ImGui.Begin("My Window")
+--       ImGui.Text("Hello from Lua!")
+--       if ImGui.Button("Click Me") then print("clicked") end
+--       local c1, v1 = ImGui.SliderFloat("Speed", speed, 0, 100)
+--       if c1 then speed = v1 end
+--       local c2, v2 = ImGui.Checkbox("Enabled", enabled)
+--       if c2 then enabled = v2 end
+--       ImGui.End()
+--   end)
+-------------------------------------------------------------------------------
+
+if false then -- LuaDoc stubs for IDE autocompletion only; never executed at runtime
+
+---@class ImGui
+ImGui = ImGui
+
+--- Register a render callback. The function is called every frame.
+--- All ImGui calls must happen inside this callback.
+---@param func function The render callback function
+function DrawImGui(func) end
+
+--- Clears all registered render callbacks.
+function ClearRender() end
+
+-- ============================================================================
+-- Windows
+-- ============================================================================
+
+--- Begin a new window. Must be paired with ImGui.End().
+---@param name string Window title / ID
+---@param flags? number ImGuiWindowFlags (default 0)
+---@return boolean visible Whether the window content should be rendered (not collapsed/clipped)
+function ImGui.Begin(name, flags) end
+
+--- Begin a closable window. Returns open state and visibility.
+---@param name string Window title / ID
+---@param open boolean Whether the window is open (pass current state)
+---@param flags? number ImGuiWindowFlags (default 0)
+---@return boolean open Whether the window is still open (false if user closed it)
+---@return boolean visible Whether the window content should be rendered
+function ImGui.Begin(name, open, flags) end
+
+--- End the current window. Must match a Begin() call.
+function ImGui.End() end
+
+--- Begin a child region. Must be paired with EndChild().
+---@param id string Child region ID
+---@param sx? number Width (0 = auto)
+---@param sy? number Height (0 = auto)
+---@param child_flags? number ImGuiChildFlags (default 0)
+---@param window_flags? number ImGuiWindowFlags (default 0)
+---@return boolean visible
+function ImGui.BeginChild(id, sx, sy, child_flags, window_flags) end
+
+--- End the current child region.
+function ImGui.EndChild() end
+
+--- Set position of next window.
+---@param x number X position
+---@param y number Y position
+---@param cond? number ImGuiCond (default 0 = Always)
+---@param pivot_x? number Pivot X (0-1, default 0)
+---@param pivot_y? number Pivot Y (0-1, default 0)
+function ImGui.SetNextWindowPos(x, y, cond, pivot_x, pivot_y) end
+
+--- Set size of next window.
+---@param x number Width
+---@param y number Height
+---@param cond? number ImGuiCond (default 0 = Always)
+function ImGui.SetNextWindowSize(x, y, cond) end
+
+--- Set collapsed state of next window.
+---@param collapsed boolean
+---@param cond? number ImGuiCond (default 0)
+function ImGui.SetNextWindowCollapsed(collapsed, cond) end
+
+--- Set next window to be focused.
+function ImGui.SetNextWindowFocus() end
+
+--- Set background alpha of next window.
+---@param alpha number Alpha value (0.0 - 1.0)
+function ImGui.SetNextWindowBgAlpha(alpha) end
+
+--- Get current window position.
+---@return number x
+---@return number y
+function ImGui.GetWindowPos() end
+
+--- Get current window size.
+---@return number width
+---@return number height
+function ImGui.GetWindowSize() end
+
+--- Get current window width.
+---@return number
+function ImGui.GetWindowWidth() end
+
+--- Get current window height.
+---@return number
+function ImGui.GetWindowHeight() end
+
+--- Returns true if the current window is appearing (e.g. first frame).
+---@return boolean
+function ImGui.IsWindowAppearing() end
+
+--- Returns true if the current window is collapsed.
+---@return boolean
+function ImGui.IsWindowCollapsed() end
+
+--- Returns true if the current window is focused.
+---@param flags? number ImGuiFocusedFlags (default 0)
+---@return boolean
+function ImGui.IsWindowFocused(flags) end
+
+--- Returns true if the current window is hovered.
+---@param flags? number ImGuiHoveredFlags (default 0)
+---@return boolean
+function ImGui.IsWindowHovered(flags) end
+
+-- ============================================================================
+-- Text
+-- ============================================================================
+
+--- Display text (safe, no format string interpretation).
+---@param text string
+function ImGui.Text(text) end
+
+--- Display colored text.
+---@param r number Red (0-1)
+---@param g number Green (0-1)
+---@param b number Blue (0-1)
+---@param a number Alpha (0-1)
+---@param text string
+function ImGui.TextColored(r, g, b, a, text) end
+
+--- Display grayed-out (disabled) text.
+---@param text string
+function ImGui.TextDisabled(text) end
+
+--- Display text with word wrapping at the current content region width.
+---@param text string
+function ImGui.TextWrapped(text) end
+
+--- Display text+label aligned the same way as value+label widgets.
+---@param label string
+---@param text string
+function ImGui.LabelText(label, text) end
+
+--- Display text with a bullet point.
+---@param text string
+function ImGui.BulletText(text) end
+
+--- Display a horizontal separator line with text in the middle.
+---@param text string
+function ImGui.SeparatorText(text) end
+
+--- Display raw text without any formatting.
+---@param text string
+function ImGui.TextUnformatted(text) end
+
+-- ============================================================================
+-- Layout
+-- ============================================================================
+
+--- Draw a horizontal separator line.
+function ImGui.Separator() end
+
+--- Place next widget on the same line as the previous one.
+---@param offset_from_start_x? number Offset from region start (default 0)
+---@param spacing? number Spacing between items (default -1 = auto)
+function ImGui.SameLine(offset_from_start_x, spacing) end
+
+--- Undo a SameLine() or force a new line when in a horizontal layout.
+function ImGui.NewLine() end
+
+--- Add vertical spacing.
+function ImGui.Spacing() end
+
+--- Move content position to the right by indent_w or style.IndentSpacing.
+---@param indent_w? number (default 0 = use style.IndentSpacing)
+function ImGui.Indent(indent_w) end
+
+--- Move content position to the left.
+---@param indent_w? number (default 0 = use style.IndentSpacing)
+function ImGui.Unindent(indent_w) end
+
+--- Lock horizontal starting position. Must be paired with EndGroup().
+function ImGui.BeginGroup() end
+
+--- Unlock horizontal starting position + capture the whole group bounding box.
+function ImGui.EndGroup() end
+
+--- Vertically align upcoming text baseline to FramePadding.y.
+function ImGui.AlignTextToFramePadding() end
+
+--- Add an invisible item of given size for layout purposes.
+---@param sx number Width
+---@param sy number Height
+function ImGui.Dummy(sx, sy) end
+
+--- Get height of a line of text.
+---@return number
+function ImGui.GetTextLineHeight() end
+
+--- Get height of a line of text plus spacing.
+---@return number
+function ImGui.GetTextLineHeightWithSpacing() end
+
+--- Set cursor position (local to window).
+---@param x number
+---@param y number
+function ImGui.SetCursorPos(x, y) end
+
+--- Set cursor X position (local to window).
+---@param x number
+function ImGui.SetCursorPosX(x) end
+
+--- Set cursor Y position (local to window).
+---@param y number
+function ImGui.SetCursorPosY(y) end
+
+--- Get cursor position (local to window).
+---@return number x
+---@return number y
+function ImGui.GetCursorPos() end
+
+---@return number
+function ImGui.GetCursorPosX() end
+
+---@return number
+function ImGui.GetCursorPosY() end
+
+--- Get cursor position in screen coordinates.
+---@return number x
+---@return number y
+function ImGui.GetCursorScreenPos() end
+
+--- Set cursor position in screen coordinates.
+---@param x number
+---@param y number
+function ImGui.SetCursorScreenPos(x, y) end
+
+--- Get available content region size.
+---@return number width
+---@return number height
+function ImGui.GetContentRegionAvail() end
+
+-- ============================================================================
+-- Buttons & Basic Widgets
+-- ============================================================================
+
+--- A clickable button. Returns true when clicked.
+---@param label string Button text
+---@param sx? number Width (default 0 = auto)
+---@param sy? number Height (default 0 = auto)
+---@return boolean clicked
+function ImGui.Button(label, sx, sy) end
+
+--- A small button that fits within text flow.
+---@param label string
+---@return boolean clicked
+function ImGui.SmallButton(label) end
+
+--- A button without visible frame. Useful for custom hit regions.
+---@param id string Widget ID
+---@param sx number Width
+---@param sy number Height
+---@param flags? number ImGuiButtonFlags (default 0)
+---@return boolean clicked
+function ImGui.InvisibleButton(id, sx, sy, flags) end
+
+--- A button with an arrow glyph.
+---@param id string Widget ID
+---@param dir number ImGuiDir (0=Left, 1=Right, 2=Up, 3=Down)
+---@return boolean clicked
+function ImGui.ArrowButton(id, dir) end
+
+--- A checkbox. Returns (changed, newValue).
+---@param label string
+---@param value boolean Current value
+---@return boolean changed Whether the value changed this frame
+---@return boolean value The new value
+function ImGui.Checkbox(label, value) end
+
+--- A radio button group helper. Returns (changed, newValue).
+---@param label string
+---@param value number Current selected value
+---@param v_button number The value this button represents
+---@return boolean changed
+---@return number value
+function ImGui.RadioButton(label, value, v_button) end
+
+--- Display a progress bar.
+---@param fraction number Progress value (0.0 to 1.0)
+---@param sx? number Width (default -FLT_MIN = fill available)
+---@param sy? number Height (default 0 = auto)
+---@param overlay? string Optional overlay text
+function ImGui.ProgressBar(fraction, sx, sy, overlay) end
+
+--- Draw a small circle (bullet point).
+function ImGui.Bullet() end
+
+-- ============================================================================
+-- Input Widgets
+-- ============================================================================
+
+--- Single-line text input. Returns (changed, newText).
+---@param label string
+---@param text string Current text value
+---@param flags? number ImGuiInputTextFlags (default 0)
+---@return boolean changed
+---@return string text The new text value
+function ImGui.InputText(label, text, flags) end
+
+--- Multi-line text input. Returns (changed, newText).
+---@param label string
+---@param text string Current text value
+---@param sx? number Width (default 0)
+---@param sy? number Height (default 0)
+---@param flags? number ImGuiInputTextFlags (default 0)
+---@return boolean changed
+---@return string text
+function ImGui.InputTextMultiline(label, text, sx, sy, flags) end
+
+--- Single-line text input with a hint/placeholder. Returns (changed, newText).
+---@param label string
+---@param hint string Placeholder text shown when empty
+---@param text string Current text value
+---@param flags? number ImGuiInputTextFlags (default 0)
+---@return boolean changed
+---@return string text
+function ImGui.InputTextWithHint(label, hint, text, flags) end
+
+--- Integer input. Returns (changed, newValue).
+---@param label string
+---@param value number Current value
+---@param step? number Step amount (default 1)
+---@param step_fast? number Fast step amount (default 100)
+---@param flags? number ImGuiInputTextFlags (default 0)
+---@return boolean changed
+---@return number value
+function ImGui.InputInt(label, value, step, step_fast, flags) end
+
+--- Float input. Returns (changed, newValue).
+---@param label string
+---@param value number Current value
+---@param step? number Step amount (default 0)
+---@param step_fast? number Fast step amount (default 0)
+---@param format? string Display format (default "%.3f")
+---@param flags? number ImGuiInputTextFlags (default 0)
+---@return boolean changed
+---@return number value
+function ImGui.InputFloat(label, value, step, step_fast, format, flags) end
+
+--- Double input. Returns (changed, newValue).
+---@param label string
+---@param value number Current value
+---@param step? number Step amount (default 0)
+---@param step_fast? number Fast step amount (default 0)
+---@param format? string Display format (default "%.6f")
+---@param flags? number ImGuiInputTextFlags (default 0)
+---@return boolean changed
+---@return number value
+function ImGui.InputDouble(label, value, step, step_fast, format, flags) end
+
+--- Float2 input (table of 2 floats). Returns (changed, newTable).
+---@param label string
+---@param values table Table with 2 float values {v1, v2}
+---@param format? string Display format (default "%.3f")
+---@param flags? number ImGuiInputTextFlags (default 0)
+---@return boolean changed
+---@return table values
+function ImGui.InputFloat2(label, values, format, flags) end
+
+--- Int2 input (table of 2 ints). Returns (changed, newTable).
+---@param label string
+---@param values table Table with 2 int values {v1, v2}
+---@param flags? number ImGuiInputTextFlags (default 0)
+---@return boolean changed
+---@return table values
+function ImGui.InputInt2(label, values, flags) end
+
+-- ============================================================================
+-- Drag Widgets
+-- ============================================================================
+
+--- Drag integer input. Click and drag to change value. Returns (changed, newValue).
+---@param label string
+---@param value number Current value
+---@param speed? number Drag speed (default 1.0)
+---@param min? number Minimum value (default 0)
+---@param max? number Maximum value (default 0)
+---@param format? string Display format (default "%d")
+---@param flags? number ImGuiSliderFlags (default 0)
+---@return boolean changed
+---@return number value
+function ImGui.DragInt(label, value, speed, min, max, format, flags) end
+
+--- Drag float input. Click and drag to change value. Returns (changed, newValue).
+---@param label string
+---@param value number Current value
+---@param speed? number Drag speed (default 1.0)
+---@param min? number Minimum value (default 0)
+---@param max? number Maximum value (default 0)
+---@param format? string Display format (default "%.3f")
+---@param flags? number ImGuiSliderFlags (default 0)
+---@return boolean changed
+---@return number value
+function ImGui.DragFloat(label, value, speed, min, max, format, flags) end
+
+-- ============================================================================
+-- Slider Widgets
+-- ============================================================================
+
+--- Integer slider. Returns (changed, newValue).
+---@param label string
+---@param value number Current value
+---@param min number Minimum value
+---@param max number Maximum value
+---@param format? string Display format (default "%d")
+---@param flags? number ImGuiSliderFlags (default 0)
+---@return boolean changed
+---@return number value
+function ImGui.SliderInt(label, value, min, max, format, flags) end
+
+--- Float slider. Returns (changed, newValue).
+---@param label string
+---@param value number Current value
+---@param min number Minimum value
+---@param max number Maximum value
+---@param format? string Display format (default "%.3f")
+---@param flags? number ImGuiSliderFlags (default 0)
+---@return boolean changed
+---@return number value
+function ImGui.SliderFloat(label, value, min, max, format, flags) end
+
+--- Angle slider (value in radians, displayed in degrees). Returns (changed, newValue).
+---@param label string
+---@param v_rad number Current value in radians
+---@param min_deg? number Min degrees (default -360)
+---@param max_deg? number Max degrees (default +360)
+---@param format? string Display format (default "%.0f deg")
+---@param flags? number ImGuiSliderFlags (default 0)
+---@return boolean changed
+---@return number v_rad
+function ImGui.SliderAngle(label, v_rad, min_deg, max_deg, format, flags) end
+
+--- Vertical integer slider. Returns (changed, newValue).
+---@param label string
+---@param sx number Width
+---@param sy number Height
+---@param value number Current value
+---@param min number Minimum
+---@param max number Maximum
+---@param format? string Display format (default "%d")
+---@param flags? number ImGuiSliderFlags (default 0)
+---@return boolean changed
+---@return number value
+function ImGui.VSliderInt(label, sx, sy, value, min, max, format, flags) end
+
+--- Vertical float slider. Returns (changed, newValue).
+---@param label string
+---@param sx number Width
+---@param sy number Height
+---@param value number Current value
+---@param min number Minimum
+---@param max number Maximum
+---@param format? string Display format (default "%.3f")
+---@param flags? number ImGuiSliderFlags (default 0)
+---@return boolean changed
+---@return number value
+function ImGui.VSliderFloat(label, sx, sy, value, min, max, format, flags) end
+
+-- ============================================================================
+-- Color Widgets
+-- ============================================================================
+
+--- RGB color editor. Returns (changed, r, g, b).
+---@param label string
+---@param r number Red (0-1)
+---@param g number Green (0-1)
+---@param b number Blue (0-1)
+---@param flags? number ImGuiColorEditFlags (default 0)
+---@return boolean changed
+---@return number r
+---@return number g
+---@return number b
+function ImGui.ColorEdit3(label, r, g, b, flags) end
+
+--- RGBA color editor. Returns (changed, r, g, b, a).
+---@param label string
+---@param r number Red (0-1)
+---@param g number Green (0-1)
+---@param b number Blue (0-1)
+---@param a number Alpha (0-1)
+---@param flags? number ImGuiColorEditFlags (default 0)
+---@return boolean changed
+---@return number r
+---@return number g
+---@return number b
+---@return number a
+function ImGui.ColorEdit4(label, r, g, b, a, flags) end
+
+--- RGB color picker. Returns (changed, r, g, b).
+---@param label string
+---@param r number Red (0-1)
+---@param g number Green (0-1)
+---@param b number Blue (0-1)
+---@param flags? number ImGuiColorEditFlags (default 0)
+---@return boolean changed
+---@return number r
+---@return number g
+---@return number b
+function ImGui.ColorPicker3(label, r, g, b, flags) end
+
+--- RGBA color picker. Returns (changed, r, g, b, a).
+---@param label string
+---@param r number Red (0-1)
+---@param g number Green (0-1)
+---@param b number Blue (0-1)
+---@param a number Alpha (0-1)
+---@param flags? number ImGuiColorEditFlags (default 0)
+---@return boolean changed
+---@return number r
+---@return number g
+---@return number b
+---@return number a
+function ImGui.ColorPicker4(label, r, g, b, a, flags) end
+
+--- Display a color square button. Returns true when clicked.
+---@param desc_id string Widget ID
+---@param r number Red (0-1)
+---@param g number Green (0-1)
+---@param b number Blue (0-1)
+---@param a number Alpha (0-1)
+---@param flags? number ImGuiColorEditFlags (default 0)
+---@param sx? number Width (default 0)
+---@param sy? number Height (default 0)
+---@return boolean clicked
+function ImGui.ColorButton(desc_id, r, g, b, a, flags, sx, sy) end
+
+-- ============================================================================
+-- Combo / Selection
+-- ============================================================================
+
+--- Begin a combo box (manual item submission). Must be paired with EndCombo() when returns true.
+---@param label string
+---@param preview string Preview text shown when combo is closed
+---@param flags? number ImGuiComboFlags (default 0)
+---@return boolean open True if the combo popup is open
+function ImGui.BeginCombo(label, preview, flags) end
+
+--- End a combo box. Only call if BeginCombo() returned true.
+function ImGui.EndCombo() end
+
+--- Simple combo box from a Lua table of strings. Returns (changed, newIndex).
+--- Note: index is 0-based to match C++ ImGui convention.
+---@param label string
+---@param current number Current selected index (0-based)
+---@param items table Array of string items
+---@param max_height? number Max popup height in items (default -1 = use default)
+---@return boolean changed
+---@return number current The new selected index
+function ImGui.Combo(label, current, items, max_height) end
+
+--- Begin a list box. Must be paired with EndListBox() when returns true.
+---@param label string
+---@param sx? number Width (default 0)
+---@param sy? number Height (default 0)
+---@return boolean open
+function ImGui.BeginListBox(label, sx, sy) end
+
+--- End a list box. Only call if BeginListBox() returned true.
+function ImGui.EndListBox() end
+
+--- A selectable item. Returns true when clicked.
+---@param label string
+---@param selected? boolean Current selection state (default false)
+---@param flags? number ImGuiSelectableFlags (default 0)
+---@param sx? number Width (default 0)
+---@param sy? number Height (default 0)
+---@return boolean clicked
+function ImGui.Selectable(label, selected, flags, sx, sy) end
+
+-- ============================================================================
+-- Trees
+-- ============================================================================
+
+--- Begin a tree node. Returns true if open. Must call TreePop() if true.
+---@param label string
+---@return boolean open
+function ImGui.TreeNode(label) end
+
+--- Begin a tree node with flags. Returns true if open. Must call TreePop() if true.
+---@param label string
+---@param flags? number ImGuiTreeNodeFlags (default 0)
+---@return boolean open
+function ImGui.TreeNodeEx(label, flags) end
+
+--- Pop the current tree node. Only call if TreeNode/TreeNodeEx returned true.
+function ImGui.TreePop() end
+
+--- A collapsing header. Returns true when open.
+---@param label string
+---@param flags? number ImGuiTreeNodeFlags (default 0)
+---@return boolean open
+---@return boolean visible
+function ImGui.CollapsingHeader(label, flags) end
+
+--- A closable collapsing header. Returns (visible, open).
+---@param label string
+---@param open boolean Current open state
+---@param flags? number ImGuiTreeNodeFlags (default 0)
+---@return boolean visible Whether the header content is visible
+---@return boolean open Whether the header is still open
+function ImGui.CollapsingHeader(label, open, flags) end
+
+--- Set next TreeNode/CollapsingHeader open state.
+---@param is_open boolean
+---@param cond? number ImGuiCond (default 0)
+function ImGui.SetNextItemOpen(is_open, cond) end
+
+-- ============================================================================
+-- Tabs
+-- ============================================================================
+
+--- Begin a tab bar. Must be paired with EndTabBar().
+---@param id string Tab bar ID
+---@param flags? number ImGuiTabBarFlags (default 0)
+---@return boolean open
+function ImGui.BeginTabBar(id, flags) end
+
+--- End a tab bar. Only call if BeginTabBar() returned true.
+function ImGui.EndTabBar() end
+
+--- Begin a tab item. Must be paired with EndTabItem() when returns true.
+---@param label string Tab label
+---@param open? boolean Whether the tab has a close button (nil = no close button)
+---@param flags? number ImGuiTabItemFlags (default 0)
+---@return boolean selected Whether this tab is currently selected
+---@return boolean open Whether the tab is still open (relevant if close button shown)
+function ImGui.BeginTabItem(label, open, flags) end
+
+--- End a tab item. Only call if BeginTabItem() returned true.
+function ImGui.EndTabItem() end
+
+-- ============================================================================
+-- Tables
+-- ============================================================================
+
+--- Begin a table. Must be paired with EndTable() when returns true.
+---@param id string Table ID
+---@param columns number Number of columns
+---@param flags? number ImGuiTableFlags (default 0)
+---@param outer_sx? number Outer width (default 0)
+---@param outer_sy? number Outer height (default 0)
+---@param inner_width? number Inner width (default 0)
+---@return boolean open
+function ImGui.BeginTable(id, columns, flags, outer_sx, outer_sy, inner_width) end
+
+--- End a table. Only call if BeginTable() returned true.
+function ImGui.EndTable() end
+
+--- Advance to next row in a table.
+---@param flags? number ImGuiTableRowFlags (default 0)
+---@param min_row_height? number (default 0)
+function ImGui.TableNextRow(flags, min_row_height) end
+
+--- Advance to next column. Returns true if column is visible.
+---@return boolean visible
+function ImGui.TableNextColumn() end
+
+--- Set current column index.
+---@param column_index number
+---@return boolean visible
+function ImGui.TableSetColumnIndex(column_index) end
+
+--- Setup a column (call between BeginTable and first row).
+---@param label string Column header label
+---@param flags? number ImGuiTableColumnFlags (default 0)
+---@param init_width? number Initial width (default 0)
+---@param user_id? number User ID (default 0)
+function ImGui.TableSetupColumn(label, flags, init_width, user_id) end
+
+--- Submit all column headers row. Usually called after all TableSetupColumn() calls.
+function ImGui.TableHeadersRow() end
+
+--- Get number of columns in current table.
+---@return number
+function ImGui.TableGetColumnCount() end
+
+-- ============================================================================
+-- Menus
+-- ============================================================================
+
+--- Begin a menu bar inside the current window. Must be paired with EndMenuBar().
+--- Window must have ImGuiWindowFlags.MenuBar flag.
+---@return boolean open
+function ImGui.BeginMenuBar() end
+
+--- End a menu bar.
+function ImGui.EndMenuBar() end
+
+--- Begin a full-screen menu bar. Must be paired with EndMainMenuBar().
+---@return boolean open
+function ImGui.BeginMainMenuBar() end
+
+--- End the main menu bar.
+function ImGui.EndMainMenuBar() end
+
+--- Begin a sub-menu. Must be paired with EndMenu() when returns true.
+---@param label string Menu label
+---@param enabled? boolean Whether the menu is enabled (default true)
+---@return boolean open
+function ImGui.BeginMenu(label, enabled) end
+
+--- End a sub-menu.
+function ImGui.EndMenu() end
+
+--- A menu item. Returns true when activated.
+---@param label string
+---@param shortcut? string Shortcut text displayed on the right
+---@param selected? boolean Whether item shows a checkmark (default false)
+---@param enabled? boolean Whether item is enabled (default true)
+---@return boolean activated
+function ImGui.MenuItem(label, shortcut, selected, enabled) end
+
+-- ============================================================================
+-- Popups
+-- ============================================================================
+
+--- Open a popup by string ID (call in response to user action).
+---@param id string Popup ID
+---@param flags? number ImGuiPopupFlags (default 0)
+function ImGui.OpenPopup(id, flags) end
+
+--- Begin a popup. Must be paired with EndPopup() when returns true.
+---@param id string Popup ID
+---@param flags? number ImGuiWindowFlags (default 0)
+---@return boolean open
+function ImGui.BeginPopup(id, flags) end
+
+--- Begin a modal popup (blocks interaction with background). Must be paired with EndPopup().
+---@param name string Popup name/ID
+---@param flags? number ImGuiWindowFlags (default 0)
+---@return boolean open
+function ImGui.BeginPopupModal(name, flags) end
+
+--- End a popup. Only call if BeginPopup/BeginPopupModal returned true.
+function ImGui.EndPopup() end
+
+--- Open popup on right-click of the last item. Must be paired with EndPopup().
+---@param id? string Override popup ID
+---@param flags? number ImGuiPopupFlags (default 1 = right click)
+---@return boolean open
+function ImGui.BeginPopupContextItem(id, flags) end
+
+--- Open popup on right-click of the current window. Must be paired with EndPopup().
+---@param id? string Override popup ID
+---@param flags? number ImGuiPopupFlags (default 1 = right click)
+---@return boolean open
+function ImGui.BeginPopupContextWindow(id, flags) end
+
+--- Close the current popup.
+function ImGui.CloseCurrentPopup() end
+
+--- Check if a popup is open.
+---@param id string Popup ID
+---@param flags? number ImGuiPopupFlags (default 0)
+---@return boolean open
+function ImGui.IsPopupOpen(id, flags) end
+
+-- ============================================================================
+-- Tooltips
+-- ============================================================================
+
+--- Set a text tooltip for the preceding item (shortcut for BeginTooltip+Text+EndTooltip).
+---@param text string
+function ImGui.SetTooltip(text) end
+
+--- Begin a tooltip. Must be paired with EndTooltip().
+---@return boolean
+function ImGui.BeginTooltip() end
+
+--- End a tooltip.
+function ImGui.EndTooltip() end
+
+-- ============================================================================
+-- Item Status / Queries
+-- ============================================================================
+
+--- Is the last item hovered?
+---@param flags? number ImGuiHoveredFlags (default 0)
+---@return boolean
+function ImGui.IsItemHovered(flags) end
+
+--- Is the last item active (being clicked/held)?
+---@return boolean
+function ImGui.IsItemActive() end
+
+--- Is the last item focused (for keyboard/gamepad nav)?
+---@return boolean
+function ImGui.IsItemFocused() end
+
+--- Was the last item clicked?
+---@param button? number ImGuiMouseButton (default 0 = left)
+---@return boolean
+function ImGui.IsItemClicked(button) end
+
+--- Is the last item visible (not clipped)?
+---@return boolean
+function ImGui.IsItemVisible() end
+
+--- Was the last item value edited this frame?
+---@return boolean
+function ImGui.IsItemEdited() end
+
+--- Was the last item just made active?
+---@return boolean
+function ImGui.IsItemActivated() end
+
+--- Was the last item just made inactive?
+---@return boolean
+function ImGui.IsItemDeactivated() end
+
+--- Was the last item just made inactive and had its value changed?
+---@return boolean
+function ImGui.IsItemDeactivatedAfterEdit() end
+
+--- Get bounding rect min of the last item (screen space).
+---@return number x
+---@return number y
+function ImGui.GetItemRectMin() end
+
+--- Get bounding rect max of the last item (screen space).
+---@return number x
+---@return number y
+function ImGui.GetItemRectMax() end
+
+--- Get size of the last item.
+---@return number width
+---@return number height
+function ImGui.GetItemRectSize() end
+
+--- Make last item the default focused item in a window.
+function ImGui.SetItemDefaultFocus() end
+
+-- ============================================================================
+-- Style
+-- ============================================================================
+
+--- Push a color style override. Must be paired with PopStyleColor().
+---@param idx number ImGuiCol enum value
+---@param r number Red (0-1)
+---@param g number Green (0-1)
+---@param b number Blue (0-1)
+---@param a number Alpha (0-1)
+function ImGui.PushStyleColor(idx, r, g, b, a) end
+
+--- Pop color style overrides.
+---@param count? number Number to pop (default 1)
+function ImGui.PopStyleColor(count) end
+
+--- Push a float style variable override. Must be paired with PopStyleVar().
+--- Also supports ImVec2 style vars: ImGui.PushStyleVar(idx, x, y)
+---@param idx number ImGuiStyleVar enum value
+---@param val number Float value (or x for ImVec2 vars)
+---@param y? number Y value (for ImVec2 style vars)
+function ImGui.PushStyleVar(idx, val, y) end
+
+--- Pop style variable overrides.
+---@param count? number Number to pop (default 1)
+function ImGui.PopStyleVar(count) end
+
+--- Set width of upcoming items. -1 = use default, >0 = fixed width, <0 = align to right edge.
+---@param width number
+function ImGui.PushItemWidth(width) end
+
+--- Reset item width to default.
+function ImGui.PopItemWidth() end
+
+-- ============================================================================
+-- Mouse / Input Queries
+-- ============================================================================
+
+--- Is the mouse button currently held down?
+---@param button number ImGuiMouseButton (0=left, 1=right, 2=middle)
+---@return boolean
+function ImGui.IsMouseDown(button) end
+
+--- Was the mouse button clicked this frame?
+---@param button number ImGuiMouseButton
+---@param repeat_? boolean Allow repeated clicks when held (default false)
+---@return boolean
+function ImGui.IsMouseClicked(button, repeat_) end
+
+--- Was the mouse button double-clicked this frame?
+---@param button number ImGuiMouseButton
+---@return boolean
+function ImGui.IsMouseDoubleClicked(button) end
+
+--- Was the mouse button released this frame?
+---@param button number ImGuiMouseButton
+---@return boolean
+function ImGui.IsMouseReleased(button) end
+
+--- Is the mouse being dragged?
+---@param button number ImGuiMouseButton
+---@param lock_threshold? number Distance threshold (default -1 = use io default)
+---@return boolean
+function ImGui.IsMouseDragging(button, lock_threshold) end
+
+--- Get current mouse position.
+---@return number x
+---@return number y
+function ImGui.GetMousePos() end
+
+--- Get mouse drag delta since clicking.
+---@param button? number ImGuiMouseButton (default 0)
+---@param lock_threshold? number (default -1)
+---@return number dx
+---@return number dy
+function ImGui.GetMouseDragDelta(button, lock_threshold) end
+
+--- Reset the mouse drag delta.
+---@param button? number ImGuiMouseButton (default 0)
+function ImGui.ResetMouseDragDelta(button) end
+
+--- Is the key currently held down?
+---@param key number ImGuiKey value
+---@return boolean
+function ImGui.IsKeyDown(key) end
+
+--- Was the key pressed this frame?
+---@param key number ImGuiKey value
+---@param repeat_? boolean Allow repeated presses when held (default true)
+---@return boolean
+function ImGui.IsKeyPressed(key, repeat_) end
+
+--- Was the key released this frame?
+---@param key number ImGuiKey value
+---@return boolean
+function ImGui.IsKeyReleased(key) end
+
+-- ============================================================================
+-- Scroll
+-- ============================================================================
+
+--- Get horizontal scroll position.
+---@return number
+function ImGui.GetScrollX() end
+
+--- Get vertical scroll position.
+---@return number
+function ImGui.GetScrollY() end
+
+--- Set horizontal scroll position.
+---@param scroll_x number
+function ImGui.SetScrollX(scroll_x) end
+
+--- Set vertical scroll position.
+---@param scroll_y number
+function ImGui.SetScrollY(scroll_y) end
+
+--- Get maximum horizontal scroll.
+---@return number
+function ImGui.GetScrollMaxX() end
+
+--- Get maximum vertical scroll.
+---@return number
+function ImGui.GetScrollMaxY() end
+
+--- Adjust horizontal scroll to make current cursor position visible.
+---@param center_ratio? number (default 0.5)
+function ImGui.SetScrollHereX(center_ratio) end
+
+--- Adjust vertical scroll to make current cursor position visible.
+---@param center_ratio? number (default 0.5)
+function ImGui.SetScrollHereY(center_ratio) end
+
+-- ============================================================================
+-- Columns (legacy API, prefer Tables)
+-- ============================================================================
+
+--- Set up columns layout (legacy). Prefer using BeginTable/EndTable instead.
+---@param count? number Number of columns (default 1 = end columns)
+---@param id? string Columns ID
+---@param border? boolean Show column borders (default true)
+function ImGui.Columns(count, id, border) end
+
+--- Next column in legacy column layout.
+function ImGui.NextColumn() end
+
+--- Get current column index (legacy columns).
+---@return number
+function ImGui.GetColumnIndex() end
+
+--- Get column width (legacy columns).
+---@param column_index? number (default -1 = current)
+---@return number
+function ImGui.GetColumnWidth(column_index) end
+
+--- Set column width (legacy columns).
+---@param column_index number
+---@param width number
+function ImGui.SetColumnWidth(column_index, width) end
+
+--- Get column offset (legacy columns).
+---@param column_index? number (default -1 = current)
+---@return number
+function ImGui.GetColumnOffset(column_index) end
+
+--- Get number of columns (legacy columns).
+---@return number
+function ImGui.GetColumnsCount() end
+
+-- ============================================================================
+-- Plots
+-- ============================================================================
+
+--- Draw a line plot from a Lua table of floats.
+---@param label string
+---@param values table Array of float values
+---@param offset? number Starting index offset (default 0)
+---@param overlay? string Overlay text
+---@param scale_min? number Y-axis min (default FLT_MAX = auto)
+---@param scale_max? number Y-axis max (default FLT_MAX = auto)
+---@param sx? number Graph width (default 0 = fill)
+---@param sy? number Graph height (default 0 = auto)
+function ImGui.PlotLines(label, values, offset, overlay, scale_min, scale_max, sx, sy) end
+
+--- Draw a histogram from a Lua table of floats.
+---@param label string
+---@param values table Array of float values
+---@param offset? number Starting index offset (default 0)
+---@param overlay? string Overlay text
+---@param scale_min? number Y-axis min (default FLT_MAX = auto)
+---@param scale_max? number Y-axis max (default FLT_MAX = auto)
+---@param sx? number Graph width (default 0 = fill)
+---@param sy? number Graph height (default 0 = auto)
+function ImGui.PlotHistogram(label, values, offset, overlay, scale_min, scale_max, sx, sy) end
+
+-- ============================================================================
+-- ID Stack
+-- ============================================================================
+
+--- Push a string ID onto the ID stack. Must be paired with PopID().
+--- Useful to differentiate widgets with the same label.
+---@param id string|number String or integer ID
+function ImGui.PushID(id) end
+
+--- Pop the ID stack.
+function ImGui.PopID() end
+
+-- ============================================================================
+-- Utility
+-- ============================================================================
+
+--- Calculate text size in pixels.
+---@param text string
+---@param hide_after_double_hash? boolean (default false)
+---@param wrap_width? number (default -1 = no wrap)
+---@return number width
+---@return number height
+function ImGui.CalcTextSize(text, hide_after_double_hash, wrap_width) end
+
+--- Get current frame height (font size + frame padding).
+---@return number
+function ImGui.GetFrameHeight() end
+
+--- Get current frame height including spacing.
+---@return number
+function ImGui.GetFrameHeightWithSpacing() end
+
+end -- if false (LuaDoc stubs)
+
+-- ============================================================================
+-- ImGui Enum Constants
+-- ============================================================================
+-- All enums are available as global tables. Use bitwise OR (|) to combine flags.
+-- Examples:
+--   ImGui.Begin("My Window", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize)
+--   ImGui.PushStyleColor(ImGuiCol.Text, 1, 0, 0, 1)
+--
+-- Available enum tables:
+--   ImGuiWindowFlags      - Window behavior flags (NoTitleBar, NoResize, NoMove, etc.)
+--   ImGuiInputTextFlags   - Text input flags (CharsDecimal, ReadOnly, Password, etc.)
+--   ImGuiTreeNodeFlags    - Tree node flags (Selected, DefaultOpen, Leaf, Bullet, etc.)
+--   ImGuiSelectableFlags  - Selectable flags (SpanAllColumns, AllowDoubleClick, Disabled)
+--   ImGuiComboFlags       - Combo box flags (HeightSmall, HeightLarge, NoArrowButton, etc.)
+--   ImGuiTabBarFlags      - Tab bar flags (Reorderable, AutoSelectNewTabs, etc.)
+--   ImGuiTabItemFlags     - Tab item flags (UnsavedDocument, SetSelected, Leading, etc.)
+--   ImGuiTableFlags       - Table flags (Resizable, Borders, RowBg, ScrollX, ScrollY, etc.)
+--   ImGuiTableColumnFlags - Table column flags (WidthStretch, WidthFixed, NoSort, etc.)
+--   ImGuiColorEditFlags   - Color edit flags (NoAlpha, NoPicker, HDR, Float, etc.)
+--   ImGuiSliderFlags      - Slider/Drag flags (Logarithmic, NoInput, AlwaysClamp, etc.)
+--   ImGuiPopupFlags       - Popup flags (MouseButtonRight, NoReopen, AnyPopup, etc.)
+--   ImGuiCol              - Color indices for PushStyleColor (Text, WindowBg, Button, etc.)
+--   ImGuiStyleVar         - Style variable indices for PushStyleVar (Alpha, FramePadding, etc.)
+--   ImGuiDir              - Directions (None, Left, Right, Up, Down)
+--   ImGuiCond             - Conditions (Always, Once, FirstUseEver, Appearing)
+--   ImGuiMouseButton      - Mouse buttons (Left, Right, Middle)
 
 return API
