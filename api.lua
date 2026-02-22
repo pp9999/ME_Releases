@@ -4089,24 +4089,8 @@ function TickEvent.Register(callback) end
 ---@return number
 function TickEvent.GetCounter() end
 
----@class ItemData
----@field id number
----@field name string
----@field tradeable boolean
----@field category number Item Category ID, see some example IDs below
----@field ge_limit number Item limit for buying in GE
----@field high_alch number High alch value
----@field low_alch number Low alch value
----@field value number Item value
----@field stackable boolean if item is stackable or not
----@field bankable boolean if item is bankable or not
----@field alchable boolean if item is alchable or not
----@field noted boolean if the item is the noted version or not
----@field HasParam fun(self: ItemData, param: number|string): boolean @ Checks if item has a parameter by ID or name
----@field GetParam fun(self: ItemData, param: number): string|number @ Gets raw parameter value by ID 
----@field GetParamInt fun(self: ItemData, param: number): number @ Gets integer parameter value by ID
----@field GetParamString fun(self: ItemData, param: number): string @ Gets string parameter value by ID
----@field GetAllParams fun(self: ItemData): table<number, string|number> @ Gets table of all parameters
+---@class item
+Item = Item
 
 --[[
 Common Item Parameter Names (for HasParam):
@@ -4114,9 +4098,6 @@ Common Item Parameter Names (for HasParam):
 Usage:
   item:HasParam("bankable")   -- by param name
 ]]
-
----@class item
-Item = Item
 
 --- Accepts an item ID or name.
 ---@param item number|string The Item ID or Name of the item to search for
@@ -4210,29 +4191,6 @@ function Discord:SendEmbedEx(embed, mention) end
 
 ---@class Quest
 Quest = Quest
-
----@class SkillData
----@field id number
----@field level number
-
----@class QuestData
----@field id number
----@field name string
----@field list_name string alternative name seen in the sorting screen (often the same name, but not always)
----@field members boolean
----@field category number
----@field difficulty number
----@field points_reward number how many points received as an award for completing the quest
----@field points_required number how many quest points are required to start
----@field progress_start_bit number starting step number of quest
----@field progress_end_bit number final step number of quest
----@field progress_varbit number vb/varp for tracking progress (the :getProgess() function checks this for you)
----@field required_quests QuestData[] Returns a table of QuestData objects for the Quests that are required to start this quest
----@field required_skills SkillData[] Returns a table of SkillData objects providing the skill ID <> level required to start the quest
----@field getProgress function Returns the progress of the quest as a number
----@field isStarted function Returns true if the quest is started
----@field isComplete function Returns true if the quest is complete
----@field getVarbits function Returns a table of IDs, represting the varbit IDs linked to this Quest indirectly
 
 --- Accepts a quest ID or exact name.
 ---@param quest number|string The Quest ID or exact name to search for
@@ -4344,10 +4302,42 @@ function SOC:Client_Close(clear) end
 ---@return void
 function SOC:Server_Debug(onoff) end
 
+---@class Achievement
+Achievement = Achievement
 
+--- Accepts an Achievement ID OR exact name, returns AchievementData object
+---@param achievement number|string The Achievement ID or exact name to search for
+---@return AchievementData
+function Achievement:Get(achievement) end
 
+--- Returns all achievements as a table of AchievementData objects
+---@return AchievementData[]
+function Achievement:GetAll() end
 
+---@class Struct
+Struct = Struct
 
+--- Accepts a Struct ID, returns StructData object
+---@param id Number
+---@return StructData
+function Struct:Get(id) end
+
+--- Returns all structs as a table of StructData objects
+---@return StructData[]
+function Struct:GetAll() end
+
+---@class DBRow
+DBRow = DBRow
+
+--- Accepts a DBRow ID and returns a DBRowData object with parsed column data
+---@param id number The DBRow ID to look up
+---@return DBRowData
+function DBRow:Get(id) end
+
+--- Returns all DBRow entries belonging to a specific table ID
+---@param tableId number The table ID to filter by
+---@return DBRowData[]
+function DBRow:GetByTable(tableId) end
 
 ---- CAUTION THESE FUNCTIONS USE MOUSE ----
 ---- DEPRECATED FUNCTIONS ----
@@ -6199,5 +6189,198 @@ end -- if false (LuaDoc stubs)
 --   ImGuiDir              - Directions (None, Left, Right, Up, Down)
 --   ImGuiCond             - Conditions (Always, Once, FirstUseEver, Appearing)
 --   ImGuiMouseButton      - Mouse buttons (Left, Right, Middle)
+
+---@class Bank
+Bank = Bank
+
+--- Returns true if bank is open, false otherwise
+---@return boolean
+function Bank:IsOpen() end
+
+--- Returns true if the PIN interface is currently open, false otherwise. Can return a false positive is collection box is open
+---@return boolean
+function Bank:IsPINOpen() end
+
+--- Enters the provided 4-digit PIN into the bank's PIN entry interface
+---@param digit1 number
+---@param digit2 number
+---@param digit3 number
+---@param digit4 number
+---@return boolean
+function Bank:EnterPIN(digit1, digit2, digit3, digit4) end
+
+--- Checks if bank contains ALL of the requested item(s)
+---@param ItemID number|table Single item ID or table of item IDs
+---@return boolean
+function Bank:Contains(ItemID) end
+
+--- Checks if bank contains ANY of the requested item(s)
+---@param ItemID number|table Single item ID or table of item IDs
+---@return boolean
+function Bank:ContainsAny(ItemID) end
+
+--- Get the total amount of the requested item in the bank
+---@param ItemID number Item ID to count
+---@return number
+function Bank:GetItemAmount(ItemID) end
+
+--- Checks if the bank is currently set to note withdrawal mode
+---@return boolean
+function Bank:IsNoteModeEnabled() end
+
+--- Sets the bank withdrawal mode to noted or unnoted
+---@param enabled boolean True to enable note mode, false to disable
+---@return boolean
+function Bank:SetNoteMode(enabled) end
+
+--- Withdraws a specific amount of item(s) from the bank
+---@param ItemID number|table Single item ID or table of item IDs
+---@param amount number Amount to withdraw
+---@return boolean
+function Bank:Withdraw(ItemID, amount) end
+
+--- Withdraws all of the requested item(s) from the bank
+---@param ItemID number|table Single item ID or table of item IDs
+---@return boolean
+function Bank:WithdrawAll(ItemID) end
+
+--- Withdraws item(s) from the bank to your Beast of Burden
+---@param ItemID number|table Single item ID or table of item IDs
+---@param amount number Amount to withdraw
+---@return boolean
+function Bank:WithdrawToBoB(ItemID, amount) end
+
+--- Withdraws all of the requested item(s) from the bank to your Beast of Burden
+---@param ItemID number|table Single item ID or table of item IDs
+---@return boolean
+function Bank:WithdrawAllToBoB(ItemID) end
+
+--- Deposits a specific amount of item(s) to the bank
+---@param ItemID number|table Single item ID or table of item IDs
+---@param amount number Amount to deposit
+---@return boolean
+function Bank:Deposit(ItemID, amount) end
+
+--- Deposits all of the requested item(s) to the bank
+---@param ItemID number|table Single item ID or table of item IDs
+---@return boolean
+function Bank:DepositAll(ItemID) end
+
+--- Deposits your entire inventory into the bank
+---@return boolean
+function Bank:DepositInventory() end
+
+--- Deposits all equipped items into the bank
+---@return boolean
+function Bank:DepositEquipment() end
+
+--- Deposits your Beast of Burden's inventory into the bank
+---@return boolean
+function Bank:DepositSummon() end
+
+--- Deposits your money pouch into MY bank
+---@return boolean
+function Bank:DepositMoneyPouch() end
+
+--- Equips a specific amount of item(s) directly from the bank
+---@param ItemID number|table Single item ID or table of item IDs
+---@param amount number Amount to equip
+---@return boolean
+function Bank:Equip(ItemID, amount) end
+
+--- Equips all of the requested item(s) directly from the bank
+---@param ItemID number|table Single item ID or table of item IDs
+---@return boolean
+function Bank:EquipAll(ItemID) end
+
+--- Saves the current inventory setup to the specified preset slot
+---@param presetNumber number Preset slot to save to (1-18)
+---@return boolean
+function Bank:SavePreset(presetNumber) end
+
+--- Loads the specified preset
+---@param presetNumber number Preset slot to load (1-18)
+---@return boolean
+function Bank:LoadPreset(presetNumber) end
+
+--- Saves the current Beast of Burden preset
+---@return boolean
+function Bank:SaveSummonPreset() end
+
+--- Loads the Beast of Burden preset
+---@return boolean
+function Bank:LoadSummonPreset() end
+
+--- Deposits logs from wood boxes in your inventory into the bank
+---@return boolean
+function Bank:WoodBoxDepositLogs() end
+
+--- Deposits wood spirits from wood boxes in your inventory into the bank
+---@return boolean
+function Bank:WoodBoxDepositWoodSpirits() end
+
+--- Deposits ores from ore boxes in your inventory into the bank
+---@return boolean
+function Bank:OreBoxDepositOres() end
+
+--- Deposits stone spirits from ore boxes in your inventory into the bank
+---@return boolean
+function Bank:OreBoxDepositStoneSpirits() end
+
+--- Deposits soil from a soil box in your inventory into the bank
+---@return boolean
+function Bank:SoilBoxDepositSoil() end
+
+--- Returns true if the Deposit Box interface is currently open, false otherwise
+---@return boolean
+function Bank:DepositBoxIsOpen() end
+
+--- Deposits your entire inventory into a deposit box
+---@return boolean
+function Bank:DepositBoxDepositInventory() end
+
+--- Deposits all equipped items into a deposit box
+---@return boolean
+function Bank:DepositBoxDepositEquipment() end
+
+--- Deposits your Beast of Burden's inventory into a deposit box
+---@return boolean
+function Bank:DepositBoxDepositSummon() end
+
+--- Deposits your money pouch into MY deposit box
+---@return boolean
+function Bank:DepositBoxDepositMoneyPouch() end
+
+--- Deposits a specific amount of item(s) into a deposit box
+---@param ItemID number|table Single item ID or table of item IDs
+---@param amount number Amount to deposit (1, 5, or 10)
+---@return boolean
+function Bank:DepositBoxDeposit(ItemID, amount) end
+
+--- Deposits all of the requested item(s) into a deposit box
+---@param ItemID number|table Single item ID or table of item IDs
+---@return boolean
+function Bank:DepositBoxDepositAll(ItemID) end
+
+--- Returns true if the Collection Box interface is currently open, false otherwise. Can return a false positive if the PIN interface is open
+---@return boolean
+function Bank:CollectionBoxIsOpen() end
+
+--- Checks if there are any items to collect in the collection box
+---@return boolean
+function Bank:CollectionBoxHasItems() end
+
+--- Checks if a specific item is available to collect in the collection box
+---@param itemId number Item ID to search for
+---@return boolean
+function Bank:CollectionBoxContains(itemId) end
+
+--- Collects all items from the collection box to your inventory
+---@return boolean
+function Bank:CollectionBoxCollectToInventory() end
+
+--- Collects all items from the collection box to your bank
+---@return boolean
+function Bank:CollectionBoxCollectToBank() end
 
 return API

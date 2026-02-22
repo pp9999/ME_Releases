@@ -272,3 +272,70 @@
 ---@field startBit number
 ---@field endBit number
 ---@field domain number
+
+---@class SkillData
+---@field id number
+---@field level number
+
+---@class QuestData
+---@field id number
+---@field name string
+---@field list_name string alternative name seen in the sorting screen (often the same name, but not always)
+---@field members boolean
+---@field category number
+---@field difficulty number
+---@field points_reward number how many points received as an award for completing the quest
+---@field points_required number how many quest points are required to start
+---@field progress_start_bit number starting step number of quest
+---@field progress_end_bit number final step number of quest
+---@field progress_varbit number vb/varp for tracking progress (the :getProgess() function checks this for you)
+---@field required_quests QuestData[] Returns a table of QuestData objects for the Quests that are required to start this quest
+---@field required_skills SkillData[] Returns a table of SkillData objects providing the skill ID <> level required to start the quest
+---@field getProgress function Returns the progress of the quest as a number
+---@field isStarted function Returns true if the quest is started
+---@field isComplete function Returns true if the quest is complete
+---@field getVarbits function Returns a table of IDs, represting the varbit IDs linked to this Quest indirectly
+
+---@class ItemData
+---@field id number
+---@field name string
+---@field tradeable boolean
+---@field category number Item Category ID, see some example IDs below
+---@field ge_limit number Item limit for buying in GE
+---@field high_alch number High alch value
+---@field low_alch number Low alch value
+---@field value number Item value
+---@field stackable boolean if item is stackable or not
+---@field bankable boolean if item is bankable or not
+---@field alchable boolean if item is alchable or not
+---@field noted boolean if the item is the noted version or not
+---@field HasParam fun(self: ItemData, param: number|string): boolean @ Checks if item has a parameter by ID or name
+---@field GetParam fun(self: ItemData, param: number): string|number @ Gets raw parameter value by ID
+---@field GetParamInt fun(self: ItemData, param: number): number @ Gets integer parameter value by ID
+---@field GetParamString fun(self: ItemData, param: number): string @ Gets string parameter value by ID
+---@field GetAllParams fun(self: ItemData): table<number, string|number> @ Gets table of all parameters
+
+---@class AchievementData
+---@field id number
+---@field name string
+---@field description string
+---@field members boolean
+---@field category number
+---@field sub_category number
+---@field getProgress function Returns the progress of the Achievement as a number
+---@field isStarted function Returns true if the Achievement is started
+---@field isCompleted function Returns true if the Achievement is complete
+
+---@class StructData
+---@field id number
+---@field params table<string, string|number>
+---@field isCompleted function Returns true if the Achievement is complete
+
+---@class DBRowData
+---@field id number
+---@field tableId number
+---@field GetInt function Returns the first int value at column index, or default (0)
+---@field GetString function Returns the first string value at column index, or default ("")
+---@field GetIntArray function Returns all int values at column index as a table
+---@field GetStringArray function Returns all string values at column index as a table
+---@field GetColumnIds function Returns all column indices that have data
