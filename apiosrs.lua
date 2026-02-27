@@ -97,6 +97,23 @@ function APIOSRS.RL_OpenTab(tab)
 	return RL_OpenTab(tab)
 end
 
+function APIOSRS.RL_ClickWig(widgetid, spriteid, action, name, xoffset, rightside, yoffset, bottomside)
+	return RL_ClickWig(widgetid, spriteid, action, name, xoffset, rightside, yoffset, bottomside)
+end
+
+function APIOSRS.RL_ClickCloseBank()
+	return RL_ClickCloseBank()
+end
+
+function APIOSRS.RL_IsBankOpen()
+	return RL_IsBankOpen()
+end
+
+function APIOSRS.RL_ClickBankDepositAll()
+	return RL_ClickBankDepositAll()
+end
+
+
 
 
 

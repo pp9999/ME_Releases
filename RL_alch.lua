@@ -13,15 +13,22 @@ while API.Read_LoopyLoop() do
             API.RandomSleep2(2500, 100, 200)
         end
         if APIOSRS.RL_GetOpenTab() == 6 then
-            APIOSRS.RL_ClickSpellbook("High Level Alchemy",0)
-            print("high alch")
-            API.RandomSleep2(1500, 1000, 2000)
-            currenwrongtab = 0
+            if not APIOSRS.RL_IsWidgetSelected() then
+                APIOSRS.RL_ClickSpellbook("High Level Alchemy",0)
+                print("high alch")
+                API.RandomSleep2(1500, 1000, 2000)
+            else
+                APIOSRS.RL_OpenTab(3)
+                print("spell already selected")
+                API.RandomSleep2(2500, 1000, 2000)
+            end
         end
         if APIOSRS.RL_GetOpenTab() == 3 then
-            APIOSRS.RL_ClickEntity(93, itemtoalch )
-            print("clicking item")
-            API.RandomSleep2(1500, 1000, 2000)
+            if APIOSRS.RL_IsWidgetSelected() then
+                APIOSRS.RL_ClickEntity(93, itemtoalch )
+                print("clicking item")
+                API.RandomSleep2(1500, 1000, 2000)
+            end
         end
     end
     API.RandomSleep2(1700, 1777,12777)
