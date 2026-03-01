@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.071
+API.VERSION = 1.072
 
 --[[
 Known shortcuts
@@ -3508,14 +3508,32 @@ function GrandExchange:DelayOffset(offset) end
 ---@return ExchangeEntry ExchangeEntry data associated with the specified slot.
 function GrandExchange:GetSlotData(slot) end
 
+--[[
 --- Places an order in the Grand Exchange.
+--- NOTE: Use Queue() instead. PlaceOrder is deprecated and kept for backwards compatibility.
 ---@param type OrderType The type of order to place
 ---@param itemId number The ID of the item.
 ---@param itemName string The name of the item.
 ---@param price number The price of the item.
 ---@param quantity number The quantity of the item.
----@return boolean
-function GrandExchange:PlaceOrder(type, itemId, itemName, price, quantity) end
+---@return number Order ID if successful, -1 if item not found or on error.
+function GrandExchange:PlaceOrder(type, itemId, itemName, price, quantity)
+    return self:Queue(type, itemName, price, quantity)
+end
+--]]
+
+--- Queues a Grand Exchange order.
+--- Supports multiple overloads:
+--- - Queue(type, itemName, priceStr, quantity) - string price (e.g., "500" or "160%")
+--- - Queue(type, itemId, priceStr, quantity) - string price with item ID
+--- - Queue(type, itemName, price, quantity) - integer price
+--- - Queue(type, itemId, price, quantity) - integer price with item ID
+---@param type OrderType The type of order (BUY or SELL).
+---@param itemNameOrId string|number The item name (string) or item ID (number).
+---@param priceStrOrInt string|number The price as string (e.g., "500" or "160%") or integer.
+---@param quantity number The quantity to buy/sell.
+---@return number Order ID if successful, -1 if item not found or on error.
+function GrandExchange:Queue(type, itemNameOrId, priceStrOrInt, quantity) end
 
 --- Retrieves the data for all slots in the Grand Exchange.
 ---@return ExchangeEntry[] ExchangeEntry array containing the data for each slot.
@@ -6382,5 +6400,33 @@ function Bank:CollectionBoxCollectToInventory() end
 --- Collects all items from the collection box to your bank
 ---@return boolean
 function Bank:CollectionBoxCollectToBank() end
+
+--- World hopping utility
+---@class WorldHop
+WorldHop = WorldHop
+
+--- Hops to a world. If worldNum is 0 or omitted, hops to a random valid world.
+--- Works in both Lobby and In-Game.
+---@param worldNum? number Optional world number
+---@return boolean
+function WorldHop:Hop(worldNum) end
+
+--- Opens the world switcher interface.
+--- Works in both Lobby and In-Game.
+---@return boolean
+function WorldHop:Open() end
+
+--- Returns true if the world switcher interface is currently open.
+---@return boolean
+function WorldHop:IsOpen() end
+
+--- Returns the current world number.
+---@return number
+function WorldHop:GetCurrentWorld() end
+
+--- Returns a random valid world number.
+---@param membersOnly? boolean Optional, defaults to true
+---@return number
+function WorldHop:GetRandomWorld(membersOnly) end
 
 return API
