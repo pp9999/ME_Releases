@@ -8,6 +8,11 @@ local banks = { 26711 }--farm bank 26711
 local sleeps = { 5000, 10000, 20000 }
 local currentfail = 0
 while API.Read_LoopyLoop() do
+    currentfail = currentfail + 1
+    if currentfail > 4 then
+        print("Too many fails, stopping script")
+        API.Write_LoopyLoop(false)
+    end
     if APIOSRS.RL_GetOpenTab() ~= 3 then
         APIOSRS.RL_OpenTab(3)
         API.RandomSleep2(2500, 1000, 2000)
