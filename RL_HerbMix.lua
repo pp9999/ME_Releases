@@ -2,27 +2,54 @@ local API = require("api")
 local APIOSRS = require("apiosrs")
 
 
-local Vial_ = 99
-local Sec_ = 99
+local Vial_ = 227--vial 227
+local Sec_ = 259--irit 259
+local banks = { 26711 }--farm bank 26711
+local sleeps = { 5000, 10000, 20000 }
 local currentfail = 0
 while API.Read_LoopyLoop() do
-    if Inventory:Contains(Vial_) and Inventory:Contains(Sec_) then
-        if APIOSRS.RL_GetOpenTab() == 3 then
-                APIOSRS.RL_ClickEntity(93, {Vial_} )
-                print("mixing 1")
-                API.RandomSleep2(1500, 1000, 2000)
-                currentfail = 0
-            end
-            if APIOSRS.RL_IsWidgetSelected() then
-                APIOSRS.RL_ClickEntity(93, {Sec_} )
-                print("mixing 2")
-                API.RandomSleep2(1500, 1000, 2000)
+    if APIOSRS.RL_GetOpenTab() ~= 3 then
+        APIOSRS.RL_OpenTab(3)
+        API.RandomSleep2(2500, 1000, 2000)
+        print("Opening tab")
+    end
+    if Inventory:IsOpen() and Inventory:Contains(Vial_) and Inventory:Contains(Sec_) then
+            APIOSRS.RL_ClickEntity(93, {Vial_} )
+            print("mixing 1")
+            API.RandomSleep2(500, 1000, 2000)
+            currentfail = 0
+        if APIOSRS.RL_IsWidgetSelected() then
+            APIOSRS.RL_ClickEntity(93, {Sec_} )
+            print("mixing 2")
+            API.RandomSleep2(500, 1000, 2000)
+            API.KeyboardPress31(32, 40, 80)
+            API.RandomSleep2(sleeps[1], 1000, 2000)
         end
     else
-        print("banking")
-
-
-
+        print("Opening bank")
+        if not Bank:IsOpen() then
+            APIOSRS.RL_ClickEntity(0, banks, 2 )
+            API.RandomSleep2(2500, 1000, 2000)
+        end
+        if Bank:IsOpen() then
+            print("Bank open")
+            APIOSRS.RL_ClickBankDepositAll()
+            API.RandomSleep2(100, 1000, 2000)
+            if Bank:Contains(Vial_) and Bank:Contains(Sec_) then
+                print("Bank contains required items")
+                APIOSRS.RL_ClickEntity(95, {Vial_} )
+                API.RandomSleep2(100, 1000, 2000)
+                APIOSRS.RL_ClickEntity(95, {Sec_} )
+                API.RandomSleep2(500, 1000, 2000)
+                --if Inventory:Contains(Vial_) and Inventory:Contains(Sec_) then
+                    print("Closing bank")
+                    APIOSRS.RL_ClickCloseBank()
+                --end
+            else
+                print("out of supplies, stopping script")
+                API.Write_LoopyLoop(false)
+            end
+        end
     end
-    API.RandomSleep2(1700, 1777,12777)
+    API.RandomSleep2(4700, 1777,12777)
 end
