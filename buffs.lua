@@ -7,7 +7,7 @@ Buffs.BUFF.ABIL = {}
 Buffs.BUFF.ABIL.DealsDamageToSurroundingNPCsDamage = { name = "Deals damage to surrounding NPCs. Damage is increased with multiple stacks.", id = 30363 }
 Buffs.BUFF.ABIL.SplitSoul = { name = "Split Soul", id = 30126 }
 Buffs.BUFF.ABIL.GreaterFlurry = { name = "Greater Flurry", id = 841 }
-Buffs.BUFF.ABIL.Snipe = { name = "Snipe", id = 14246 }
+Buffs.BUFF.ABIL.Snipe = { name = "Snipe", id = 23729 }
 Buffs.BUFF.ABIL.RapidFire = { name = "Rapid Fire", id = 14250 }
 Buffs.BUFF.ABIL.Unload = { name = "Unload", id = 14253 }
 Buffs.BUFF.ABIL.Flurry = { name = "Flurry", id = 14214 }
@@ -64,13 +64,11 @@ Buffs.BUFF.ABIL.SpectralScythe = { name = "Spectral Scythe", id = 30084 }
 Buffs.BUFF.ABIL.InnerChaos = { name = "Inner Chaos", id = 20228 }
 Buffs.BUFF.ABIL.SwordOfEdicts = { name = "Sword of Edicts", id = 20229 }
 Buffs.BUFF.ABIL.CleansingAura = { name = "Cleansing Aura", id = 20229 }
-Buffs.BUFF.ABIL.IcyChillThresholdUltimateAndSpecial = { name = "Icy Chill: Threshold, ultimate and special abilities convert this into Icy Precision for 0.6s per stack.", id = 19116 }
-Buffs.BUFF.ABIL.IcyPrecisionBlocksConsumptionOfIcy = { name = "Icy Precision: Blocks consumption of Icy Chill and gives threshold, ultimate and special abilities +2% base damage and +2% hit chance per stack.", id = 19117 }
+Buffs.BUFF.ABIL.IcyChillAt10StacksNon = { name = "Icy Chill: At 10 stacks non-basic abilities convert this into Icy Precision for 9s.", id = 19116 }
+Buffs.BUFF.ABIL.IcyPrecisionBlocksConsumptionOfIcy = { name = "Icy Precision: Blocks consumption of Icy Chill and gives threshold, ultimate and special abilities +25% base damage and +25% hit chance.", id = 19117 }
 Buffs.BUFF.ABIL.AnimateDead = { name = "Animate Dead", id = 14764 }
 Buffs.BUFF.ABIL.GlacialEmbrace = { name = "Glacial Embrace", id = 14766 }
-Buffs.BUFF.ABIL.LesserConcentratedBlast = { name = "Lesser Concentrated Blast", id = 27509 }
 Buffs.BUFF.ABIL.BloodTithe = { name = "Blood Tithe", id = 14765 }
-Buffs.BUFF.ABIL.Ruin = { name = "Ruin", id = 14235 }
 Buffs.BUFF.ABIL.Divert = { name = "Divert", id = 15035 }
 Buffs.BUFF.ABIL.Cease = { name = "Cease", id = 15036 }
 Buffs.BUFF.ABIL.Instability = { name = "Instability", id = 51772 }
@@ -82,7 +80,7 @@ Buffs.BUFF.ABIL.SplinteringArrows = { name = "Splintering Arrows", id = 30332 }
 Buffs.BUFF.ABIL.GladiatorSRage = { name = "Gladiator's Rage", id = 52494 }
 Buffs.BUFF.ABIL.GreaterSunshine = { name = "Greater Sunshine", id = 20184 }
 Buffs.BUFF.ABIL.GreaterDeathSSwiftness = { name = "Greater Death's Swiftness", id = 20186 }
-Buffs.BUFF.ABIL.ChaosRoar = { name = "Chaos Roar", id = 20188 }
+Buffs.BUFF.ABIL.ChaosRoar = { name = "Chaos Roar", id = 21238 }
 Buffs.BUFF.ABIL.Flow = { name = "Flow", id = 27430 }
 Buffs.BUFF.ABIL.GreaterFlow = { name = "Greater Flow", id = 27432 }
 Buffs.BUFF.ABIL.TempestOfArmadyl = { name = "Tempest of Armadyl", id = 21777 }
@@ -114,6 +112,12 @@ Buffs.BUFF.ABIL.SoulReave = { name = "Soul Reave", id = 35069 }
 Buffs.BUFF.ABIL.SoulCrush = { name = "Soul Crush", id = 59354 }
 Buffs.BUFF.ABIL.EmbodimentOfLight = { name = "Embodiment of Light", id = 59336 }
 Buffs.BUFF.ABIL.PowerOfTheElderGods = { name = "Power of the Elder Gods", id = 59639 }
+Buffs.BUFF.ABIL.AnimaCharged = { name = "Anima Charged", id = 23725 }
+Buffs.BUFF.ABIL.BlastInfused = { name = "Blast Infused", id = 14239 }
+Buffs.BUFF.ABIL.Bloodlust = { name = "Bloodlust", id = 23876 }
+Buffs.BUFF.ABIL.Dismember = { name = "Dismember", id = 21239 }
+Buffs.BUFF.ABIL.SearingWinds = { name = "Searing Winds", id = 23877 }
+Buffs.BUFF.ABIL.ShadowImbued = { name = "Shadow Imbued", id = 31925 }
 
 Buffs.BUFF.COMBATBOOST = {}
 Buffs.BUFF.COMBATBOOST.AttackStatBoosted = { name = "Attack Stat Boosted", id = 25824 }
@@ -135,8 +139,8 @@ Buffs.BUFF.MISC.BerserkerSFury = { name = "Berserker's Fury - For all combat sty
 Buffs.BUFF.MISC.DeathWard = { name = "Death Ward - 5% damage reduction when your life points are below 50%; 10% damage reduction when they are below 25%", id = 10494 }
 Buffs.BUFF.MISC.ClanCupSessionActive = { name = "Clan Cup Session Active", id = 20709 }
 Buffs.BUFF.MISC.YouCurrentlyFeelEnergisedAndHastened = { name = "You currently feel energised and hastened.", id = 18818 }
-Buffs.BUFF.MISC.CastingGreaterBargeWillMakeYour = { name = "Casting greater barge will make your next melee combo ability instant and deal damage over time instead.", id = 840 }
-Buffs.BUFF.MISC.EndlessAssault = { name = "Endless Assault - Your next melee combo ability will be instant cast and deal damage over time to your opponent instead.", id = 14221 }
+Buffs.BUFF.MISC.CastingGreaterBargeWillMakeYour = { name = "Casting greater barge will make your next melee channelled ability instant and deal damage over time instead.", id = 840 }
+Buffs.BUFF.MISC.EndlessAssault = { name = "Endless Assault - Your next melee channelled ability will be instant cast and deal damage over time to your opponent instead.", id = 14221 }
 Buffs.BUFF.MISC.ReduceAllIncomingMeleeDamageBy = { name = "Reduce all incoming melee damage by 50%", id = 15486 }
 Buffs.BUFF.MISC.ReducesAllIncomingDamageBy25 = { name = "Reduces all incoming damage by 25% and 25% of incoming damage is reflected back to the attacker.", id = 34155 }
 Buffs.BUFF.MISC.PyroclasticShock = { name = "Pyroclastic Shock - You have been rapidly defrosted, gaining a huge adrenaline rush!", id = 389 }
@@ -152,7 +156,6 @@ Buffs.BUFF.MISC.Rampage = { name = "Rampage", id = 1377 }
 Buffs.BUFF.MISC.DraconicPrecision = { name = "Draconic Precision", id = 4587 }
 Buffs.BUFF.MISC.SoulSiphon = { name = "Soul Siphon", id = 26450 }
 Buffs.BUFF.MISC.MagicCriticalStrikesGenerateAnAdditional = { name = "Magic critical strikes generate an additional 8% adrenaline.", id = 33962 }
-Buffs.BUFF.MISC.MeleeCriticalStrikesGenerateAnAdditional = { name = "Melee critical strikes generate an additional 8% adrenaline.", id = 33962 }
 Buffs.BUFF.MISC.RangedCriticalStrikesGenerateAnAdditional = { name = "Ranged critical strikes generate an additional 8% adrenaline.", id = 33962 }
 Buffs.BUFF.MISC.YourNextMeleeAttackIsGuaranteed = { name = "Your next Melee attack is guaranteed to Critically Strike.", id = 842 }
 Buffs.BUFF.MISC.DivineProtection = { name = "Divine Protection", id = 33974 }
@@ -163,6 +166,7 @@ Buffs.BUFF.MISC.BlessingOfHet = { name = "Blessing of Het", id = 35065 }
 Buffs.BUFF.MISC.BlessingOfScabaras = { name = "Blessing of Scabaras", id = 35066 }
 Buffs.BUFF.MISC.Enlightened = { name = "Enlightened", id = 35067 }
 Buffs.BUFF.MISC.Ascension = { name = "Ascension", id = 35244 }
+Buffs.BUFF.MISC.MeleeBasicAbilitiesGenerate15x = { name = "Melee basic abilities generate 1.5x adrenaline<br>Regenerate 4.5% adrenaline every 0.6s.", id = 21363 }
 
 Buffs.BUFF.POTS = {}
 Buffs.BUFF.POTS.AdrenalineRenewal = { name = "Adrenaline renewal", id = 49079 }
@@ -406,13 +410,13 @@ Buffs.DEBUFF.ABIL.AbyssalParasite = { name = "Abyssal Parasite", id = 52931 }
 Buffs.DEBUFF.ABIL.Debilitated = { name = "Debilitated", id = 14226 }
 Buffs.DEBUFF.ABIL.FragmentationShot = { name = "Fragmentation Shot", id = 14247 }
 Buffs.DEBUFF.ABIL.IncendiaryShot = { name = "Incendiary Shot", id = 14252 }
-Buffs.DEBUFF.ABIL.Deadshot = { name = "Deadshot", id = 14254 }
-Buffs.DEBUFF.ABIL.Sever = { name = "Sever", id = 14209 }
+Buffs.DEBUFF.ABIL.Deadshot = { name = "Deadshot", id = 23730 }
+Buffs.DEBUFF.ABIL.AdaptiveStrike = { name = "Adaptive Strike", id = 21237 }
 Buffs.DEBUFF.ABIL.Slaughter = { name = "Slaughter", id = 14213 }
 Buffs.DEBUFF.ABIL.Massacre = { name = "Massacre", id = 14217 }
 Buffs.DEBUFF.ABIL.Pulverise = { name = "Pulverise", id = 14266 }
 Buffs.DEBUFF.ABIL.Provoke = { name = "Provoke", id = 14221 }
-Buffs.DEBUFF.ABIL.Combust = { name = "Combust", id = 14235 }
+Buffs.DEBUFF.ABIL.Combust = { name = "Combust", id = 23401 }
 Buffs.DEBUFF.ABIL.Confuse = { name = "Confuse", id = 14389 }
 Buffs.DEBUFF.ABIL.Weaken = { name = "Weaken", id = 14390 }
 Buffs.DEBUFF.ABIL.Curse = { name = "Curse", id = 14391 }
@@ -429,7 +433,6 @@ Buffs.DEBUFF.ABIL.YourVengeanceAbilityIsOnCooldown = { name = "Your Vengeance ab
 Buffs.DEBUFF.ABIL.FuryOfLeng = { name = "Fury of Leng - Each stack increases damage output by 1% and breaks through protection prayers by 0.25%", id = 842 }
 Buffs.DEBUFF.ABIL.EvolvingToxinIncreasesPoisonDamageTaken = { name = "Evolving Toxin: Increases poison damage taken by percentage displayed. After 30 seconds without an ability using a Bik arrow hitting the target, all stacks are removed.", id = 19118 }
 Buffs.DEBUFF.ABIL.FrostSurge = { name = "Frost Surge - Currently on cooldown.", id = 14766 }
-Buffs.DEBUFF.ABIL.Dismember = { name = "Dismember", id = 14255 }
 Buffs.DEBUFF.ABIL.SmokeCloud = { name = "Smoke Cloud", id = 14771 }
 Buffs.DEBUFF.ABIL.CroesusDeathspores = { name = "Croesus Deathspores", id = 52260 }
 Buffs.DEBUFF.ABIL.KerapacSFuryEachStackIncreases = { name = "Kerapac's Fury: Each stack increases damage output by 1% and breaks through protection prayers by 0.25%", id = 15145 }
@@ -453,6 +456,10 @@ Buffs.DEBUFF.ABIL.SunfallSlam = { name = "Sunfall Slam", id = 59350 }
 Buffs.DEBUFF.ABIL.Specialist = { name = "Specialist", id = 35242 }
 Buffs.DEBUFF.ABIL.Resurrection = { name = "Resurrection", id = 35240 }
 Buffs.DEBUFF.ABIL.Fishstabber = { name = "Fishstabber", id = 60101 }
+Buffs.DEBUFF.ABIL.Combusted = { name = "Combusted", id = 23401 }
+Buffs.DEBUFF.ABIL.Rend = { name = "Rend", id = 14211 }
+Buffs.DEBUFF.ABIL.Slaughter = { name = "Slaughter", id = 21362 }
+Buffs.DEBUFF.ABIL.Massacre = { name = "Massacre", id = 21296 }
 
 Buffs.DEBUFF.MISC = {}
 Buffs.DEBUFF.MISC.Stunned = { name = "Stunned", id = 26103 }
@@ -465,7 +472,7 @@ Buffs.DEBUFF.MISC.Frozen = { name = "Frozen", id = 14415 }
 Buffs.DEBUFF.MISC.CamelSandstorm = { name = "Camel Sandstorm - 5% reduced chance to hit", id = 36019 }
 Buffs.DEBUFF.MISC.Toxic = { name = "Toxic - a deadly venom flows through your veins dealing rapid damage.", id = 30722 }
 Buffs.DEBUFF.MISC.CavernChill = { name = "Cavern Chill", id = 8437 }
-Buffs.DEBUFF.MISC.Bleeding = { name = "Bleeding", id = 14255 }
+Buffs.DEBUFF.MISC.Bleeding = { name = "Bleeding", id = 21239 }
 Buffs.DEBUFF.MISC.ArmourBreak = { name = "Armour Break - Armour effectiveness is reduced by 1% per stack.", id = 9228 }
 Buffs.DEBUFF.MISC.YourPortentOfRestorationHasRecently = { name = "Your Portent of Restoration has recently activated, it'll activate again when off cooldown.", id = 29257 }
 Buffs.DEBUFF.MISC.YouAreUnableToUseOverhead = { name = "You are unable to use overhead protection prayers and deflection curses.", id = 26343 }
@@ -478,7 +485,7 @@ Buffs.DEBUFF.MISC.Corrosion = { name = "Corrosion", id = 9882 }
 Buffs.DEBUFF.MISC.Frostbite = { name = "Frostbite - You have been frozen to the core, reducing attack speed and movement speed.", id = 9881 }
 Buffs.DEBUFF.MISC.SearingPain = { name = "Searing Pain - The suffering is reducing your maximum life points.", id = 30721 }
 Buffs.DEBUFF.MISC.HeatingUp = { name = "Heating Up - You're hot enough to be able to damage TzKal-Zuk's spire!", id = 30721 }
-Buffs.DEBUFF.MISC.SavageWounds = { name = "Savage Wounds", id = 14255 }
+Buffs.DEBUFF.MISC.SavageWounds = { name = "Savage Wounds", id = 21239 }
 Buffs.DEBUFF.MISC.YourLacerationBootsEmpoweringEffectIs = { name = "Your laceration boots' empowering effect is on cooldown.", id = 14208 }
 Buffs.DEBUFF.MISC.Haunted = { name = "Haunted", id = 30212 }
 Buffs.DEBUFF.MISC.DeathMark = { name = "Death Mark", id = 30100 }

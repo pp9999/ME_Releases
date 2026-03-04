@@ -1,7 +1,6 @@
 local API = require("api")
 print("Run Lua port fish script afker.")
-API.TurnOffMrHasselhoff(true)
-API.Write_fake_mouse_do(true)
+
 while API.Read_LoopyLoop() do
     API.DoRandomEvents()
 
@@ -24,7 +23,7 @@ while API.Read_LoopyLoop() do
         API.RandomSleep2(5400, 1300, 400)
         API.KeyboardPress31(0x20, 30, 80)
         if not Inventory:Contains(1511) then
-            API.Write_LoopyLoop(false)
+            --API.Write_LoopyLoop(false)
         end
     end
 

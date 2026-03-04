@@ -78,10 +78,10 @@ Abilities.INCANTATION.Darkness = { name = "Darkness", id = 30700 }
 Abilities.INCANTATION.InvokeLordOfBones = { name = "Invoke Lord of Bones", id = 33147 }
 
 Abilities.MAGIC = {}
-Abilities.MAGIC.Wrack = { name = "Wrack", id = 11338 }
+Abilities.MAGIC.RunicCharge = { name = "Runic Charge", id = 23725 }
 Abilities.MAGIC.Impact = { name = "Impact", id = 14234 }
 Abilities.MAGIC.Chain = { name = "Chain", id = 15037 }
-Abilities.MAGIC.Combust = { name = "Combust", id = 14235 }
+Abilities.MAGIC.Combust = { name = "Combust", id = 23401 }
 Abilities.MAGIC.DragonBreath = { name = "Dragon Breath", id = 14236 }
 Abilities.MAGIC.Asphyxiate = { name = "Asphyxiate", id = 14237 }
 Abilities.MAGIC.Detonate = { name = "Detonate", id = 14238 }
@@ -99,11 +99,7 @@ Abilities.MAGIC.MagmaTempestAreaOfEffectDamage = { name = "Magma Tempest - Area 
 Abilities.MAGIC.CorruptionBlast = { name = "Corruption Blast", id = 19226 }
 Abilities.MAGIC.Shock = { name = "Shock", id = 33083 }
 Abilities.MAGIC.Horror = { name = "Horror", id = 33084 }
-Abilities.MAGIC.LesserCombust = { name = "Lesser Combust", id = 1573 }
-Abilities.MAGIC.LesserDragonBreath = { name = "Lesser Dragon Breath", id = 1577 }
-Abilities.MAGIC.LesserSonicWave = { name = "Lesser Sonic Wave", id = 27434 }
-Abilities.MAGIC.LesserConcentratedBlast = { name = "Lesser Concentrated Blast", id = 27509 }
-Abilities.MAGIC.WrackAndRuin = { name = "Wrack and Ruin", id = 13308 }
+Abilities.MAGIC.SanguineCharge = { name = "Sanguine Charge", id = 13308 }
 Abilities.MAGIC.GreaterChain = { name = "Greater Chain", id = 15038 }
 Abilities.MAGIC.GreaterConcentratedBlast = { name = "Greater Concentrated Blast", id = 13310 }
 Abilities.MAGIC.MagmaTempestTargeted = { name = "Magma Tempest (Targeted)", id = 15033 }
@@ -112,7 +108,19 @@ Abilities.MAGIC.TempestOfArmadyl = { name = "Tempest of Armadyl", id = 47055 }
 Abilities.MAGIC.GreaterSonicWave = { name = "Greater Sonic Wave", id = 27432 }
 
 Abilities.MELEE = {}
-Abilities.MELEE.Kick = { name = "Kick", id = 14256 }
+Abilities.MELEE.BladedDive = { name = "Bladed Dive", id = 30331 }
+Abilities.MELEE.GreaterFlurry = { name = "Greater Flurry", id = 841 }
+Abilities.MELEE.Slice = { name = "Slice", id = 14207 }
+Abilities.MELEE.Barge = { name = "Barge", id = 14208 }
+Abilities.MELEE.AdaptiveStrike = { name = "Adaptive Strike", id = 21237 }
+Abilities.MELEE.Smash = { name = "Smash", id = 14211 }
+Abilities.MELEE.Backhand = { name = "Backhand", id = 14212 }
+Abilities.MELEE.Slaughter = { name = "Slaughter", id = 14213 }
+Abilities.MELEE.Flurry = { name = "Flurry", id = 14214 }
+Abilities.MELEE.Hurricane = { name = "Hurricane", id = 14215 }
+Abilities.MELEE.Overpower = { name = "Overpower", id = 14216 }
+Abilities.MELEE.Massacre = { name = "Massacre", id = 14217 }
+Abilities.MELEE.MeteorStrike = { name = "Meteor Strike", id = 21363 }
 Abilities.MELEE.Punish = { name = "Punish", id = 14257 }
 Abilities.MELEE.Fury = { name = "Fury", id = 14258 }
 Abilities.MELEE.Decimate = { name = "Decimate", id = 14259 }
@@ -123,34 +131,26 @@ Abilities.MELEE.Destroy = { name = "Destroy", id = 14263 }
 Abilities.MELEE.Berserk = { name = "Berserk", id = 14264 }
 Abilities.MELEE.Frenzy = { name = "Frenzy", id = 14265 }
 Abilities.MELEE.Pulverise = { name = "Pulverise", id = 14266 }
-Abilities.MELEE.Stomp = { name = "Stomp", id = 22753 }
-Abilities.MELEE.GreaterFury = { name = "Greater Fury", id = 842 }
-Abilities.MELEE.LesserDismember = { name = "Lesser Dismember", id = 1576 }
-Abilities.MELEE.Dismember = { name = "Dismember", id = 14255 }
-Abilities.MELEE.ChaosRoar = { name = "Chaos Roar", id = 20188 }
-Abilities.MELEE.BladedDive = { name = "Bladed Dive", id = 30331 }
-Abilities.MELEE.GreaterFlurry = { name = "Greater Flurry", id = 841 }
-Abilities.MELEE.Slice = { name = "Slice", id = 14207 }
-Abilities.MELEE.Barge = { name = "Barge", id = 14208 }
-Abilities.MELEE.Sever = { name = "Sever", id = 14209 }
-Abilities.MELEE.Smash = { name = "Smash", id = 14211 }
-Abilities.MELEE.Backhand = { name = "Backhand", id = 14212 }
-Abilities.MELEE.Slaughter = { name = "Slaughter", id = 14213 }
-Abilities.MELEE.Flurry = { name = "Flurry", id = 14214 }
-Abilities.MELEE.Hurricane = { name = "Hurricane", id = 14215 }
-Abilities.MELEE.Overpower = { name = "Overpower", id = 14216 }
-Abilities.MELEE.Massacre = { name = "Massacre", id = 14217 }
-Abilities.MELEE.MeteorStrike = { name = "Meteor Strike", id = 14218 }
 Abilities.MELEE.BalancedStrike = { name = "Balanced Strike", id = 16548 }
 Abilities.MELEE.BloodTendrils = { name = "Blood Tendrils", id = 17500 }
-Abilities.MELEE.ForcefulBackhand = { name = "Forceful Backhand", id = 22752 }
 Abilities.MELEE.GreaterBarge = { name = "Greater Barge", id = 840 }
 Abilities.MELEE.GreaterFlurry = { name = "Greater Flurry", id = 841 }
-Abilities.MELEE.LesserSever = { name = "Lesser Sever", id = 1581 }
-Abilities.MELEE.LesserHavoc = { name = "Lesser Havoc", id = 1579 }
+Abilities.MELEE.GreaterFury = { name = "Greater Fury", id = 842 }
 Abilities.MELEE.Havoc = { name = "Havoc", id = 14210 }
-Abilities.MELEE.LesserSmash = { name = "Lesser Smash", id = 1583 }
-Abilities.MELEE.BasicNbspAttack = { name = "Basic<nbsp>Attack", id = 30015 }
+Abilities.MELEE.Dismember = { name = "Dismember", id = 21239 }
+Abilities.MELEE.ChaosRoar = { name = "Chaos Roar", id = 21238 }
+Abilities.MELEE.BasicNbspAttack = { name = "Basic<nbsp>Attack", id = 21235 }
+Abilities.MELEE.BasicNbspAttack = { name = "Basic<nbsp>Attack", id = 23399 }
+Abilities.MELEE.Rend = { name = "Rend", id = 14211 }
+Abilities.MELEE.Flurry = { name = "Flurry", id = 14214 }
+Abilities.MELEE.Flurry = { name = "Flurry", id = 14214 }
+Abilities.MELEE.Flurry = { name = "Flurry", id = 14214 }
+Abilities.MELEE.GreaterFlurry = { name = "Greater Flurry", id = 841 }
+Abilities.MELEE.GreaterFlurry = { name = "Greater Flurry", id = 841 }
+Abilities.MELEE.Hurricane = { name = "Hurricane", id = 14215 }
+Abilities.MELEE.Slaughter = { name = "Slaughter", id = 21362 }
+Abilities.MELEE.Massacre = { name = "Massacre", id = 21296 }
+Abilities.MELEE.Assault = { name = "Assault", id = 14261 }
 
 Abilities.MISC = {}
 Abilities.MISC.Escape = { name = "Escape", id = 14245 }
@@ -186,31 +186,28 @@ Abilities.NECRO.LivingDeath = { name = "Living Death", id = 30078 }
 Abilities.RANGE = {}
 Abilities.RANGE.GreaterDazingShot = { name = "Greater Dazing Shot", id = 30332 }
 Abilities.RANGE.SaltTheWound = { name = "Salt the Wound", id = 30334 }
-Abilities.RANGE.PiercingShot = { name = "Piercing Shot", id = 14243 }
+Abilities.RANGE.PiercingShot = { name = "Piercing Shot", id = 23727 }
 Abilities.RANGE.BindingShot = { name = "Binding Shot", id = 14244 }
-Abilities.RANGE.Snipe = { name = "Snipe", id = 14246 }
+Abilities.RANGE.Snipe = { name = "Snipe", id = 23729 }
 Abilities.RANGE.FragmentationShot = { name = "Fragmentation Shot", id = 14247 }
-Abilities.RANGE.Ricochet = { name = "Ricochet", id = 14248 }
-Abilities.RANGE.SnapShot = { name = "Snap Shot", id = 14249 }
+Abilities.RANGE.Ricochet = { name = "Ricochet", id = 23868 }
+Abilities.RANGE.SnapShot = { name = "Snap Shot", id = 23728 }
 Abilities.RANGE.RapidFire = { name = "Rapid Fire", id = 14250 }
 Abilities.RANGE.Bombardment = { name = "Bombardment", id = 14251 }
 Abilities.RANGE.IncendiaryShot = { name = "Incendiary Shot", id = 14252 }
 Abilities.RANGE.Unload = { name = "Unload", id = 14253 }
-Abilities.RANGE.Deadshot = { name = "Deadshot", id = 14254 }
+Abilities.RANGE.Deadshot = { name = "Deadshot", id = 23730 }
 Abilities.RANGE.DeathSSwiftness = { name = "Death's Swiftness", id = 20185 }
 Abilities.RANGE.DazingShot = { name = "Dazing Shot", id = 9316 }
-Abilities.RANGE.NeedleStrike = { name = "Needle Strike", id = 9315 }
 Abilities.RANGE.ShadowTendrils = { name = "Shadow Tendrils", id = 20914 }
-Abilities.RANGE.TightBindings = { name = "Tight Bindings", id = 22754 }
 Abilities.RANGE.CorruptionShot = { name = "Corruption Shot", id = 17255 }
 Abilities.RANGE.Demoralise = { name = "Demoralise", id = 33085 }
 Abilities.RANGE.Rout = { name = "Rout", id = 33086 }
-Abilities.RANGE.LesserSnipe = { name = "Lesser Snipe", id = 1599 }
-Abilities.RANGE.LesserFragmentationShot = { name = "Lesser Fragmentation Shot", id = 1578 }
-Abilities.RANGE.LesserDazingShot = { name = "Lesser Dazing Shot", id = 1575 }
-Abilities.RANGE.LesserNeedleStrike = { name = "Lesser Needle Strike", id = 1580 }
 Abilities.RANGE.GreaterRicochet = { name = "Greater Ricochet", id = 15039 }
 Abilities.RANGE.GreaterDeathSSwiftness = { name = "Greater Death's Swiftness", id = 20186 }
+Abilities.RANGE.BasicNbspAttack = { name = "Basic<nbsp>Attack", id = 23726 }
+Abilities.RANGE.ImbueShadows = { name = "Imbue: Shadows", id = 23761 }
+Abilities.RANGE.Galeshot = { name = "Galeshot", id = 23731 }
 
 Abilities.TELEPORT = {}
 Abilities.TELEPORT.BurthorpeLodestone = { name = "Burthorpe Lodestone", id = 31864 }

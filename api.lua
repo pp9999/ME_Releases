@@ -6401,4 +6401,32 @@ function Bank:CollectionBoxCollectToInventory() end
 ---@return boolean
 function Bank:CollectionBoxCollectToBank() end
 
+--- World hopping utility
+---@class WorldHop
+WorldHop = WorldHop
+
+--- Hops to a world. If worldNum is 0 or omitted, hops to a random valid world.
+--- Works in both Lobby and In-Game.
+---@param worldNum? number Optional world number
+---@return boolean
+function WorldHop:Hop(worldNum) end
+
+--- Opens the world switcher interface.
+--- Works in both Lobby and In-Game.
+---@return boolean
+function WorldHop:Open() end
+
+--- Returns true if the world switcher interface is currently open.
+---@return boolean
+function WorldHop:IsOpen() end
+
+--- Returns the current world number.
+---@return number
+function WorldHop:GetCurrentWorld() end
+
+--- Returns a random valid world number.
+---@param membersOnly? boolean Optional, defaults to true
+---@return number
+function WorldHop:GetRandomWorld(membersOnly) end
+
 return API
