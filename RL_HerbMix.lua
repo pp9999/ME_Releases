@@ -2,14 +2,25 @@ local API = require("api")
 local APIOSRS = require("apiosrs")
 
 
-local Vial_ = 227--vial 227
-local Sec_ = 259--irit 259
+local Vial_ = 101--vial 227, unf irit 101
+local Sec_ = 221--irit 259, eye of new 221
 local banks = { 26711 }--farm bank 26711
 local sleeps = { 5000, 10000, 20000 }
 local currentfail = 0
 while API.Read_LoopyLoop() do
+    
+    local countloops = 0
+    while API.ReadPlayerAnim() ~= -1 do
+        countloops = countloops + 1
+        if countloops > 50 then
+            print("Stuck in animation, stopping script")
+            API.Write_LoopyLoop(false)
+        end
+        API.RandomSleep2(200, 1000, 2000)
+    end
+
     currentfail = currentfail + 1
-    if currentfail > 4 then
+    if currentfail > 5 then
         print("Too many fails, stopping script")
         API.Write_LoopyLoop(false)
     end
