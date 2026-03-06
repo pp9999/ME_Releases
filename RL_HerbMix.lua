@@ -9,7 +9,7 @@ local sleeps = { 5000, 10000, 20000 }
 local currentfail = 0
 while API.Read_LoopyLoop() do
     currentfail = currentfail + 1
-    if currentfail > 4 then
+    if currentfail > 8 then
         print("Too many fails, stopping script")
         API.Write_LoopyLoop(false)
     end
