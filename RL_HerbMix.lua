@@ -20,7 +20,7 @@ while API.Read_LoopyLoop() do
     end
 
     currentfail = currentfail + 1
-    if currentfail > 4 then
+    if currentfail > 8 then
         print("Too many fails, stopping script")
         API.Write_LoopyLoop(false)
     end
