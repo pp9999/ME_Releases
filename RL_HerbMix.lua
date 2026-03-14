@@ -2,8 +2,8 @@ local API = require("api")
 local APIOSRS = require("apiosrs")
 
 --Grimy irit 209
-local Vial_ = 227 --vial 227, unf irit 101
-local Sec_ = 259 --irit 259, eye of new 221
+local Vial_ = 101 --vial 227, unf irit 101
+local Sec_ = 221 --irit 259, eye of new 221
 local banks = { 26711 } --farm bank 26711
 local sleeps = { 5000, 10000, 20000, 25000, 30000 }
 local currentfail = 0
