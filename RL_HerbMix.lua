@@ -10,7 +10,7 @@ local currentfail = 0
 while API.Read_LoopyLoop() do
     
     local countloops = 0
-    while API.ReadPlayerAnim() ~= -1 do
+    while API.ReadPlayerAnim() ~= -1 and API.Read_LoopyLoop() do
         countloops = countloops + 1
         if countloops > 50 then
             print("Stuck in animation, stopping script")
