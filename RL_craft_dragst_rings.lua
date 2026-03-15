@@ -22,6 +22,7 @@ end
 local main_stuff = 2357 -- gold/silver bar
 local second_stuff = 1615 -- gem
 local result_stuff = 1645 --
+local mold = 1592 --
 local banks = { 10355 } --
 local use_obj = { 16469 } --
 local sleeps = { 5000, 10000, 20000 }
@@ -62,7 +63,7 @@ while API.Read_LoopyLoop() do
         if Bank:IsOpen() then
             print("Bank open")
             --APIOSRS.RL_ClickBankDepositAll()
-            Bankdeposit(result_stuff)
+            APIOSRS.RL_ClickBankInvDepositAllExcept({mold})
             API.RandomSleep2(300, 1000, 2000)
             if Bank:Contains(main_stuff) and (second_stuff == 0 or Bank:Contains(second_stuff))  then
                 print("Bank contains required items")
@@ -71,8 +72,8 @@ while API.Read_LoopyLoop() do
                 APIOSRS.RL_ClickEntity(95, {second_stuff} )
                 currentfail = 0
                 API.RandomSleep2(300, 1000, 2000)
-                --print("Closing bank")
-                --APIOSRS.RL_ClickCloseBank()-- furnace visible without closing, zoomout and turn camera
+                print("Closing bank")
+                APIOSRS.RL_ClickCloseBank()-- furnace visible without closing, zoomout and turn camera, needs bit of work
             else
                 print("out of supplies, stopping script")
                 API.Write_LoopyLoop(false)
