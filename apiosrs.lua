@@ -14,6 +14,18 @@ APIOSRS.VERSION = 1.000
 --Few functions are mapped onto original api rest are missing. animation is
 --[[ some tested and working are:
 
+API.CheckAnim(10) -- checks if player is doing an animation, argument is delay in ms between checks, returns -1 if not animating and animation id if animating. not sure if it can be used to check for specific animations or just if player is doing something
+API.ReadPlayerAnim() -- checks if player is doing an animation, returns -1 if not animating and animation id if animating. not sure if it can be used to check for specific animations or just if player is doing something
+Inventory:IsOpen()
+Inventory:Contains(itemid)
+Bank:IsOpen()
+Bank:Contains(itemid)
+API.ReadPlayerMovin()
+Bank:InventoryContains(itemid)
+Bank:FindInventoryItemSlot(itemId)
+Bank:DepositInventory()
+Bank:DepositAll
+
 --]]
 
 
@@ -97,23 +109,30 @@ function APIOSRS.RL_OpenTab(tab)
 	return RL_OpenTab(tab)
 end
 
+--complex
 function APIOSRS.RL_ClickWig(widgetid, spriteid, action, name, xoffset, rightside, yoffset, bottomside)
 	return RL_ClickWig(widgetid, spriteid, action, name, xoffset, rightside, yoffset, bottomside)
 end
 
+--clicks x
 function APIOSRS.RL_ClickCloseBank()
 	return RL_ClickCloseBank()
 end
 
+--checks
 function APIOSRS.RL_IsBankOpen()
 	return RL_IsBankOpen()
 end
 
+--deposit all button
 function APIOSRS.RL_ClickBankDepositAll()
 	return RL_ClickBankDepositAll()
 end
 
-
+--deposit some items
+function APIOSRS.RL_ClickBankInvDepositAllExcept(items_not)
+	return RL_ClickBankInvDepositAllExcept(items_not)
+end
 
 
 
