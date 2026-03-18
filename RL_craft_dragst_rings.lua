@@ -19,10 +19,10 @@ local function Bankdeposit(stuff)
 end
 
 
-local main_stuff = 2357 -- gold/silver bar
-local second_stuff = 1605 -- gem
+local main_stuff = 2353 -- gold/silver bar
+local second_stuff = 0 -- gem
 local result_stuff = 1645 --
-local mold = 11065 -- amulet 1595, ring 1592, bracelet 11065
+local mold = 27012 -- amulet 1595, ring 1592, bracelet 11065
 local banks = { 10355 } --
 local use_obj = { 16469 } --
 local sleeps = { 5000, 10000, 20000 }
@@ -55,7 +55,7 @@ while API.Read_LoopyLoop() do
         print("Click furnace1")
         if (APIOSRS.RL_ClickEntity(0, use_obj, 25 )) then
             print("Click furnace2")
-            API.RandomSleep2(8500, 1000, 2000)
+            API.RandomSleep2(9000, 1000, 2000)
             API.KeyboardPress31(32, 40, 80)--select item manually before using
             API.RandomSleep2(2500, 1000, 2000)
         end
