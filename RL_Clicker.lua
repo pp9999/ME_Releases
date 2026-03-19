@@ -15,10 +15,10 @@ while API.Read_LoopyLoop() do
         end
         API.RandomSleep2(200, 1000, 2000)
     end
-
-    API.RandomSleep2(2000, 1000, 2000)
-    APIOSRS.RL_ClickEntity(1, NPCs, 8 )
-    API.RandomSleep2(2000, 1000, 2000)
-
+    if API.ReadPlayerMovin() then
+        API.RandomSleep2(2000, 1000, 2000)
+        APIOSRS.RL_ClickEntity(1, NPCs, 8 )
+        API.RandomSleep2(2000, 1000, 2000)
+    end
     API.RandomSleep2(4700, 1777,12777)
 end
