@@ -304,5 +304,7 @@ Abilities.TELEPORT.MountainCampTeleport = { name = "Mountain Camp Teleport", id 
 Abilities.TELEPORT.NorthWesternAnachroniaTeleport = { name = "North-western Anachronia Teleport", id = 10370 }
 Abilities.TELEPORT.EasternAnachroniaTeleport = { name = "Eastern Anachronia Teleport", id = 10369 }
 Abilities.TELEPORT.NorthernLostGroveTeleport = { name = "Northern Lost Grove Teleport", id = 11316 }
+Abilities.TELEPORT.WendlewickLodestone = { name = "Wendlewick Lodestone", id = 35667 }
+Abilities.TELEPORT.WendlewickTeleport = { name = "Wendlewick Teleport", id = 35665 }
 
 return Abilities

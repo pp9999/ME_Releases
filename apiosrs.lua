@@ -134,6 +134,70 @@ function APIOSRS.RL_ClickBankInvDepositAllExcept(items_not)
 	return RL_ClickBankInvDepositAllExcept(items_not)
 end
 
+-- @return boolean
+function APIOSRS.RL_IsQuickPrayerActive()
+	return RL_IsQuickPrayerActive()
+end
+
+-- @return boolean
+function APIOSRS.RL_IsInWilderness()
+	return RL_IsInWilderness()
+end
+
+-- @return boolean
+function APIOSRS.RL_IsPoisoned()
+	return RL_IsPoisoned()
+end
+
+-- @return boolean
+function APIOSRS.RL_IsProtectFromMagic()
+	return RL_IsProtectFromMagic()
+end
+
+-- @return boolean
+function APIOSRS.RL_IsProtectFromMelee()
+	return RL_IsProtectFromMelee()
+end
+
+-- @return boolean
+function APIOSRS.RL_IsProtectFromMissiles()
+	return RL_IsProtectFromMissiles()
+end
+
+-- Wintertodt kill timer countdown (varbit 7980)
+-- @return number
+function APIOSRS.RL_GetWintertodtTimer()
+	return RL_GetWintertodtTimer()
+end
+
+-- Wintertodt warmth/brazier heat level (varbit 11434)
+-- @return number
+function APIOSRS.RL_GetWintertodtWarmth()
+	return RL_GetWintertodtWarmth()
+end
+
+-- Query any varbit by ID at runtime.
+-- See: https://static.runelite.net/runelite-api/apidocs/net/runelite/api/Varbits.html
+-- @param varbitId number
+-- @return number  raw varbit value, or -1 on failure
+function APIOSRS.Rl_GetVarbit(varbitId)
+	return Rl_GetVarbit(varbitId)
+end
+
+https://static.runelite.net/runelite-api/apidocs/constant-values.html#net.runelite.api.SpriteID
+--UNUSED_PRAYER_PROTECT_FROM_SUMMONING	944
+-- draws a sprite above the local player's head
+-- @param spriteId number
+function APIOSRS.RL_DrawSpriteHead(spriteId)
+	return RL_DrawSpriteHead(spriteId)
+end
+
+-- draws sprites at a list of world positions
+-- @param spriteTargets WPOINT[] where WPOINT is x = coord x, y = coord y, z = spriteId
+function APIOSRS.RL_DrawSprites(spriteTargets)
+	return RL_DrawSprites(spriteTargets)
+end
+
 
 
 

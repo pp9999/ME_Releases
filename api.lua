@@ -563,6 +563,13 @@ function API.JsonDecode(jsonString)
 	return JsonDecode(jsonString)
 end
 
+--- get member expiry unix timestamp
+--- only works in lobby
+--- @return number timestamp in seconds
+function API.MemberExpiry()
+	return MemberExpiry()
+end
+
 --- check
 ---@return boolean
 function API.IsMember()
@@ -3413,6 +3420,14 @@ function API.ClearLog()
 	return ClearLog()
 end
 
+---Saves console log to file
+---@param filename? string Optional filename, defaults to console_log_YYYY-MM-DD_HH-MM-SS.txt
+---@param clearAfterSave? boolean Clear console after saving, defaults to false
+---@return boolean success
+function API.SaveConsoleToFile(filename, clearAfterSave)
+	return SaveConsoleToFile(filename or "", clearAfterSave or false)
+end
+
 ---@return TrackedSkill -- vector<TrackedSkill>
 function API.GetTrackedSkills()
 	return GetTrackedSkills()
@@ -3639,6 +3654,10 @@ Inventory = Inventory
 --- Checks whether the Inventory interface is currently open.
 ---@return boolean true if the Inventory is open, false otherwise.
 function Inventory:IsOpen() end
+
+--- Checks whether the Inventory array is null (i.e. does not contain exactly 28 slots).
+---@return boolean true if the Inventory array is null or unexpected size, false otherwise.
+function Inventory:IsArrayNull() end
 
 --- Checks whether the Inventory is full.
 ---@return boolean true if the Inventory is full, false otherwise.

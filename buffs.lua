@@ -65,7 +65,7 @@ Buffs.BUFF.ABIL.InnerChaos = { name = "Inner Chaos", id = 20228 }
 Buffs.BUFF.ABIL.SwordOfEdicts = { name = "Sword of Edicts", id = 20229 }
 Buffs.BUFF.ABIL.CleansingAura = { name = "Cleansing Aura", id = 20229 }
 Buffs.BUFF.ABIL.IcyChillAt10StacksNon = { name = "Icy Chill: At 10 stacks non-basic abilities convert this into Icy Precision for 9s.", id = 19116 }
-Buffs.BUFF.ABIL.IcyPrecisionBlocksConsumptionOfIcy = { name = "Icy Precision: Blocks consumption of Icy Chill and gives threshold, ultimate and special abilities +25% base damage and +25% hit chance.", id = 19117 }
+Buffs.BUFF.ABIL.IcyPrecisionBlocksConsumptionOfIcy = { name = "Icy Precision: Blocks consumption of Icy Chill and gives threshold, ultimate and special abilities +30% base damage and +30% hit chance.", id = 19117 }
 Buffs.BUFF.ABIL.AnimateDead = { name = "Animate Dead", id = 14764 }
 Buffs.BUFF.ABIL.GlacialEmbrace = { name = "Glacial Embrace", id = 14766 }
 Buffs.BUFF.ABIL.BloodTithe = { name = "Blood Tithe", id = 14765 }
@@ -167,6 +167,15 @@ Buffs.BUFF.MISC.BlessingOfScabaras = { name = "Blessing of Scabaras", id = 35066
 Buffs.BUFF.MISC.Enlightened = { name = "Enlightened", id = 35067 }
 Buffs.BUFF.MISC.Ascension = { name = "Ascension", id = 35244 }
 Buffs.BUFF.MISC.MeleeBasicAbilitiesGenerate15x = { name = "Melee basic abilities generate 1.5x adrenaline<br>Regenerate 4.5% adrenaline every 0.6s.", id = 21363 }
+Buffs.BUFF.MISC.StrongestPoison = { name = "Strongest poison - Verdite moth", id = 60749 }
+Buffs.BUFF.MISC.StrongestPoison = { name = "Strongest poison - Lazurite moth", id = 60750 }
+Buffs.BUFF.MISC.StrongestPoison = { name = "Strongest poison - Purpurite moth", id = 60751 }
+Buffs.BUFF.MISC.StrongestPoison = { name = "Strongest poison - Green spikes", id = 60752 }
+Buffs.BUFF.MISC.StrongestPoison = { name = "Strongest poison - Blue spikes", id = 60753 }
+Buffs.BUFF.MISC.StrongestPoison = { name = "Strongest poison - Purple spikes", id = 60754 }
+Buffs.BUFF.MISC.SugiliteMoth = { name = "Sugilite moth", id = 60700 }
+Buffs.BUFF.MISC.CalciteMoth = { name = "Calcite moth", id = 60702 }
+Buffs.BUFF.MISC.AzuriteMoth = { name = "Azurite moth", id = 60704 }
 
 Buffs.BUFF.POTS = {}
 Buffs.BUFF.POTS.AdrenalineRenewal = { name = "Adrenaline renewal", id = 49079 }
@@ -239,6 +248,7 @@ Buffs.BUFF.POTS.AutomaticallyCol0x00ffffSmashPumpkinsCol = { name = "Automatical
 Buffs.BUFF.POTS.AgilityPotionActive = { name = "Agility Potion Active - increases your Agility level temporarily.", id = 3034 }
 Buffs.BUFF.POTS.CraftingPotionActive = { name = "Crafting Potion Active - increases your Crafting level temporarily.", id = 14840 }
 Buffs.BUFF.POTS.SuperMiningPotionActive = { name = "Super Mining Potion Active - increases your Mining level temporarily.", id = 52452 }
+Buffs.BUFF.POTS.AntisanguineActive = { name = "Antisanguine Active", id = 60424 }
 
 Buffs.BUFF.PRAYERS = {}
 Buffs.BUFF.PRAYERS.ThickSkin = { name = "Thick Skin", id = 25947 }
