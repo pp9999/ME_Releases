@@ -12,35 +12,45 @@ local brazier_burning = 29314
 local brazier_light = 29312
 local brazier_broken = 29313;
 local near_brazier = FFPOINT.new(1639, 3996, 0)
+local foods = { 329, 20702, 20701, 20700, 20699  } --add foods here
 while API.Read_LoopyLoop() do
-    print("RL_GetWintertodtTimer:" .. tostring(APIOSRS.RL_GetWintertodtTimer()))
-    print("RL_GetWintertodtWarmth:" .. tostring(APIOSRS.RL_GetWintertodtWarmth()))
-
-    if API.Dist_FLP(near_brazier) < 3 then
-        if Inventory:Contains(bruma_root) or Inventory:Contains(bruma_kindling) then
-            if APIOSRS.RL_ClickEntity(0, {brazier_light} , 4) then
-                print("light")
-                API.RandomSleep2(300, 1000, 2000)
-            end
+    --print("RL_GetWintertodtTimer:" .. tostring(APIOSRS.RL_GetWintertodtTimer()))
+    --print("RL_GetWintertodtWarmth:" .. tostring(APIOSRS.RL_GetWintertodtWarmth()))
+    if APIOSRS.RL_GetWintertodtTimer() == 0 then-- 0 game is going on
+        if APIOSRS.RL_GetWintertodtWarmth() < 600 then
+            APIOSRS.RL_ClickEntity(93, foods)
+            API.RandomSleep2(300, 1000, 2000)
         end
-        if Inventory:Contains(hammer) then
-            if APIOSRS.RL_ClickEntity(0, {brazier_broken} , 4) then
-                print("repair")
-                API.RandomSleep2(300, 1000, 2000)
+        if API.Dist_FLP(near_brazier) < 3 then
+            --if Inventory:Contains(bruma_root) or Inventory:Contains(bruma_kindling) then
+                if APIOSRS.RL_ClickEntity(0, {brazier_light} , 4) then
+                    print("light")
+                    API.RandomSleep2(300, 500, 2000)
+                end
+            --end
+            if Inventory:Contains(hammer) then
+                if APIOSRS.RL_ClickEntity(0, {brazier_broken} , 4) then
+                    print("repair")
+                    API.RandomSleep2(300, 500, 2000)
+                end
             end
-        end
-        if (not API.CheckAnim(30) and not API.ReadPlayerMovin()) then
-            if Inventory:Contains(bruma_root) and Inventory:Contains(knife) then
-                APIOSRS.RL_ClickEntity(93, {knife})
-                API.RandomSleep2(300, 500, 2000)
-                APIOSRS.RL_ClickEntity(93, {bruma_root})
-                print("Fletching")
-                API.RandomSleep2(500, 1000, 2000)
-            end
-            if Inventory:Contains(bruma_kindling) and not Inventory:Contains(bruma_root) then
-                APIOSRS.RL_ClickEntity(0, {brazier_burning} , 4)
-                print("Feeding fire")
-                API.RandomSleep2(500, 1000, 2000)
+            if (not API.CheckAnim(30)) then
+                if Inventory:Contains(bruma_root) and Inventory:Contains(knife) then
+                    APIOSRS.RL_ClickEntity(93, {knife})
+                    API.RandomSleep2(300, 500, 2000)
+                    if APIOSRS.RL_IsWidgetSelected() then
+                        APIOSRS.RL_ClickEntity(93, {bruma_root})
+                        print("Fletching")
+                        API.RandomSleep2(500, 1000, 2000)
+                    else
+                        print("Failed to select knife")
+                    end
+                end
+                if Inventory:Contains(bruma_kindling) and not Inventory:Contains(bruma_root) then
+                    APIOSRS.RL_ClickEntity(0, {brazier_burning} , 4)
+                    print("Feeding fire")
+                    API.RandomSleep2(500, 1000, 2000)
+                end
             end
         end
     end
@@ -48,6 +58,5 @@ while API.Read_LoopyLoop() do
 
 
 
-
-    API.RandomSleep2(1700, 1777,10777)
+    API.RandomSleep2(900, 1777,10777)
 end
