@@ -339,3 +339,16 @@
 ---@field GetIntArray function Returns all int values at column index as a table
 ---@field GetStringArray function Returns all string values at column index as a table
 ---@field GetColumnIds function Returns all column indices that have data
+
+---@class LootOptions
+---@field allowStackablesAlreadyHeld boolean Loot stackables already in inventory (default: false)
+---@field allowCoins boolean Loot coins even if not in ids (default: false)
+---@field coinMinAmount number Minimum coin stack size (default: 300)
+---@field sleepOffset number Global sleep offset in ms (default: 500)
+---@field maxItemsToLoot number Max items to loot, 0=unlimited (default: 0)
+---@field useLootAll boolean Allow loot-all optimization (default: true)
+---@field lootAmmoSlot boolean Auto-loot items matching equipped ammo slot (default: false)
+---@field useKeybindToOpen boolean Use keybind to attempt to open loot window (default: false)
+---@field keybindVK number Virtual key code for keybind (e.g., 0x24 for Delete)
+---@field lootAllWhenFull boolean Use loot-all when inventory full with stackables (default: false)
+---@field debug boolean Extra debug logging (default: false)

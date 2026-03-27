@@ -2708,6 +2708,31 @@ function API.DoAction_Loot_w_Close()
 	return DoAction_Loot_w_Close()
 end
 
+---LootOptions table for DoAction_Loot_o (defined in usertypes.lua)
+---@type LootOptions
+
+---Usage:
+--- 1. Defaults only: API.DoAction_Loot_o({123}, 20, API.PlayerCoordfloat(), 20)
+--- 2. Pass options per-call:
+---    API.DoAction_Loot_o({123, 888}, 20, API.PlayerCoordfloat(), 20, {allowCoins = true})
+--- 3. Define table once and reuse:
+--	   ---@type LootOptions
+---    local lootOpts = {allowCoins = true, maxItemCount = 5}
+---    API.DoAction_Loot_o({123, 888}, 20, API.PlayerCoordfloat(), 20, lootOpts)
+
+---@param ids table|number Item ids to loot
+---@param maxdistance number Maximum distance from player
+---@param tile FFPOINT Center tile (use API.PlayerCoordfloat() for player position)
+---@param radius number Max distance from center tile (float)
+---@param opts LootOptions|table|nil Optional configuration (table or LootOptions object)
+---@return boolean
+function API.DoAction_Loot_o(ids, maxdistance, tile, radius, opts)
+	if opts then
+		return DoAction_Loot_o(ids, maxdistance, tile, radius, opts)
+	end
+	return DoAction_Loot_o(ids, maxdistance, tile, radius)
+end
+
 ---@param action number
 ---@param offset number
 ---@param obj table|number
