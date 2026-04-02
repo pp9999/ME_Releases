@@ -75,6 +75,7 @@ Buffs.BUFF.ABIL.Instability = { name = "Instability", id = 51772 }
 Buffs.BUFF.ABIL.TimeRift = { name = "Time rift", id = 15146 }
 Buffs.BUFF.ABIL.GreaterConcentratedBlast = { name = "Greater Concentrated Blast", id = 13310 }
 Buffs.BUFF.ABIL.FeastingSpores = { name = "Feasting Spores", id = 52303 }
+Buffs.BUFF.ABIL.ChannelledMight = { name = "Channelled Might", id = 17606 }
 Buffs.BUFF.ABIL.SheerCold = { name = "Sheer Cold", id = 15922 }
 Buffs.BUFF.ABIL.SplinteringArrows = { name = "Splintering Arrows", id = 30332 }
 Buffs.BUFF.ABIL.GladiatorSRage = { name = "Gladiator's Rage", id = 52494 }
@@ -110,7 +111,6 @@ Buffs.BUFF.ABIL.SurgingStorm = { name = "Surging Storm", id = 34997 }
 Buffs.BUFF.ABIL.FlameboundRival = { name = "Flamebound Rival", id = 34998 }
 Buffs.BUFF.ABIL.SoulReave = { name = "Soul Reave", id = 35069 }
 Buffs.BUFF.ABIL.SoulCrush = { name = "Soul Crush", id = 59354 }
-Buffs.BUFF.ABIL.EmbodimentOfLight = { name = "Embodiment of Light", id = 59336 }
 Buffs.BUFF.ABIL.PowerOfTheElderGods = { name = "Power of the Elder Gods", id = 59639 }
 Buffs.BUFF.ABIL.AnimaCharged = { name = "Anima Charged", id = 23725 }
 Buffs.BUFF.ABIL.BlastInfused = { name = "Blast Infused", id = 14239 }
