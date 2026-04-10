@@ -3404,7 +3404,7 @@ end
 
 ---@param obj table|string
 ---@param maxdistance number
----@param checkcombat boolean
+---@param checkcombat boolean -- attacks everyone in Combat if true, if false only in not in combat players
 ---@param xstart number
 ---@param xend number
 ---@param ystart number
@@ -3872,6 +3872,11 @@ function Inventory:CheckInvStuffCheckAllSS(items, size, sizeorstack) end
 ---@return boolean true if the action was successful, false otherwise.
 function Inventory:DoAction(target, action, offset) end
 
+--- Checks whether the Inventory contains any food items.
+--- Food is identified by ge_category (param 2195) = 12 with positive healing values (params 963 or 1397).
+---@return boolean true if the Inventory contains any food items, false otherwise.
+function Inventory:HasFood() end
+
 
 --- Equipment LUADoc
 
@@ -4268,101 +4273,12 @@ function API.GetVarbitValue(id)
 	return GetVarbitValue(id)
 end
 
-
 --- Takes the top level varp ID and returns all of the associated varbit objects for that Varp
 ---@param id number varp ID
 ---@return table|Varbit
 function API.GetVarbitsFromVarp(id)
 	return GetVarbitsFromVarp(id)
 end
-
---- Represents the SOC class.
----@class SOC
-SOC = SOC
-
--- Message minimum size is 24 bytes, 23 bytes are reserved for info, after that is THE message
--- 0-7 bytes are PID in string form
--- 8-12 is player name
--- 21 byte 1 is hide debug text
--- 22 byte is operation code, not used
--- to send from other systems to ME server write 23 zero bytes and then message bytes
---[[
-only few commands via messages are directly to the server currently
-"DirectCommand::Server_Close(true)"
-"DirectCommand::Server_Close(false)"
-"DirectCommand::Server_Debug(true)"
-"DirectCommand::Server_Debug(false)"
---]]
-
---- Starts a server for the SOC (Socket Object Communication) system.
----@param port number The port to start the server on.
----@param forcereset boolean reset started boolean.
----@return boolean if successful
-function SOC:StartServer(port,forcereset) end
-
---- Sees only local status
----@return boolean True if the server was successfully started, false otherwise.
-function SOC:IsServerStarted() end
-
---- Asks form server. Returns false if it cant find server.
----@return boolean True if the server was successfully started, false otherwise.
-function SOC:AskIsServerStarted() end
-
----@param type number 0 all clients, 1 player, 2 PID
----@param ident string player name or PID
----@param stext string message to send
----@return boolean if successful
-function SOC:MessageClients(type, ident, stext) end
-
---- Starts a client for the SOC (Socket Object Communication) system.
----@param port number The port to start the server on.
----@param forcereset boolean reset started boolean.
----@return boolean if successful
-function SOC:StartClient(port,forcereset) end
-
---- Sees only local status
----@return boolean True if the client was successfully started, false otherwise.
-function SOC:IsClientStarted() end
-
----@param stext string message to send
----@return boolean if successful
-function SOC:MessageServer(stext) end
-
---- Get whole message that are stored here but server sent a while ago
----@return string
-function SOC:ClientAskMessage() end
-
---- Get whole messages that are stored here but server sent a while ago
----@return string[]
-function SOC:ClientAskMessages() end
-
---- Client sent message on server
----@return string
-function SOC:ServerAskMessage() end
-
---- Client sent message on server
----@param timeoutMs number timeout in milliseconds
----@return string
-function SOC:ServerAskMessage2(timeoutMs) end
-
---- Client sent messages on server
----@return string[]
-function SOC:ServerAskMessages() end
-
---- Request server and server socket to be closed
--- @param clear boolean If true then clear previous data
----@return void
-function SOC:Server_Close(clear) end
-
---- Request client and server client to be closed
--- @param clear boolean If true then clear previous data
----@return void
-function SOC:Client_Close(clear) end
-
---- Debug server
--- @param onoff boolean
----@return void
-function SOC:Server_Debug(onoff) end
 
 ---@class Achievement
 Achievement = Achievement
@@ -6472,5 +6388,15 @@ function WorldHop:GetCurrentWorld() end
 ---@param membersOnly? boolean Optional, defaults to true
 ---@return number
 function WorldHop:GetRandomWorld(membersOnly) end
+
+-------------------------------------------------------------------------------
+-- WebSocket Client
+-------------------------------------------------------------------------------
+
+--- Starts the WebSocket client worker thread and connects if enabled in settings.
+function WS_Start() end
+
+--- Stops the WebSocket client, disconnects, and joins the worker thread.
+function WS_Stop() end
 
 return API
