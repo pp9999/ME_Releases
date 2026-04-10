@@ -184,7 +184,7 @@ function APIOSRS.Rl_GetVarbit(varbitId)
 	return Rl_GetVarbit(varbitId)
 end
 
-https://static.runelite.net/runelite-api/apidocs/constant-values.html#net.runelite.api.SpriteID
+--https://static.runelite.net/runelite-api/apidocs/constant-values.html#net.runelite.api.SpriteID
 --UNUSED_PRAYER_PROTECT_FROM_SUMMONING	944
 -- draws a sprite above the local player's head
 -- @param spriteId number
