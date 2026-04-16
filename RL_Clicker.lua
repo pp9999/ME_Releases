@@ -2,12 +2,12 @@ local API = require("api")
 local APIOSRS = require("apiosrs")
 
 
-local NPCs = {2098,2099,2100,2101,2102,2103} --
+local NPCs = {5553} --
 local currentfail = 0
 while API.Read_LoopyLoop() do
     
     local countloops = 0
-    while (API.CheckAnim(50) or API.ReadPlayerMovin()) and API.Read_LoopyLoop() do
+    while (API.CheckAnim(20) or API.ReadPlayerMovin()) and API.Read_LoopyLoop() do
         countloops = countloops + 1
         if countloops > 500 then
             print("Stuck in animation, stopping script")
@@ -16,10 +16,9 @@ while API.Read_LoopyLoop() do
         API.RandomSleep2(200, 1000, 2000)
     end
 
-    API.RandomSleep2(2000, 1000, 2000)
     if not API.ReadPlayerMovin() then
-        APIOSRS.RL_ClickEntity(1, NPCs, 8 )
-        API.RandomSleep2(2000, 1000, 2000)
+        APIOSRS.RL_ClickEntity(1, NPCs, 20 )
+        API.RandomSleep2(200, 1000, 2000)
     end
-    API.RandomSleep2(4700, 1777,12777)
+    API.RandomSleep2(700, 1777,12777)
 end

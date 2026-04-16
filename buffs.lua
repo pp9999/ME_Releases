@@ -118,6 +118,8 @@ Buffs.BUFF.ABIL.Bloodlust = { name = "Bloodlust", id = 23876 }
 Buffs.BUFF.ABIL.Dismember = { name = "Dismember", id = 21239 }
 Buffs.BUFF.ABIL.SearingWinds = { name = "Searing Winds", id = 23877 }
 Buffs.BUFF.ABIL.ShadowImbued = { name = "Shadow Imbued", id = 31925 }
+Buffs.BUFF.ABIL.Vampyrism = { name = "Vampyrism", id = 35768 }
+Buffs.BUFF.ABIL.Penance = { name = "Penance", id = 35769 }
 
 Buffs.BUFF.COMBATBOOST = {}
 Buffs.BUFF.COMBATBOOST.AttackStatBoosted = { name = "Attack Stat Boosted", id = 25824 }
@@ -346,6 +348,7 @@ Buffs.BUFF.PRAYERS.EclipsedSoul = { name = "Eclipsed Soul", id = 34199 }
 Buffs.BUFF.SKILLING = {}
 Buffs.BUFF.SKILLING.AdrenalineUrn = { name = "Adrenaline urn - prevents your adrenaline draining while out of combat.", id = 44210 }
 Buffs.BUFF.SKILLING.YourSignOfThePorterIs = { name = "Your sign of the porter is active, banking specific items, using a charge each time.", id = 51490 }
+Buffs.BUFF.SKILLING.PortableTraderSummoningStoneActive = { name = "Portable Trader summoning stone active", id = 47804 }
 Buffs.BUFF.SKILLING.QuiverAmmo = { name = "Quiver ammo", id = 33719 }
 Buffs.BUFF.SKILLING.GuamIncense = { name = "Guam Incense:", id = 47699 }
 Buffs.BUFF.SKILLING.TarrominIncense = { name = "Tarromin Incense:", id = 47700 }
@@ -390,7 +393,6 @@ Buffs.BUFF.SKILLING.UndeadSlayer = { name = "Undead slayer - Boosts your damage 
 Buffs.BUFF.SKILLING.YourFurySharkHasBeenConsumed = { name = "Your fury shark has been consumed and will protect an item for one minute.", id = 20429 }
 Buffs.BUFF.SKILLING.YourBookOfCharIsActive = { name = "Your Book of Char is active, burning any logs you walk over.", id = 23027 }
 Buffs.BUFF.SKILLING.GlovesOfPassage = { name = "Gloves of Passage - Your next melee attack within 6 seconds deals 10% increased damage.", id = 40322 }
-Buffs.BUFF.SKILLING._20IncreasedHitchanceOnEnemiesBelow = { name = "20% increased hitchance on enemies below 15% health and 10% chance to stop your slayer count from decreasing", id = 44472 }
 Buffs.BUFF.SKILLING.DominionMine1Placed = { name = "Dominion Mine 1 Placed", id = 22371 }
 Buffs.BUFF.SKILLING.DominionMine2Placed = { name = "Dominion Mine 2 Placed", id = 22371 }
 Buffs.BUFF.SKILLING.FurnaceCore = { name = "Furnace Core", id = 50806 }
