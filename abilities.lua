@@ -72,6 +72,7 @@ Abilities.INCANTATION.InvokeDeath = { name = "Invoke Death", id = 30702 }
 Abilities.INCANTATION.SplitSoul = { name = "Split Soul", id = 30706 }
 Abilities.INCANTATION.CityOfUmTeleport = { name = "City of Um Teleport", id = 30715 }
 Abilities.INCANTATION.UngaelTeleport = { name = "Ungael Teleport", id = 33716 }
+Abilities.INCANTATION.Darkness = { name = "Darkness", id = 30700 }
 Abilities.INCANTATION.LesserBoneShield = { name = "Lesser Bone Shield", id = 30697 }
 Abilities.INCANTATION.GreaterBoneShield = { name = "Greater Bone Shield", id = 30628 }
 Abilities.INCANTATION.Darkness = { name = "Darkness", id = 30700 }

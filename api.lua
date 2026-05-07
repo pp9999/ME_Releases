@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.072
+API.VERSION = 1.073
 
 --[[
 Known shortcuts
@@ -46,6 +46,9 @@ API.OFF_ACT_InteractNPC_route4 = InteractNPC_route4
 
 --- default item pickup
 API.OFF_ACT_Pickup_route = Pickup_route
+
+--- Boxtrap action
+API.Boxtrap_route = Boxtrap_route
 
 --- walk to tile
 API.OFF_ACT_Walk_route = Walk_route
@@ -3086,7 +3089,7 @@ end
 ---@param rand number
 ---@return boolean
 function API.KeyboardPress31(codes, sleep, rand)
-	return KeyboardPress31(codes, sleep, rand)
+	return KeyboardPress31(codes, sleep, rand, false)
 end
 
 --- Ascii numeric values, 1 is 49, enter is 17, space is 32
@@ -6398,5 +6401,68 @@ function WS_Start() end
 
 --- Stops the WebSocket client, disconnects, and joins the worker thread.
 function WS_Stop() end
+
+-------------------------------------------------------------------------------
+-- GPT-4.1 integration
+-------------------------------------------------------------------------------
+
+--- Set the OpenAI API key used for all GPT calls.
+---@param key string  Your OpenAI secret key (sk-...)
+function GPT_SetKey(key) end
+
+--- Set the GitHub token used when routing through the Copilot backend.
+--- GPT-4.1 is free via GitHub Copilot.  Requires a token with Copilot access.
+---@param key string  GitHub personal access token (ghp_... or ghu_...)
+function GPT_SetCopilotKey(key) end
+
+--- Get the currently stored GitHub Copilot OAuth token.
+---@return string  The current GPT_COPILOT_KEY value (empty string if not set)
+function GPT_GetCopilotKey() end
+
+--- Switch between backends.  true = GitHub Copilot (free GPT-4.1), false = OpenAI.
+---@param enable boolean
+function GPT_UseCopilot(enable) end
+
+--- Force-invalidate the cached Copilot session token so it is re-exchanged on the
+--- next request.  Call this if requests start returning 401 / unauthorized.
+function GPT_ClearCopilotToken() end
+
+--- Run the GitHub OAuth device-flow to get a valid Copilot OAuth token (ghu_...).
+--- Prints a short code + URL to the console; blocks until the user authorises
+--- in a browser or the 15-minute window expires.
+--- On success GPT_COPILOT_KEY is set automatically — no need to call GPT_SetCopilotKey.
+--- MUST be called from a Lua script thread, not from within an ImGui render callback.
+---
+--- Typical one-time setup:
+---   GPT_UseCopilot(true)
+---   GPT_CopilotDeviceFlow()   -- follow the printed instructions
+function GPT_CopilotDeviceFlow() end
+
+--- Send a plain role/content message to the model
+---@param role string   "user" | "system" | "assistant"
+---@param content string
+function GPT_TestBot(role, content) end
+
+--- Send a goal string to GPT-4.1 with live game-world context.
+--- GPT replies ONLY with a JSON command list which is parsed and dispatched
+--- directly to the game action functions (walk, attack, loot, ability, etc.).
+--- Returns the number of commands that were executed.
+---@param goal string   Plain-language description of what the bot should do
+---@return integer      Number of commands executed
+function GPT_AskAndExecute(goal) end
+
+--- Signal a running GPT_AskAndExecute loop to stop after the current tick.
+function GPT_StopExecution() end
+
+--- Returns true while a GPT_AskAndExecute task is still running.
+---@return boolean
+function GPT_IsExecuting() end
+
+--- Extract a Lua code block from a GPT reply (strips ```lua ... ``` fences).
+--- Returns the raw Lua source string, or an empty string if none found.
+--- Use with load() to execute the model's suggested code.
+---@param gptReply string   The raw model reply text
+---@return string           Extracted Lua code (empty if no code block present)
+function GPT_ExtractLuaCode(gptReply) end
 
 return API
