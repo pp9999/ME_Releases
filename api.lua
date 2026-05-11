@@ -3520,6 +3520,8 @@ function API.LogDrop(itemId,qty)
 	return LogDrop(itemId,qty)
 end
 
+if false then -- LuaDoc stubs for IDE autocompletion only; never executed at runtime
+
 ---Grand Exchange LUADoc
 
 ---@class OrderType
@@ -5053,6 +5055,8 @@ function Http:Post(url, jsonData, headers) end
 ---@return HttpResponse The response table with statusCode and body fields.
 function Http:Get(url, headers) end
 
+end -- if false (LuaDoc stubs)
+
 -------------------------------------------------------------------------------
 -- ImGui Direct Bindings
 -------------------------------------------------------------------------------
@@ -6171,6 +6175,8 @@ end -- if false (LuaDoc stubs)
 --   ImGuiCond             - Conditions (Always, Once, FirstUseEver, Appearing)
 --   ImGuiMouseButton      - Mouse buttons (Left, Right, Middle)
 
+if false then -- LuaDoc stubs for IDE autocompletion only; never executed at runtime
+
 ---@class Bank
 Bank = Bank
 
@@ -6464,5 +6470,7 @@ function GPT_IsExecuting() end
 ---@param gptReply string   The raw model reply text
 ---@return string           Extracted Lua code (empty if no code block present)
 function GPT_ExtractLuaCode(gptReply) end
+
+end -- if false (LuaDoc stubs)
 
 return API
