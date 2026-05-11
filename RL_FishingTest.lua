@@ -8,7 +8,7 @@ while API.Read_LoopyLoop() do
         API.Write_LoopyLoop(false)
     end
 
-    if not API.CheckAnim(100) then
+    if not API.CheckAnim(50) then
         if not Inventory:IsFull() then
             APIOSRS.RL_ClickEntity(1, { 8523 }, 12)
             safetyloopcheck = safetyloopcheck + 1
@@ -19,30 +19,36 @@ while API.Read_LoopyLoop() do
                     APIOSRS.RL_ClickEntity(93, { 946 })
                     API.RandomSleep2(200, 777, 1777)
                     if APIOSRS.RL_IsWidgetSelected() then
+                        local clicked = false
                         local blu = Inventory:InvItemcount(22826)
-                        if blu > 0 then
-                            APIOSRS.RL_ClickEntity(93, { 22826 })
-                            print("waiting blu fishes to be done")
-                            API.RandomSleep2(1000 * blu, 1000, 10000)
+                        if blu > 0 and not clicked then
+                           if APIOSRS.RL_ClickEntity(93, { 22826 }) then
+                                clicked = true
+                                print("waiting blu fishes to be done")
+                           end
                         end
                         local tenc = Inventory:InvItemcount(22829)
-                        if tenc > 0 then
-                            APIOSRS.RL_ClickEntity(93, { 22829 })
-                            print("waiting tenc fishes to be done")
-                            API.RandomSleep2(1000 * tenc, 1000, 10000)
+                        if tenc > 0 and not clicked then
+                            if APIOSRS.RL_ClickEntity(93, { 22829 }) then
+                                clicked = true
+                                print("waiting tenc fishes to be done")
+                            end
                         end
                         local eel = Inventory:InvItemcount(22832)
-                        if eel > 0 then
-                            APIOSRS.RL_ClickEntity(93, { 22832 })
-                            print("waiting eel fishes to be done")
-                            API.RandomSleep2(1000 * eel, 1000, 10000)
+                        if eel > 0 and not clicked then
+                           if APIOSRS.RL_ClickEntity(93, { 22832 }) then
+                                clicked = true
+                                print("waiting eel fishes to be done")
+                           end
                         end
                         local siren = Inventory:InvItemcount(22835)
-                        if siren > 0 then
-                            APIOSRS.RL_ClickEntity(93, { 22835 })
-                            print("waiting siren fishes to be done")
-                            API.RandomSleep2(1000 * siren, 1000, 10000)
+                        if siren > 0 and not clicked then
+                            if APIOSRS.RL_ClickEntity(93, { 22835 }) then
+                                clicked = true
+                                print("waiting siren fishes to be done")
+                            end
                         end
+                        API.RandomSleep2(1000 * (blu + tenc + eel + siren), 1000, 10000)
                     end
                 end
             end
