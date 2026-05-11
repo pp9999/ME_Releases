@@ -3443,6 +3443,20 @@ function API.logError(logline)
 	return Log(logline,'error')
 end
 
+--- *Cache required* Looks up a varbit value
+---@param id number varbit ID
+---@return number varbit current value
+function API.GetVarbitValue(id)
+	return GetVarbitValue(id)
+end
+
+--- Takes the top level varp ID and returns all of the associated varbit objects for that Varp
+---@param id number varp ID
+---@return table|Varbit
+function API.GetVarbitsFromVarp(id)
+	return GetVarbitsFromVarp(id)
+end
+
 ---Clears Log
 function API.ClearLog()
 	return ClearLog()
@@ -4268,22 +4282,6 @@ Quest = Quest
 ---@param quest number|string The Quest ID or exact name to search for
 ---@return QuestData
 function Quest:Get(quest) end
-
---- *Cache required* Looks up a varbit value
---- E.g VB lookup for SoulSplit would now be API.GetVarbitValue(16779)
---- But using our traditional varp/vb functions it would have to look like API.VB_FindPSettinOrder(3275, 0).state >> 18 & 1
----@param id number varbit ID
----@return number varbit current value
-function API.GetVarbitValue(id)
-	return GetVarbitValue(id)
-end
-
---- Takes the top level varp ID and returns all of the associated varbit objects for that Varp
----@param id number varp ID
----@return table|Varbit
-function API.GetVarbitsFromVarp(id)
-	return GetVarbitsFromVarp(id)
-end
 
 ---@class Achievement
 Achievement = Achievement
