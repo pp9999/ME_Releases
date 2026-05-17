@@ -3,6 +3,7 @@ local APIOSRS = require("apiosrs")
 
 
 local NPCs = {2170,2169} --
+local stalls = {51935}
 local currentfail = 0
 while API.Read_LoopyLoop() do
     
@@ -16,8 +17,9 @@ while API.Read_LoopyLoop() do
         API.RandomSleep2(200, 1000, 2000)
     end
 
-    if not API.ReadPlayerMovin() then
-        APIOSRS.RL_ClickEntity(1, NPCs, 15 )
+    if not API.ReadPlayerMovin() and not Inventory:IsFull() then
+        --APIOSRS.RL_ClickEntity(1, NPCs, 15 )
+        APIOSRS.RL_ClickEntity(0, stalls, 5 )
         API.RandomSleep2(200, 1000, 2000)
     end
     API.RandomSleep2(700, 1777,12777)
