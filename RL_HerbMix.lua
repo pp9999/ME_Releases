@@ -2,8 +2,10 @@ local API = require("api")
 local APIOSRS = require("apiosrs")
 
 --Grimy irit 209
-local Vial_ = 52 --vial 227, unf irit 101
-local Sec_ = 314 --irit 259, eye of new 221
+local Vial_ = 3002 --vial 227, unf irit 101 -- 269 Clean torstol
+local Sec_ = 6693 --irit 259, eye of new 221 -- 2436 super Attack
+local Third_ = 0 -- 2440 super Strength
+local Fourth_ = 0 -- 2442 super Defence
 local banks = { 26711 } --farm bank 26711
 local sleeps = { 5000, 10000, 20000, 25000, 30000 }
 local currentfail = 0
@@ -38,11 +40,11 @@ while API.Read_LoopyLoop() do
             if APIOSRS.RL_IsWidgetSelected() then
                 APIOSRS.RL_ClickEntity(93, {Sec_} )
                 print("mixing 2")
-                API.RandomSleep2(500, 1000, 2000)
-            end           
+                API.RandomSleep2(700, 1000, 2000)
+            end            
         end
-        API.KeyboardPress31(32, 40, 80)
-        API.RandomSleep2(sleeps[5], 1000, 2000)
+        API.KeyboardPress31(32, 60, 80)
+        API.RandomSleep2(sleeps[1], 1000, 2000)
     else
         print("Opening bank")
         if not Bank:IsOpen() then
@@ -52,8 +54,10 @@ while API.Read_LoopyLoop() do
         if Bank:IsOpen() then
             print("Bank open")
             APIOSRS.RL_ClickBankDepositAll()
-            API.RandomSleep2(100, 1000, 2000)
-            if Bank:Contains(Vial_) and (Sec_ == 0 or Bank:Contains(Sec_)) then
+            --APIOSRS.RL_ClickBankInvDepositAllExcept({1755})
+            API.RandomSleep2(500, 1000, 2000)
+            --(Vial_ == 0 or Bank:Contains(Vial_)) and
+            if (Sec_ == 0 or Bank:Contains(Sec_)) then
                 print("Bank contains required items")
                 APIOSRS.RL_ClickEntity(95, {Vial_} )
                 API.RandomSleep2(100, 1000, 2000)
@@ -61,14 +65,32 @@ while API.Read_LoopyLoop() do
                     APIOSRS.RL_ClickEntity(95, {Sec_} )
                     API.RandomSleep2(500, 1000, 2000)
                 end
-                --if Inventory:Contains(Vial_) and Inventory:Contains(Sec_) then
-                    print("Closing bank")
-                    APIOSRS.RL_ClickCloseBank()
-                --end
             else
                 print("out of supplies, stopping script")
                 API.Write_LoopyLoop(false)
             end
+            if (Third_ == 0 or Bank:Contains(Third_)) then
+                API.RandomSleep2(100, 1000, 2000)
+                if Third_ > 0 then
+                    APIOSRS.RL_ClickEntity(95, {Third_} )
+                    API.RandomSleep2(500, 1000, 2000)
+                end
+            else
+                print("out of supplies, stopping script")
+                API.Write_LoopyLoop(false)
+            end
+            if (Fourth_ == 0 or Bank:Contains(Fourth_)) then
+                API.RandomSleep2(100, 1000, 2000)
+                if Fourth_ > 0 then
+                    APIOSRS.RL_ClickEntity(95, {Fourth_} )
+                    API.RandomSleep2(500, 1000, 2000)
+                end
+            else
+                print("out of supplies, stopping script")
+                API.Write_LoopyLoop(false)
+            end
+            print("Closing bank")
+            APIOSRS.RL_ClickCloseBank()
         end
     end
     API.RandomSleep2(4700, 1777,12777)

@@ -180,6 +180,7 @@ Buffs.BUFF.MISC.CalciteMoth = { name = "Calcite moth", id = 60702 }
 Buffs.BUFF.MISC.AzuriteMoth = { name = "Azurite moth", id = 60704 }
 
 Buffs.BUFF.POTS = {}
+Buffs.BUFF.POTS.Overloaded = { name = "Overloaded", id = 61365 }
 Buffs.BUFF.POTS.AdrenalineRenewal = { name = "Adrenaline renewal", id = 49079 }
 Buffs.BUFF.POTS.AntiPoisonActive = { name = "Anti-poison Active", id = 30094 }
 Buffs.BUFF.POTS.Poisonous = { name = "Poisonous", id = 30095 }

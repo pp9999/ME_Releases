@@ -2,11 +2,12 @@ local API = require("api")
 local APIOSRS = require("apiosrs")
 
 
-local itemtoalch = {2504,1150}
+local itemtoalch = {2504,1150,1128,1114,3055,1360,1202,3055,1378,1348,1404,1374,1334,1402,1094,1320
+,3055,3203,1164,1124,1214,1186,1306,1080,1433,9432,71,2500}
 local nats = 561
 local currentfail = 0
 while API.Read_LoopyLoop() do
-    if Inventory:Contains(itemtoalch) and Inventory:Contains({nats}) then
+    if Inventory:Contains(itemtoalch) and Inventory:Contains({nats}) and not API.CheckAnim(50) then
         if APIOSRS.RL_GetOpenTab() ~= 6 then
             APIOSRS.RL_OpenTab(6)
             print("wrong tab, opening spellbook")
@@ -31,5 +32,5 @@ while API.Read_LoopyLoop() do
             end
         end
     end
-    API.RandomSleep2(1700, 1777,12777)
+    API.RandomSleep2(700, 4777,22777)
 end

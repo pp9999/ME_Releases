@@ -3,7 +3,7 @@ print("Run Lua port fish script afker.")
 
 while API.Read_LoopyLoop() do
     API.DoRandomEvents()
-
+    print("Loop")
     if API.WaitUntilMovingandAnimEnds(4,2) then
         if API.Buffbar_GetIDstatus(51490,false).conv_text > 0 then
             if not Inventory:IsFull() then
