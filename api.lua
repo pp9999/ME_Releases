@@ -44,6 +44,9 @@ API.OFF_ACT_InteractNPC_route3 = InteractNPC_route3
 --- fourth option
 API.OFF_ACT_InteractNPC_route4 = InteractNPC_route4
 
+--- use item on npc
+API.OFF_ACT_InteractNPC_useitem = InteractNPC_useitem
+
 --- default item pickup
 API.OFF_ACT_Pickup_route = Pickup_route
 
@@ -3443,6 +3446,20 @@ function API.logError(logline)
 	return Log(logline,'error')
 end
 
+--- *Cache required* Looks up a varbit value
+---@param id number varbit ID
+---@return number varbit current value
+function API.GetVarbitValue(id)
+	return GetVarbitValue(id)
+end
+
+--- Takes the top level varp ID and returns all of the associated varbit objects for that Varp
+---@param id number varp ID
+---@return table|Varbit
+function API.GetVarbitsFromVarp(id)
+	return GetVarbitsFromVarp(id)
+end
+
 ---Clears Log
 function API.ClearLog()
 	return ClearLog()
@@ -3519,6 +3536,8 @@ end
 function API.LogDrop(itemId,qty)
 	return LogDrop(itemId,qty)
 end
+
+if false then -- LuaDoc stubs for IDE autocompletion only; never executed at runtime
 
 ---Grand Exchange LUADoc
 
@@ -4266,22 +4285,6 @@ Quest = Quest
 ---@param quest number|string The Quest ID or exact name to search for
 ---@return QuestData
 function Quest:Get(quest) end
-
---- *Cache required* Looks up a varbit value
---- E.g VB lookup for SoulSplit would now be API.GetVarbitValue(16779)
---- But using our traditional varp/vb functions it would have to look like API.VB_FindPSettinOrder(3275, 0).state >> 18 & 1
----@param id number varbit ID
----@return number varbit current value
-function API.GetVarbitValue(id)
-	return GetVarbitValue(id)
-end
-
---- Takes the top level varp ID and returns all of the associated varbit objects for that Varp
----@param id number varp ID
----@return table|Varbit
-function API.GetVarbitsFromVarp(id)
-	return GetVarbitsFromVarp(id)
-end
 
 ---@class Achievement
 Achievement = Achievement
@@ -5052,6 +5055,8 @@ function Http:Post(url, jsonData, headers) end
 ---@param headers? string[] Optional array of header strings in "Name: Value" format.
 ---@return HttpResponse The response table with statusCode and body fields.
 function Http:Get(url, headers) end
+
+end -- if false (LuaDoc stubs)
 
 -------------------------------------------------------------------------------
 -- ImGui Direct Bindings
@@ -6171,6 +6176,8 @@ end -- if false (LuaDoc stubs)
 --   ImGuiCond             - Conditions (Always, Once, FirstUseEver, Appearing)
 --   ImGuiMouseButton      - Mouse buttons (Left, Right, Middle)
 
+if false then -- LuaDoc stubs for IDE autocompletion only; never executed at runtime
+
 ---@class Bank
 Bank = Bank
 
@@ -6464,5 +6471,7 @@ function GPT_IsExecuting() end
 ---@param gptReply string   The raw model reply text
 ---@return string           Extracted Lua code (empty if no code block present)
 function GPT_ExtractLuaCode(gptReply) end
+
+end -- if false (LuaDoc stubs)
 
 return API
