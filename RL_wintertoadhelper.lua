@@ -64,7 +64,7 @@ while API.Read_LoopyLoop() do
                 end
                 --get roots until full
                 if not Inventory:Contains(bruma_kindling) and Inventory:Contains(knife) and not Inventory:IsFull() then
-                    APIOSRS.RL_ClickEntity(0, roots, 10)
+                    APIOSRS.RL_ClickEntity(0, roots, 12)
                     print("Chopin")
                     API.RandomSleep2(1500, 1000, 2000)
                 end
