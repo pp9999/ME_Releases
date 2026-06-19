@@ -32,5 +32,5 @@ while API.Read_LoopyLoop() do
             end
         end
     end
-    API.RandomSleep2(700, 4777,22777)
+    API.RandomSleep2(300, 3077,22777)
 end

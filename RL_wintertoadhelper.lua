@@ -13,6 +13,7 @@ local brazier_light = 29312
 local brazier_broken = 29313;
 local near_brazier = FFPOINT.new(1639, 3996, 0)
 local foods = { 329, 20702, 20701, 20700, 20699  } --add foods here
+local roots = {}
 while API.Read_LoopyLoop() do
     --print("RL_GetWintertodtTimer:" .. tostring(APIOSRS.RL_GetWintertodtTimer()))
     --print("RL_GetWintertodtWarmth:" .. tostring(APIOSRS.RL_GetWintertodtWarmth()))
@@ -33,7 +34,18 @@ while API.Read_LoopyLoop() do
                 API.RandomSleep2(300, 500, 2000)
             end
             if (not API.CheckAnim(25)) then
-                if Inventory:Contains(bruma_root) and Inventory:Contains(knife) then
+                --get roots until full
+                if not Inventory:Contains(bruma_kindling) and Inventory:Contains(knife) and not Inventory:IsFull() then
+                    APIOSRS.RL_ClickEntity(0, roots, 20)
+                    API.RandomSleep2(500, 1000, 2000)
+                end
+                --full load, move to spot and start fletching
+                if Inventory:Contains(bruma_root) and Inventory:Contains(knife) and Inventory:IsFull() then
+                    if API.Dist_FLP(near_brazier) > 3 then
+                        print("Move next to brazier 1")
+                        APIOSRS.RL_ClickTile(near_brazier.Tile_XYZ.x + 1,near_brazier.Tile_XYZ.y,true)
+                        API.RandomSleep2(900, 500, 2000)
+                    end
                     APIOSRS.RL_ClickEntity(93, {knife})
                     API.RandomSleep2(300, 500, 2000)
                     if APIOSRS.RL_IsWidgetSelected() then
@@ -44,11 +56,17 @@ while API.Read_LoopyLoop() do
                         print("Failed to select knife")
                     end
                 end
+                --start fireing
                 if Inventory:Contains(bruma_kindling) and not Inventory:Contains(bruma_root) then
+                    if API.Dist_FLP(near_brazier) > 3 then
+                        print("Move next to brazier 2")
+                        APIOSRS.RL_ClickTile(near_brazier.Tile_XYZ.x + 1,near_brazier.Tile_XYZ.y,true)
+                        API.RandomSleep2(900, 500, 2000)
+                    end
                     APIOSRS.RL_ClickEntity(0, {brazier_burning} , 4)
                     print("Feeding fire")
-                    API.RandomSleep2(500, 1000, 2000)
-                end
+                    API.RandomSleep2(500, 1000, 2000)                    
+                end             
             end
         end
     end

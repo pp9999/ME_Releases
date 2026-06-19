@@ -44,13 +44,17 @@ end
 -- @param localtile boolean
 -- @param tilex number
 -- @param tiley number
+-- @param action string optional will overide default
+-- @param names string[] optional names will be used for finding objects
 -- @return boolean
-function APIOSRS.RL_ClickEntity(type, entityID, max_distance, localtile, tilex, tiley)
+function APIOSRS.RL_ClickEntity(type, entityID, max_distance, localtile, tilex, tiley, action, names)
 	max_distance = max_distance or 15
 	localtile = localtile or false
 	tilex = tilex or 0
 	tiley = tiley or 0
-	return RL_ClickEntity(type, entityID, max_distance, localtile, tilex, tiley)
+	action = action or ""
+	names = names or {}
+	return RL_ClickEntity(type, entityID, max_distance, localtile, tilex, tiley, action, names)
 end
 
 function APIOSRS.RL_ClickSpellbook(spellname, spriteid)
@@ -196,6 +200,76 @@ end
 -- @param spriteTargets WPOINT[] where WPOINT is x = coord x, y = coord y, z = spriteId
 function APIOSRS.RL_DrawSprites(spriteTargets)
 	return RL_DrawSprites(spriteTargets)
+end
+
+---@class AllObject
+---@field Id number
+---@field Name string
+---@field Type number  0=Object 1=NPC 2=Player 3=GroundItem 4=WorldEntity 5=Projectile
+---@field Distance number
+---@field Anim number
+---@field Cmb_lv number
+---@field Life number
+---@field Amount number
+---@field Action string
+---@field Bool1 number
+---@field Floor number
+---@field CalcX number
+---@field CalcY number
+---@field TileX number
+---@field TileY number
+---@field Mem number
+---@field MemE number
+---@field Tile_XYZ {x:number, y:number, z:number}
+---@field Pixel_XYZ {x:number, y:number, z:number}
+---@field Head_XYZ {x:number, y:number, z:number}
+---@field Start_Tile_XYZ {x:number, y:number, z:number}
+---@field End_Tile_XYZ {x:number, y:number, z:number}
+
+--- Returns all entities currently tracked by the engine.
+--- Filters: types 0=Object 1=NPC 2=Player 3=GroundItem 4=WorldEntity 5=Projectile
+-- @param types number[]|nil   entity type filter list
+-- @param names string[]|nil   entity name filter list
+-- @param ids number[]|nil     entity ID filter list
+-- @return AllObject[]
+function APIOSRS.ReadAllObjectsArray(types, ids, names)
+	types    = types    or {-1}
+	names    = names    or {}
+	ids      = ids      or {}
+	return ReadAllObjectsArray(types, ids, names)
+end
+
+--- returns first found
+-- @param types number[]|nil   entity type filter list
+-- @param names string[]|nil   entity name filter list
+-- @param ids number[]|nil     entity ID filter list
+-- @param distance number  	   distance filter, only returns object if distance is less than this value, default 50
+-- @return AllObject
+function APIOSRS.ReadAllObjectsArrayFirst(types, ids, names, distance)
+	types    = types    or {-1}
+	names    = names    or {}
+	ids      = ids      or {}
+	distance    = distance or 50
+	local object = ReadAllObjectsArray(types, ids, names)
+	print("Walking to altar1111 " .. tostring(object.Distance))
+    if object ~= nil and #object > 0 and object[1].Distance < distance then
+		return object[1]
+	else
+		return nil
+	end
+end
+
+--- Calculates the tile distance between two AllObject entries using their world coordinates.
+--- Useful when you need the separation between two arbitrary entities rather than
+--- the distance from the local player.
+-- @param obj1 AllObject
+-- @param obj2 AllObject
+-- @return number  Euclidean tile distance, or -1 if either argument is nil
+function APIOSRS.GetDistanceBetweenObjects(obj1, obj2)
+	if obj1 == nil or obj2 == nil then return -1 end
+	local dx = obj1.Tile_XYZ.x - obj2.Tile_XYZ.x
+	local dy = obj1.Tile_XYZ.y - obj2.Tile_XYZ.y
+	return math.sqrt(dx * dx + dy * dy)
 end
 
 
