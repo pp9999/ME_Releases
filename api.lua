@@ -44,6 +44,9 @@ API.OFF_ACT_InteractNPC_route3 = InteractNPC_route3
 --- fourth option
 API.OFF_ACT_InteractNPC_route4 = InteractNPC_route4
 
+--- use item on npc
+API.OFF_ACT_InteractNPC_useitem = InteractNPC_useitem
+
 --- default item pickup
 API.OFF_ACT_Pickup_route = Pickup_route
 
