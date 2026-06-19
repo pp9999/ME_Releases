@@ -58,7 +58,7 @@ while API.Read_LoopyLoop() do
             if APIOSRS.RL_GetWintertodtTimer() == 0 then
                 --shoulndt be
                 if APIOSRS.RL_IsWidgetSelected() then
-                    APIOSRS.RL_ClickTile(near_brazier.x - rand,near_brazier.y + 1,true)
+                    APIOSRS.RL_ClickTile(near_brazier.x - rand,near_brazier.y,true)
                     print("Un-widget")
                 end
                 --get roots until full
@@ -72,7 +72,7 @@ while API.Read_LoopyLoop() do
                     if API.Dist_FLP(near_brazier) > 3 then
                         print("Move next to brazier")
                         local rand = API.Math_RandomNumber(2)-1
-                        APIOSRS.RL_ClickTile(near_brazier.x - rand,near_brazier.y + 1,true)
+                        APIOSRS.RL_ClickTile(near_brazier.x - rand,near_brazier.y,true)
                         API.RandomSleep2(900, 500, 2000)
                     end
                     API.RandomSleep2(1500, 1000, 2000)
