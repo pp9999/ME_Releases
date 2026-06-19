@@ -55,22 +55,29 @@ while API.Read_LoopyLoop() do
             end
         end
         if (not API.CheckAnim(25)) then
-            --get roots until full
-            if not Inventory:Contains(bruma_kindling) and Inventory:Contains(knife) and not Inventory:IsFull() then
-                APIOSRS.RL_ClickEntity(0, roots, 10)
-                print("Chopin")
-                API.RandomSleep2(1500, 1000, 2000)
-            end
-            --Walk to brazier if full
-            if Inventory:Contains(bruma_root) and Inventory:Contains(knife) and Inventory:IsFull() then
-                if API.Dist_FLP(near_brazier) > 3 then
-                    print("Move next to brazier")
-                    local rand = API.Math_RandomNumber(2)-1
+            if APIOSRS.RL_GetWintertodtTimer() == 0 then
+                --shoulndt be
+                if APIOSRS.RL_IsWidgetSelected() then
                     APIOSRS.RL_ClickTile(near_brazier.x - rand,near_brazier.y + 1,true)
-                    API.RandomSleep2(900, 500, 2000)
+                    print("Un-widget")
                 end
-                API.RandomSleep2(1500, 1000, 2000)
-            end     
+                --get roots until full
+                if not Inventory:Contains(bruma_kindling) and Inventory:Contains(knife) and not Inventory:IsFull() then
+                    APIOSRS.RL_ClickEntity(0, roots, 10)
+                    print("Chopin")
+                    API.RandomSleep2(1500, 1000, 2000)
+                end
+                --Walk to brazier if full
+                if Inventory:Contains(bruma_root) and Inventory:Contains(knife) and Inventory:IsFull() then
+                    if API.Dist_FLP(near_brazier) > 3 then
+                        print("Move next to brazier")
+                        local rand = API.Math_RandomNumber(2)-1
+                        APIOSRS.RL_ClickTile(near_brazier.x - rand,near_brazier.y + 1,true)
+                        API.RandomSleep2(900, 500, 2000)
+                    end
+                    API.RandomSleep2(1500, 1000, 2000)
+                end    
+            end 
         end
     end
 
