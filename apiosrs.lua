@@ -251,7 +251,6 @@ function APIOSRS.ReadAllObjectsArrayFirst(types, ids, names, distance)
 	ids      = ids      or {}
 	distance    = distance or 50
 	local object = ReadAllObjectsArray(types, ids, names)
-	print("Walking to altar1111 " .. tostring(object.Distance))
     if object ~= nil and #object > 0 and object[1].Distance < distance then
 		return object[1]
 	else
