@@ -2,13 +2,13 @@ local API = require("api")
 local APIOSRS = require("apiosrs")
 
 
-local NPCs = {499} --
+local NPCs = {517,516,11952,11953} --
 local stalls = {51935}
 local currentfail = 0
 while API.Read_LoopyLoop() do
     
     local countloops = 0
-    while (API.CheckAnim(200) or API.ReadPlayerMovin()) and API.Read_LoopyLoop() do
+    while (API.CheckAnim(50) or API.ReadPlayerMovin()) and API.Read_LoopyLoop() do
         countloops = countloops + 1
         if countloops > 500 then
             print("Stuck in animation, stopping script")

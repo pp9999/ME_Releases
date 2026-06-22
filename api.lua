@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.073
+API.VERSION = 1.074
 
 --[[
 Known shortcuts
@@ -224,18 +224,18 @@ function API.IsPremiumMember()
 	return IsPremiumMember()
 end
 
----@return table|string
+---@return string[]
 function API.ReturnConsoleLog()
 	return ReturnConsoleLog()
 end
 
----@return table|string
+---@return string[]
 function API.ReturnScriptLog()
 	return ReturnScriptLog()
 end
 
 -- @param path string expects cpp format // double slashes
----@return table|string
+---@return string[]
 function API.ReadTextString(path)
 	return ReadTextString(path)
 end
@@ -249,7 +249,7 @@ function API.StoreTextString(path, text, append)
 end
 
 -- @param append bool either to clear or add
--- @param text table|string
+-- @param text string[]
 -- @param path string expects cpp format // double slashes
 ---@return void
 function API.StoreTextStringArray(path, text, append)
@@ -258,21 +258,21 @@ end
 
 -- returns 4 strings per player, name, prev name, full world name, note
 -- its NOT interface read, it is own separate table
----@return table|string
+---@return string[]
 function API.ReadFriendList()
 	return ReadFriendList()
 end
 
 -- returns 3 strings per player, name, prev name, note
 -- its NOT interface read, it is own separate table
----@return table|string
+---@return string[]
 function API.ReadIgnoreList()
 	return ReadIgnoreList()
 end
 
 -- returns 2 strings per player, name, full world name
 -- its NOT interface read, it is own separate table
----@return table|string
+---@return string[]
 function API.ReadFriendChatList()
 	return ReadFriendChatList()
 end
@@ -332,7 +332,7 @@ end
 
 --Tries to calculate correct coords for interface. Only works if internal data is correct
 ---@param mad InterfaceComp5
----@return table|WPOINT 4 corner points of the cube
+---@return WPOINT[] 4 corner points of the cube
 function API.InterfacesCombineFullFM(mad)
 	return InterfacesCombineFullFM(mad)
 end
@@ -351,22 +351,22 @@ function API.ReadDCColor(at_x,at_y)
 end
 
 -- check tiles in list against tile +- range
----@param occtiles table|FFPOINT will be trunc, tiles to avoid
+---@param occtiles FFPOINT[] will be trunc, tiles to avoid
 ---@param size number, dangerous tile area size to avoid, 0 is 1 tile, 1 is 3x3, 2 is 5x5 etc
 ---@param range number, how big virtual area to generate tiles
----@param BlockedTiles table|FFPOINT 1 tile size extra blocked tiles
----@return  table|FFPOINT tiles that isnt near our occtiles 
+---@param BlockedTiles FFPOINT[] 1 tile size extra blocked tiles
+---@return FFPOINT[] tiles that isnt near our occtiles
 function API.Math_FreeTilesTile(tile,occtiles,size,range,BlockedTiles,DrawDebugTiles)
 	DrawDebugTiles = DrawDebugTiles or false
 	return Math_FreeTilesTile(tile,occtiles,size,range,BlockedTiles,DrawDebugTiles)
 end
 
 -- check tiles in list against localplayer +- range
----@param occtiles table|FFPOINT will be trunc
+---@param occtiles FFPOINT[] will be trunc
 ---@param size number
 ---@param range number
----@param BlockedTiles table|FFPOINT 1 tile size extra blocked tiles
----@return  table|FFPOINT tiles that isnt near our occtiles 
+---@param BlockedTiles FFPOINT[] 1 tile size extra blocked tiles
+---@return FFPOINT[] tiles that isnt near our occtiles
 function API.Math_FreeTiles(occtiles,size,range,BlockedTiles,DrawDebugTiles)
 	DrawDebugTiles = DrawDebugTiles or false
 	return Math_FreeTiles(occtiles,size,range,BlockedTiles,DrawDebugTiles)
@@ -380,35 +380,35 @@ function API.Math_FlattenFloat(tile)
 end
 
 -- Make it flat
----@param tiles table|FFPOINT
----@return table|FFPOINT
+---@param tiles FFPOINT[]
+---@return FFPOINT[]
 function API.Math_FlattenFloatArray(tiles)
 	return Math_FlattenFloatArray(tiles)
 end
 
 -- by distance from tile
----@param objects table|AllObject
----@return table|AllObject
+---@param objects AllObject[]
+---@return AllObject[]
 function API.Math_SortAODistFromA(tile,objects)
 	return Math_SortAODistFromA(tile,objects)
 end
 
 --by distance from localplayer
----@param objects table|AllObject
----@return table|AllObject
+---@param objects AllObject[]
+---@return AllObject[]
 function API.Math_SortAODistA(objects)
 	return Math_SortAODistA(objects)
 end
 
 -- by distance from tile
----@param objects table|AllObject
+---@param objects AllObject[]
 ---@return AllObject
 function API.Math_SortAODistFrom(tile,objects)
 	return Math_SortAODistFrom(tile,objects)
 end
 
 --by distance from localplayer
----@param objects table|AllObject
+---@param objects AllObject[]
 ---@return AllObject
 function API.Math_SortAODist(objects)
 	return Math_SortAODist(objects)
@@ -434,12 +434,12 @@ function API.GetMapIconTile(id,x,y)
 end
 
 ---@param id number
----@return AllObject|table
+---@return AllObject[]
 function API.GetMapIcons(id)
 	return GetMapIcons(id)
 end
 
----@return AllObject|table
+---@return AllObject[]
 function API.GetALLMapIcons()
 	return GetALLMapIcons()
 end
@@ -782,7 +782,7 @@ function API.Write_ScripCuRunning2(status)
 end
 
 --- Return material storagedata
----@return table|IInfo
+---@return IInfo[]
 function API.MaterialStorage()
 	return MaterialStorage()
 end
@@ -790,19 +790,19 @@ end
 ---Return trade window item array
 ---Default will return your own trade window (your offer) param set to "their" will return their offer
 ---@param which string optional "their" or default "self"
----@return table|IInfo
+---@return IInfo[]
 function API.TradeWindow(which)
 	return TradeWindow(which)
 end
 
 --- Return array of bank inventory
----@return table|IInfo
+---@return IInfo[]
 function API.FetchBankInvArray()
 	return FetchBankInvArray()
 end
 
 --- Return array of bankdata
----@return table|IInfo
+---@return IInfo[]
 function API.FetchBankArray()
 	return FetchBankArray()
 end
@@ -954,13 +954,13 @@ end
 ---@param input WPOINT -- tile 
 ---@param angle number -- int
 ---@param steps number -- int
----@return table|WPOINT
+---@return WPOINT[]
 function API.Math_AnglePixels(input,angle,steps)
 	return Math_AnglePixels(input,angle,steps)
 end
 
 --- is localplayer facing in direction of tile
----@param ArrayOfPoints table|WPOINT -- vectors of tiles to check vs
+---@param ArrayOfPoints WPOINT[] -- vectors of tiles to check vs
 ---@param OnePoint WPOINT -- tile vs
 ---@param inrangeof number -- how far to predict
 ---@return boolean
@@ -1065,14 +1065,14 @@ end
 
 --- Save FFPOINTs to disk
 ---@param name string
----@param array_points table|FFPOINT
+---@param array_points FFPOINT[]
 ---@return boolean
 function API.SaveFFPOINTs(name, array_points)
 	return SaveFFPOINTs(name, API.CreateFFPointArray(array_points))
 end
 
 ---@param name string
----@return table|FFPOINT
+---@return FFPOINT[]
 function API.LoadFFPOINTs(name)
 	return LoadFFPOINTs(name)
 end
@@ -1224,7 +1224,7 @@ function API.GetFloorLv_2()
 	return GetFloorLv_2()
 end
 
----@param item table|number
+---@param item number[]
 ---@return boolean
 function API.FindGItemBool_(item)
 	return FindGItemBool_(item)
@@ -1232,7 +1232,7 @@ end
 
 ---@param NPC_name string
 ---@param maxdistance number
----@return table|AllObject
+---@return AllObject[]
 function API.FindNPCbyName(NPC_name, maxdistance)
 	return FindNPCbyName(NPC_name, maxdistance)
 end
@@ -1256,13 +1256,13 @@ end
 
 ---@param animated_also boolean
 ---@param hp number
----@return table|AllObject
+---@return AllObject[]
 function API.OthersInteractingWithLpNPC(animated_also, hp)
 	return OthersInteractingWithLpNPC(animated_also, hp)
 end
 
 ---@param look_stance boolean
----@return table|AllObject
+---@return AllObject[]
 function API.OthersInteractingWithLpPl(look_stance)
 	return OthersInteractingWithLpPl(look_stance)
 end
@@ -1347,10 +1347,10 @@ end
 8 tiles
 12 decor
 --]]
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
----@param type table|number
----@return table|AllObject
+---@param type number[]
+---@return AllObject[]
 function API.GetAllObjArrayInteract(obj, maxdistance, type)
 	return GetAllObjArrayInteract(obj, maxdistance, type)
 end
@@ -1366,10 +1366,10 @@ end
 8 tiles
 12 decor
 --]]
----@param obj table|string
+---@param obj string[]
 ---@param maxdistance number
----@param type table|number
----@return table|AllObject
+---@param type number[]
+---@return AllObject[]
 function API.GetAllObjArrayInteract_str(obj, maxdistance, type)
 	return GetAllObjArrayInteract_str(obj, maxdistance, type)
 end
@@ -1420,23 +1420,23 @@ function API.FindSideText()
 	return FindSideText()
 end
 
----@param ObjectName table|string
+---@param ObjectName string[]
 ---@param maxdistance number
----@return table|AllObject
+---@return AllObject[]
 function API.FindObject_string(ObjectName, maxdistance)
 	return FindObject_str(ObjectName, maxdistance)
 end
 
----@param types table|number -- possible types are: 0,1,2,3,5,8,12,all -1
----@param ids table|number --place {-1} unless you know ids
----@param names table|string --leave empty with {}
----@return table|AllObject
+---@param types number[] -- possible types are: 0,1,2,3,5,8,12,all -1
+---@param ids number[] -- if no ids are filtered then {}
+---@param names string[] --leave empty with {}
+---@return AllObject[]
 function API.ReadAllObjectsArray(types, ids, names)
 	return ReadAllObjectsArray(types, ids, names)
 end
 
 -- legacy, use Inventory class one instead
----@return table|IInfo
+---@return IInfo[]
 function API.ReadInvArrays33()
 	return ReadInvArrays33()
 end
@@ -1474,7 +1474,7 @@ end
 
 -- number to bitset booleans and then check bits value at poss
 ---@param value number
----@param poss table|number --0-31
+---@param poss number[] --0-31
 ---@return boolean
 function API.CheckBooleanBits(value,poss)
 	return CheckBooleanBits(value,poss)
@@ -1482,8 +1482,8 @@ end
 
 -- Get bits from int
 ---@param value number
----@param poss table|number --0-31
----@return table|number
+---@param poss number[] --0-31
+---@return number[]
 function API.GetBooleanBits(value,poss)
 	return GetBooleanBits(value,poss)
 end
@@ -1689,7 +1689,7 @@ end
 
 --- return 32 slot boolean array
 ---@param id number
----@return table|number
+---@return number[]
 function API.VB_FindPSett2(id)
 	return VB_FindPSett2(id)
 end
@@ -1731,12 +1731,12 @@ function API.LootWindowOpen_2()
 	return LootWindowOpen_2()
 end
 
----@return table|IInfo
+---@return IInfo[]
 function API.LootWindow_GetData()
 	return LootWindow_GetData()
 end
 
----@param Except_item table|number
+---@param Except_item number[]
 ---@param Inventory_stacks boolean
 ---@return number
 function API.LootWindow_space_needed(Except_item, Inventory_stacks)
@@ -1788,62 +1788,62 @@ function API.FindChooseOptionOpenClose()
 end
 
 ---@param value number
----@param arrayof table|Bbar
+---@param arrayof Bbar[]
 ---@return boolean
 function API.Math_Bbar_ValueEquals(value, arrayof)
 	return Math_Bbar_ValueEquals(value, arrayof)
 end
 
----@param arrayof1 table|number
----@param arrayof2 table|Bbar
----@return table|number
+---@param arrayof1 number[]
+---@param arrayof2 Bbar[]
+---@return number[]
 function API.Math_Bbar_ValueEqualsArr(arrayof1, arrayof2)
 	return Math_Bbar_ValueEqualsArr(arrayof1, arrayof2)
 end
 
 ---@param value number
----@param arrayof table|AllObject
+---@param arrayof AllObject[]
 ---@return boolean
 function API.Math_AO_ValueEquals(value, arrayof)
 	return Math_AO_ValueEquals(value, arrayof)
 end
 
 ---@param name string
----@param arrayof table|IInfo
+---@param arrayof IInfo[]
 ---@return boolean
 function API.Math_IInfo_ValueEqualsStr(name, arrayof)
 	return Math_IInfo_ValueEqualsStr(name, arrayof)
 end
 
----@param name table|string
----@param arrayof table|IInfo
+---@param name string[]
+---@param arrayof IInfo[]
 ---@return boolean
 function API.Math_IInfo_ValueEqualsStrArr(name, arrayof)
 	return Math_IInfo_ValueEqualsStrArr(name, arrayof)
 end
 
 ---@param value number
----@param arrayof table|IInfo
+---@param arrayof IInfo[]
 ---@return boolean
 function API.Math_IInfo_ValueEqualsStack(value, arrayof)
 	return Math_IInfo_ValueEqualsStack(value, arrayof)
 end
 
----@param arrayof1 table|number
----@param arrayof2 table|AllObject
+---@param arrayof1 number[]
+---@param arrayof2 AllObject[]
 ---@return boolean
 function API.Math_AO_ValueEqualsArr(arrayof1, arrayof2)
 	return Math_AO_ValueEqualsArr(arrayof1, arrayof2)
 end
 
----@param arrayof1 table|number
----@param arrayof2 table|AllObject
----@return table|number
+---@param arrayof1 number[]
+---@param arrayof2 AllObject[]
+---@return number[]
 function API.Math_AO_ValueEqualsArr2(arrayof1, arrayof2)
 	return Math_AO_ValueEqualsArr2(arrayof1, arrayof2)
 end
 
----@param inputaddresses table|number
+---@param inputaddresses number[]
 ---@param target number
 ---@return boolean
 function API.Math_Compare_int(inputaddresses, target)
@@ -1987,21 +1987,21 @@ end
 ---@param y1 number
 ---@param x2 number
 ---@param y2 number
----@return table|WPOINT
+---@return WPOINT[]
 function API.Math_Bresenham_line(x1, y1, x2, y2)
 	return Math_Bresenham_line(x1, y1, x2, y2)
 end
 
 ---@param xy1 WPOINT
 ---@param xy2 WPOINT
----@return table|WPOINT
+---@return WPOINT[]
 function API.Math_Bresenham_lineW(xy1, xy2)
 	return Math_Bresenham_lineW(xy1, xy2)
 end
 
 ---@param xy1 FFPOINT
 ---@param xy2 FFPOINT
----@return table|WPOINT
+---@return WPOINT[]
 function API.Math_Bresenham_lineF(xy1, xy2)
 	return Math_Bresenham_lineF(xy1, xy2)
 end
@@ -2012,7 +2012,7 @@ function API.Bresenham_step(tilexy)
 	return Bresenham_step(tilexy)
 end
 
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param sens number --float
 ---@return boolean
@@ -2028,7 +2028,7 @@ function API.RotateCamera(ItemXY, currxy, sens)
 	return RotateCamera(ItemXY, currxy, sens)
 end
 
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@return FFPOINT
 function API.FindObjTileName(obj, maxdistance)
@@ -2037,7 +2037,7 @@ end
 
 ---@param Line_index number
 ---@param size number
----@return table|string
+---@return string[]
 function API.GetChatMessage(Line_index, size)
 	return GetChatMessage(Line_index, size)
 end
@@ -2101,7 +2101,7 @@ function API.Bbar_ConvToSeconds(bar)
 end
 
 ---@param print_all_out boolean
----@return table|Bbar
+---@return Bbar[]
 function API.Buffbar_GetAllIDs(print_all_out)
 	return Buffbar_GetAllIDs(print_all_out)
 end
@@ -2154,7 +2154,7 @@ function API.ChatFind(text, limit)
 end
 
 ---old
----@return table|ChatTexts
+---@return ChatTexts[]
 function API.ChatGetMessages()
 	return ChatGetMessages()
 end
@@ -2180,7 +2180,7 @@ function API.CheckFamiliar()
 end
 
 ---@param print_all_out boolean
----@return table|Bbar
+---@return Bbar[]
 function API.DeBuffbar_GetAllIDs(print_all_out)
 	return DeBuffbar_GetAllIDs(print_all_out)
 end
@@ -2193,7 +2193,7 @@ function API.DeBuffbar_GetIDstatus(id, debug)
 end
 
 ---@param debug? boolean
----@return table|TargetBuff[]
+---@return TargetBuff[]
 function API.ReadTargetBuffsDetailed(debug)
 	return ReadTargetBuffsDetailed(debug or false)
 end
@@ -2215,14 +2215,14 @@ function API.EquipInterfaceCheckvarbit()
 end
 
 ---@param name string
----@param model_ids table|number
+---@param model_ids number[]
 ---@return boolean
 function API.FindModelCompare(name, model_ids)
 	return FindModelCompare(name, model_ids)
 end
 
 ---@param bar_nr number
----@return table|Abilitybar
+---@return Abilitybar[]
 function API.GetABarInfo(bar_nr)
 	return GetABarInfo(bar_nr)
 end
@@ -2269,7 +2269,7 @@ end
 
 ---@param entity_base number
 ---@param debug boolean
----@return table|number
+---@return number[]
 function API.GetModel_ids(entity_base, debug)
 	return GetModel_ids(entity_base, debug)
 end
@@ -2376,7 +2376,7 @@ function API.LODEInterfaceCheckvarbit()
 end
 
 ---@param entity_base number
----@param model_ids table|number
+---@param model_ids number[]
 ---@return boolean
 function API.ModelCompare(entity_base, model_ids)
 	return ModelCompare(entity_base, model_ids)
@@ -2394,20 +2394,20 @@ function API.print_GetABarInfo(bar_nr)
 end
 
 --use containers instead
----@return table|IInfo
+---@return IInfo[]
 function API.ReadEquipment()
 	return ReadEquipment()
 end
 
 ---@param boxtext string
 ---@param secondedit boolean
----@return table|string
+---@return string[]
 function API.ScriptAskBox(boxtext, secondedit)
 	return ScriptAskBox(boxtext, secondedit)
 end
 
 ---@param boxtext string
----@param textchoices table|string
+---@param textchoices string[]
 ---@param button_name1 string
 ---@param button_name2 string
 ---@param Make string
@@ -2426,8 +2426,8 @@ function API.ScriptDialogWindow_input(boxtext, password, arrtype, filename)
 	return ScriptDialogWindow_input(boxtext, password, arrtype, filename)
 end
 
----@param input table|string
----@return table|number
+---@param input string[]
+---@return number[]
 function API.StringsToInts(input)
 	return StringsToInts(input)
 end
@@ -2639,7 +2639,7 @@ function API.DoAction_G_Items_Direct(action, route, obj)
 end
 
 ---@param action number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param tile FFPOINT
 ---@param radius number --float
@@ -2649,7 +2649,7 @@ function API.DoAction_G_Items_r_norm(action, obj, maxdistance, tile, radius)
 end
 
 ---@param action number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param tile FFPOINT
 ---@param radius number --float
@@ -2690,7 +2690,7 @@ function API.DoAction_LootAll_Button()
 	return DoAction_LootAll_Button()
 end
 
----@param ids table|number
+---@param ids number[]
 ---@param maxdistance number
 ---@param tile FFPOINT
 ---@param radius number --float
@@ -2726,7 +2726,7 @@ end
 ---    local lootOpts = {allowCoins = true, maxItemCount = 5}
 ---    API.DoAction_Loot_o({123, 888}, 20, API.PlayerCoordfloat(), 20, lootOpts)
 
----@param ids table|number Item ids to loot
+---@param ids number[] Item ids to loot
 ---@param maxdistance number Maximum distance from player
 ---@param tile FFPOINT Center tile (use API.PlayerCoordfloat() for player position)
 ---@param radius number Max distance from center tile (float)
@@ -2741,7 +2741,7 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param tile WPOINT
 ---@param ignore_star boolean
@@ -2785,7 +2785,7 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param bottom_left WPOINT
 ---@param top_right WPOINT
@@ -2796,7 +2796,7 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|string
+---@param obj string[]
 ---@param maxdistance number
 ---@param ignore_star boolean
 ---@param health number
@@ -2823,7 +2823,7 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@return boolean
 function API.DoAction_Object_furthest(action, offset, obj, maxdistance)
@@ -2832,7 +2832,7 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param tile WPOINT
 ---@param tile_range number max distance FROM tile to found object, tile and tile_range range cant be zero
@@ -2888,9 +2888,9 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
----@param highlight table|number
+---@param highlight number[]
 ---@return boolean
 function API.DOFindHl(action, offset, obj, maxdistance, highlight)
 	return DOFindHl(action, offset, obj, maxdistance, highlight)
@@ -2898,9 +2898,9 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
----@param highlight table|number
+---@param highlight number[]
 ---@param localp_dist number --float
 ---@return boolean
 function API.DOFindHLvsLocalPlayer(action, offset, obj, maxdistance, highlight, localp_dist)
@@ -2926,7 +2926,7 @@ function API.DoRandomEvent(randnpc)
 end
 
 ---@param value number
----@param arrayof table|number
+---@param arrayof number[]
 ---@return boolean
 function API.Math_ValueEquals(value, arrayof)
 	return Math_ValueEquals(value, arrayof)
@@ -2942,9 +2942,9 @@ end
 8 tiles
 12 decor
 --]]
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
----@param type table|number {}
+---@param type number[] {}
 ---@return AllObject
 function API.GetAllObjArrayFirst(obj, maxdistance, type)
 	return GetAllObjArrayFirst(obj, maxdistance,type)
@@ -2960,9 +2960,9 @@ end
 8 tiles
 12 decor
 --]]
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
----@param type table|number {}
+---@param type number[] {}
 ---@param tile WPOINT
 ---@return AllObject
 function API.GetAllObjArrayFirstTile(obj, maxdistance, type, tile)
@@ -2979,10 +2979,10 @@ end
 8 tiles
 12 decor
 --]]
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
----@param type table|number {}
----@return table|AllObject
+---@param type number[] {}
+---@return AllObject[]
 function API.GetAllObjArray1(obj, maxdistance, type)
 	return GetAllObjArray(obj, maxdistance,type)
 end
@@ -2997,11 +2997,11 @@ end
 8 tiles
 12 decor
 --]]
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
----@param type table|number {}
+---@param type number[] {}
 ---@param tile WPOINT
----@return table|AllObject
+---@return AllObject[]
 function API.GetAllObjArray2(obj, maxdistance, type, tile)
 	return GetAllObjArray(obj, maxdistance, type, tile)
 end
@@ -3026,7 +3026,7 @@ function API.SideTextEq1(text)
 	return SideTextEq(text)
 end
 
----@param text table|string
+---@param text string[]
 ---@return boolean
 function API.SideTextEq2(text)
 	return SideTextEq(text)
@@ -3112,14 +3112,14 @@ function API.KeyboardPress33(codes, keymod, sleep, rand)
 end
 
 ---@param value number
----@param arrayof table|IInfo
+---@param arrayof IInfo[]
 ---@return boolean
 function API.Math_IInfo_ValueEquals1(value, arrayof)
 	return Math_IInfo_ValueEquals(value, arrayof)
 end
 
----@param value table|IInfo
----@param arrayof table|IInfo
+---@param value IInfo
+---@param arrayof IInfo[]
 ---@return boolean
 function API.Math_IInfo_ValueEquals2(value, arrayof)
 	return Math_IInfo_ValueEquals(value, arrayof)
@@ -3181,8 +3181,8 @@ function API.PlayerInterActingWith_2(localmem)
 end
 
 ---@param target_under boolean
----@param lv_ID table|InterfaceComp5
----@return table|IInfo
+---@param lv_ID InterfaceComp5[]
+---@return IInfo[]
 function API.ScanForInterfaceTest2Get(target_under, lv_ID)
 	if type(lv_ID[1]) == "table" then
 		local ids = {}
@@ -3218,8 +3218,8 @@ function API.BankGetItemStack_str(itemname)
 	return BankGetItemStack(itemname)
 end
 
----@param item table|number
----@return table|number
+---@param item number[]
+---@return number[]
 function API.BankGetItemStack2(item)
 	return BankGetItemStack(item)
 end
@@ -3263,14 +3263,14 @@ end
 
 -- gets ability data by matching icon ids
 ---@param ability_ids number
----@return table|Abilitybar
+---@return Abilitybar[]
 function API.GetABs_ids(ability_ids)
 	return GetABs_ids(ability_ids)
 end
 
 -- get ability data by names
----@param ability_names table|string
----@return table|Abilitybar
+---@param ability_names string[]
+---@return Abilitybar[]
 function API.GetABs_names(ability_names)
 	return GetABs_names(ability_names)
 end
@@ -3283,7 +3283,7 @@ function API.GetAB_ids(ability_ids)
 end
 
 ---@param action number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@return boolean
 function API.DoAction_G_Items1(action, obj, maxdistance)
@@ -3291,7 +3291,7 @@ function API.DoAction_G_Items1(action, obj, maxdistance)
 end
 
 ---@param action number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param atTile WPOINT
 ---@return boolean
@@ -3300,7 +3300,7 @@ function API.DoAction_G_Items2(action, obj, maxdistance, atTile)
 end
 
 ---@param action number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param tile FFPOINT
 ---@param radius number --float
@@ -3311,7 +3311,7 @@ end
 
 ---@param action number
 ---@param action_route number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param tile FFPOINT
 ---@param radius number --float
@@ -3329,7 +3329,7 @@ function API.DoAction_Inventory1(id, random, m_action, offset)
 	return DoAction_Inventory(id, random, m_action, offset)
 end
 
----@param ids table|number
+---@param ids number[]
 ---@param random number
 ---@param m_action number
 ---@param offset number
@@ -3349,7 +3349,7 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@return boolean
 function API.DoAction_Object1(action, offset, obj, maxdistance)
@@ -3358,7 +3358,7 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param tile WPOINT
 ---@return boolean
@@ -3368,7 +3368,7 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param valid boolean
 ---@return boolean
@@ -3378,7 +3378,7 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param tile WPOINT
 ---@param valid boolean
@@ -3389,7 +3389,7 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|string
+---@param obj string[]
 ---@param maxdistance number
 ---@param valid boolean
 ---@return boolean
@@ -3399,7 +3399,7 @@ end
 
 ---@param action number
 ---@param offset number
----@param obj table|string
+---@param obj string[]
 ---@param maxdistance number
 ---@param tile WPOINT
 ---@param valid boolean
@@ -3408,7 +3408,7 @@ function API.DoAction_Object_string2(action, offset, obj, maxdistance, tile, val
 	return DoAction_Object_string(action, offset, obj, maxdistance, tile, valid)
 end
 
----@param obj table|string
+---@param obj string[]
 ---@param maxdistance number
 ---@param checkcombat boolean -- attacks everyone in Combat if true, if false only in not in combat players
 ---@param xstart number
@@ -3455,7 +3455,7 @@ end
 
 --- Takes the top level varp ID and returns all of the associated varbit objects for that Varp
 ---@param id number varp ID
----@return table|Varbit
+---@return Varbit[]
 function API.GetVarbitsFromVarp(id)
 	return GetVarbitsFromVarp(id)
 end
@@ -3522,7 +3522,7 @@ function API.SetDrawTrackedSkills(val)
 end
 
 ---Get item price from exchange API
----@param itemid number|table itemid or table of itemids to lookup
+---@param itemid number|number[] itemid or table of itemids to lookup
 ---@return number|table price of table of prices with itemid as key, price as value
 ---@overload fun(itemids: table): table
 function API.GetExchangePrice(itemid)
@@ -3716,28 +3716,28 @@ function Inventory:IsEmpty() end
 
 ---Checks if the Inventory contains a specific item or multiple items.
 ---Accepts a single item ID, a single item name, a table of item IDs, or a table of item names.
----@param item number|string|table
+---@param item number|string|number[]|string[]
 ---@return boolean true if the Inventory contains the specified item(s), false otherwise.
 function Inventory:Contains(item) end
 
 --- Checks if the Inventory contains all of the specified items.
 ---
 --- Accepts a list of item IDs or a list of item names.
----@param items table|number|string
+---@param items number[]|string[]
 ---@return boolean true if the Inventory contains all of the items, `false otherwise.
 function Inventory:ContainsAll(items) end
 
 --- Checks if the Inventory contains any of the specified items.
 ---
 --- Accepts a list of item IDs or a list of item names.
----@param items table|number|string
+---@param items number[]|string[]
 ---@return boolean true if the Inventory contains any of the items, false otherwise.
 function Inventory:ContainsAny(items) end
 
 --- Checks if the Inventory contains only the specified items.
 ---
 --- Accepts a list of item IDs or a list of item names.
----@param items table|number|string
+---@param items number[]|string[]
 ---@return boolean true if the Inventory contains only the specified items, false otherwise.
 function Inventory:ContainsOnly(items) end
 
@@ -3953,7 +3953,7 @@ function Equipment:IsFull() end
 
 ---Checks if the Equipment contains a specific item or multiple items.
 ---Accepts a single item ID, a single item name, a table of item IDs, or a table of item names.
----@param item number|string|table The item ID, item name
+---@param item number|string|number[]|string[] The item ID, item name
 ---@return boolean true if the Equipment contains the specified item(s), false otherwise.
 function Equipment:Contains(item) end
 
@@ -4334,13 +4334,13 @@ function API.BankAllItems()
 	return BankAllItems()
 end
 
----@param Except_item table|number
+---@param Except_item number[]
 ---@return boolean
 function API.BankAllItem_InvExceptintM(Except_item)
 	return BankAllItem_InvExceptintM(Except_item)
 end
 
----@param Except_item table|string
+---@param Except_item string[]
 ---@return boolean
 function API.BankAllItem_InvExceptstrM(Except_item)
 	return BankAllItem_InvExceptstrM(Except_item)
@@ -4378,7 +4378,7 @@ function API.SelectToolOpen(txt_to_find)
 	return SelectToolOpen(txt_to_find)
 end
 
----@param Except_itemv table|number
+---@param Except_itemv number[]
 ---@return boolean
 function API.LootWindow_Loot(Except_itemv)
 	return LootWindow_Loot(Except_itemv)
@@ -4445,12 +4445,12 @@ function API.ClickTile_2(x, y, z, mouse)
 	return ClickTile_(x, y, z, mouse)
 end
 
----@param Except_item table|number
+---@param Except_item number[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param tilespot WPOINT
 ---@param maxdistance2 number
----@param items_to_eat table|number
+---@param items_to_eat number[]
 ---@return boolean
 function API.FindGItem_AllBut2(Except_item, maxdistance, accuracy, tilespot, maxdistance2, items_to_eat)
 	return FindGItem_AllBut2(Except_item, maxdistance, accuracy, tilespot, maxdistance2, items_to_eat)
@@ -4491,7 +4491,7 @@ function API.Map_Walker2(tilexy, distance)
 	return Map_Walker2(tilexy, distance)
 end
 
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param usemap boolean
@@ -4502,18 +4502,18 @@ function API.FindObj1(obj, maxdistance, accuracy, usemap, action, sidetext)
 	return FindObj(obj, maxdistance, accuracy, usemap, action, sidetext)
 end
 
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param usemap boolean
 ---@param action number
----@param sidetext table|string
+---@param sidetext string[]
 ---@return boolean
 function API.FindObj2(obj, maxdistance, accuracy, usemap, action, sidetext)
 	return FindObj(obj, maxdistance, accuracy, usemap, action, sidetext)
 end
 
----@param AllStuff2 table|AllObject
+---@param AllStuff2 AllObject[]
 ---@param accuracy number
 ---@param usemap boolean
 ---@param action number
@@ -4523,11 +4523,11 @@ function API.ClickAllObj1(AllStuff2, accuracy, usemap, action, sidetext)
 	return ClickAllObj(AllStuff2, accuracy, usemap, action, sidetext)
 end
 
----@param AllStuff2 table|AllObject
+---@param AllStuff2 AllObject[]
 ---@param accuracy number
 ---@param usemap boolean
 ---@param action number
----@param sidetext table|string
+---@param sidetext string[]
 ---@return boolean
 function API.ClickAllObj2(AllStuff2, accuracy, usemap, action, sidetext)
 	return ClickAllObj(AllStuff2, accuracy, usemap, action, sidetext)
@@ -4589,20 +4589,20 @@ function API.Post_MouseRightClick(x, y, sleep, random)
 end
 
 -- old
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param usemap boolean
 ---@param action number
 ---@param sidetext string
----@param highlight table|number
+---@param highlight number[]
 ---@return boolean
 function API.FindHl(obj, maxdistance, accuracy, usemap, action, sidetext, highlight)
 	return FindHl(obj, maxdistance, accuracy, usemap, action, sidetext, highlight)
 end
 
 -- old
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param usemap boolean
@@ -4614,7 +4614,7 @@ function API.FindObjCheck(obj, maxdistance, accuracy, usemap, action, sidetext)
 end
 
 -- old
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param objtile WPOINT
@@ -4626,7 +4626,7 @@ function API.FindObjTile(obj, maxdistance, accuracy, objtile, usemap, action, si
 	return FindObjTile(obj, maxdistance, accuracy, objtile, usemap, action, sidetext)
 end
 
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param usemap boolean
@@ -4637,7 +4637,7 @@ function API.FindObjCheck_1(obj, maxdistance, accuracy, usemap, action, sidetext
 	return FindObjCheck_(obj, maxdistance, accuracy, usemap, action, sidetext)
 end
 
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param usemap boolean
@@ -4649,20 +4649,20 @@ function API.FindObjCheck_2(obj, maxdistance, accuracy, usemap, action, sidetext
 	return FindObjCheck_(obj, maxdistance, accuracy, usemap, action, sidetext, tile)
 end
 
----@param objIds table|number
+---@param objIds number[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param usemap boolean
 ---@param action number
 ---@param sidetext string
----@param hlIds table|number
+---@param hlIds number[]
 ---@param localp_dist number --float
 ---@return boolean
 function API.FindHLvsLocalPlayer(objIds, maxdistance, accuracy, usemap, action, sidetext, hlIds, localp_dist)
 	return FindHLvsLocalPlayer(objIds, maxdistance, accuracy, usemap, action, sidetext, hlIds, localp_dist)
 end
 
----@param obj table|number
+---@param obj number[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param usemap boolean
@@ -4673,7 +4673,7 @@ function API.FindHObj(obj, maxdistance, accuracy, usemap, action, sidetext)
 	return FindHObj(obj, maxdistance, accuracy, usemap, action, sidetext)
 end
 
----@param npc table|number
+---@param npc number[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param lifepoint number
@@ -4686,14 +4686,14 @@ function API.FindNPCss(npc, maxdistance, accuracy, lifepoint, tilespot, maxdista
 	return FindNPCss(npc, maxdistance, accuracy, lifepoint, tilespot, maxdistance2, action, sidetext)
 end
 
----@param npc table|number
+---@param npc number[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param lifepoints number
 ---@param tilespot WPOINT
 ---@param maxdistance2 number
 ---@param action number
----@param sidetext table|string
+---@param sidetext string[]
 ---@return boolean
 function API.FindNPCssMulti(npc, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
 	return FindNPCssMulti(npc, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
@@ -4725,7 +4725,7 @@ function API.FindNPCssSTR(NPC_name, maxdistance, accuracy, lifepoints, tilespot,
 	return FindNPCssSTR(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
 end
 
----@param NPC_names table|string
+---@param NPC_names string[]
 ---@param maxdistance number
 ---@param accuracy number
 ---@param lifepoints number
@@ -4904,7 +4904,7 @@ function SM:AddTileArray(label, key, customArray, defaultArray) end
 ---@param label string The display label for the array
 ---@param key string The unique key used to access the value in the CONFIG table
 ---@param fieldTypes table Array of field type strings: {"text", "number", "checkbox", "dropdown", "slider", "tile"}
----@param fieldLabels table|nil Optional array of labels for each field: {"Item", "Count", "Enabled"}
+---@param fieldLabels string[]|nil Optional array of labels for each field: {"Item", "Count", "Enabled"}
 ---@param extraParams table|nil Optional table of tables for dropdown/slider params (one per field, empty {} if not needed). Tile stored as "x,y,z" string
 ---@param customArray table[]|nil Optional initial custom array values
 ---@param defaultArray table[]|nil Optional default values shown as reference
@@ -6198,12 +6198,12 @@ function Bank:IsPINOpen() end
 function Bank:EnterPIN(digit1, digit2, digit3, digit4) end
 
 --- Checks if bank contains ALL of the requested item(s)
----@param ItemID number|table Single item ID or table of item IDs
+---@param ItemID number|number[] Single item ID or table of item IDs
 ---@return boolean
 function Bank:Contains(ItemID) end
 
 --- Checks if bank contains ANY of the requested item(s)
----@param ItemID number|table Single item ID or table of item IDs
+---@param ItemID number|number[] Single item ID or table of item IDs
 ---@return boolean
 function Bank:ContainsAny(ItemID) end
 
@@ -6222,35 +6222,35 @@ function Bank:IsNoteModeEnabled() end
 function Bank:SetNoteMode(enabled) end
 
 --- Withdraws a specific amount of item(s) from the bank
----@param ItemID number|table Single item ID or table of item IDs
+---@param ItemID number|number[] Single item ID or table of item IDs
 ---@param amount number Amount to withdraw
 ---@return boolean
 function Bank:Withdraw(ItemID, amount) end
 
 --- Withdraws all of the requested item(s) from the bank
----@param ItemID number|table Single item ID or table of item IDs
+---@param ItemID number|number[] Single item ID or table of item IDs
 ---@return boolean
 function Bank:WithdrawAll(ItemID) end
 
 --- Withdraws item(s) from the bank to your Beast of Burden
----@param ItemID number|table Single item ID or table of item IDs
+---@param ItemID number|number[] Single item ID or table of item IDs
 ---@param amount number Amount to withdraw
 ---@return boolean
 function Bank:WithdrawToBoB(ItemID, amount) end
 
 --- Withdraws all of the requested item(s) from the bank to your Beast of Burden
----@param ItemID number|table Single item ID or table of item IDs
+---@param ItemID number|number[] Single item ID or table of item IDs
 ---@return boolean
 function Bank:WithdrawAllToBoB(ItemID) end
 
 --- Deposits a specific amount of item(s) to the bank
----@param ItemID number|table Single item ID or table of item IDs
+---@param ItemID number|number[] Single item ID or table of item IDs
 ---@param amount number Amount to deposit
 ---@return boolean
 function Bank:Deposit(ItemID, amount) end
 
 --- Deposits all of the requested item(s) to the bank
----@param ItemID number|table Single item ID or table of item IDs
+---@param ItemID number|number[] Single item ID or table of item IDs
 ---@return boolean
 function Bank:DepositAll(ItemID) end
 
@@ -6271,13 +6271,13 @@ function Bank:DepositSummon() end
 function Bank:DepositMoneyPouch() end
 
 --- Equips a specific amount of item(s) directly from the bank
----@param ItemID number|table Single item ID or table of item IDs
+---@param ItemID number|number[] Single item ID or table of item IDs
 ---@param amount number Amount to equip
 ---@return boolean
 function Bank:Equip(ItemID, amount) end
 
 --- Equips all of the requested item(s) directly from the bank
----@param ItemID number|table Single item ID or table of item IDs
+---@param ItemID number|number[] Single item ID or table of item IDs
 ---@return boolean
 function Bank:EquipAll(ItemID) end
 
@@ -6340,13 +6340,13 @@ function Bank:DepositBoxDepositSummon() end
 function Bank:DepositBoxDepositMoneyPouch() end
 
 --- Deposits a specific amount of item(s) into a deposit box
----@param ItemID number|table Single item ID or table of item IDs
+---@param ItemID number|number[] Single item ID or table of item IDs
 ---@param amount number Amount to deposit (1, 5, or 10)
 ---@return boolean
 function Bank:DepositBoxDeposit(ItemID, amount) end
 
 --- Deposits all of the requested item(s) into a deposit box
----@param ItemID number|table Single item ID or table of item IDs
+---@param ItemID number|number[] Single item ID or table of item IDs
 ---@return boolean
 function Bank:DepositBoxDepositAll(ItemID) end
 

@@ -58,7 +58,7 @@ while API.Read_LoopyLoop() do
             if APIOSRS.RL_GetWintertodtTimer() == 0 then
                 --shoulndt be
                 if APIOSRS.RL_IsWidgetSelected() then
-                    local rand = API.Math_RandomNumber(3)-1
+                    local rand = API.Math_RandomNumber(2)-1
                     APIOSRS.RL_ClickTile(near_brazier.x - rand,near_brazier.y,true)
                     print("Un-widget")
                 end
@@ -72,7 +72,7 @@ while API.Read_LoopyLoop() do
                 if Inventory:Contains(bruma_root) and Inventory:Contains(knife) and Inventory:IsFull() then
                     if API.Dist_FLP(near_brazier) > 3 then
                         print("Move next to brazier")
-                        local rand = API.Math_RandomNumber(3)-1
+                        local rand = API.Math_RandomNumber(2)-1
                         APIOSRS.RL_ClickTile(near_brazier.x - rand,near_brazier.y,true)
                         API.RandomSleep2(900, 500, 2000)
                     end
