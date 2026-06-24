@@ -18,14 +18,5 @@ while API.Read_LoopyLoop() do
         end
     end
 
-    if not API.CheckAnim(120) then
-        API.DoAction_Object1(0x33,API.OFF_ACT_GeneralObject_route0,{ 106598 },10)
-        API.RandomSleep2(5400, 1300, 400)
-        API.KeyboardPress31(0x20, 30, 80)
-        if not Inventory:Contains(1511) then
-            --API.Write_LoopyLoop(false)
-        end
-    end
-
 API.RandomSleep2(8600, 2300, 300)
 end

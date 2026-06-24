@@ -1320,6 +1320,14 @@ function API.TypeOnkeyboard2(asciii)
 	return TypeOnkeyboard2(asciii)
 end
 
+--- Types a string via direct game input hook (SimClickFun).
+--- Handles Shift and uppercase/symbols correctly.
+---@param asciii string
+---@return void
+function API.TypeOnkeyboard3(asciii)
+	return TypeOnkeyboard3(asciii)
+end
+
 ---@param Loops number
 ---@return boolean
 function API.CheckAnim(Loops)
@@ -3109,6 +3117,15 @@ end
 ---@return boolean
 function API.KeyboardPress33(codes, keymod, sleep, rand)
 	return KeyboardPress33(codes, keymod, sleep, rand)
+end
+
+--- Press a single char via direct game input hook (SimClickFun).
+--- Handles Shift and WM_CHAR internally.
+---@param codes number ascii char code
+---@param keymod number? 0=auto, 1=shift, 2=ctrl, 3=alt (default 0)
+---@return boolean
+function API.KeyboardPress4(codes, keymod)
+	return KeyboardPress4(codes, keymod or 0)
 end
 
 ---@param value number

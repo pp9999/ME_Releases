@@ -18,18 +18,23 @@ while API.Read_LoopyLoop() do
     --print("RL_GetWintertodtTimer:" .. tostring(APIOSRS.RL_GetWintertodtTimer()))
     --print("RL_GetWintertodtWarmth:" .. tostring(APIOSRS.RL_GetWintertodtWarmth()))
     if APIOSRS.RL_GetWintertodtTimer() == 0 then-- 0 game is going on
+        if APIOSRS.RL_GetOpenTab() ~= 3 then
+            APIOSRS.RL_OpenTab(3)
+            print("wrong tab")
+            API.RandomSleep2(2500, 100, 200)
+        end
         if APIOSRS.RL_GetWintertodtWarmth() < 600 then
             APIOSRS.RL_ClickEntity(93, foods)
             API.RandomSleep2(300, 1000, 2000)
         end
-        if API.Dist_FLP(near_brazier) < 3 then
+        if API.Dist_FLP(near_brazier) < 6 then
             if Inventory:Contains(hammer) then
-                if APIOSRS.RL_ClickEntity(0, {brazier_broken} , 4) then
+                if APIOSRS.RL_ClickEntity(0, {brazier_broken} , 5) then
                     print("repair")
                     API.RandomSleep2(300, 500, 2000)
                 end
             end
-            if APIOSRS.RL_ClickEntity(0, {brazier_light} , 4) then
+            if APIOSRS.RL_ClickEntity(0, {brazier_light} , 5) then
                 print("light")
                 API.RandomSleep2(300, 500, 2000)
             end
@@ -48,7 +53,7 @@ while API.Read_LoopyLoop() do
                 end
                 --start fireing, all are fletched
                 if Inventory:Contains(bruma_kindling) and not Inventory:Contains(bruma_root) then
-                    APIOSRS.RL_ClickEntity(0, {brazier_burning} , 4)
+                    APIOSRS.RL_ClickEntity(0, {brazier_burning} , 5)
                     print("Feeding fire")
                     API.RandomSleep2(500, 1000, 2000)                    
                 end
