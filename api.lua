@@ -119,13 +119,50 @@ API.I_buffb = I_buffb
 ---@return boolean
 API.CacheEnabled = CacheEnabled
 
+-- old
+--[[AllObject Types 
+0 obj
+1 npc
+2 player
+3 ground item
+4 highlights
+5 projectiles
+8 tiles
+12 decor
+--]]
+---@param obj number[]
+---@param maxdistance number
+---@param type number[]
+---@return AllObject[]
+function API.GetAllObjArrayInteract(obj, maxdistance, type)
+	return GetAllObjArrayInteract(obj, maxdistance, type)
+end
+
+-- old
+--[[AllObject Types 
+0 obj
+1 npc
+2 player
+3 ground item
+4 highlights
+5 projectiles
+8 tiles
+12 decor
+--]]
+---@param obj string[]
+---@param maxdistance number
+---@param type number[]
+---@return AllObject[]
+function API.GetAllObjArrayInteract_str(obj, maxdistance, type)
+	return GetAllObjArrayInteract_str(obj, maxdistance, type)
+end
+
 -- Get those from "Splats diagnosis"
 ---@param clear boolean clean array
 ---@return SPLAT
 function API.GatherEvents_splat_check(clear)
 	return GatherEvents_splat_check(clear)
 end
-
 
 -- Turn on/off default on
 ---@param state boolean
