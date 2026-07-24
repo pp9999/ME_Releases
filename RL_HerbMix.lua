@@ -2,11 +2,11 @@ local API = require("api")
 local APIOSRS = require("apiosrs")
 
 --Grimy irit 209
-local Vial_ = 3002 --vial 227, unf irit 101 -- 269 Clean torstol
-local Sec_ = 6693 --irit 259, eye of new 221 -- 2436 super Attack
+local Vial_ = 3430 --vial 227, unf irit 101 -- 269 Clean torstol
+local Sec_ = 19669 --irit 259, eye of new 221 -- 2436 super Attack
 local Third_ = 0 -- 2440 super Strength
 local Fourth_ = 0 -- 2442 super Defence
-local banks = { 26711 } --farm bank 26711
+local banks = { 26711, } --farm bank 26711
 local sleeps = { 5000, 10000, 20000, 25000, 30000 }
 local currentfail = 0
 while API.Read_LoopyLoop() do
@@ -44,7 +44,7 @@ while API.Read_LoopyLoop() do
             end            
         end
         API.KeyboardPress31(32, 60, 80)
-        API.RandomSleep2(sleeps[1], 1000, 2000)
+        API.RandomSleep2(sleeps[5], 1000, 2000)
     else
         print("Opening bank")
         if not Bank:IsOpen() then

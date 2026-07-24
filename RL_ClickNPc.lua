@@ -2,7 +2,7 @@ local API = require("api")
 local APIOSRS = require("apiosrs")
 
 
-local NPCs = {517,516,11952,11953}
+local NPCs = {3887}
 local ITEMs = {
 25419,
 365,379,385,

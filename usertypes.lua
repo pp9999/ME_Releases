@@ -67,16 +67,6 @@
 ---@field text string
 ---@field conv_text number
 
----@class ChatTexts
----@field name string
----@field text string
----@field text_extra1 string
----@field text_extra2 string
----@field mem_loc number
----@field pc_time_stamp number
----@field pos_found number
----@field time_total number
-
 ---@class VB
 ---@field state number
 ---@field addr number

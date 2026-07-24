@@ -212,35 +212,35 @@ Abilities.RANGE.Galeshot = { name = "Galeshot", id = 23731 }
 
 Abilities.TELEPORT = {}
 Abilities.TELEPORT.BurthorpeLodestone = { name = "Burthorpe Lodestone", id = 31864 }
-Abilities.TELEPORT.MaxGuildTeleport = { name = "Max guild Teleport", id = 12531 }
-Abilities.TELEPORT.SkeletalHorrorTeleport = { name = "Skeletal horror Teleport", id = 12518 }
-Abilities.TELEPORT.KandarinMonasteryTeleport = { name = "Kandarin monastery Teleport", id = 12519 }
-Abilities.TELEPORT.ManorFarmTeleport = { name = "Manor farm Teleport", id = 12520 }
+Abilities.TELEPORT.MaxGuildTeleport = { name = "Max guild Teleport", id = 36145 }
+Abilities.TELEPORT.SkeletalHorrorTeleport = { name = "Skeletal horror Teleport", id = 36142 }
+Abilities.TELEPORT.KandarinMonasteryTeleport = { name = "Kandarin monastery Teleport", id = 36143 }
+Abilities.TELEPORT.ManorFarmTeleport = { name = "Manor farm Teleport", id = 36144 }
 Abilities.TELEPORT.WarSRetreatTeleport = { name = "War's Retreat Teleport", id = 35042 }
 Abilities.TELEPORT.AlKharidLodestone = { name = "Al Kharid Lodestone", id = 31871 }
 Abilities.TELEPORT.TaverleyTeleport = { name = "Taverley Teleport", id = 35031 }
 Abilities.TELEPORT.ArdougneLodestone = { name = "Ardougne Lodestone", id = 31862 }
-Abilities.TELEPORT.SouthFeldipHillsTeleport = { name = "South Feldip Hills Teleport", id = 14335 }
-Abilities.TELEPORT.VarrockTeleport = { name = "Varrock Teleport", id = 14336 }
-Abilities.TELEPORT.LumbridgeTeleport = { name = "Lumbridge Teleport", id = 14334 }
-Abilities.TELEPORT.FaladorTeleport = { name = "Falador Teleport", id = 14337 }
-Abilities.TELEPORT.HouseTeleport = { name = "House Teleport", id = 14338 }
-Abilities.TELEPORT.CamelotTeleport = { name = "Camelot Teleport", id = 14339 }
+Abilities.TELEPORT.SouthFeldipHillsTeleport = { name = "South Feldip Hills Teleport", id = 36136 }
+Abilities.TELEPORT.VarrockTeleport = { name = "Varrock Teleport", id = 36137 }
+Abilities.TELEPORT.LumbridgeTeleport = { name = "Lumbridge Teleport", id = 36135 }
+Abilities.TELEPORT.FaladorTeleport = { name = "Falador Teleport", id = 36132 }
+Abilities.TELEPORT.HouseTeleport = { name = "House Teleport", id = 36133 }
+Abilities.TELEPORT.CamelotTeleport = { name = "Camelot Teleport", id = 36130 }
 Abilities.TELEPORT.ArdougneTeleport = { name = "Ardougne Teleport", id = 35028 }
 Abilities.TELEPORT.WatchtowerTeleport = { name = "Watchtower Teleport", id = 35033 }
 Abilities.TELEPORT.TrollheimTeleport = { name = "Trollheim Teleport", id = 35032 }
 Abilities.TELEPORT.ApeAtollTeleport = { name = "Ape Atoll Teleport", id = 35027 }
-Abilities.TELEPORT.TeleOtherLumbridge = { name = "Tele-other Lumbridge", id = 14345 }
-Abilities.TELEPORT.TeleOtherFalador = { name = "Tele-other Falador", id = 14346 }
-Abilities.TELEPORT.TeleOtherCamelot = { name = "Tele-other Camelot", id = 14347 }
-Abilities.TELEPORT.PaddewwaTeleport = { name = "Paddewwa Teleport", id = 18765 }
-Abilities.TELEPORT.SenntistenTeleport = { name = "Senntisten Teleport", id = 25908 }
-Abilities.TELEPORT.KharyrllTeleport = { name = "Kharyrll Teleport", id = 25909 }
-Abilities.TELEPORT.LassarTeleport = { name = "Lassar Teleport", id = 25910 }
-Abilities.TELEPORT.DareeyakTeleport = { name = "Dareeyak Teleport", id = 25911 }
-Abilities.TELEPORT.CarrallangarTeleport = { name = "Carrallangar Teleport", id = 25912 }
-Abilities.TELEPORT.AnnakarlTeleport = { name = "Annakarl Teleport", id = 25913 }
-Abilities.TELEPORT.GhorrockTeleport = { name = "Ghorrock Teleport", id = 25914 }
+Abilities.TELEPORT.TeleOtherLumbridge = { name = "Tele-other Lumbridge", id = 36140 }
+Abilities.TELEPORT.TeleOtherFalador = { name = "Tele-other Falador", id = 36139 }
+Abilities.TELEPORT.TeleOtherCamelot = { name = "Tele-other Camelot", id = 36138 }
+Abilities.TELEPORT.PaddewwaTeleport = { name = "Paddewwa Teleport", id = 36128 }
+Abilities.TELEPORT.SenntistenTeleport = { name = "Senntisten Teleport", id = 36129 }
+Abilities.TELEPORT.KharyrllTeleport = { name = "Kharyrll Teleport", id = 36126 }
+Abilities.TELEPORT.LassarTeleport = { name = "Lassar Teleport", id = 36127 }
+Abilities.TELEPORT.DareeyakTeleport = { name = "Dareeyak Teleport", id = 36124 }
+Abilities.TELEPORT.CarrallangarTeleport = { name = "Carrallangar Teleport", id = 36123 }
+Abilities.TELEPORT.AnnakarlTeleport = { name = "Annakarl Teleport", id = 36122 }
+Abilities.TELEPORT.GhorrockTeleport = { name = "Ghorrock Teleport", id = 36125 }
 Abilities.TELEPORT.MoonclanTeleport = { name = "Moonclan Teleport", id = 14403 }
 Abilities.TELEPORT.TeleGroupMoonclan = { name = "Tele-group Moonclan", id = 14428 }
 Abilities.TELEPORT.OuraniaTeleport = { name = "Ourania Teleport", id = 14442 }
@@ -260,8 +260,8 @@ Abilities.TELEPORT.IcePlateauTeleport = { name = "Ice Plateau Teleport", id = 14
 Abilities.TELEPORT.TeleGroupIcePlateau = { name = "Tele-group Ice Plateau", id = 14434 }
 Abilities.TELEPORT.TrollheimFarmTeleport = { name = "Trollheim Farm Teleport", id = 14453 }
 Abilities.TELEPORT.TeleGroupTrollheimFarm = { name = "Tele-group Trollheim Farm", id = 14454 }
-Abilities.TELEPORT.HomeTeleport = { name = "Home Teleport", id = 14333 }
-Abilities.TELEPORT.DungeonHomeTeleport = { name = "Dungeon Home Teleport", id = 14333 }
+Abilities.TELEPORT.HomeTeleport = { name = "Home Teleport", id = 36131 }
+Abilities.TELEPORT.DungeonHomeTeleport = { name = "Dungeon Home Teleport", id = 36131 }
 Abilities.TELEPORT.CreateGatestone = { name = "Create Gatestone", id = 14507 }
 Abilities.TELEPORT.GatestoneTeleport = { name = "Gatestone Teleport", id = 14508 }
 Abilities.TELEPORT.GroupGatestoneTeleport = { name = "Group Gatestone Teleport", id = 14509 }
@@ -307,5 +307,7 @@ Abilities.TELEPORT.EasternAnachroniaTeleport = { name = "Eastern Anachronia Tele
 Abilities.TELEPORT.NorthernLostGroveTeleport = { name = "Northern Lost Grove Teleport", id = 11316 }
 Abilities.TELEPORT.WendlewickLodestone = { name = "Wendlewick Lodestone", id = 35667 }
 Abilities.TELEPORT.WendlewickTeleport = { name = "Wendlewick Teleport", id = 35665 }
+Abilities.TELEPORT.SunlightSandsTeleport = { name = "Sunlight Sands Teleport", id = 36102 }
+Abilities.TELEPORT.HouseTeleport = { name = "House Teleport", id = 36134 }
 
 return Abilities

@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.074
+API.VERSION = 1.075
 
 --[[
 Known shortcuts
@@ -51,7 +51,7 @@ API.OFF_ACT_InteractNPC_useitem = InteractNPC_useitem
 API.OFF_ACT_Pickup_route = Pickup_route
 
 --- Boxtrap action
-API.Boxtrap_route = Boxtrap_route
+API.OFF_ACT_Boxtrap_route = Boxtrap_route
 
 --- walk to tile
 API.OFF_ACT_Walk_route = Walk_route
@@ -139,34 +139,6 @@ end
 ---@return void
 function API.SetDoActionLimit(state)
 	return SetDoActionLimit(state)
-end
-
--- Turn on/off default off, Simulate mouse movement pre click
----@param state boolean
----@return void
-function API.SetMouseMove(state)
-	return SetMouseMove(state)
-end
-
--- Turn on/off default on, disable doaction
----@param state boolean
----@return void
-function API.SetDoAction(state)
-	return SetDoAction(state)
-end
-
--- Turn on/off default on, disable software flag override
----@param state boolean
----@return void
-function API.SetHookModifaction(state)
-	return SetHookModifaction(state)
-end
-
--- Turn on/off default on. FM random movement
----@param state boolean
----@return void
-function API.SetFMRandom(state)
-	return SetFMRandom(state)
 end
 
 -- current world of localplayer
@@ -631,17 +603,6 @@ end
 ---@return number
 function API.Get_HANDLE()
 	return Get_HANDLE()
-end
-
----@return number
-function API.Read_fake_mouse_do()
-	return Read_fake_mouse_do()
-end
-
----@param state boolean
----@return number
-function API.Write_fake_mouse_do(state)
-	return Write_fake_mouse_do(state)
 end
 
 --- get localplayer name.
@@ -1111,12 +1072,6 @@ function API.TilesToPixelsWF(xy)
 	return TilesToPixelsWF(xy)
 end
 
----@param mxy WPOINT
----@return boolean
-function API.ScreenFilter(mxy)
-	return ScreenFilter(mxy)
-end
-
 ---@param SummPointer number
 ---@param howmanyBytes number --something like 250
 ---@return string
@@ -1267,12 +1222,6 @@ function API.OthersInteractingWithLpPl(look_stance)
 	return OthersInteractingWithLpPl(look_stance)
 end
 
----@param spot number
----@return string
-function API.ReadText(spot)
-	return ReadText(spot)
-end
-
 ---@return FFPOINT
 function API.PlayerCoordfloat()
 	return PlayerCoordfloat()
@@ -1344,70 +1293,12 @@ function API.ReadPlayerMovin2()
 	return ReadPlayerMovin2()
 end
 
--- old
---[[AllObject Types 
-0 obj
-1 npc
-2 player
-3 ground item
-4 highlights
-5 projectiles
-8 tiles
-12 decor
---]]
----@param obj number[]
----@param maxdistance number
----@param type number[]
----@return AllObject[]
-function API.GetAllObjArrayInteract(obj, maxdistance, type)
-	return GetAllObjArrayInteract(obj, maxdistance, type)
-end
-
--- old
---[[AllObject Types 
-0 obj
-1 npc
-2 player
-3 ground item
-4 highlights
-5 projectiles
-8 tiles
-12 decor
---]]
----@param obj string[]
----@param maxdistance number
----@param type number[]
----@return AllObject[]
-function API.GetAllObjArrayInteract_str(obj, maxdistance, type)
-	return GetAllObjArrayInteract_str(obj, maxdistance, type)
-end
-
--- old
----@param tile WPOINT
----@param item number
----@return boolean
-function API.CheckTileforItems(tile, item)
-	return CheckTileforItems(tile, item)
-end
-
 ---@return WPOINT
 --[[
-returns x,y coords of the mouse cusor relative to the game window
+returns x,y coords of the mouse cursor relative to the game window
 ]]
 function API.GetMLoc()
 	return GetMLoc()
-end
-
----@param mK number --char
----@return void
-function API.KeyPress_(mK)
-	return KeyPress_(mK)
-end
-
----@param mK number
----@return void
-function API.KeyPress_2(mK)
-	return KeyPress_2(mK)
 end
 
 ---@return number
@@ -1421,11 +1312,6 @@ end
 ---@return number
 function API.CRC32CheckSum(Data, Size, InitialValue)
 	return CRC32CheckSum(Data, Size, InitialValue)
-end
-
----@return string
-function API.FindSideText()
-	return FindSideText()
 end
 
 ---@param ObjectName string[]
@@ -1449,11 +1335,6 @@ function API.ReadInvArrays33()
 	return ReadInvArrays33()
 end
 
----@return void
-function API.Get_shop()
-	return Get_shop()
-end
-
 ---@return number
 function API.GetPray_()
 	return GetPray_()
@@ -1470,36 +1351,6 @@ end
 ---@return number
 function API.VB_GetBit(id,pos)
 	return VB_GetBit(id,pos)
-end
-
--- number to bitset booleans and then check bit value at pos
----@param value number
----@param pos number --0-31
----@return boolean
-function API.CheckBooleanBit(value,pos)
-	return CheckBooleanBit(value,pos)
-end
-
--- number to bitset booleans and then check bits value at poss
----@param value number
----@param poss number[] --0-31
----@return boolean
-function API.CheckBooleanBits(value,poss)
-	return CheckBooleanBits(value,poss)
-end
-
--- Get bits from int
----@param value number
----@param poss number[] --0-31
----@return number[]
-function API.GetBooleanBits(value,poss)
-	return GetBooleanBits(value,poss)
-end
-
----@param to_print number
----@return void
-function API.VB_PrintBits_all(to_print)
-	return VB_PrintBits_all(to_print)
 end
 
 ---@return boolean
@@ -1628,42 +1479,56 @@ function API.KeyboardPress2(codes, sleep, rand)
 	return KeyboardPress2(codes, sleep, rand)
 end
 
--- Non-blocking key down/up (hold/release)
+-- Sends a non-blocking KEYDOWN message for the given virtual key code. e.g. 0x25 for left arrow, 0x41 for A.
+---@param codes number
+---@return boolean
 function API.KeyboardDown(codes)
 	return KeyboardDown(codes)
 end
 
+-- Sends a non-blocking KEYUP message for the given virtual key code. e.g. 0x25 for left arrow, 0x41 for A.
+---@param codes number
+---@return boolean
 function API.KeyboardUp(codes)
 	return KeyboardUp(codes)
 end
 
--- Non-blocking key hold API with optional timeout
--- Start holding a key (posts KEYDOWN if not held). timeout_ms = 0 means no timeout
+-- Starts holding a key. Posts KEYDOWN once and tracks it until stopped or timed out.
+---@param codes number Virtual key code. e.g. 0x25 for left arrow, 0x41 for A.
+---@param timeout_ms number|nil Optional timeout in milliseconds. 0 or nil means no timeout.
+---@return boolean
 function API.KeyboardHoldStart(codes, timeout_ms)
 	return KeyboardHoldStart(codes, timeout_ms or 0)
 end
 
--- Stop holding a key (posts KEYUP if held)
+-- Stops holding a key. Posts KEYUP and removes it from the held-key list.
+---@param codes number Virtual key code. e.g. 0x25 for left arrow, 0x41 for A.
+---@return boolean
 function API.KeyboardHoldStop(codes)
 	return KeyboardHoldStop(codes)
 end
 
--- Release all held keys
+-- Stops all currently held keys and clears the held-key list.
+---@return nil
 function API.KeyboardHoldStopAll()
 	return KeyboardHoldStopAll()
 end
 
--- Service function to auto-release expired holds (called internally every ~50ms)
+-- Updates held keys, sends repeat KEYDOWN messages, and releases keys with expired timeouts.
+---@return nil
 function API.KeyboardHoldService()
 	return KeyboardHoldService()
 end
 
--- Query if a key is currently held
+-- Returns true if the key is currently tracked as held by KeyboardHoldStart.
+---@param codes number Virtual key code. e.g. 0x25 for left arrow, 0x41 for A.
+---@return boolean
 function API.KeyboardIsHeld(codes)
 	return KeyboardIsHeld(codes)
 end
 
--- Inspect current held keys (array of KeyHoldInfo)
+-- Returns information about all currently held keys.
+---@return table
 function API.KeyboardHoldInspect()
 	return KeyboardHoldInspect()
 end
@@ -1675,17 +1540,18 @@ function API.Play_sound(sleeptime, location)
 	return Play_sound(sleeptime, location)
 end
 
----@param ItemCoord FFPOINT
----@param map_limit boolean
----@return FFPOINT
-function API.ToMapFFPOINT(ItemCoord, map_limit)
-	return ToMapFFPOINT(ItemCoord, map_limit)
-end
-
+-- Returns the value of the player var mapped to `id`
 ---@param id number
 ---@return VB
 function API.VB_FindPSett(id)
 	return VB_FindPSett(id)
+end
+
+-- Returns the value of the client var mapped to `id`
+---@param id number
+---@return VB
+function API.VC_FindPSett(id)
+	return VC_FindPSett(id)
 end
 
 -- use this instead VB_FindPSett. Almost same as VB_FindPSett
@@ -1695,193 +1561,9 @@ function API.VB_FindPSettinOrder(id)
 	return VB_FindPSettinOrder(id)
 end
 
---- return 32 slot boolean array
----@param id number
----@return number[]
-function API.VB_FindPSett2(id)
-	return VB_FindPSett2(id)
-end
-
---- make int number into 32 slot boolean array
----@param var number
----@return string
-function API.VB_IntToBit(var)
-	return VB_IntToBit(var)
-end
-
---- get bit slot on int var
----@param id number
----@param spot_index number --1 to 32 slot on int
----@return number
-function API.VB_FindPSett3int(id, spot_index)
-	return VB_FindPSett3int(id, spot_index)
-end
-
---- get 2 bit slots on int var
----@param id number
----@param spot_index1 number
----@param spot_index2 number
----@return WPOINT
-function API.VB_FindPSett3wpoint(id, spot_index1, spot_index2)
-	return VB_FindPSett3wpoint(id, spot_index1, spot_index2)
-end
-
----@param start number
----@param end number
----@param checked_var number
----@return boolean
-function API.Math_VarBetween(start, endd, checked_var)
-	return Math_VarBetween(start, endd, checked_var)
-end
-
 ---@return boolean
 function API.LootWindowOpen_2()
 	return LootWindowOpen_2()
-end
-
----@return IInfo[]
-function API.LootWindow_GetData()
-	return LootWindow_GetData()
-end
-
----@param Except_item number[]
----@param Inventory_stacks boolean
----@return number
-function API.LootWindow_space_needed(Except_item, Inventory_stacks)
-	return LootWindow_space_needed(Except_item, Inventory_stacks)
-end
-
----@param to string
----@param remove string
----@return string
-function API.Filter(to, remove)
-	return Filter(to, remove)
-end
-
----@param sentence string
----@param keyword string
----@return string
-function API.String_Filter(sentence, keyword)
-	return String_Filter(sentence, keyword)
-end
-
----@param to string
----@return string
-function API.String_Filter2(to)
-	return String_Filter2(to)
-end
-
----@param to string
----@return string
-function API.Filter22(to)
-	return Filter22(to)
-end
-
----@param to string
----@return string
-function API.String_Filter3(to)
-	return String_Filter3(to)
-end
-
---old
----@return boolean
-function API.FindChooseOptionOpen()
-	return FindChooseOptionOpen()
-end
-
---old
----@return boolean
-function API.FindChooseOptionOpenClose()
-	return FindChooseOptionOpenClose()
-end
-
----@param value number
----@param arrayof Bbar[]
----@return boolean
-function API.Math_Bbar_ValueEquals(value, arrayof)
-	return Math_Bbar_ValueEquals(value, arrayof)
-end
-
----@param arrayof1 number[]
----@param arrayof2 Bbar[]
----@return number[]
-function API.Math_Bbar_ValueEqualsArr(arrayof1, arrayof2)
-	return Math_Bbar_ValueEqualsArr(arrayof1, arrayof2)
-end
-
----@param value number
----@param arrayof AllObject[]
----@return boolean
-function API.Math_AO_ValueEquals(value, arrayof)
-	return Math_AO_ValueEquals(value, arrayof)
-end
-
----@param name string
----@param arrayof IInfo[]
----@return boolean
-function API.Math_IInfo_ValueEqualsStr(name, arrayof)
-	return Math_IInfo_ValueEqualsStr(name, arrayof)
-end
-
----@param name string[]
----@param arrayof IInfo[]
----@return boolean
-function API.Math_IInfo_ValueEqualsStrArr(name, arrayof)
-	return Math_IInfo_ValueEqualsStrArr(name, arrayof)
-end
-
----@param value number
----@param arrayof IInfo[]
----@return boolean
-function API.Math_IInfo_ValueEqualsStack(value, arrayof)
-	return Math_IInfo_ValueEqualsStack(value, arrayof)
-end
-
----@param arrayof1 number[]
----@param arrayof2 AllObject[]
----@return boolean
-function API.Math_AO_ValueEqualsArr(arrayof1, arrayof2)
-	return Math_AO_ValueEqualsArr(arrayof1, arrayof2)
-end
-
----@param arrayof1 number[]
----@param arrayof2 AllObject[]
----@return number[]
-function API.Math_AO_ValueEqualsArr2(arrayof1, arrayof2)
-	return Math_AO_ValueEqualsArr2(arrayof1, arrayof2)
-end
-
----@param inputaddresses number[]
----@param target number
----@return boolean
-function API.Math_Compare_int(inputaddresses, target)
-	return Math_Compare_int(inputaddresses, target)
-end
-
----@return boolean
-function API.ReadNPCInFocus_0()
-	return ReadNPCInFocus_0()
-end
-
----@param index number
----@param debug boolean
----@return boolean
-function API.ReadNPCInFocus(index, debug)
-	return ReadNPCInFocus(index, debug)
-end
-
----@param index number
----@param NPC_id number
----@param debug boolean
----@return boolean
-function API.GetCheckNPCInFocus(index, NPC_id, debug)
-	return GetCheckNPCInFocus(index, NPC_id, debug)
-end
-
----@param entity FFPOINT
----@return FFPOINT
-function API.W2ScreenNat_F(entity)
-	return W2ScreenNat_F(entity)
 end
 
 ---@param player string
@@ -1991,77 +1673,6 @@ function API.InInstancedArea()
 	return InInstancedArea()
 end
 
----@param x1 number
----@param y1 number
----@param x2 number
----@param y2 number
----@return WPOINT[]
-function API.Math_Bresenham_line(x1, y1, x2, y2)
-	return Math_Bresenham_line(x1, y1, x2, y2)
-end
-
----@param xy1 WPOINT
----@param xy2 WPOINT
----@return WPOINT[]
-function API.Math_Bresenham_lineW(xy1, xy2)
-	return Math_Bresenham_lineW(xy1, xy2)
-end
-
----@param xy1 FFPOINT
----@param xy2 FFPOINT
----@return WPOINT[]
-function API.Math_Bresenham_lineF(xy1, xy2)
-	return Math_Bresenham_lineF(xy1, xy2)
-end
-
----@param tilexy FFPOINT
----@return WPOINT
-function API.Bresenham_step(tilexy)
-	return Bresenham_step(tilexy)
-end
-
----@param obj number[]
----@param maxdistance number
----@param sens number --float
----@return boolean
-function API.FindObjRot(obj, maxdistance, sens)
-	return FindObjRot(obj, maxdistance, sens)
-end
-
----@param ItemXY FFPOINT
----@param currxy FFPOINT
----@param sens number --float
----@return boolean
-function API.RotateCamera(ItemXY, currxy, sens)
-	return RotateCamera(ItemXY, currxy, sens)
-end
-
----@param obj number[]
----@param maxdistance number
----@return FFPOINT
-function API.FindObjTileName(obj, maxdistance)
-	return FindObjTileName(obj, maxdistance)
-end
-
----@param Line_index number
----@param size number
----@return string[]
-function API.GetChatMessage(Line_index, size)
-	return GetChatMessage(Line_index, size)
-end
-
----@param ascii_num string
----@return number
-function API.AsciiToNumbers32(ascii_num)
-	return AsciiToNumbers32(ascii_num)
-end
-
----@param ascii_num string
----@return number
-function API.AsciiToNumbers64(ascii_num)
-	return AsciiToNumbers64(ascii_num)
-end
-
 ---@param item number
 ---@return WPOINT
 function API.BankGetItem(item)
@@ -2152,24 +1763,6 @@ masterstroke:49087
 ---@return Bbar
 function API.Buffbar_GetIDstatus(id, debug)
 	return Buffbar_GetIDstatus(id, debug)
-end
-
----@param text string
----@param limit number
----@return ChatTexts
-function API.ChatFind(text, limit)
-	return ChatFind(text, limit)
-end
-
----old
----@return ChatTexts[]
-function API.ChatGetMessages()
-	return ChatGetMessages()
-end
-
----@return number
-function API.ChatPortableTime()
-	return ChatPortableTime()
 end
 
 ---@return boolean
@@ -3026,18 +2619,6 @@ end
 ---@return boolean
 function API.CheckTileforObjects2(tile, object, thresh)
 	return CheckTileforObjects(tile, object, thresh)
-end
-
----@param text string
----@return boolean
-function API.SideTextEq1(text)
-	return SideTextEq(text)
-end
-
----@param text string[]
----@return boolean
-function API.SideTextEq2(text)
-	return SideTextEq(text)
 end
 
 ---@param xstart number
@@ -4339,428 +3920,6 @@ function DBRow:Get(id) end
 ---@param tableId number The table ID to filter by
 ---@return DBRowData[]
 function DBRow:GetByTable(tableId) end
-
----- CAUTION THESE FUNCTIONS USE MOUSE ----
----- DEPRECATED FUNCTIONS ----
----- UNCOMMENT IF YOU REALLY WANNA USE ----
-
---[[
-
----@return boolean
-function API.BankAllItems()
-	return BankAllItems()
-end
-
----@param Except_item number[]
----@return boolean
-function API.BankAllItem_InvExceptintM(Except_item)
-	return BankAllItem_InvExceptintM(Except_item)
-end
-
----@param Except_item string[]
----@return boolean
-function API.BankAllItem_InvExceptstrM(Except_item)
-	return BankAllItem_InvExceptstrM(Except_item)
-end
-
----@param id number
----@param mouse number
----@return boolean
-function API.BankClickItem(id, mouse)
-	return BankClickItem(id, mouse)
-end
-
----@param id number
----@param mouse number
----@return boolean
-function API.BankClickItem_Inv(id, mouse)
-	return BankClickItem_Inv(id, mouse)
-end
-
----@param id number
----@param choose_text string
----@return boolean
-function API.BankClickItem_InvChoose(id, choose_text)
-	return BankClickItem_InvChoose(id, choose_text)
-end
-
----@return void
-function API.BankClose()
-	return BankClose()
-end
-
----@param txt_to_find string
----@return boolean
-function API.SelectToolOpen(txt_to_find)
-	return SelectToolOpen(txt_to_find)
-end
-
----@param Except_itemv number[]
----@return boolean
-function API.LootWindow_Loot(Except_itemv)
-	return LootWindow_Loot(Except_itemv)
-end
-
----@param choice string
----@return boolean
-function API.SelectCOption_(choice)
-	return SelectCOption_(choice)
-end
-
----@param choice string
----@param user string
----@return WPOINT
-function API.SelectCOption2(choice, user)
-	return SelectCOption2(choice, user)
-end
-
----@param choice string
----@param user string
----@return boolean
-function API.SelectCOption2_(choice, user)
-	return SelectCOption2_(choice, user)
-end
-
----@param choice string
----@return WPOINT
-function API.SelectCOption(choice)
-	return SelectCOption(choice)
-end
-
----@param choice string
----@param move boolean
----@return boolean
-function API.SelectCOption_Click(choice, move)
-	return SelectCOption_Click(choice, move)
-end
-
----@return boolean
-function API.OpenEquipInterface2()
-	return OpenEquipInterface2()
-end
-
----@return boolean
-function API.OpenInventoryInterface2()
-	return OpenInventoryInterface2()
-end
-
---old
----@param xy table|number c POINT
----@param mouse number
----@return void
-function API.ClickTile_1(xy, mouse)
-	return ClickTile_(xy, mouse)
-end
-
---old
----@param x number
----@param y number
----@param z number
----@param mouse number
----@return void
-function API.ClickTile_2(x, y, z, mouse)
-	return ClickTile_(x, y, z, mouse)
-end
-
----@param Except_item number[]
----@param maxdistance number
----@param accuracy number
----@param tilespot WPOINT
----@param maxdistance2 number
----@param items_to_eat number[]
----@return boolean
-function API.FindGItem_AllBut2(Except_item, maxdistance, accuracy, tilespot, maxdistance2, items_to_eat)
-	return FindGItem_AllBut2(Except_item, maxdistance, accuracy, tilespot, maxdistance2, items_to_eat)
-end
-
----old
----@param ItemCoord2 FFPOINT
----@return boolean
-function API.ClickMapTile_(ItemCoord2)
-	return ClickMapTile_(ItemCoord2)
-end
-
----old
----@param ItemCoord2 table|number --c POINT
----@return boolean
-function API.ClickMapTile_2(ItemCoord2)
-	return ClickMapTile_2(ItemCoord2)
-end
-
----@param tilexy FFPOINT
----@param distance number
----@return void
-function API.Map_Walker1(tilexy, distance)
-	return Map_Walker1(tilexy, distance)
-end
-
----@param tilexy2 WPOINT
----@param distance number
----@return void
-function API.Map_Walker1NT(tilexy2, distance)
-	return Map_Walker1NT(tilexy2, distance)
-end
-
----@param tilexy FFPOINT
----@param distance number
----@return void
-function API.Map_Walker2(tilexy, distance)
-	return Map_Walker2(tilexy, distance)
-end
-
----@param obj number[]
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@return boolean
-function API.FindObj1(obj, maxdistance, accuracy, usemap, action, sidetext)
-	return FindObj(obj, maxdistance, accuracy, usemap, action, sidetext)
-end
-
----@param obj number[]
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string[]
----@return boolean
-function API.FindObj2(obj, maxdistance, accuracy, usemap, action, sidetext)
-	return FindObj(obj, maxdistance, accuracy, usemap, action, sidetext)
-end
-
----@param AllStuff2 AllObject[]
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@return boolean
-function API.ClickAllObj1(AllStuff2, accuracy, usemap, action, sidetext)
-	return ClickAllObj(AllStuff2, accuracy, usemap, action, sidetext)
-end
-
----@param AllStuff2 AllObject[]
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string[]
----@return boolean
-function API.ClickAllObj2(AllStuff2, accuracy, usemap, action, sidetext)
-	return ClickAllObj(AllStuff2, accuracy, usemap, action, sidetext)
-end
-
----@param dx number
----@param dy number
----@return number
-function API.Hypot(dx, dy)
-	return Hypot(dx, dy)
-end
-
----@param x number
----@param y number
----@param rx number
----@param ry number
----@return boolean
-function API.MoveMouse2(x, y, rx, ry)
-	return MoveMouse2(x, y, rx, ry)
-end
-
----@param x number
----@param y number
----@return boolean
-function API.MoveMouse3(x, y)
-	return MoveMouse3(x, y,)
-end
-
----@param sleep number
----@param rand number
----@return boolean
-function API.MouseLeftClick(sleep, rand)
-	return MouseLeftClick(sleep, rand)
-end
-
----@param sleep number
----@param rand number
----@return boolean
-function API.MouseRightClick(sleep, rand)
-	return MouseRightClick(sleep, rand)
-end
-
----@param x number
----@param y number
----@param sleep number
----@param random number
----@return boolean
-function API.Post_MouseLeftClick(x, y, sleep, random)
-	return Post_MouseLeftClick(x, y, sleep, random)
-end
-
----@param x number
----@param y number
----@param sleep number
----@param random number
----@return boolean
-function API.Post_MouseRightClick(x, y, sleep, random)
-	return Post_MouseRightClick(x, y, sleep, random)
-end
-
--- old
----@param obj number[]
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@param highlight number[]
----@return boolean
-function API.FindHl(obj, maxdistance, accuracy, usemap, action, sidetext, highlight)
-	return FindHl(obj, maxdistance, accuracy, usemap, action, sidetext, highlight)
-end
-
--- old
----@param obj number[]
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@return boolean
-function API.FindObjCheck(obj, maxdistance, accuracy, usemap, action, sidetext)
-	return FindObjCheck(obj, maxdistance, accuracy, usemap, action, sidetext)
-end
-
--- old
----@param obj number[]
----@param maxdistance number
----@param accuracy number
----@param objtile WPOINT
----@param usemap boolean
----@param action number
----@param sidetext string
----@return boolean
-function API.FindObjTile(obj, maxdistance, accuracy, objtile, usemap, action, sidetext)
-	return FindObjTile(obj, maxdistance, accuracy, objtile, usemap, action, sidetext)
-end
-
----@param obj number[]
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@return boolean
-function API.FindObjCheck_1(obj, maxdistance, accuracy, usemap, action, sidetext)
-	return FindObjCheck_(obj, maxdistance, accuracy, usemap, action, sidetext)
-end
-
----@param obj number[]
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@param tile WPOINT
----@return boolean
-function API.FindObjCheck_2(obj, maxdistance, accuracy, usemap, action, sidetext, tile)
-	return FindObjCheck_(obj, maxdistance, accuracy, usemap, action, sidetext, tile)
-end
-
----@param objIds number[]
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@param hlIds number[]
----@param localp_dist number --float
----@return boolean
-function API.FindHLvsLocalPlayer(objIds, maxdistance, accuracy, usemap, action, sidetext, hlIds, localp_dist)
-	return FindHLvsLocalPlayer(objIds, maxdistance, accuracy, usemap, action, sidetext, hlIds, localp_dist)
-end
-
----@param obj number[]
----@param maxdistance number
----@param accuracy number
----@param usemap boolean
----@param action number
----@param sidetext string
----@return boolean
-function API.FindHObj(obj, maxdistance, accuracy, usemap, action, sidetext)
-	return FindHObj(obj, maxdistance, accuracy, usemap, action, sidetext)
-end
-
----@param npc number[]
----@param maxdistance number
----@param accuracy number
----@param lifepoint number
----@param tilespot WPOINT
----@param maxdistance2 number
----@param action number
----@param sidetext string
----@return boolean
-function API.FindNPCss(npc, maxdistance, accuracy, lifepoint, tilespot, maxdistance2, action, sidetext)
-	return FindNPCss(npc, maxdistance, accuracy, lifepoint, tilespot, maxdistance2, action, sidetext)
-end
-
----@param npc number[]
----@param maxdistance number
----@param accuracy number
----@param lifepoints number
----@param tilespot WPOINT
----@param maxdistance2 number
----@param action number
----@param sidetext string[]
----@return boolean
-function API.FindNPCssMulti(npc, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-	return FindNPCssMulti(npc, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-end
-
----@param NPC_name string
----@param maxdistance number
----@param accuracy number
----@param lifepoints number
----@param tilespot WPOINT
----@param maxdistance2 number
----@param action number
----@param sidetext string
----@return boolean
-function API.FindNPCssSTRRem(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-	return FindNPCssSTRRem(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-end
-
----@param NPC_name string
----@param maxdistance number
----@param accuracy number
----@param lifepoints number
----@param tilespot WPOINT
----@param maxdistance2 number
----@param action number
----@param sidetext string
----@return boolean
-function API.FindNPCssSTR(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-	return FindNPCssSTR(NPC_name, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-end
-
----@param NPC_names string[]
----@param maxdistance number
----@param accuracy number
----@param lifepoints number
----@param tilespot WPOINT
----@param maxdistance2 number
----@param action number
----@param sidetext string
----@return boolean
-function API.FindNPCssSTRs(NPC_names, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-	return FindNPCssSTRs(NPC_names, maxdistance, accuracy, lifepoints, tilespot, maxdistance2, action, sidetext)
-end
-
----@return void
-function API.RandomEvents()
-	return RandomEvents()
-end
-
----- END OF DEPRECATED GOODNESS ----
 
 --]]
 
@@ -6416,6 +5575,8 @@ function WorldHop:GetCurrentWorld() end
 ---@return number
 function WorldHop:GetRandomWorld(membersOnly) end
 
+end -- if false (LuaDoc stubs)
+
 -------------------------------------------------------------------------------
 -- WebSocket Client
 -------------------------------------------------------------------------------
@@ -6425,70 +5586,5 @@ function WS_Start() end
 
 --- Stops the WebSocket client, disconnects, and joins the worker thread.
 function WS_Stop() end
-
--------------------------------------------------------------------------------
--- GPT-4.1 integration
--------------------------------------------------------------------------------
-
---- Set the OpenAI API key used for all GPT calls.
----@param key string  Your OpenAI secret key (sk-...)
-function GPT_SetKey(key) end
-
---- Set the GitHub token used when routing through the Copilot backend.
---- GPT-4.1 is free via GitHub Copilot.  Requires a token with Copilot access.
----@param key string  GitHub personal access token (ghp_... or ghu_...)
-function GPT_SetCopilotKey(key) end
-
---- Get the currently stored GitHub Copilot OAuth token.
----@return string  The current GPT_COPILOT_KEY value (empty string if not set)
-function GPT_GetCopilotKey() end
-
---- Switch between backends.  true = GitHub Copilot (free GPT-4.1), false = OpenAI.
----@param enable boolean
-function GPT_UseCopilot(enable) end
-
---- Force-invalidate the cached Copilot session token so it is re-exchanged on the
---- next request.  Call this if requests start returning 401 / unauthorized.
-function GPT_ClearCopilotToken() end
-
---- Run the GitHub OAuth device-flow to get a valid Copilot OAuth token (ghu_...).
---- Prints a short code + URL to the console; blocks until the user authorises
---- in a browser or the 15-minute window expires.
---- On success GPT_COPILOT_KEY is set automatically — no need to call GPT_SetCopilotKey.
---- MUST be called from a Lua script thread, not from within an ImGui render callback.
----
---- Typical one-time setup:
----   GPT_UseCopilot(true)
----   GPT_CopilotDeviceFlow()   -- follow the printed instructions
-function GPT_CopilotDeviceFlow() end
-
---- Send a plain role/content message to the model
----@param role string   "user" | "system" | "assistant"
----@param content string
-function GPT_TestBot(role, content) end
-
---- Send a goal string to GPT-4.1 with live game-world context.
---- GPT replies ONLY with a JSON command list which is parsed and dispatched
---- directly to the game action functions (walk, attack, loot, ability, etc.).
---- Returns the number of commands that were executed.
----@param goal string   Plain-language description of what the bot should do
----@return integer      Number of commands executed
-function GPT_AskAndExecute(goal) end
-
---- Signal a running GPT_AskAndExecute loop to stop after the current tick.
-function GPT_StopExecution() end
-
---- Returns true while a GPT_AskAndExecute task is still running.
----@return boolean
-function GPT_IsExecuting() end
-
---- Extract a Lua code block from a GPT reply (strips ```lua ... ``` fences).
---- Returns the raw Lua source string, or an empty string if none found.
---- Use with load() to execute the model's suggested code.
----@param gptReply string   The raw model reply text
----@return string           Extracted Lua code (empty if no code block present)
-function GPT_ExtractLuaCode(gptReply) end
-
-end -- if false (LuaDoc stubs)
 
 return API

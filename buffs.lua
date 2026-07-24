@@ -404,10 +404,10 @@ Buffs.BUFF.SKILLING.PurpleLumbridgeBeachCocktail = { name = "Purple Lumbridge (b
 Buffs.BUFF.SKILLING.PineappletiniBeachCocktail = { name = "Pineappletini (beach cocktail)", id = 35053 }
 Buffs.BUFF.SKILLING.LemonSourBeachCocktail = { name = "Lemon sour (beach cocktail)", id = 35054 }
 Buffs.BUFF.SKILLING.YourAbilityToDelveIntoThe = { name = "Your ability to delve into the 'Dungeoneering Hole' activity is improved.<br>XP gain is increased by +10%.<br>You can now complete '60 floors' before having to break.<br>Doing the activity won't increase your temperature gauge.<br>This effect lasts 15 mins.", id = 51729 }
-Buffs.BUFF.SKILLING.YourProwessAtTheHookA = { name = "Your prowess at the 'Hook a Duck' activity is improved.<br>XP gain is increased by 30% of your hunter level.<br>Doing the activity won't increase your temperature gauge.<br>This effect lasts 15 mins.", id = 51730 }
-Buffs.BUFF.SKILLING.YourSkillAtPickingCoconutsFrom = { name = "Your skill at picking coconuts from the 'Palm Tree Farming' activity is improved.<br>XP gain is increased by +300%.<br>Picking from trees no longer depletes fruit from the tree.<br>Doing the activity won't increase your temperature gauge.<br>This effect lasts 15 mins.", id = 51731 }
-Buffs.BUFF.SKILLING.YourAbilityToFishWithinThe = { name = "Your ability to fish within the 'Rock Pools' is improved.<br>XP gain is increased by +10%.<br>Doing the activity won't increase your temperature gauge.<br>This effect lasts 15 mins.", id = 51732 }
-Buffs.BUFF.SKILLING.YourSkillAtTheSandcastleBuilding = { name = "Your skill at the 'Sandcastle Building' activity is improved.<br>XP gain is increased by +10%.<br>You can shovel sand up to 60 times before you need a rest.<br>Doing the activity won't increase your temperature gauge.<br>This effect lasts 15 mins.", id = 51733 }
+Buffs.BUFF.SKILLING.YourProwessAtTheHookA = { name = "Your prowess at the 'Hook a Duck' activity is improved.<br>XP gain is increased by +10%.<br>This effect lasts 15 mins.", id = 51730 }
+Buffs.BUFF.SKILLING.YourSkillAtPickingCoconutsFrom = { name = "Your skill at picking coconuts from the 'Palm Tree Farming' activity is improved.<br>XP gain is increased by +10%.<br>Picking from trees no longer depletes fruit from the tree.<br>This effect lasts 15 mins.", id = 51731 }
+Buffs.BUFF.SKILLING.YourAbilityToFishWithinThe = { name = "Your ability to fish within the 'Rock Pools' is improved.<br>XP gain is increased by +10%.<br>This effect lasts 15 mins.", id = 51732 }
+Buffs.BUFF.SKILLING.YourSkillAtTheSandcastleBuilding = { name = "Your skill at the 'Sandcastle Building' activity is improved.<br>XP gain is increased by +10%.<br>You can shovel sand up to 60 times before you need a rest.<br>This effect lasts 15 mins.", id = 51733 }
 Buffs.BUFF.SKILLING.Havoc = { name = "Havoc", id = 53378 }
 Buffs.BUFF.SKILLING.EssenceCorruptionAdrenaline = { name = "Essence Corruption: Adrenaline", id = 33963 }
 
