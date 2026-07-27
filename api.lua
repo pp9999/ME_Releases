@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.076
+API.VERSION = 1.077
 
 --[[
 Known shortcuts
@@ -2624,6 +2624,108 @@ end
 ---@return boolean
 function API.CheckTileforObjects2(tile, object, thresh)
 	return CheckTileforObjects(tile, object, thresh)
+end
+
+---@param tile WPOINT
+---@param item number
+---@return boolean
+function API.CheckTileforItems(tile, item)
+	return CheckTileforItems(tile, item)
+end
+
+---@param obj number[]
+---@param maxdistance number
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@param highlight number[]
+---@return boolean
+function API.FindHl(obj, maxdistance, accuracy, usemap, action, sidetext, highlight)
+	return FindHl(obj, maxdistance, accuracy, usemap, action, sidetext, highlight)
+end
+
+---@param obj number[]
+---@param maxdistance number
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.FindObjCheck(obj, maxdistance, accuracy, usemap, action, sidetext)
+	return FindObjCheck(obj, maxdistance, accuracy, usemap, action, sidetext)
+end
+
+---@param AllStuff2 AllObject[]
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.ClickAllObj1(AllStuff2, accuracy, usemap, action, sidetext)
+	return ClickAllObj(AllStuff2, accuracy, usemap, action, sidetext)
+end
+
+---@param AllStuff2 AllObject[]
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string[]
+---@return boolean
+function API.ClickAllObj2(AllStuff2, accuracy, usemap, action, sidetext)
+	return ClickAllObj(AllStuff2, accuracy, usemap, action, sidetext)
+end
+
+--- look for specific objects, return all data, check if action text is there
+---@param obj number[]
+---@param maxdistance number
+---@param types number[] {}
+---@return AllObject[]
+function API.GetAllObjArrayInteract(obj, maxdistance, types)
+	return GetAllObjArrayInteract(obj, maxdistance, types)
+end
+
+---@param obj string[]
+---@param maxdistance number
+---@param types number[] {}
+---@return AllObject[]
+function API.GetAllObjArrayInteract_str(obj, maxdistance, types)
+	return GetAllObjArrayInteract_str(obj, maxdistance, types)
+end
+
+---@param obj number[]
+---@param maxdistance number
+---@param accuracy number
+---@param objtile WPOINT
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.FindObjTile(obj, maxdistance, accuracy, objtile, usemap, action, sidetext)
+	return FindObjTile(obj, maxdistance, accuracy, objtile, usemap, action, sidetext)
+end
+
+---@param obj number[]
+---@param maxdistance number
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@return boolean
+function API.FindObjCheck_1(obj, maxdistance, accuracy, usemap, action, sidetext)
+	return FindObjCheck_(obj, maxdistance, accuracy, usemap, action, sidetext)
+end
+
+---@param obj number[]
+---@param maxdistance number
+---@param accuracy number
+---@param usemap boolean
+---@param action number
+---@param sidetext string
+---@param tile WPOINT
+---@return boolean
+function API.FindObjCheck_2(obj, maxdistance, accuracy, usemap, action, sidetext, tile)
+	return FindObjCheck_(obj, maxdistance, accuracy, usemap, action, sidetext, tile)
 end
 
 ---@param xstart number
