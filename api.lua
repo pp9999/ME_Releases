@@ -3158,6 +3158,14 @@ function API.GetVarbitValue(id)
 	return GetVarbitValue(id)
 end
 
+--- *Cache required* Reads a varbit value from cache
+---@param id number varbit ID
+---@param client boolean optional, default false
+---@return number varbit current value, -1 if cache not loaded
+function API.ReadVarbit(id, client)
+	return GetVarbitValue(id, client or false)
+end
+
 --- Takes the top level varp ID and returns all of the associated varbit objects for that Varp
 ---@param id number varp ID
 ---@return Varbit[]
