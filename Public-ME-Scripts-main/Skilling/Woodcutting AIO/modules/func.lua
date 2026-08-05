@@ -1,13 +1,14 @@
 -- Helper functions for Spectre011's Woodcutter AIO
 local API = require("api")
 local Slib = require("Woodcutting AIO.modules.slib")
-local CONFIG = require("Woodcutting AIO.config")
 local DATA = require("Woodcutting AIO.modules.data")
 local BANK = require("Woodcutting AIO.modules.bank")
 
 math.randomseed(os.time())
 
 FUNC = {}
+
+local CurrentTargetTree = nil
 
 function FUNC:PrintConfig(config)
     if config then
@@ -133,6 +134,8 @@ function FUNC:GetBestTree(config)
         treeData = DATA.TREES.EUCALYPTUS
     elseif treeType == "Mahogany trees" then
         treeData = DATA.TREES.MAHOGANY
+    elseif treeType == "Yew tree" then
+        treeData = DATA.TREES.YEW
     elseif treeType == "Ivy" then
         treeData = DATA.TREES.IVY
     elseif treeType == "Magic tree" then
@@ -215,11 +218,42 @@ function FUNC:GetBestTree(config)
     end
     
     table.sort(validTrees, function(a, b) return a.Distance < b.Distance end)
-    
-    local bestTree = validTrees[1]
-    local bestTreeX = math.floor(bestTree.TileX / 512)
-    local bestTreeY = math.floor(bestTree.TileY / 512)
-    return bestTree
+
+    --Stick with the current target while it is still valid (alive, cuttable, in area)
+    --so the script does not hop between trees mid-chop.
+    if CurrentTargetTree then
+        for _, tree in ipairs(validTrees) do
+            if tree.Id == CurrentTargetTree.Id
+                and tree.TileX == CurrentTargetTree.TileX
+                and tree.TileY == CurrentTargetTree.TileY then
+                CurrentTargetTree = tree
+                return tree
+            end
+        end
+        CurrentTargetTree = nil --target died or despawned; pick a new one
+    end
+
+    CurrentTargetTree = validTrees[1]
+    return CurrentTargetTree
+end
+
+function FUNC:HasCrystalizeRequirements()
+    local spellbook = Slib:GetSpellBook()
+    if spellbook ~= "Ancient" then
+        Slib:Warn("Crystalize requires the Ancient spellbook. Current spellbook: " .. spellbook)
+        return false
+    end
+
+    local runes = Slib:GetRuneAmounts().Normal
+    local required = {Water = 6, Fire = 6, Chaos = 6, Soul = 6}
+    for name, amount in pairs(required) do
+        if (runes[name] or 0) < amount then
+            Slib:Warn("Crystalize requires " .. amount .. " " .. name .. " runes. Found: " .. tostring(runes[name] or 0))
+            return false
+        end
+    end
+
+    return true
 end
 
 function FUNC:GetRegularJuju()
@@ -283,6 +317,8 @@ function FUNC:GetLogIdFromTree(treeSelection)
         return 12581
     elseif lowerTree:find("mahogany tree") then
         return 6332
+    elseif lowerTree:find("yew tree") then
+        return 1515
     elseif lowerTree:find("magic tree") and not lowerTree:find("eternal") then
         return 1513
     elseif lowerTree:find("elder tree") then

@@ -5,7 +5,6 @@ local Slib = require("Woodcutting AIO.modules.slib")
 local LODESTONES = require("Woodcutting AIO.modules.lodestones")
 local FUNC = require("Woodcutting AIO.modules.func")
 local DATA = require("Woodcutting AIO.modules.data")
-local AURAS = require("Woodcutting AIO.modules.auras")
 local BANK = require("Woodcutting AIO.modules.bank")
 
 PROC = {}
@@ -18,13 +17,34 @@ local CanRenewal = {
     torstolStick = nil,
     sharpeningStone = nil,
     imbuedBirdFeed = nil,
-    lumberjacksCourage = nil, 
+    lumberjacksCourage = nil,
 }
+
+local LastCrystalizeCast = 0
+
+--Crystalize expires after 30 seconds. Recast timing is randomized to look human:
+--usually a bit before expiry, sometimes letting the buff run out for a few seconds.
+local function RollCrystalizeDelay()
+    if math.random(100) <= 20 then
+        return math.random(31, 40) --let it lapse occasionally
+    end
+    return math.random(25, 29)
+end
+
+local NextCrystalizeDelay = RollCrystalizeDelay()
+
+local function CrystalizeIsDue(config)
+    if not (config.Crystalize == true or config.Crystalize == "true") then
+        return false
+    end
+    if not CanRenewal.crystalize then
+        return false
+    end
+    return (os.time() - LastCrystalizeCast) >= NextCrystalizeDelay
+end
 
 function PROC:HandleStartingState(config)
     Slib:Info("Current state: STARTING")
-    local auraToUse = string.lower(config.Aura)
-    Slib:Info("Aura to use: " .. auraToUse)
     FUNC:PrintConfig(config)
 
     -- Set all CanRenewal values to true
@@ -158,6 +178,27 @@ function PROC:HandleMovingToTreesState(config)
             Slib:MoveTo(FUNC:GetRandomNumber(2815, 1), FUNC:GetRandomNumber(3083, 1), 0)
             return "MOVING_TO_TREES"
         end
+
+    elseif config.Tree == "Teak tree - Musa Point" then
+        Slib:Info("Tree: Teak tree - Musa Point")
+        if Slib:IsPlayerInArea(2896, 3152, 0, 10) then
+            return "AT_TREES"
+
+        elseif Slib:IsPlayerInArea(2814, 3183, 0, 3) then
+            if not Slib:CheckObjectBool1(24370, 5, 12) then
+                Interact:Object("Gate", "Open")
+            else
+                Slib:MoveTo(FUNC:GetRandomNumber(2896, 1), FUNC:GetRandomNumber(3152, 1), 0)
+            end
+
+            return "MOVING_TO_TREES"
+
+        else
+            LODESTONES.KARAMJA.Teleport()
+            Slib:MoveTo(FUNC:GetRandomNumber(2813, 1), FUNC:GetRandomNumber(3183, 1), 0)
+            return "MOVING_TO_TREES"
+        end
+
     elseif config.Tree == "Maple tree - North of Seer's Village" then
         Slib:Info("Tree: Maple tree - North of Seer's Village")
         if not Slib:IsPlayerInArea(2724, 3501, 0, 30) then
@@ -189,6 +230,7 @@ function PROC:HandleMovingToTreesState(config)
             Slib:MoveTo(FUNC:GetRandomNumber(3186, 1), FUNC:GetRandomNumber(2738, 1), 0)
             return "MOVING_TO_TREES"
         end
+
     elseif config.Tree == "Eucaliptus trees - West of Oo'glog" then
         Slib:Info("Tree: Eucaliptus trees - West of Oo'glog")
         if not Slib:IsPlayerInArea(2507, 2863, 0, 30) then
@@ -211,6 +253,17 @@ function PROC:HandleMovingToTreesState(config)
             Slib:MoveTo(FUNC:GetRandomNumber(2815, 1), FUNC:GetRandomNumber(3083, 1), 0)
             return "MOVING_TO_TREES"
         end
+
+    elseif config.Tree == "Mahogany trees - South of Cairn Isle" then
+        Slib:Info("Tree: Mahogany trees - South of Cairn Isle")
+        if not Slib:IsPlayerInRectangle(2774, 2786, 2944, 2953, 0) then
+            LODESTONES.KARAMJA.Teleport()
+            Slib:MoveTo(FUNC:GetRandomNumber(2780, 2), FUNC:GetRandomNumber(2947, 2), 0)
+        end
+
+        Slib:Info("DEBUG: IsPlayerInRectangle returned true")
+        return "AT_TREES"
+
     elseif config.Tree == "Ivy - falador north wall" then
         Slib:Info("Tree: Ivy - falador north wall")
         if not Slib:IsPlayerInRectangle(3011, 3018, 3393, 3398, 0) then
@@ -256,6 +309,31 @@ function PROC:HandleMovingToTreesState(config)
             Slib:MoveTo(FUNC:GetRandomNumber(3342, 2), FUNC:GetRandomNumber(3557, 2), 0)
         end
 
+        return "AT_TREES"
+
+    elseif config.Tree == "Yew tree - Edgeville" then
+        Slib:Info("Tree: Yew tree - Edgeville")
+        if not Slib:IsPlayerInRectangle(3084, 3090, 3467, 3483, 0) then
+            LODESTONES.EDGEVILLE.Teleport()
+            Slib:MoveTo(FUNC:GetRandomNumber(3087, 2), FUNC:GetRandomNumber(3474, 2), 0)
+            return "MOVING_TO_TREES"
+        else
+            return "AT_TREES"
+        end
+
+        return "AT_TREES"
+
+    elseif config.Tree == "Yew tree - South of Seers Village" then
+        Slib:Info("Tree: Yew tree - South of Seers Village")
+        if not Slib:IsPlayerInRectangle(2703, 2718, 3457, 3468, 0) then
+            LODESTONES.SEERS_VILLAGE.Teleport()
+            Slib:MoveTo(FUNC:GetRandomNumber(2710, 2), FUNC:GetRandomNumber(3462, 2), 0)
+            return "MOVING_TO_TREES"
+        else
+            return "AT_TREES"
+        end
+
+        Slib:Info("DEBUG: IsPlayerInRectangle returned true")
         return "AT_TREES"
 
     elseif config.Tree == "Magic tree - North east of Ardougne" then
@@ -336,7 +414,7 @@ function PROC:HandleAtTreesState(config)
                 Slib:Warn("No cadantine incense sticks found in inventory.")
                 CanRenewal.cadantineStick = false
             else
-                Slib:CheckIncenseStick(DATA.BUFFS["Cadantine incense sticks"])
+                Slib:BuffUpKeep({"Cadantine"})
             end
         end
     end
@@ -347,7 +425,7 @@ function PROC:HandleAtTreesState(config)
                 Slib:Warn("No guam incense sticks found in inventory.")
                 CanRenewal.guamStick = false
             else
-                Slib:CheckIncenseStick(DATA.BUFFS["Guam incense sticks"])
+                Slib:BuffUpKeep({"Guam"})
             end
         end
     end
@@ -358,7 +436,7 @@ function PROC:HandleAtTreesState(config)
                 Slib:Warn("No torstol incense sticks found in inventory.")
                 CanRenewal.torstolStick = false
             else
-                Slib:CheckIncenseStick(DATA.BUFFS["Torstol incense sticks"])
+                Slib:BuffUpKeep({"Torstol"})
             end
         end
     end
@@ -411,12 +489,12 @@ function PROC:HandleAtTreesState(config)
         local Highlight = Slib:FindObj({8447}, 25, {4})
         if Highlight and not Slib:IsPlayerInArea(Highlight.Tile_XYZ.x, Highlight.Tile_XYZ.y, 0, 1) then
             Slib:WalkToCoordinates(math.floor(Highlight.Tile_XYZ.x), math.floor(Highlight.Tile_XYZ.y), 0)
-            Slib:RandomSleep(1000, 2000, "ms")
+            Slib:RandomSleep(2400, 3000, "ms")
         end
     end
 
     --Start action skipping
-    if API.IsPlayerAnimating_(API.GetLocalPlayerName(), 10) then
+    if API.IsPlayerAnimating_(API.GetLocalPlayerName(), 10) and not CrystalizeIsDue(config) then
         return "AT_TREES"
     end
 
@@ -425,13 +503,6 @@ function PROC:HandleAtTreesState(config)
     end
 
     --End action skipping
-
-    if config.Aura ~= "None" and not AURAS.noResets then
-        if not AURAS.isAuraActive() then
-            AURAS.activateAura(config.Aura)
-            return "AT_TREES"
-        end
-    end
 
     if Inventory:IsFull() then
         Slib:Info("Inventory is full")
@@ -452,11 +523,32 @@ function PROC:HandleAtTreesState(config)
     local BestTree = FUNC:GetBestTree(CONFIG)    
     if BestTree then
         Slib:Info("BestTree = " .. tostring(BestTree.Name))
-        if config.Crystalize == true or config.Crystalize == "true" then
-            API.DoAction_Interface(0xffffffff,0xffffffff,0,1461,1,181,API.OFF_ACT_Bladed_interface_route)
-            Slib:RandomSleep(100, 200, "ms")
-            API.DoAction_Object2(0x9d,API.OFF_ACT_GeneralObject_route00,{BestTree.Id},50,WPOINT.new(BestTree.CalcX, BestTree.CalcY, 0))
-            Slib:RandomSleep(100, 200, "ms")
+        if CrystalizeIsDue(config) then
+            if FUNC:HasCrystalizeRequirements() then
+                if not API.Buffbar_GetIDstatus(DATA.BUFFS["Light Form"], false).found then
+                    if Slib:CanCastAbility(DATA.BUFFS["Light Form"]) then
+                        Slib:Info("Activating Light Form")
+                        Slib:UseAbilityById(DATA.BUFFS["Light Form"])
+                        Slib:Sleep(1200, "ms")
+                    else
+                        Slib:Warn("Light Form cannot be cast. Continuing without it.")
+                    end
+                end
+                API.DoAction_DontResetSelection()
+                API.DoAction_Interface(0xffffffff,0xffffffff,0,1461,1,181,API.OFF_ACT_Bladed_interface_route)
+                Slib:RandomSleep(300, 600, "ms")
+                API.DoAction_DontResetSelection()
+                API.DoAction_Object1(0x9d,API.OFF_ACT_GeneralObject_route00,{ BestTree.Id },50)
+                LastCrystalizeCast = os.time()
+                NextCrystalizeDelay = RollCrystalizeDelay()
+                --Let the cast finish before anything else clicks the tree;
+                --an immediate cut click cancels the queued spell cast.
+                Slib:RandomSleep(1800, 2400, "ms")
+                return "AT_TREES"
+            else
+                Slib:Warn("Crystalize requirements not met. Disabling crystalize until next trip to the trees.")
+                CanRenewal.crystalize = false
+            end
         end
 
         Slib:Info("Cutting tree: " .. BestTree.Name)
@@ -552,6 +644,7 @@ function PROC:HandleMovingToBankState(config)
                 return "AT_BANK"
             end
         end
+
     elseif config.Bank == "Woodcutters grove - Log pile" then
         Slib:Info("Bank: Woodcutters grove - Log pile")
         if not Slib:FindObj(125466, 50, 0) then -- log pile
@@ -574,6 +667,18 @@ function PROC:HandleMovingToBankState(config)
             else
                 return "AT_BANK"
             end
+        end
+
+        return "MOVING_TO_BANK"
+
+    elseif config.Bank == "Edgeville" then
+        Slib:Info("Bank: Edgeville")
+        if Slib:IsPlayerInRectangle(3091, 3098, 3488, 3499, 0) then
+            return "AT_BANK"
+        else
+            LODESTONES.EDGEVILLE.Teleport()
+            Slib:MoveTo(FUNC:GetRandomNumber(3093, 1), FUNC:GetRandomNumber(3493, 1), 0)
+            return "MOVING_TO_BANK"
         end
 
         return "MOVING_TO_BANK"
@@ -687,6 +792,7 @@ function PROC:HandleMovingToBankState(config)
                 return "MOVING_TO_BANK"
             end
         end
+
     else
         Slib:Error("Bank: Unknown bank type - " .. tostring(config.Bank))
         return "ERROR"
