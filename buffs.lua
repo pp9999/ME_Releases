@@ -5,6 +5,7 @@ Buffs.DEBUFF = {}
 
 Buffs.BUFF.ABIL = {}
 Buffs.BUFF.ABIL.DealsDamageToSurroundingNPCsDamage = { name = "Deals damage to surrounding NPCs. Damage is increased with multiple stacks.", id = 30363 }
+Buffs.BUFF.ABIL.Revenge = { name = "Revenge", id = 14227 }
 Buffs.BUFF.ABIL.SplitSoul = { name = "Split Soul", id = 30126 }
 Buffs.BUFF.ABIL.GreaterFlurry = { name = "Greater Flurry", id = 841 }
 Buffs.BUFF.ABIL.Snipe = { name = "Snipe", id = 23729 }
@@ -26,7 +27,6 @@ Buffs.BUFF.ABIL.Resonance = { name = "Resonance", id = 14222 }
 Buffs.BUFF.ABIL.Preparation = { name = "Preparation", id = 14223 }
 Buffs.BUFF.ABIL.Reflect = { name = "Reflect", id = 14225 }
 Buffs.BUFF.ABIL.Debilitate = { name = "Debilitate", id = 14226 }
-Buffs.BUFF.ABIL.Revenge = { name = "Revenge", id = 14227 }
 Buffs.BUFF.ABIL.Barricade = { name = "Barricade", id = 14228 }
 Buffs.BUFF.ABIL.Rejuvenate = { name = "Rejuvenate", id = 14229 }
 Buffs.BUFF.ABIL.Immortality = { name = "Immortality", id = 14230 }
@@ -349,6 +349,7 @@ Buffs.BUFF.PRAYERS.EclipsedSoul = { name = "Eclipsed Soul", id = 34199 }
 Buffs.BUFF.SKILLING = {}
 Buffs.BUFF.SKILLING.AdrenalineUrn = { name = "Adrenaline urn - prevents your adrenaline draining while out of combat.", id = 44210 }
 Buffs.BUFF.SKILLING.YourSignOfThePorterIs = { name = "Your sign of the porter is active, banking specific items, using a charge each time.", id = 51490 }
+Buffs.BUFF.SKILLING.SliverOfEdicts = { name = "Sliver of Edicts", id = 63597 }
 Buffs.BUFF.SKILLING.PortableTraderSummoningStoneActive = { name = "Portable Trader summoning stone active", id = 47804 }
 Buffs.BUFF.SKILLING.QuiverAmmo = { name = "Quiver ammo", id = 33719 }
 Buffs.BUFF.SKILLING.GuamIncense = { name = "Guam Incense:", id = 47699 }

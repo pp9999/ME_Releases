@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.077
+API.VERSION = 1.078
 
 --[[
 Known shortcuts
@@ -134,13 +134,6 @@ function API.TurnOffMrHasselhoff(state)
 	return TurnOffMrHasselhoff(state)
 end
 
--- Turn on/off default on, Limit actions 1 per frame
----@param state boolean
----@return void
-function API.SetDoActionLimit(state)
-	return SetDoActionLimit(state)
-end
-
 -- current world of localplayer
 ---@return number
 function API.GetWorldNR()
@@ -154,7 +147,7 @@ function API.IsCacheLoaded()
 end
 
 -- Dont let selection reset, using ability on action or item on item
--- Before selective doAction
+-- Before selective doAction(bladed_dive offset)
 ---@return boolean
 function API.DoAction_DontResetSelection()
 	return DoAction_DontResetSelection()
@@ -300,13 +293,6 @@ Necromancy 56
 ---@return number
 function API.GetSkillsTableSkill(nr)
 	return GetSkillsTableSkill(nr)
-end
-
---Tries to calculate correct coords for interface. Only works if internal data is correct
----@param mad InterfaceComp5
----@return WPOINT[] 4 corner points of the cube
-function API.InterfacesCombineFullFM(mad)
-	return InterfacesCombineFullFM(mad)
 end
 
 -- Disable ImGui for script runtime so it dosent mess with script. Page down to enable again or if script ends it gets enabled again
@@ -740,20 +726,6 @@ end
 ---@return void
 function API.Write_ScripCuRunning2(status)
 	return Write_ScripCuRunning2(status)
-end
-
---- Return material storagedata
----@return IInfo[]
-function API.MaterialStorage()
-	return MaterialStorage()
-end
-
----Return trade window item array
----Default will return your own trade window (your offer) param set to "their" will return their offer
----@param which string optional "their" or default "self"
----@return IInfo[]
-function API.TradeWindow(which)
-	return TradeWindow(which)
 end
 
 --- Return array of bank inventory
@@ -1209,11 +1181,18 @@ function API.ReadLpInteracting()
 	return ReadLpInteracting()
 end
 
----@param animated_also boolean
----@param hp number
+---@param animated_also boolean --set to false to ignore
+---@param hp number --set to 0 to ignore
 ---@return AllObject[]
 function API.OthersInteractingWithLpNPC(animated_also, hp)
 	return OthersInteractingWithLpNPC(animated_also, hp)
+end
+
+--find npcs that is interacting wiht localplayer and name matches, is case sensitive and must be exact match, returns all found
+---@param npcname string --NPC name to filter by
+---@return AllObject[]
+function API.Local_PlayerVsNPCs(npcname)
+	return Local_PlayerVsNPCs(npcname)
 end
 
 ---@param look_stance boolean
@@ -2886,21 +2865,24 @@ function API.PlayerInterActingWith_2(localmem)
 end
 
 ---@param target_under boolean
----@param lv_ID InterfaceComp5[]
+---@param lv_ID InterfaceComp5
 ---@return IInfo[]
-function API.ScanForInterfaceTest2Get(target_under, lv_ID)
-	if type(lv_ID[1]) == "table" then
-		local ids = {}
-		
-		for i = 1, #lv_ID do
-			local comp = InterfaceComp5:new(lv_ID[i][1], lv_ID[i][2], lv_ID[i][3], lv_ID[i][4])
-			table.insert(ids, comp)
-		end
-		
-		return ScanForInterfaceTest2Get(target_under, ids)
-	end
-	
-	return ScanForInterfaceTest2Get(target_under, lv_ID)
+function API.ScanForInterfaceTest2Get2(target_under, lv_ID)
+	return ScanForInterfaceTest2Get2(target_under, lv_ID)
+end
+
+---@param lv_IDs InterfaceComp5[]
+---@param check_lv3 boolean
+---@return IInfo[]
+function API.ScanForInterfaceTest2GetAll(lv_IDs, check_lv3)
+	return ScanForInterfaceTest2GetAll(lv_IDs, check_lv3)
+end
+
+---@param lv_IDs InterfaceComp5[]
+---@param check_lv3 boolean
+---@return table<number, IInfo>
+function API.ScanForInterfaceTest2GetAllmapped(lv_IDs, check_lv3)
+	return ScanForInterfaceTest2GetAllmapped(lv_IDs, check_lv3)
 end
 
 --- Checks if an interface is open by its size/ID. 
@@ -3397,6 +3379,36 @@ function GrandExchange:FindOrder(itemId) end
 ---@return boolean True if the order was successfully canceled.
 function GrandExchange:CancelOrder(slot) end
 
+--- Processes the pending order queue.
+---@return boolean True if the queue was processed.
+function GrandExchange:ProcessQueue() end
+
+--- Executes the pending order queue.
+---@return boolean True if the queue was executed.
+function GrandExchange:Execute() end
+
+--- Checks if the Grand Exchange is currently processing an order.
+---@return boolean True if an order is being processed, false otherwise.
+function GrandExchange:IsProcessing() end
+
+--- Checks if there are pending orders in the queue.
+---@return boolean True if there are pending orders, false otherwise.
+function GrandExchange:HasPending() end
+
+--- Clears the pending order queue.
+---@return void
+function GrandExchange:ClearQueue() end
+
+--- Sets the price using the CS2 script mode.
+---@param price number|string The price to set (number or string).
+---@return void
+function GrandExchange:SetPriceCS2(price) end
+
+--- Enables or disables the CS2 script mode for Grand Exchange actions.
+---@param enabled boolean True to use CS2 scripts, false otherwise.
+---@return void
+function GrandExchange:useCS2(enabled) end
+
 --- Inventory LUADoc
 --- 
 --- Represents an item in the Inventory.
@@ -3708,6 +3720,11 @@ function Equipment:DoAction(item,action) end
 ---@return EquipmentItem The item data in the specified slot.
 function Equipment:GetSlotData(slot) end
 
+--- Retrieves the item ID in a specific slot.
+---@param slot ESlot The equipment slot; e.g., ESlot.HEAD or ESlot.OFFHAND.
+---@return number The item ID in the specified slot.
+function Equipment:GetItemID(slot) end
+
 --- Retrieves all items currently equipped.
 ---@return EquipmentItem[] Table of EquipmentItems containing all equipped items.
 function Equipment:GetItems() end
@@ -3913,10 +3930,27 @@ function Item:Get(item, tradeable) end
 function Item:GetAll(item, partial_match) end
 
 ---@class DiscordEmbed
+--- The embed title text.
+---@field title string
+--- The embed description text.
+---@field description string
+--- The embed URL.
+---@field url string
+--- The embed timestamp (UNIX TIME).
+---@field timestamp number
+--- The embed color as an integer (e.g., 0xFF0000 for red).
+---@field color number
+--- The embed footer.
+---@field footer EmbedFooter
+--- The embed image.
+---@field image EmbedImage
+--- The embed thumbnail.
+---@field thumbnail EmbedImage
+--- The embed author.
+---@field author EmbedAuthor
+--- The embed fields.
+---@field fields EmbedField[]
 local DiscordEmbed = {}
-
----@return DiscordEmbed a new DiscordEmbed object
-function DiscordEmbed.new() end
 
 --- Sets the title of the embed message.
 ---@param title string The title of the embed message.
@@ -3954,7 +3988,7 @@ function DiscordEmbed:SetFooter(footer) end
 function DiscordEmbed:SetImage(image) end
 
 --- Sets the thumbnail of the embed message.
----@param thumbnail EmbedThumbnail The thumbnail of the embed message.
+---@param thumbnail EmbedImage The thumbnail of the embed message.
 ---@return DiscordEmbed self
 function DiscordEmbed:SetThumbnail(thumbnail) end
 
@@ -5701,5 +5735,7 @@ function WS_Start() end
 
 --- Stops the WebSocket client, disconnects, and joins the worker thread.
 function WS_Stop() end
+
+
 
 return API

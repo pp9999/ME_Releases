@@ -2,13 +2,14 @@ local API = require("api")
 local APIOSRS = require("apiosrs")
 
 --Grimy irit 209
-local Vial_ = 3430 --vial 227, unf irit 101 -- 269 Clean torstol
-local Sec_ = 19669 --irit 259, eye of new 221 -- 2436 super Attack
+local Vial_ = 209 --vial 227, unf irit 101 -- 269 Clean torstol
+local Sec_ = 0 --irit 259, eye of new 221 -- 2436 super Attack
 local Third_ = 0 -- 2440 super Strength
 local Fourth_ = 0 -- 2442 super Defence
 local banks = { 26711, } --farm bank 26711
 local sleeps = { 5000, 10000, 20000, 25000, 30000 }
 local currentfail = 0
+local usemagic = true -- degrime mostly
 while API.Read_LoopyLoop() do
     
     local countloops = 0
@@ -32,19 +33,33 @@ while API.Read_LoopyLoop() do
         print("Opening tab")
     end
     if Inventory:IsOpen() and Inventory:Contains(Vial_) and (Sec_ == 0 or Inventory:Contains(Sec_)) then
-            APIOSRS.RL_ClickEntity(93, {Vial_} )
-            print("mixing 1")
-            API.RandomSleep2(500, 1000, 2000)
-            currentfail = 0
-        if Sec_ > 0 then
-            if APIOSRS.RL_IsWidgetSelected() then
-                APIOSRS.RL_ClickEntity(93, {Sec_} )
-                print("mixing 2")
-                API.RandomSleep2(700, 1000, 2000)
-            end            
+        if not usemagic then
+                APIOSRS.RL_ClickEntity(93, {Vial_} )
+                print("mixing 1")
+                API.RandomSleep2(500, 1000, 2000)
+                currentfail = 0
+            if Sec_ > 0 then
+                if APIOSRS.RL_IsWidgetSelected() then
+                    APIOSRS.RL_ClickEntity(93, {Sec_} )
+                    print("mixing 2")
+                    API.RandomSleep2(700, 1000, 2000)
+                end            
+            end
+            API.KeyboardPress31(32, 60, 80)
+            API.RandomSleep2(sleeps[5], 1000, 2000)
+        else
+            if APIOSRS.RL_GetOpenTab() ~= 6 then
+                APIOSRS.RL_OpenTab(6)
+                print("wrong tab, opening spellbook")
+                API.RandomSleep2(2000, 100, 200)
+            end
+            if APIOSRS.RL_GetOpenTab() == 6 then
+                APIOSRS.RL_ClickSpellbook("Degrime",0)
+                currentfail = 0
+                print("Degrime")
+                API.RandomSleep2(4000, 600, 200)
+            end
         end
-        API.KeyboardPress31(32, 60, 80)
-        API.RandomSleep2(sleeps[5], 1000, 2000)
     else
         print("Opening bank")
         if not Bank:IsOpen() then
@@ -56,8 +71,8 @@ while API.Read_LoopyLoop() do
             APIOSRS.RL_ClickBankDepositAll()
             --APIOSRS.RL_ClickBankInvDepositAllExcept({1755})
             API.RandomSleep2(500, 1000, 2000)
-            --(Vial_ == 0 or Bank:Contains(Vial_)) and
-            if (Sec_ == 0 or Bank:Contains(Sec_)) then
+            if (Vial_ == 0 or Bank:Contains(Vial_)) and
+            (Sec_ == 0 or Bank:Contains(Sec_)) then
                 print("Bank contains required items")
                 APIOSRS.RL_ClickEntity(95, {Vial_} )
                 API.RandomSleep2(100, 1000, 2000)
@@ -93,5 +108,5 @@ while API.Read_LoopyLoop() do
             APIOSRS.RL_ClickCloseBank()
         end
     end
-    API.RandomSleep2(4700, 1777,12777)
+    API.RandomSleep2(2700, 1777,12777)
 end
