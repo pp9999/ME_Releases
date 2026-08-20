@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.078
+API.VERSION = 1.079
 
 --[[
 Known shortcuts
@@ -2868,6 +2868,9 @@ end
 ---@param lv_ID InterfaceComp5
 ---@return IInfo[]
 function API.ScanForInterfaceTest2Get2(target_under, lv_ID)
+	if type(lv_ID) == "table" and not getmetatable(lv_ID) then
+		lv_ID = InterfaceComp5:new(lv_ID[1], lv_ID[2], lv_ID[3], lv_ID[4])
+	end
 	return ScanForInterfaceTest2Get2(target_under, lv_ID)
 end
 
@@ -2875,6 +2878,17 @@ end
 ---@param check_lv3 boolean use full accuracy or not, this generally means ecact interface to be returned
 ---@return IInfo[]
 function API.ScanForInterfaceTest2GetAll(lv_IDs, check_lv3)
+	if type(lv_IDs[1]) == "table" then
+		local ids = {}
+		
+		for i = 1, #lv_IDs do
+			local comp = InterfaceComp5:new(lv_IDs[i][1], lv_IDs[i][2], lv_IDs[i][3], lv_IDs[i][4])
+			table.insert(ids, comp)
+		end
+		
+		return ScanForInterfaceTest2GetAll(ids, check_lv3)
+	end
+	
 	return ScanForInterfaceTest2GetAll(lv_IDs, check_lv3)
 end
 
@@ -2882,6 +2896,17 @@ end
 ---@param check_lv3 boolean use full accuracy or not, this generally means ecact interface to be returned
 ---@return table<number, IInfo>
 function API.ScanForInterfaceTest2GetAllmapped(lv_IDs, check_lv3)
+	if type(lv_IDs[1]) == "table" then
+		local ids = {}
+		
+		for i = 1, #lv_IDs do
+			local comp = InterfaceComp5:new(lv_IDs[i][1], lv_IDs[i][2], lv_IDs[i][3], lv_IDs[i][4])
+			table.insert(ids, comp)
+		end
+		
+		return ScanForInterfaceTest2GetAllmapped(ids, check_lv3)
+	end
+	
 	return ScanForInterfaceTest2GetAllmapped(lv_IDs, check_lv3)
 end
 
