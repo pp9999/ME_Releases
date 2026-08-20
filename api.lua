@@ -2864,22 +2864,22 @@ function API.PlayerInterActingWith_2(localmem)
 	return PlayerInterActingWith_(localmem)
 end
 
----@param target_under boolean
+---@param target_under boolean use full accuracy or not
 ---@param lv_ID InterfaceComp5
 ---@return IInfo[]
 function API.ScanForInterfaceTest2Get2(target_under, lv_ID)
 	return ScanForInterfaceTest2Get2(target_under, lv_ID)
 end
 
----@param lv_IDs InterfaceComp5[]
----@param check_lv3 boolean
+---@param lv_IDs InterfaceComp5[] This is not a chain anymore, every lv_IDs returns its target
+---@param check_lv3 boolean use full accuracy or not, this generally means ecact interface to be returned
 ---@return IInfo[]
 function API.ScanForInterfaceTest2GetAll(lv_IDs, check_lv3)
 	return ScanForInterfaceTest2GetAll(lv_IDs, check_lv3)
 end
 
----@param lv_IDs InterfaceComp5[]
----@param check_lv3 boolean
+---@param lv_IDs InterfaceComp5[] This is not a chain anymore, every lv_IDs returns its target
+---@param check_lv3 boolean use full accuracy or not, this generally means ecact interface to be returned
 ---@return table<number, IInfo>
 function API.ScanForInterfaceTest2GetAllmapped(lv_IDs, check_lv3)
 	return ScanForInterfaceTest2GetAllmapped(lv_IDs, check_lv3)
