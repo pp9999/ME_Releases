@@ -373,7 +373,7 @@ while (API.Read_LoopyLoop()) do
         end
     end
 
-    if API.CheckAnim(10) or API.ReadPlayerMovin2() then
+    if API.CheckAnim(40) or API.ReadPlayerMovin2() then
         if not API.ReadPlayerMovin2() then
             local p = API.PlayerCoordfloat()
 

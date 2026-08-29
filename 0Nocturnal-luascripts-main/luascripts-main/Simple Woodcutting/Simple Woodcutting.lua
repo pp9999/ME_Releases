@@ -17,7 +17,7 @@ local itemToGather = "None"
 local shouldBank = false
 
 -- #region Config
-local actionSpots = {"Tree", "Oak", "Willow", "Maple Tree", "Yew", "Ivy"}
+local actionSpots = {"Tree", "Oak", "Willow", "Maple Tree", "Yew", "Ivy", "Teak", "Mahogany" }
 local logIds = {1511, 1521, 1519, 1517, 1515}
 -- #endregion
 
@@ -114,7 +114,7 @@ local function getDistinctValues(inputTable)
 end
 
 local function populateDropdown()
-    local allNPCS = API.ReadAllObjectsArray({0, 12}, {-1}, {})
+    local allNPCS = API.ReadAllObjectsArray({0, 1, 12}, {-1}, {})
     local objects = {}
     if #allNPCS > 0 then
         for _, a in pairs(allNPCS) do
@@ -217,7 +217,7 @@ local function cutNearestTree()
         pauseAction()
         return true
     end
-    local trees = API.GetAllObjArrayInteract_str({itemToGather}, 50, {0, 12})
+    local trees = API.GetAllObjArrayInteract_str({itemToGather}, 2, {0, 1, 12})
 
     for _, tree in ipairs(trees) do
         if API.DoAction_Object_valid2(0x3B, API.OFF_ACT_GeneralObject_route0, {tree.Id}, 50, WPOINT.new(tree.TileX / 512, tree.TileY / 512, 1), true) then
@@ -267,8 +267,7 @@ local function chopChop()
             return
         end
         if not cutNearestTree() then
-            print("No chopable tree found. Terminating...")
-            API.Write_LoopyLoop(false)
+            print("No chopable tree found.")
         end
     end
 end

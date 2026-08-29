@@ -746,6 +746,16 @@ function API.LocalPlayer_HoverProgress()
 	return LocalPlayer_HoverProgress()
 end
 
+--- Get player stance (animation) id. object optional - default is local player
+---@param object number|nil --entity memory address
+---@return number
+function API.ReadPlayerStance(object)
+	if object == nil then
+		return ReadPlayerStance()
+	end
+	return ReadPlayerStance(object)
+end
+
 --- change paint state
 ---@param value boolean
 ---@return void
@@ -1267,6 +1277,7 @@ function API.ReadPlayerMovin()
 	return ReadPlayerMovin()
 end
 
+--faster, should be prefered
 ---@return boolean
 function API.ReadPlayerMovin2()
 	return ReadPlayerMovin2()
@@ -3266,6 +3277,19 @@ if false then -- LuaDoc stubs for IDE autocompletion only; never executed at run
 ---@field SELL number
 OrderType = OrderType
 
+---@class OrderStatus
+---@field Pending number Queued but not started.
+---@field Processing number Currently being placed.
+---@field Completed number Offer was placed and verified in a GE slot.
+---@field Failed number Placement failed; inspect the snapshot error.
+OrderStatus = OrderStatus
+
+---@class GECollectionTarget
+---@field Inventory number Collect finished offers into inventory.
+---@field Bank number Collect finished offers into the bank.
+---@field Auto number Try inventory, then bank when supported.
+GECollectionTarget = GECollectionTarget
+
 ---
 -- Represents an entry in the Grand Exchange.
 ---@class ExchangeEntry
@@ -3277,6 +3301,18 @@ OrderType = OrderType
 ---@field completed_quantity number The completed quantity of the order.
 ---@field completed_value number The completed value of the order.
 
+---@class GEOrderSnapshot
+---@field id number Stable queue order ID.
+---@field type OrderType BUY or SELL.
+---@field itemId number Item ID.
+---@field itemName string Cached item name when available.
+---@field price string Exact price or target percentage string.
+---@field quantity number Requested quantity.
+---@field status OrderStatus Current queue status.
+---@field error string Failure detail, empty on success.
+---@field attempts number Number of retries attempted.
+---@field slot number Zero-based GE slot, or -1 before placement.
+
 GrandExchange = GrandExchange
 
 --- Sets the delay offset for sleeps in Grand Exchange actions.
@@ -3286,7 +3322,7 @@ function GrandExchange:DelayOffset(offset) end
 
 -- Retrieves the data for a specific slot from the GrandExchange table.
 ---@function GrandExchange:GetSlotData
----@param slot number The index of the slot to retrieve data for.
+---@param slot number Zero-based GE slot index.
 ---@return ExchangeEntry ExchangeEntry data associated with the specified slot.
 function GrandExchange:GetSlotData(slot) end
 
@@ -3329,13 +3365,31 @@ function GrandExchange:IsAtGE() end
 ---@return boolean True if the Grand Exchange window is open
 function GrandExchange:IsGEWindowOpen() end
 
+--- Checks whether the GE overview (not search/editor) is visible.
+---@return boolean
+function GrandExchange:IsGEOverviewOpen() end
+
+--- Checks whether a buy/sell offer editor is visible.
+---@return boolean
+function GrandExchange:IsGEOfferEditorOpen() end
+
 --- Checks if the Grand Exchange search interface is open.
 ---@return boolean True if the Grand Exchange search interface is open
 function GrandExchange:IsGESearchOpen() end
 
 --- Collects items from the Grand Exchange to the player's inventory.
----@return boolean
+---@return boolean True when a collection action was queued.
 function GrandExchange:CollectToInventory() end
+
+--- Collects finished offers to the bank using the collection box.
+---@return boolean True when a collection action was queued.
+function GrandExchange:CollectToBank() end
+
+--- Collects finished offers and verifies that the GE slot state changed.
+---@param target GECollectionTarget
+---@param timeoutMs number|nil
+---@return boolean
+function GrandExchange:CollectFinishedOffers(target, timeoutMs) end
 
 --- Returns to the previous interface from the Grand Exchange.
 ---@return boolean
@@ -3362,9 +3416,19 @@ function GrandExchange:GetFinishedSlots() end
 function GrandExchange:GetNextAvailableSlot() end
 
 --- Opens a specific slot in the Grand Exchange.
----@param slot number The index of the slot to open.
+---@param slot number Zero-based GE slot index.
 ---@return boolean True if the slot was successfully opened
 function GrandExchange:OpenSlot(slot) end
+
+--- Opens a specific sell slot in the Grand Exchange.
+---@param slot number Zero-based GE slot index.
+---@return boolean True if the slot was successfully opened
+function GrandExchange:OpenSellSlot(slot) end
+
+--- Selects an existing Grand Exchange offer slot.
+---@param slot number Zero-based GE slot index.
+---@return boolean True if the slot was successfully selected
+function GrandExchange:SelectSlot(slot) end
 
 --- Opens the next available slot in the Grand Exchange.
 ---@return boolean True if the next available slot was successfully opened
@@ -3379,6 +3443,21 @@ function GrandExchange:SetQuantity(quantity) end
 ---@param price number The price to set.
 ---@return boolean
 function GrandExchange:SetPrice(price) end
+
+--- Sets the price relative to the market price using the current price controls.
+---@param percent string Percentage target, e.g. "100%" or "160%".
+---@return boolean
+function GrandExchange:SetPriceByPercent(percent) end
+
+--- Sets the offer price to the current market price.
+---@return boolean
+function GrandExchange:SetMarketPrice() end
+
+--- Opens Customise and applies a 1-99 percent increase or decrease.
+---@param increase boolean True to increase, false to decrease.
+---@param percent number Percentage adjustment from 1 to 99.
+---@return boolean
+function GrandExchange:SetCustomPricePercent(increase, percent) end
 
 --- Searches for an item in the Grand Exchange UI.
 ---@param itemId number The ID of the item to search for.
@@ -3396,21 +3475,65 @@ function GrandExchange:ConfirmOrder() end
 
 --- Finds an order in the Grand Exchange by item ID.
 ---@param itemId number The ID of the item to find.
----@return number slotNumber slot number of the order, or -1 if not found.
+---@return number Zero-based slot number, or -1 if not found.
 function GrandExchange:FindOrder(itemId) end
 
 --- Cancels an order in the Grand Exchange.
----@param slot number The slot number of the order to cancel.
+---@param slot number Zero-based slot number to cancel.
 ---@return boolean True if the order was successfully canceled.
 function GrandExchange:CancelOrder(slot) end
 
 --- Processes the pending order queue.
----@return boolean True if the queue was processed.
+---@return ProcessQueueConfig A fluent configuration object; call :Execute() to run it.
 function GrandExchange:ProcessQueue() end
 
 --- Executes the pending order queue.
----@return boolean True if the queue was executed.
+---@return QueueStatus Counts of pending, processing, completed and failed orders.
 function GrandExchange:Execute() end
+
+---@class QueueStatus
+---@field pending number Pending queue entries.
+---@field processing number Entries currently being processed.
+---@field completed number Offers placed and verified.
+---@field failed number Entries that failed.
+
+---@class ProcessQueueConfig
+---@field retries number Maximum retries after the initial attempt.
+---@field retryDelayMs number Delay between retries.
+---@field slotTimeoutMs number Maximum wait for a free GE slot.
+---@field collectTimeoutMs number Maximum wait for collection progress.
+---@field collectionTarget GECollectionTarget Inventory, Bank, or Auto.
+
+---@param retries number
+---@return ProcessQueueConfig
+function ProcessQueueConfig:Retries(retries) end
+---@param milliseconds number
+---@return ProcessQueueConfig
+function ProcessQueueConfig:RetryDelay(milliseconds) end
+---@param milliseconds number
+---@return ProcessQueueConfig
+function ProcessQueueConfig:SlotTimeout(milliseconds) end
+---@param milliseconds number
+---@return ProcessQueueConfig
+function ProcessQueueConfig:CollectTimeout(milliseconds) end
+---@param target GECollectionTarget
+---@return ProcessQueueConfig
+function ProcessQueueConfig:CollectionTarget(target) end
+---@return QueueStatus
+function ProcessQueueConfig:Execute() end
+
+--- Returns the current queue status without executing it.
+---@return QueueStatus
+function GrandExchange:GetQueueStatus() end
+
+--- Returns stable snapshots of all retained queue entries.
+---@return GEOrderSnapshot[]
+function GrandExchange:GetQueuedOrders() end
+
+--- Returns one retained queue entry, or nil when the ID is unknown.
+---@param orderId number
+---@return GEOrderSnapshot|nil
+function GrandExchange:GetQueuedOrder(orderId) end
 
 --- Checks if the Grand Exchange is currently processing an order.
 ---@return boolean True if an order is being processed, false otherwise.
@@ -3420,9 +3543,23 @@ function GrandExchange:IsProcessing() end
 ---@return boolean True if there are pending orders, false otherwise.
 function GrandExchange:HasPending() end
 
---- Clears the pending order queue.
+--- Clears every retained queue entry, including completed and failed history.
 ---@return void
 function GrandExchange:ClearQueue() end
+
+--- Clears only completed and failed entries; pending work is retained.
+---@return void
+function GrandExchange:ClearFinishedOrders() end
+
+--- Example:
+--- local first = GrandExchange:Queue(OrderType.BUY, 554, 100, 5)
+--- local second = GrandExchange:Queue(OrderType.BUY, "Fire rune", "160%", 10)
+--- local result = GrandExchange:ProcessQueue()
+---     :Retries(2):SlotTimeout(30000):CollectTimeout(5000)
+---     :CollectionTarget(GECollectionTarget.Auto):Execute()
+--- for _, order in ipairs(GrandExchange:GetQueuedOrders()) do
+---     print(order.id, order.status, order.slot, order.error)
+--- end
 
 --- Sets the price using the CS2 script mode.
 ---@param price number|string The price to set (number or string).
@@ -3430,9 +3567,7 @@ function GrandExchange:ClearQueue() end
 function GrandExchange:SetPriceCS2(price) end
 
 --- Enables or disables the CS2 script mode for Grand Exchange actions.
----@param enabled boolean True to use CS2 scripts, false otherwise.
----@return void
-function GrandExchange:useCS2(enabled) end
+---@field useCS2 boolean
 
 --- Inventory LUADoc
 --- 

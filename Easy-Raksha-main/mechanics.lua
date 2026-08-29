@@ -14,9 +14,10 @@
 ---@diagnostic disable: undefined-global
 
 local API       = require("api")
-local Utils     = require("core.helper")
-local Player    = require("core.player")
+local Utils     = require("raksha.core.helper")
+local Player    = require("raksha.core.player")
 local Constants = require("raksha.constants")
+local Profiler  = require("raksha.core.profiler")
 
 local Mechanics = {}
 Mechanics.__index = Mechanics
@@ -60,6 +61,10 @@ function Mechanics.new(options)
         lastLethalMoveTick = -99, -- pacing for the lethal-ground dodge
         lethalTarget = nil, -- committed escape tile, so we don't re-pick each tick
 
+        -- True once we have got clear of the sweep currently animating. One
+        -- escape per sweep — see ensureClearOfSweep.
+        sweepEscaped = false,
+
         -- Floor shadows, cached by tile. Keyed "x:y" -> {x, y, seen}. Entries
         -- linger briefly after they stop being detected so a scan flicker can't
         -- make us dart back and forth, then are dropped once genuinely gone.
@@ -69,11 +74,18 @@ function Mechanics.new(options)
         poolsActive = false,
         lastPoolAbilityTick = -99, -- GCD pacing for pool DPS
         lastPoolTargetTick = -99, -- when we last clicked a pool
+        lastPoolSurgeTick = -99, -- when we last surged toward one
         poolTargetId = nil, -- Unique_Id of the pool we're currently killing
+        -- Set by the phase 3 rotation's "Threads of fate + target pools" step.
+        -- Starts a clear regardless of how many are up, since that is the point
+        -- in the guide's line where the pools are meant to be dealt with.
+        poolClearRequested = false,
 
         -- Shadow manifestation (NPC 27355) being killed
         manifestationActive = false,
         lastManifestAbilityTick = -99, -- GCD pacing for manifestation DPS
+        manifestTargetId = nil, -- Unique_Id of the one we're attacking
+        lastManifestTargetTick = -99, -- when we last clicked it
 
         -- Expel pacing, in real milliseconds (sub-tick — see EXPEL_INTERVAL_MS)
         lastExpelTick = -99,
@@ -258,17 +270,48 @@ end
 -- rather than guessing a single one. Includes 4 for ground-marker objects.
 local FIND_TYPES = {0, 1, 2, 3, 4, 5, 8, 12}
 
--- Abilities to spend on the anima pools, best first. Single-target Necromancy
--- abilities that Threads of Fate spreads to the cluster; Basic Attack is the
--- always-available fallback so we always cast something on them.
--- Ordered by how much of the CLUSTER they hit, not by single-target damage.
--- The wiki's Necromancy picks for pools are Bloat (spreads across a cluster) and
--- Blood Siphon (heals ~700 per pool); we were leading with single-target Touch
--- of Death, which is why clearing them was so slow.
+-- Abilities to spend on the anima pools, best first, and the ONLY things cast
+-- while we're on them — the phase rotation is held for the whole clear (see
+-- Mechanics:rotationOnHold), so this list is the pool fight in its entirety.
+--
+-- Ordered by how much of the CLUSTER each one hits, not by single-target
+-- damage. PVME's phase 3 line is "Threads of fate + target pools -> Soul sap",
+-- so Threads of Fate leads: it hits the target and two more pools at once,
+-- which is the difference between clearing a sweep of eight and killing eight
+-- things one after another.
+--
+-- Volley of Souls is deliberately absent. It's the biggest thing 5 souls can
+-- buy and the guide spends it on Raksha immediately after the pools ("target
+-- Raksha + Volley of souls"), so dumping it into a pool costs more than it
+-- clears.
 local POOL_DPS_ABILITIES = {
-    "Bloat", -- spreads across the cluster
+    "Threads of Fate", -- hits the target plus two more of the cluster
+    "Bloat", -- spreads across the cluster as they die
     "Blood Siphon", -- hits the cluster and heals per pool
-    "Volley of Souls", -- dumps banked souls into the group
+    "Soul Sap", -- builds the souls the guide spends on Raksha next
+    "Touch of Death", "Basic<nbsp>Attack"
+}
+
+-- How close two pools have to be to count as one cluster when choosing which to
+-- attack. Threads of Fate splashes to nearby targets, so among pools that are
+-- about equally close we lead on the one with the most neighbours inside this
+-- radius — killing three at a time instead of one.
+--
+-- Density is now the TIEBREAK, not the primary sort. See pickPoolTarget.
+local POOL_CLUSTER_RADIUS = 3
+
+-- How much closer one pool has to be than another before distance decides on its
+-- own. Inside this band the two count as equally close and the denser cluster
+-- wins; outside it, the nearer pool always wins.
+--
+-- This is what stops us walking past pools at our feet to reach a knot across
+-- the arena, which is exactly what the old density-first ordering did.
+local POOL_DISTANCE_TIE = 1.0
+
+-- Abilities to spend on the Shadow manifestation, best first, once it has been
+-- stunned. Same contract as POOL_DPS_ABILITIES: while it's up the phase
+-- rotation is held, so this list is all the damage it takes.
+local MANIFESTATION_DPS_ABILITIES = {
     "Touch of Death", "Soul Sap", "Basic<nbsp>Attack"
 }
 
@@ -286,11 +329,22 @@ local INTERACT_TICKS = 1 -- one clean interaction per tick
 -- real attack.
 local POOL_RECLICK_TICKS = 5
 
+-- The same watchdog for the Shadow manifestation. There is only ever one, so
+-- this exists purely so a click that silently failed can't leave us standing
+-- next to something we think we're already attacking.
+local MANIFEST_RECLICK_TICKS = 5
+
 -- Ticks to wait between clicking a pool and surging at it, so the character has
 -- actually finished turning to face it first. Surge follows facing, not the
 -- target, so surging on the same tick as the click sends us in whatever
 -- direction we were already pointed.
 local POOL_SURGE_FACE_TICKS = 2
+
+-- Minimum ticks between two surges toward a pool. The ability bar's cooldown is
+-- not enough on its own: it doesn't refresh within the tick, and this handler
+-- runs a dozen-plus times per tick, so without this we'd fire the same Surge
+-- repeatedly and end up across the arena.
+local POOL_SURGE_REPEAT_TICKS = 5
 
 -- Expel is the exception to the one-per-tick rule: Mind Flay orbs dispel on
 -- click instead of resolving like an attack, so clicks don't cancel each other
@@ -300,14 +354,57 @@ local POOL_SURGE_FACE_TICKS = 2
 -- orbs each take a click inside ~360ms — comfortably under a single game tick.
 local EXPEL_INTERVAL_MS = 90
 
+--- Per-GAME-TICK memo for findAnyType, keyed by id and range. See findAnyType.
+local anyTypeCache, anyTypeCacheTick = {}, -1
+
 --- Finds all instances of an id across every common object type — robust to the
 --- exact `type` in constants being wrong, which is the usual reason a presence
 --- mechanic "never fires".
+---
+--- MEMOISED PER GAME TICK, keyed by id and range. This is the most expensive
+--- call in the file: it asks for EIGHT object types at once (FIND_TYPES), three
+--- of its callers at range 60. It is reached from handleInstakill,
+--- getLethalHazardTiles, liveManifestation and handleAdds — all of which run
+--- inside Mechanics:update(), which the `parallel`, `cooldown = 0` "Handle
+--- fight" task calls 12-20 times per tick. Several of those paths ask for the
+--- same id more than once in a single pass.
+---
+--- Objects only move on tick boundaries, so every repeat within a tick was
+--- returning identical data at full native cost. Behaviour is unchanged; only
+--- the number of scans is.
+---
+--- The array is shared, not copied — every call site iterates it or takes its
+--- length and none of them mutate it (checked across the file). getShadowTiles
+--- and getLethalHazardTiles are deliberately NOT cached for exactly that reason:
+--- they hand back tables their callers APPEND to (see getAllHazardTiles), so a
+--- shared table would grow without bound within a tick.
+---
+--- `fresh` forces a real scan and refreshes the entry. Exactly ONE caller needs
+--- it — handleAdds. Every other mechanic here keys off state the game only
+--- changes on a tick boundary, but Mind Flay orbs dispel ON CLICK, and the expel
+--- round-robin deliberately fires every EXPEL_INTERVAL_MS (~6 times a tick). A
+--- list frozen for the whole tick would keep reporting popped orbs, which delays
+--- the "cleared — reattacking Raksha" branch by up to a tick.
 --- @param id number
 --- @param range number
+--- @param fresh? boolean bypass the per-tick memo
 --- @return AllObject[]
-function Mechanics:findAnyType(id, range)
-    return API.GetAllObjArray1({id}, range or 30, FIND_TYPES) or {}
+function Mechanics:findAnyType(id, range, fresh)
+    local tick = API.Get_tick()
+    if tick ~= anyTypeCacheTick then
+        anyTypeCacheTick = tick
+        anyTypeCache = {}
+    end
+
+    local key = id .. ":" .. (range or 30)
+    if not fresh then
+        local hit = anyTypeCache[key]
+        if hit then return hit end
+    end
+
+    local result = API.GetAllObjArray1({id}, range or 30, FIND_TYPES) or {}
+    anyTypeCache[key] = result
+    return result
 end
 
 --- Builds an axis-aligned hazard box centred on a tile.
@@ -362,6 +459,23 @@ local SHADOW_LINGER_TICKS = 3
 --- cache stops a detection flicker from making us dart back and forth. Entries
 --- are dropped once they've gone unseen for SHADOW_LINGER_TICKS, which is what
 --- lets us walk back over ground where a shadow has genuinely despawned.
+--- Per-GAME-TICK memo for the shadow-floor scan. See getShadowTiles.
+local shadowScanCache, shadowScanCacheTick = nil, -1
+
+--- The raw floor-shadow object read, once per game tick.
+--- @param sf table Constants.SHADOW_FLOOR
+--- @return AllObject[]
+local function shadowScan(sf)
+    local tick = API.Get_tick()
+    if shadowScanCache and tick == shadowScanCacheTick then
+        return shadowScanCache
+    end
+
+    shadowScanCacheTick = tick
+    shadowScanCache = API.GetAllObjArray1(sf.ids, 30, {sf.type}) or {}
+    return shadowScanCache
+end
+
 --- @return table[]
 function Mechanics:getShadowTiles()
     local sf = Constants.SHADOW_FLOOR
@@ -374,7 +488,13 @@ function Mechanics:getShadowTiles()
     -- instead of attacking.
     local clearance = math.min(escapeClearance(sf.safeRange, sf.triggerRange), 3)
 
-    for _, s in ipairs(API.GetAllObjArray1(sf.ids, 30, {sf.type}) or {}) do
+    -- Only the NATIVE READ is memoised, not the table this returns. getShadowTiles
+    -- is reached several times per pass (getLethalHazardTiles, getAllHazardTiles,
+    -- ensureClearOfSweep and the debug readout all call it) and each one was a
+    -- fresh scan. Its OUTPUT still has to be a new table every call, because
+    -- getLethalHazardTiles appends to what it gets back — which is exactly why
+    -- this function is not memoised as a whole.
+    for _, s in ipairs(shadowScan(sf) or {}) do
         local tile = s.Tile_XYZ
         if tile then
             local x, y = math.floor(tile.x), math.floor(tile.y)
@@ -393,11 +513,19 @@ function Mechanics:getShadowTiles()
     return out
 end
 
---- Every area we must never move into, as hazard boxes: floor shadows and
---- insta-kill highlights (both lethal) plus the ground bombs. Used to validate a
---- Dive destination — a blind dive into a shadow is instant death.
+--- The LETHAL ground only: floor shadows and the 2789 insta-kill highlights.
+--- Standing in either is an instant death, so these are the hazards no movement
+--- may ever ignore, however urgent it is.
+---
+--- Split out from getAllHazardTiles because "never land here or you die" and
+--- "prefer not to stand here" were being treated as the same thing, and that
+--- silently disabled the pool clear's Dive. The full list includes a box around
+--- every anima pool, so validating a dive ONTO a pool against it asked whether
+--- the pool's own tile was clear of the pool — distance 0 against a clearance of
+--- 2, false every time. Every approach fell back to walking, and with
+--- diveDistance at 8 that is most of a sweep spent crossing the arena on foot.
 --- @return table[]
-function Mechanics:getAllHazardTiles()
+function Mechanics:getLethalHazardTiles()
     local hazards = self:getShadowTiles()
 
     local ik = Constants.INSTAKILL
@@ -409,6 +537,16 @@ function Mechanics:getAllHazardTiles()
                                                           ik.triggerRange))
         end
     end
+
+    return hazards
+end
+
+--- Every area we must never move into, as hazard boxes: the lethal ground above,
+--- plus the anima pools, the ground bombs and (in phase 4) Raksha's own blocked
+--- footprint. Used to validate a movement destination in the general case.
+--- @return table[]
+function Mechanics:getAllHazardTiles()
+    local hazards = self:getLethalHazardTiles()
 
     -- Phase 4: Raksha is a blocked 5x5 that can't be walked through, so his
     -- footprint is a pathing hazard. Clearance is deliberately TINY — we want to
@@ -551,6 +689,25 @@ local ORBIT_SLOTS = 16
 -- we travel.
 local ORBIT_STEP_SLOTS = 2
 
+-- Phase 4 walk-back tuning. See Mechanics:returnToPhase4Home.
+--
+-- Beyond HOME_HURRY_DISTANCE we are out of position badly enough to re-issue the
+-- walk every tick instead of pacing it — which is what an Escape leaves us. At
+-- or inside it we're close enough that the normal pacing avoids twitching
+-- between adjacent tiles.
+local HOME_HURRY_DISTANCE = 3
+
+-- Past this, walking back is slow enough to be worth a Dive. Set below Dive's
+-- ~10 tile reach so a dive that lands short still covers most of the gap, and
+-- above HOME_HURRY_DISTANCE so short corrections never burn the cooldown.
+local HOME_DIVE_DISTANCE = 6
+
+-- Error range handed to API.DoAction_Surge_Tile when escaping a tail sweep: how
+-- far off the requested tile the surge may land and still be worth taking. Surge
+-- travels a fixed distance, so demanding an exact tile would reject nearly every
+-- useful surge; two tiles of slack still lands us outside the 7x7.
+local SWEEP_SURGE_ERROR = 2
+
 --- Ring offsets in a fixed rotational order, cached per radius.
 ---
 --- Built with cos/sin once at first use. Slots are matched to tiles by DISTANCE
@@ -603,6 +760,41 @@ function Mechanics:diveToTile(tile)
         return API.DoAction_BDive_Tile(tile) and true or false
     end
     return false
+end
+
+--- True while we are off Raksha killing something else, and the phase rotation
+--- must therefore be held.
+---
+--- The phase rotations are written against the boss — Death Skulls, Volley of
+--- Souls, the specs, the phase 4 switches. Firing them at an anima pool or a
+--- manifestation both wastes them and walks the rotation index forward, so a
+--- clear that takes eight seconds used to cost us three or four steps of the
+--- phase as well as the damage. Everything we do to an add is cast from this
+--- module's own lists instead (POOL_DPS_ABILITIES,
+--- MANIFESTATION_DPS_ABILITIES), and the rotation resumes on the same step once
+--- the target comes back.
+--- @return boolean
+function Mechanics:rotationOnHold()
+    return self.state.poolsActive or self.state.manifestationActive or
+               self.state.addsActive
+end
+
+--- True from the moment the phase 3 rotation casts "Threads of Fate + target
+--- pools" until the last pool is dead. While this holds, the pool clear owns our
+--- movement outright and the bomb dodge is suppressed (see runActive).
+---
+--- Deliberately checks the REQUEST as well as the latch, and that second half is
+--- load-bearing. Mechanics:begin() resets poolsActive to false, and the BOMBS
+--- definition re-arms every couple of ticks for the whole bomb phase (duration
+--- 20, retriggerAfter 3) — so during exactly the window we care about, the latch
+--- is being knocked down and rebuilt constantly. runActive runs BEFORE
+--- handleAnimaPools in update(), so on any iteration where begin() had just
+--- cleared the latch, a check on poolsActive alone would read false and let the
+--- dodge run. poolClearRequested survives all of that: it is set once by the
+--- rotation and cleared only when the pools are actually gone.
+--- @return boolean
+function Mechanics:poolClearInProgress()
+    return self.state.poolsActive or self.state.poolClearRequested
 end
 
 --- True when Raksha is our current target. Escape teleports us away from what
@@ -697,15 +889,20 @@ function Mechanics:resetFight()
     self.state.addsActive = false
     self.state.poolsActive = false
     self.state.poolTargetId = nil
+    self.state.poolClearRequested = false
+    self.state.lastPoolSurgeTick = -99
     self.state.manifestationActive = false
+    self.state.manifestTargetId = nil
     self.state.instakillActive = false
     self.state.lethalTarget = nil
+    self.state.sweepEscaped = false
 
     self.state.shadowCache = {}
     self.state.expelIndex = 0
 
     self.state.arenaCenter = nil
     self.state.arenaCenterBoss = nil
+    self.state.lastHomeSlotLogged = nil
 
     self.state.lastSiphonTick = -999
     self.state.lastSiphonCheckTick = -1
@@ -734,11 +931,54 @@ end
 --- The home tile we should currently be using: the primary unless something
 --- lethal is sitting on it, in which case the alternate.
 --- @return table|nil {x, y, z}
+--- Logs the phase 4 home tile whenever the chosen ring slot changes.
+---
+--- Diagnostic, and specifically for the question this file cannot answer on its
+--- own: whether Raksha's REPORTED tile (Tile_XYZ) is the centre of his blocked
+--- 5x5 or a corner of it. Everything here assumes centre — homeOffsetX of 4 is
+--- documented as "2 tiles off the edge" of a footprint spanning +/-2, which only
+--- holds from the centre — but constants.lua flags the assumption as unverified,
+--- and if it is actually a corner then the east slot lands off his south-east
+--- corner instead, which is what "we are south of the boss" would look like.
+---
+--- Prints the boss tile, the home tile and the delta between them, so the answer
+--- can be read off a real kill instead of inferred. Slot 1 is due east; the ring
+--- runs anticlockwise in 22.5 degree steps, so 5 is north, 9 west, 13 south.
+--- @param tile table The chosen home tile
+--- @param cx number Boss reported x
+--- @param cy number Boss reported y
+--- @param eastSlot number The slot due east, for comparison
+--- @private
+function Mechanics:logHomeSlot(tile, cx, cy, eastSlot)
+    if self.state.lastHomeSlotLogged == tile.slot then return end
+    self.state.lastHomeSlotLogged = tile.slot
+
+    self:log(string.format(
+                 "phase 4 home: slot %d (east is %d) at (%d, %d); boss reports (%d, %d); delta (%+d, %+d)",
+                 tile.slot, eastSlot, tile.x, tile.y, cx, cy, tile.x - cx,
+                 tile.y - cy))
+end
+
 function Mechanics:getHome()
     -- Phase 4 is a different, smaller arena, so the tile we recorded pre-fight is
-    -- meaningless there. We orbit Raksha instead: home is the east slot on the
-    -- ring, and if something lethal lands on it we take the nearest clear slot
-    -- round the ring rather than an arbitrary nudge.
+    -- meaningless there. We orbit Raksha instead, and home is the EAST slot on
+    -- the ring — always, with no search for somewhere better.
+    --
+    -- It used to walk outward from east to the nearest hazard-free slot, up to
+    -- half the ring away, which is how we ended up holding a spot south of him.
+    -- That relocation was solving a problem twice over and losing the phase in
+    -- the process:
+    --
+    --   * handleInstakill already runs at top priority and moves us off lethal
+    --     ground wherever we are standing, so nothing needs home to dodge.
+    --   * returnToPhase4Home already refuses to walk a fouled route: it checks
+    --     tileIsClear on home and falls through to planOrbitMove, which routes
+    --     around hazards on its own.
+    --
+    -- So the only thing redefining home achieved was moving the spot we hold —
+    -- and phase 4 depends entirely on holding ONE tile east of him. Drift off it
+    -- and he swaps the dodgeable tail sweep for shadow bombs, which is precisely
+    -- the trade PHASE4 exists to avoid.
     --
     -- Expressed in ring slots on purpose, so this agrees exactly with the tiles
     -- returnHome and the lethal dodge actually steer for. When it was a separate
@@ -749,25 +989,13 @@ function Mechanics:getHome()
         if center then
             local d = Constants.PHASE4.homeOffsetX or 4
             local cx, cy = math.floor(center.x), math.floor(center.y)
-            local hazards = self:getAllHazardTiles()
             local eastSlot = self:orbitNearestSlot(cx + d, cy)
 
-            for offset = 0, math.floor(ORBIT_SLOTS / 2) do
-                for _, direction in ipairs({1, -1}) do
-                    local tile = self:orbitTileAt(eastSlot + direction * offset)
-                    if tile and tileIsClear(tile.x, tile.y, hazards) then
-                        tile.name = "orbit " .. tile.slot
-                        return tile
-                    end
-                end
-            end
-
-            -- Every slot fouled: hand the east spot back anyway and let the
-            -- dodge handlers move us somewhere survivable instead.
-            local fallback = self:orbitTileAt(eastSlot)
-            if fallback then
-                fallback.name = "orbit " .. fallback.slot
-                return fallback
+            local tile = self:orbitTileAt(eastSlot)
+            if tile then
+                tile.name = "orbit " .. tile.slot
+                self:logHomeSlot(tile, cx, cy, eastSlot)
+                return tile
             end
         end
     end
@@ -979,6 +1207,317 @@ function Mechanics:walkAvoiding(x, y, hazards, urgent)
     return true
 end
 
+--- The live Shadow manifestation, if one is up. Used to bias the sweep escape
+--- toward a tile that keeps us on the add.
+--- @return table|nil
+function Mechanics:liveManifestation()
+    local sm = Constants.ADDS.SHADOW_MANIFESTATION
+    for _, m in ipairs(self:findAnyType(sm.id, sm.range)) do
+        if (m.Life or 0) > 0 and m.Tile_XYZ then return m end
+    end
+    return nil
+end
+
+--- Best tile to escape a tail sweep to: outside the 7x7, safe to stand on,
+--- reachable without crossing something lethal, and — as a tie-break only — as
+--- close to the Shadow manifestation as we can get so we keep DPSing it.
+---
+--- Getting out comes first and the add comes second, deliberately. The previous
+--- version had it the other way round: it aimed at the manifestation and gave up
+--- entirely if the add happened to be inside the sweep radius, which is exactly
+--- when we most needed to move.
+--- @param clearance number Tiles from Raksha the tile must be
+--- @param hazards table[] Ground hazards, with the sweep already added
+--- @return table|nil {x, y}
+function Mechanics:pickSweepEscapeTile(clearance, hazards)
+    local center = self.state.arenaCenterBoss
+    local player = Player:getCoords()
+    if not center or not player then return nil end
+
+    local cx, cy = math.floor(center.x), math.floor(center.y)
+    local arenaCenter = self.state.arenaCenter
+    local arenaRadius = self:arenaRadius()
+
+    -- Bias target: the add if there is one, otherwise our own tile, which makes
+    -- the tie-break "move as little as possible".
+    local add = self:liveManifestation()
+    local bx = add and math.floor(add.Tile_XYZ.x) or math.floor(player.x)
+    local by = add and math.floor(add.Tile_XYZ.y) or math.floor(player.y)
+
+    local searchRadius = 12
+    local best, bestCost, bestBias = nil, math.huge, math.huge
+
+    for dx = -searchRadius, searchRadius do
+        for dy = -searchRadius, searchRadius do
+            local tx = math.floor(player.x + dx)
+            local ty = math.floor(player.y + dy)
+
+            -- Must actually be out of the sweep.
+            local ox, oy = tx - cx, ty - cy
+            if math.sqrt(ox * ox + oy * oy) >= clearance then
+                local inArena = true
+                if arenaCenter then
+                    local ax = tx - arenaCenter.x
+                    local ay = ty - arenaCenter.y
+                    inArena = math.sqrt(ax * ax + ay * ay) <= arenaRadius
+                end
+
+                if inArena and tileIsClear(tx, ty, hazards) then
+                    local cost = pathHazardCost(player.x, player.y, tx, ty,
+                                                hazards)
+                    local ex, ey = tx - bx, ty - by
+                    local bias = math.sqrt(ex * ex + ey * ey)
+
+                    if cost < bestCost or
+                        (cost == bestCost and bias < bestBias) then
+                        best, bestCost, bestBias = {x = tx, y = ty}, cost, bias
+                    end
+                end
+            end
+        end
+    end
+
+    return best
+end
+
+--- Gets us out of Raksha's 7x7 tail sweep when we are NOT targeting him.
+---
+--- This is the whole answer to "we keep eating the sweep while killing the add",
+--- and it replaces a dive-to-the-manifestation attempt that had six separate
+--- ways to silently give up and fall back to walking. Now there is one job —
+--- reach a safe tile outside the 7x7 — and three ways to do it, tried in order
+--- of how fast they are:
+---
+---   1. Dive to the tile. Instant, and it lands where we aimed.
+---   2. Surge to the tile, via DoAction_Surge_Tile. Also instant, separate
+---      cooldown from Dive, and being TILE-TARGETED is what makes it usable
+---      here — a bare Surge follows our facing, which while we're turned toward
+---      an add is as likely to carry us across the sweep as out of it.
+---   3. Walk, urgently. Slow, but it goes the right way.
+---
+--- Escape is deliberately absent: it moves away from our TARGET, and our target
+--- is the add rather than Raksha, so it can just as easily throw us deeper in.
+---
+--- Every bail-out logs its reason. The previous version failed silently, which
+--- is why "it still isn't dodging" was impossible to tell apart from "it tried
+--- and the dive was on cooldown".
+--- @param clearance number Tiles from Raksha we need to be
+--- @return boolean consumed True if we spent the tick's action
+function Mechanics:escapeSweep(clearance)
+    local center = self.state.arenaCenterBoss
+    local player = Player:getCoords()
+    if not center or not player then return false end
+
+    -- Already clear of it.
+    local dx, dy = player.x - center.x, player.y - center.y
+    if math.sqrt(dx * dx + dy * dy) >= clearance then return false end
+
+    -- The sweep radius goes in as a hazard on top of the real ground hazards,
+    -- so neither the tile search nor the walk can hand back somewhere still
+    -- inside it — or route us out through a floor shadow.
+    local hazards = self:getAllHazardTiles()
+    hazards[#hazards + 1] = hazardBox(center.x, center.y, 0, clearance)
+
+    local target = self:pickSweepEscapeTile(clearance, hazards)
+    if not target then
+        self:log("tail sweep: no safe tile outside the 7x7 — walking clear")
+        self:walkClearOfBoss(clearance)
+        return false -- walking costs no global cooldown
+    end
+
+    local z = math.floor(player.z or 0)
+
+    -- 1. Dive.
+    if self:canDive() then
+        ---@diagnostic disable-next-line: undefined-global
+        if self:diveToTile(WPOINT.new(target.x, target.y, z)) then
+            self:log(string.format("tail sweep: DIVED clear to (%d, %d)",
+                                   target.x, target.y))
+            return true
+        end
+        self:log(string.format("tail sweep: dive to (%d, %d) was rejected",
+                               target.x, target.y))
+    end
+
+    -- 2. Tile-targeted Surge.
+    if Utils:canUseAbility("Surge") then
+        ---@diagnostic disable-next-line: undefined-global
+        local dest = WPOINT.new(target.x, target.y, z)
+        if API.DoAction_Surge_Tile(dest, SWEEP_SURGE_ERROR) then
+            self:log(string.format("tail sweep: SURGED clear to (%d, %d)",
+                                   target.x, target.y))
+            return true
+        end
+        self:log("tail sweep: surge to tile was rejected")
+    end
+
+    -- 3. Walk. Urgent, so a compromised route still beats standing in the 7x7.
+    self:log(string.format(
+                 "tail sweep: no Dive or Surge available — walking to (%d, %d)",
+                 target.x, target.y))
+    self:walkAvoiding(target.x, target.y, hazards, true)
+    return false
+end
+
+--- The two animations that mean "a 7x7 is about to land on Raksha's tile".
+local SWEEP_ANIMS = {
+    [Constants.ANIM.TAIL_SWEEP_ESCAPE] = true,
+    [Constants.ANIM.TAIL_SWEEP_FREEDOM] = true
+}
+
+--- Tiles of clearance a sweep escape aims for, which differs by phase.
+---
+--- Phase 4 goes two further: we take the sweep from melee range there, so the
+--- hop is short and a shortfall leaves us inside it. See
+--- Constants.TAIL_SWEEP_CLEARANCE_P4.
+---
+--- Every phase 4 escape route has to agree on this number — the dive/surge
+--- target, the walking retreat and the "we are clear now, stop moving" latch
+--- alike. If the latch wanted more distance than the retreat delivers we would
+--- never satisfy it and would shuffle in and out for the whole animation.
+--- @return number
+function Mechanics:sweepClearance()
+    if self.state.phase >= 4 then
+        return Constants.TAIL_SWEEP_CLEARANCE_P4 or
+                   Constants.TAIL_SWEEP_CLEARANCE
+    end
+    return Constants.TAIL_SWEEP_CLEARANCE
+end
+
+--- Whether we are outside Raksha's tail sweep radius.
+--- @return boolean
+function Mechanics:clearOfSweepRadius()
+    local center = self.state.arenaCenterBoss
+    local player = Player:getCoords()
+    if not center or not player then return false end
+
+    local dx, dy = player.x - center.x, player.y - center.y
+    return math.sqrt(dx * dx + dy * dy) >= self:sweepClearance()
+end
+
+--- Last line of defence for the tail sweep: a sweep is playing, we are still
+--- inside the 7x7, and no sweep response is running. Get out anyway.
+---
+--- This deliberately sits OUTSIDE the mechanic-registration contest, and that is
+--- the whole point of it. Registration is priority-ranked and a live mechanic
+--- refuses anything that does not outrank it:
+---
+---     local outranks = (active == nil) or
+---                          ((definition.priority or 0) >= (active.priority or 0))
+---
+--- In phase 4 the detonation dome is priority 95 against the sweep's 60, and it
+--- is `sustained` for a FIXED 30 ticks — it finishes on `elapsed >= duration`,
+--- not when the dome animation stops. So for eighteen seconds at a stretch every
+--- tail sweep was refused registration outright: begin() was never called, no
+--- sequence existed, and neither the Escape step nor its retreat fallback ever
+--- got the chance to run.
+---
+--- That is why this reads as a phase 4 dodging problem when the detection is
+--- fine. burnDome returns false, so the rotation kept firing throughout — we
+--- were attacking normally and simply never moving.
+---
+--- Phases 1-3 never hit it because they have no dome. Their top-priority
+--- responses are the bombardment and bind sequences, which finish in a few ticks
+--- and hand the slot straight back.
+--- @param boss table
+--- @return boolean consumed True if we spent the tick's action getting clear
+function Mechanics:ensureClearOfSweep(boss)
+    if not boss.found or not SWEEP_ANIMS[boss.anim] then
+        -- Sweep over. Re-arm for the next one.
+        self.state.sweepEscaped = false
+        return false
+    end
+
+    -- ONE escape per sweep, then hold position.
+    --
+    -- The animation plays on for several ticks after the hit has resolved, and
+    -- this function runs every loop iteration — so without the latch we spent
+    -- all of those ticks fighting returnHome. It walked us onto the home tile at
+    -- four tiles out, we read four as "inside the 7x7" and shoved us back to
+    -- seven, returnHome walked us in again, and round it went. That is the
+    -- back-and-forth shuffle.
+    --
+    -- Once we have got clear the sweep cannot touch us, so from here we stop
+    -- moving and let returnHome put us on the tile and LEAVE us there.
+    if self.state.sweepEscaped then return false end
+
+    -- Outside the radius already — nothing to do but remember that we are.
+    if self:clearOfSweepRadius() then
+        self.state.sweepEscaped = true
+        return false
+    end
+
+    -- Defer to a registered sweep response ONLY while its mover can genuinely
+    -- fire. Escape teleports us out in one action and leaves us at melee range,
+    -- so it is worth a tick's wait — but only if it is actually coming.
+    --
+    -- THE GLOBAL COOLDOWN IS WHY THIS MATTERS. Every rotation ability puts one
+    -- on us for around three ticks, and canUseAbility reads `enabled`, which the
+    -- cooldown clears for the whole bar at once — Escape, Surge and Dive alike.
+    -- So the sequence would reach its movement step mid-cooldown, log "not
+    -- available", mark the step done and walk on to the reattack. We stood in
+    -- the 7x7 waiting on an ability that was never going to come, and the more
+    -- the rotation was firing the more reliably it happened.
+    --
+    -- WALKING is not on the global cooldown. That is the whole point: whatever
+    -- the ability bar is doing, we can always walk out, and escapeSweep's last
+    -- tier is a plain hazard-avoiding walk.
+    local active = self.state.activeDef
+    if active and SWEEP_ANIMS[self.state.activeAnim] then
+        local mover = active.sweepMover
+        if mover and self:isTargetingBoss() and Utils:canUseAbility(mover) then
+            return false
+        end
+    end
+
+    -- escapeSweep returns immediately when we are already outside the radius, so
+    -- running this on every tick of every sweep costs nothing.
+    return self:escapeSweep(self:sweepClearance())
+end
+
+--- Backs straight away from Raksha by `tiles`, for when a sweep answer's
+--- movement ability is on cooldown.
+---
+--- Deliberately dumber than escapeSweep(): no tile search, no hazard routing,
+--- no ability. Just step back along the line we're already standing on. That is
+--- what makes it usable as a fallback — it cannot fail to find a tile, and it
+--- cannot spend a global cooldown we may need for the rotation.
+---
+--- Direction comes from where we stand relative to him rather than a hardcoded
+--- compass point. In phase 4 that resolves to due EAST, because the phase holds
+--- a tile east of him and we are backing further out the same way. Deriving it
+--- means a retreat from anywhere else still goes away from him rather than
+--- through him, which a fixed east would not.
+--- @param tiles number Tiles to retreat
+--- @return boolean consumed Always false — walking costs no global cooldown
+function Mechanics:retreatFromBoss(tiles)
+    local player = Player:getCoords()
+    if not player then return false end
+
+    local px, py = math.floor(player.x), math.floor(player.y)
+
+    -- Default east, the side phase 4 holds, for the degenerate case where we
+    -- have no boss reading or are somehow standing on his exact tile.
+    local dx, dy = 1, 0
+
+    local center = self.state.arenaCenterBoss
+    if center then
+        local ox, oy = px - center.x, py - center.y
+        local length = math.sqrt(ox * ox + oy * oy)
+        if length > 0.5 then dx, dy = ox / length, oy / length end
+    end
+
+    local tx = math.floor(px + dx * tiles + 0.5)
+    local ty = math.floor(py + dy * tiles + 0.5)
+    tx, ty = self:clampToArena(tx, ty)
+
+    self:log(string.format("tail sweep: backing off %d tiles to (%d, %d)", tiles,
+                           tx, ty))
+    ---@diagnostic disable-next-line: undefined-global
+    API.DoAction_WalkerW(WPOINT.new(tx, ty, math.floor(player.z or 0)))
+    return false
+end
+
 --- Walks to the nearest hazard-clear tile at least `distance` tiles from Raksha.
 ---
 --- This exists because Escape moves away from our TARGET and Surge follows our
@@ -1009,6 +1548,81 @@ function Mechanics:walkClearOfBoss(distance)
     return self:walkAvoiding(target.x, target.y, hazards, true)
 end
 
+--- Phase 4 walk-back, and the one movement in the fight that has to be fast.
+---
+--- Escape throws us the better part of ten tiles off the spot we hold beside
+--- Raksha, and every tick spent out there is a tick he can spend on shadow bombs
+--- instead of the tail sweep we can actually dodge. Getting back was slow for
+--- three compounding reasons, none of them the Escape itself: the walk was paced
+--- at returnEveryTicks (3), each re-issue only hopped ORBIT_STEP_SLOTS (2) round
+--- the ring, and it took the arc even when nothing was in the way. Closing an
+--- eight tile gap therefore cost a dozen-odd ticks on a clear floor.
+---
+--- Three routes, best first:
+---   1. Dive straight onto the tile when it's off cooldown and the tile is
+---      clear. Instant, and the same trick the pool chase already uses.
+---   2. Walk the straight line when nothing lethal sits on it. The arc exists to
+---      route around floor shadows; with none in the way, going round is pure
+---      delay.
+---   3. Fall back to the orbit arc, which is still the only thing that reliably
+---      gets us round a shadow rather than through it.
+---
+--- Pacing is by distance: re-issue every tick while we're genuinely out of
+--- position, and only fall back to returnEveryTicks for the final settle, so we
+--- aren't spamming one-tile nudges once we're basically home.
+--- @param player table
+--- @param tick number
+--- @param hazards table[]
+function Mechanics:returnToPhase4Home(player, tick, hazards)
+    local home = self:getHome()
+    if not home then return end
+
+    local dx, dy = home.x - player.x, home.y - player.y
+    local distance = math.sqrt(dx * dx + dy * dy)
+    if distance <= 1 then return end -- on it, near enough
+
+    local pace = (distance > HOME_HURRY_DISTANCE) and 1 or
+                     (Constants.HOME.returnEveryTicks or 3)
+    if (tick - self.state.lastHomeMoveTick) < pace then return end
+
+    local homeClear = tileIsClear(home.x, home.y, hazards)
+
+    -- 1. Dive the long gap.
+    if homeClear and distance > HOME_DIVE_DISTANCE and self:canDive() then
+        self.state.lastHomeMoveTick = tick
+        ---@diagnostic disable-next-line: undefined-global
+        local dest = WPOINT.new(home.x, home.y, math.floor(player.z or 0))
+        if self:diveToTile(dest) then
+            self:log(string.format("phase 4: dived home, %.1f tiles out",
+                                   distance))
+            return
+        end
+    end
+
+    -- 2. Straight line, when it's clean.
+    if homeClear and
+        pathHazardCost(player.x, player.y, home.x, home.y, hazards) == 0 then
+        self.state.lastHomeMoveTick = tick
+        ---@diagnostic disable-next-line: undefined-global
+        --- Could add a delay here possibly
+        API.DoAction_WalkerW(WPOINT.new(home.x, home.y, home.z))
+        return
+    end
+
+    -- 3. Round the ring, avoiding whatever is in the way.
+    local homeSlot = self:orbitNearestSlot(
+                         math.floor(self.state.arenaCenterBoss.x) +
+                             (Constants.PHASE4.homeOffsetX or 4),
+                         math.floor(self.state.arenaCenterBoss.y))
+
+    local hop = self:planOrbitMove(hazards, homeSlot)
+    if hop then
+        self.state.lastHomeMoveTick = tick
+        ---@diagnostic disable-next-line: undefined-global
+        API.DoAction_WalkerW(WPOINT.new(hop.x, hop.y, hop.z))
+    end
+end
+
 --- Walks back toward home once we've drifted off it and nothing is threatening.
 --- Movement costs no global cooldown, so the rotation keeps attacking through
 --- it. This is what makes positioning repeatable between mechanics.
@@ -1017,29 +1631,16 @@ function Mechanics:returnHome()
     if not player then return end
 
     local tick = API.Get_tick()
-    if (tick - self.state.lastHomeMoveTick) <
-        (Constants.HOME.returnEveryTicks or 3) then
-        return
-    end
-
     local hazards = self:getAllHazardTiles()
 
-    -- Phase 4: travel the ring rather than walking a straight line to the home
-    -- tile. planOrbitMove picks the arc that doesn't cross a shadow, so going
-    -- home can no longer take us back through the thing we just dodged — which
-    -- is precisely what it used to do.
+    -- Phase 4 does its own pacing, because "how fast do we need to be back?"
+    -- has a very different answer there — see returnToPhase4Home.
     if self.state.phase >= 4 and self.state.arenaCenterBoss then
-        local homeSlot = self:orbitNearestSlot(
-                             math.floor(self.state.arenaCenterBoss.x) +
-                                 (Constants.PHASE4.homeOffsetX or 4),
-                             math.floor(self.state.arenaCenterBoss.y))
+        return self:returnToPhase4Home(player, tick, hazards)
+    end
 
-        local hop = self:planOrbitMove(hazards, homeSlot)
-        if hop then
-            self.state.lastHomeMoveTick = tick
-            ---@diagnostic disable-next-line: undefined-global
-            API.DoAction_WalkerW(WPOINT.new(hop.x, hop.y, hop.z))
-        end
+    if (tick - self.state.lastHomeMoveTick) <
+        (Constants.HOME.returnEveryTicks or 3) then
         return
     end
 
@@ -1103,6 +1704,14 @@ end
 --- True shortly after Raksha announces he's pulling the pools in. That message
 --- is the exact cue to drop everything and clear them, regardless of how many
 --- are up.
+---
+--- Reads the chat through API.GatherEvents_chat_check, which returns an array of
+--- recent events with a `text` field. It used to call API.ChatFind, and that has
+--- been REMOVED from api.lua as of 1.077 — the call was wrapped in pcall, so
+--- instead of erroring it just failed every single time and this function
+--- silently returned false for the whole fight. The siphon cue was therefore
+--- dead: pools only ever got cleared by the count threshold or by phase 3's
+--- rotation step, never by Raksha announcing the siphon.
 --- @return boolean
 function Mechanics:siphonImminent()
     local tick = API.Get_tick()
@@ -1110,9 +1719,20 @@ function Mechanics:siphonImminent()
     -- Only re-scan the chat once a tick; this runs 12-20 times per tick.
     if tick ~= self.state.lastSiphonCheckTick then
         self.state.lastSiphonCheckTick = tick
-        local ok, found = pcall(API.ChatFind, Constants.SIPHON_CHAT, 1)
-        if ok and found and found.text and found.text ~= "" then
-            self.state.lastSiphonTick = tick
+
+        local ok, events = pcall(API.GatherEvents_chat_check)
+        if ok and type(events) == "table" then
+            for _, event in ipairs(events) do
+                -- Entries are {text = "..."} in every other caller in this
+                -- codebase, but tolerate a bare string too.
+                local text = (type(event) == "table" and event.text) or event
+                if type(text) == "string" and
+                    text:find(Constants.SIPHON_CHAT, 1, true) then
+                    self:log("siphon announced: " .. text)
+                    self.state.lastSiphonTick = tick
+                    break
+                end
+            end
         end
     end
 
@@ -1123,17 +1743,43 @@ end
 -- # BOSS READING
 ------------------------------------------
 
+--- Per-GAME-TICK memo for the boss read. See getBoss.
+local bossCache, bossCacheTick = nil, -1
+
 --- Current boss state. Returns found=false when Raksha is not loaded.
+---
+--- MEMOISED PER GAME TICK, and that is a fix rather than an optimisation.
+--- Mechanics:update() calls this once and is itself driven by the "Handle fight"
+--- task, which is `parallel` with `cooldown = 0` — so it ran 12-20 NPC scans
+--- per tick for a value that cannot change between ticks. The game only moves
+--- entities on tick boundaries, so every one of those reads after the first
+--- returned identical data at full native cost.
+---
+--- The edge detection in update() is unaffected: `animChanged` compares against
+--- state.lastSeenAnim, which is written on every call, so the first call of a
+--- tick still sees the change and the rest still see none — exactly what an
+--- uncached scan produced, because the scan could not have changed within the
+--- tick either.
+---
+--- The table is shared, not copied. Nothing mutates a boss table (checked across
+--- both files), and the callers — update, runActive, ensureClearOfSweep — read
+--- fields only.
 --- @return table
 function Mechanics:getBoss()
+    local tick = API.Get_tick()
+    if bossCache and tick == bossCacheTick then return bossCache end
+
     local found = Utils:findAll(Constants.BOSS.id, Constants.BOSS.type, 50)
+    bossCacheTick = tick
     if #found == 0 then
-        return {found = false, anim = -1, life = -1, x = 0, y = 0, distance = -1}
+        bossCache = {found = false, anim = -1, life = -1, x = 0, y = 0,
+                     z = 0, distance = -1}
+        return bossCache
     end
 
     local boss = found[1]
     local tile = boss.Tile_XYZ
-    return {
+    bossCache = {
         found = true,
         anim = boss.Anim or -1,
         life = boss.Life or -1,
@@ -1142,6 +1788,7 @@ function Mechanics:getBoss()
         z = tile and tile.z or 0,
         distance = boss.Distance or -1
     }
+    return bossCache
 end
 
 ------------------------------------------
@@ -1251,6 +1898,18 @@ function Mechanics:runStep(step, index, total)
         return self:reattackBoss()
     end
 
+    -- A step that MOVES us without spending an ability. This is how phase 4
+    -- answers anything that would otherwise Surge: Surge follows our facing, and
+    -- our facing is not something the script controls, so it throws us to
+    -- whichever side of Raksha we happen to be pointing at. Backing off along
+    -- the line between us and him keeps us on the side we are already holding —
+    -- east, in phase 4 — and costs no global cooldown.
+    if step.retreat then
+        self:log(string.format("step %d/%d: stepping back %d tiles", index,
+                               total, step.retreat))
+        return self:retreatFromBoss(step.retreat)
+    end
+
     if not step.ability then
         self:log(string.format("step %d/%d: nothing to do", index, total))
         return false
@@ -1264,10 +1923,14 @@ function Mechanics:runStep(step, index, total)
     -- sweep centred on Raksha. Walking costs no global cooldown, so this doesn't
     -- interrupt the add we're killing.
     if not onBoss and step.walkFromBossWhenNotTargeting then
-        local moved = self:walkClearOfBoss(step.walkFromBossWhenNotTargeting)
-        self:log(string.format(
-                     "step %d/%d: not on boss — walking clear of the sweep%s",
-                     index, total, moved and "" or " (already clear/no tile)"))
+        -- runActive is what normally handles this, every tick, from the moment
+        -- the animation starts. By the time the sequence reaches this step we
+        -- are usually already clear and escapeSweep returns straight away; it
+        -- stays here so the escape is still attempted if the definition has no
+        -- escapeSweepWhenNotTargeting set.
+        self:escapeSweep(step.walkFromBossWhenNotTargeting)
+        self:log(string.format("step %d/%d: not on boss — escaping the sweep",
+                               index, total))
         return false
     end
 
@@ -1281,6 +1944,16 @@ function Mechanics:runStep(step, index, total)
     end
 
     if not Utils:canUseAbility(ability) then
+        -- "Skipping step" used to be the whole story here, and on a tail sweep
+        -- that meant standing in the 7x7 until it landed: the step is marked
+        -- executed either way (see runActive), so the sequence just walked on to
+        -- the reattack having never moved us. A step that declares a retreat
+        -- gets to fall back on it instead.
+        if step.retreatWhenUnavailable then
+            self:log(ability .. " not available — retreating on foot instead")
+            return self:retreatFromBoss(step.retreatWhenUnavailable)
+        end
+
         self:log(ability .. " not available, skipping step")
         return false
     end
@@ -1360,6 +2033,26 @@ function Mechanics:runActive(boss)
 
     local tick = API.Get_tick()
     local elapsed = tick - self.state.startTick
+
+    -- A tail sweep has started and we are NOT on Raksha: get out of the 7x7
+    -- NOW, before any of the sequence below runs.
+    --
+    -- This deliberately jumps the queue. The sweep sequences open with a hold —
+    -- 33707 sits on Anticipation for a full 2000ms, 33706 has a 2 tick pre-delay
+    -- — and only then reach the step that moves us. That pacing is right when
+    -- we're on the boss, where Escape teleports us out in one action, but while
+    -- we're on an add it meant standing in the sweep for the whole wind-up and
+    -- only then starting to WALK. That is why we were still being hit.
+    --
+    -- Retried EVERY tick the sweep is live, not once: escapeSweep returns
+    -- immediately once we're outside the radius, so the cost of re-checking is
+    -- nothing, and a Dive or Surge that was a tick off cooldown when the
+    -- animation started now still gets used.
+    if definition.escapeSweepWhenNotTargeting and not self:isTargetingBoss() then
+        if self:escapeSweep(definition.escapeSweepWhenNotTargeting) then
+            return true
+        end
+    end
 
     ----------------------------------------
     -- Instant: one ability, then done
@@ -1478,11 +2171,32 @@ function Mechanics:runActive(boss)
         end
 
         if definition.behaviour == "dodgeBombs" then
-            -- Just dodge here. Pool-killing is handled globally by
-            -- handleAnimaPools (presence-based), which runs earlier in update()
-            -- and dodges too, so this only matters when bombs are out with no
-            -- pools present.
-            self:dodgeBombs(definition, boss)
+            -- NOT WHILE WE ARE CLEARING POOLS.
+            --
+            -- This is the other half of the "no bomb dodging during a clear"
+            -- rule in handleAnimaPools, and for a long time only that half
+            -- existed: the call was removed from inside the pool handler, but
+            -- this one kept running and the two walked us in opposite
+            -- directions on the same iteration. dodgeBombs returns false, so it
+            -- never consumed the tick — handleAnimaPools ran straight after it
+            -- (step 5-6 of update(), BELOW this) and clicked the pool we had
+            -- just been walked away from. Every tick, for the whole sweep.
+            --
+            -- It is worse than a wash, because dodgeBombs counts the anima
+            -- pools THEMSELVES as hazards to stand clear of. The tile we have
+            -- to be on to attack a pool is by definition inside that pool's
+            -- hazard box, so the dodge was specifically pushing us off the
+            -- destination the clear was walking to.
+            --
+            -- The clear is a race against the siphon — 5,000 healed per pool
+            -- plus a stacking damage buff — so bomb DAMAGE is the cheaper side
+            -- of this trade. What we do NOT give up is the lethal ground: the
+            -- floor shadows and the 2789 highlight are instant death and
+            -- handleInstakill answers them at the top of update(), above all of
+            -- this, so they still move us.
+            if not self:poolClearInProgress() then
+                self:dodgeBombs(definition, boss)
+            end
             return false
 
         elseif definition.behaviour == "burnDome" then
@@ -1495,6 +2209,20 @@ function Mechanics:runActive(boss)
                 self.state.lastPoolTargetTick = tick
                 self:reattackBoss()
             end
+
+            -- Walk back onto the home tile BETWEEN sweeps, which update() cannot
+            -- do for us here: returnHome is gated on there being no active
+            -- mechanic, and the dome holds that slot for its whole 30 tick
+            -- duration. Without this, one sweep escape during a dome parks us at
+            -- seven tiles for the rest of it — and range is exactly what makes
+            -- him swap the dodgeable tail sweep for shadow bombs.
+            --
+            -- Skipped while a sweep is actually playing, so this can never walk
+            -- us back into the 7x7 we just left. returnHome paces itself and
+            -- routes around hazards, and walking costs no global cooldown, so
+            -- the burn carries on regardless.
+            if not SWEEP_ANIMS[boss.anim] then self:returnHome() end
+
             return false
         end
 
@@ -1510,21 +2238,89 @@ end
 -- # ANIMA POOLS (kill fast, presence-based)
 ------------------------------------------
 
+--- Picks the NEAREST pool, using cluster density only to break near-ties.
+---
+--- This used to be the other way round — densest cluster first, distance as the
+--- tiebreak — on the reasoning that Threads of Fate splashes, so a knot of four
+--- five tiles away beats an isolated pool two tiles away. That was right when
+--- the rule was "clear to zero": every pool was going to die, so the only
+--- question was what order killed them fastest.
+---
+--- It is wrong now. We clear down to the threshold and go back to Raksha, so we
+--- kill a handful and leave — and the cost of a pool is dominated by the walk to
+--- it, not the casts. Leading on a distant cluster meant crossing the arena
+--- while the near pools we could have shaved off in seconds stayed up.
+---
+--- POOL_DISTANCE_TIE keeps the splash benefit where it is nearly free: pools
+--- within a tile of each other in distance count as equally close, and the
+--- denser of those wins.
+---
+--- O(n^2) in the pool count, so callers must only use it when they actually
+--- need a new target — not on every pass.
+--- @param pools table[] Live pools, nearest-first ordering not required
+--- @return table|nil
+function Mechanics:pickPoolTarget(pools)
+    local best, bestScore, bestDistance = nil, -1, math.huge
+
+    for _, p in ipairs(pools) do
+        local tile = p.Tile_XYZ
+        local d = p.Distance or 999
+        local score = 0
+
+        if tile then
+            for _, other in ipairs(pools) do
+                local ot = other.Tile_XYZ
+                if ot and other ~= p then
+                    local dx, dy = ot.x - tile.x, ot.y - tile.y
+                    if math.sqrt(dx * dx + dy * dy) <= POOL_CLUSTER_RADIUS then
+                        score = score + 1
+                    end
+                end
+            end
+        end
+
+        -- Distance first, cluster only among the near-equally-close.
+        local closer = d < (bestDistance - POOL_DISTANCE_TIE)
+        local sameish = math.abs(d - bestDistance) <= POOL_DISTANCE_TIE
+
+        if best == nil or closer or (sameish and score > bestScore) then
+            best, bestScore, bestDistance = p, score, d
+        end
+    end
+
+    if best then
+        self:log(string.format("next pool: %.1f away, %d others within %d tiles",
+                               bestDistance, bestScore, POOL_CLUSTER_RADIUS))
+    end
+    return best
+end
+
 --- Shadow anima pools (NPC 27354) heal the boss and there can be ~16 at once, so
 --- they must die fast. This is PRESENCE-based (runs whenever any pool exists) —
 --- not tied to the 33709 animation, which was why they weren't being killed: the
 --- pools linger while the boss isn't mid-animation, so the old animation-gated
 --- handler never ran.
 ---
---- It attacks the nearest detected pool OBJECT DIRECTLY (DoAction_NPC__Direct),
---- which bypasses every id/name/type ambiguity by acting on the exact thing we
---- found. Threads of Fate makes single-target abilities hit the cluster, then we
---- DPS directly. Movement (bomb/shadow dodge) runs first so we stay safe.
+--- It attacks the chosen pool OBJECT DIRECTLY (DoAction_NPC__Direct), which
+--- bypasses every id/name/type ambiguity by acting on the exact thing we found,
+--- and leads with Threads of Fate so each cast takes three pools rather than
+--- one. Movement (bomb/shadow dodge) runs first so we stay safe.
 ---
---- HYSTERESIS: a handful of pools isn't worth breaking DPS for, so we only START
---- clearing once the swarm reaches `killThreshold`. Once started we latch and
---- keep going until ZERO are left — we don't stop the moment the count dips back
---- under the threshold, or we'd leave stragglers healing the boss.
+--- The phase rotation is HELD for the whole clear (see rotationOnHold), so
+--- POOL_DPS_ABILITIES is the entirety of what we cast while we're down here.
+---
+--- START conditions, any one of which is enough:
+---   * the swarm reaches `killThreshold` for the current phase,
+---   * Raksha announces the siphon (siphonImminent), or
+---   * the phase 3 rotation reaches its "target pools" step
+---     (requestPoolClear).
+--- Once started we keep going until the count is back at or under the
+--- threshold, then return to Raksha — the setting is a ceiling on how many pools
+--- we tolerate, not an instruction to kill every one.
+---
+--- The exception is a siphon: once announced, every remaining pool heals him
+--- 5,000 and stacks his damage buff, so that case clears to ZERO regardless of
+--- the count.
 --- @return boolean consumed
 function Mechanics:handleAnimaPools()
     local pool = Constants.ADDS.ANIMA_POOL
@@ -1533,6 +2329,7 @@ function Mechanics:handleAnimaPools()
     -- boss. Clears the latch too, in case we were mid-clear.
     if pool.ignore then
         self.state.poolsActive = false
+        self.state.poolClearRequested = false
         return false
     end
 
@@ -1560,6 +2357,9 @@ function Mechanics:handleAnimaPools()
                          self.state.phase))
             self:reattackBoss()
         end
+        -- A rotation request can't override a math.huge phase either, so drop it
+        -- rather than leaving it armed for the next phase to pick up.
+        self.state.poolClearRequested = false
         return false
     end
 
@@ -1575,10 +2375,20 @@ function Mechanics:handleAnimaPools()
                          self.state.bossLife, skipBelow))
             self:reattackBoss()
         end
+        self.state.poolClearRequested = false
         return false
     end
 
-    local pools = self:findAnyType(pool.id, pool.range or 60)
+    -- LIVE pools only. This filter is the single biggest source of the pause
+    -- after each kill: a pool that has just died keeps appearing in the scan for
+    -- a tick or two with Life at 0, so `current` stayed matched to a corpse and
+    -- we stood there "attacking" it until the POOL_RECLICK_TICKS watchdog
+    -- finally fired. Dropping the dead ones means the very next iteration picks
+    -- the next live pool and clicks it.
+    local pools = {}
+    for _, p in ipairs(self:findAnyType(pool.id, pool.range or 60)) do
+        if (p.Life or 0) > 0 then pools[#pools + 1] = p end
+    end
 
     if #pools == 0 then
         if self.state.poolsActive then
@@ -1587,34 +2397,120 @@ function Mechanics:handleAnimaPools()
             self:log("anima pools cleared (0 left) — back to Raksha")
             self:reattackBoss()
         end
+        self.state.poolClearRequested = false
+        return false
+    end
+
+    -- ALREADY CLEARING, and back at or under the configured count: stop and
+    -- return to Raksha. We do not need to kill every pool — the setting is a
+    -- ceiling on how many we tolerate, not a target of zero.
+    --
+    -- This used to clear to ZERO once started, on the reasoning that stragglers
+    -- heal him on the next siphon. That still holds WHEN A SIPHON IS COMING, and
+    -- that case is excluded below — every pool he pulls in is 5,000 health and a
+    -- damage-buff stack, so an announced siphon still means all of them go. What
+    -- it does not justify is walking the arena killing the last few pools while
+    -- he stands there untouched and no siphon is pending; that trades real DPS
+    -- for a heal that is not going to happen.
+    if self.state.poolsActive and #pools <= phaseThreshold and
+        not self:siphonImminent() then
+        self.state.poolsActive = false
+        self.state.poolClearRequested = false
+        self.state.poolTargetId = nil
+        self:log(string.format(
+                     "anima pools: %d left (threshold %d) — back to Raksha",
+                     #pools, phaseThreshold))
+        self:reattackBoss()
         return false
     end
 
     -- Below the threshold and not already clearing: ignore them and keep DPSing
-    -- the boss. Only crossing the threshold — or Raksha announcing the siphon —
-    -- starts the clear.
+    -- the boss. Only crossing the threshold — or the phase 3 rotation reaching
+    -- its "target pools" step, or Raksha announcing the siphon — starts a clear.
     if not self.state.poolsActive then
+        -- TOP OF THE WINDOW. Phase 3 opens on Raksha, not on a detour: he enters
+        -- at full phase health and we stay on him until he is 10,000 down.
+        --
+        -- Checked before the siphon and the rotation request, and overriding
+        -- both, because it is the same kind of rule as the math.huge phases —
+        -- "not here, whatever the cue says". The window's other end
+        -- (skipBelowHpInPhase3) is enforced further up.
+        --
+        -- poolClearRequested is deliberately LEFT ARMED. The rotation reaches
+        -- its "Threads of Fate + target pools" step at a fixed point in the
+        -- line, which can land while he is still above the gate; dropping the
+        -- request there would lose the clear entirely, so instead it waits and
+        -- fires the moment his health crosses. Only a genuinely finished or
+        -- cancelled clear clears that flag.
+        local startBelow = pool.startBelowHpInPhase3
+        if startBelow and self.state.phase == 3 and self.state.bossLife > 0 and
+            self.state.bossLife > startBelow then
+            return false
+        end
+
         -- The siphon message overrides the THRESHOLD: every pool he pulls in
         -- heals him 5,000 and stacks his damage buff, so once it's announced
         -- they all have to go regardless of how few are up. It does not override
         -- a math.huge phase — that case already returned above.
         local siphoning = self:siphonImminent()
+        local requested = self.state.poolClearRequested
 
-        if not siphoning and #pools < phaseThreshold then return false end
+        -- `<=`, not `<`: the threshold is the number we TOLERATE, so a count
+        -- equal to it is acceptable and only a count above it starts a clear.
+        -- With `<` the start and stop tests were both "== threshold", so hitting
+        -- the number started a clear that the stop check above cancelled on the
+        -- same tick.
+        if not requested and not siphoning and #pools <= phaseThreshold then
+            return false
+        end
         self:log(string.format(
-                     "anima pools: %d up (phase %d, threshold %d%s) — clearing to zero",
+                     "anima pools: %d up (phase %d, threshold %d%s%s) — clearing to zero",
                      #pools, self.state.phase, phaseThreshold,
-                     siphoning and ", SIPHONING" or ""))
+                     siphoning and ", SIPHONING" or "",
+                     requested and ", ROTATION" or ""))
     end
 
     -- Latch: from here we keep clearing every tick until none are left.
+    --
+    -- BOTH flags, whichever trigger got us here. poolsActive alone is not a
+    -- durable latch — Mechanics:begin() resets it, and the bomb phase registers
+    -- mechanics continuously, so a clear that started on the count threshold or
+    -- the siphon cue was being dropped part-way through. Once the count had
+    -- fallen below the threshold (3) the re-entry test then refused to restart
+    -- it, and the last two or three pools were simply left standing for Raksha
+    -- to siphon — the exact failure the "clear to ZERO" rule exists to prevent.
+    --
+    -- poolClearRequested survives begin(), and every exit path below already
+    -- clears it (pools gone, phase says never, endgame HP skip, setting
+    -- disabled), so nothing can leave it armed.
     self.state.poolsActive = true
+    self.state.poolClearRequested = true
 
-    -- Stay clear of bombs + floor shadows while we clear the pools (no GCD).
-    local bombsDef = Constants.MECHANICS[Constants.ANIM.BOMBS]
-    if bombsDef then self:dodgeBombs(bombsDef, nil) end
+    -- NO BOMB DODGING WHILE WE CLEAR. The clear is a race against the siphon —
+    -- every pool he pulls in heals him 5,000 and stacks his damage buff — so
+    -- time spent walking away from falling rocks is time the pools are still
+    -- standing.
+    --
+    -- Worse, dodgeBombs treats the ANIMA POOLS THEMSELVES as hazards to walk
+    -- away from, so it pushes us off the exact tile we need to stand on to
+    -- attack one: the pool killer walks us toward a pool while the dodge walks
+    -- us off it, on the same tick.
+    --
+    -- BOTH halves of that are now enforced. It isn't called from here, and
+    -- runActive skips its own call while poolClearInProgress() holds — which is
+    -- the one that was actually doing the damage, because dodgeBombs returns
+    -- false and so never stopped this handler running immediately afterwards.
+    --
+    -- WHAT THIS DOES NOT GIVE UP. The lethal ground — floor shadows and the 2789
+    -- highlight — is instant death and is not handled here at all: handleInstakill
+    -- runs at the top of update(), above everything including this, so it still
+    -- moves us off anything that kills outright. The dive below checks
+    -- getLethalHazardTiles() before committing, so we cannot land in one either.
+    --
+    -- What we accept is bomb DAMAGE during a clear, which is survivable, in
+    -- exchange for the pools dying before he siphons them.
 
-    -- Locate the nearest pool AND the one we're already killing, in one pass.
+    -- The pool we're already killing, and the nearest one as a fallback.
     local nearest, nd = nil, math.huge
     local current = nil
     for _, p in ipairs(pools) do
@@ -1627,39 +2523,62 @@ function Mechanics:handleAnimaPools()
 
     local tick = API.Get_tick()
 
-    -- Stick with the pool we're already on until it's actually gone, then move
+    -- Stick with the pool we're already on until it's actually dead, then move
     -- to the next on the SAME iteration — no pacing window, no confirmation
-    -- step. Waiting a tick after each kill to "check" was most of why clearing a
-    -- swarm felt so slow: with ~16 pools that's 16 wasted ticks of standing
-    -- still, and the check bought us nothing because a dead pool simply stops
-    -- appearing in the scan.
+    -- step. Confirming a kill before moving on bought us nothing (a dead pool
+    -- simply stops passing the Life filter above) and cost a tick per pool,
+    -- which across a sweep of eight is most of the clear.
     --
     -- Equally, we do NOT re-click a pool we're already attacking. Repeated
     -- clicks on the same target cancel the in-flight attack, which looks busy
     -- and deals almost no damage. The staleClick watchdog is the one exception,
     -- so a click that silently failed can't strand us on a pool forever.
-    local target = current or nearest
     local staleClick = (tick - self.state.lastPoolTargetTick) >= POOL_RECLICK_TICKS
-    if target and (not current or staleClick) then
+    local needTarget = (current == nil) or staleClick
+
+    -- Only score the cluster when we actually need a new target. It's O(n^2) in
+    -- the pool count and this runs a dozen-plus times per game tick, so doing it
+    -- unconditionally would burn most of a sweep's CPU re-deciding something we
+    -- aren't allowed to change anyway.
+    local target = current
+    if needTarget then
+        target = self:pickPoolTarget(pools) or nearest
+    end
+
+    if target and needTarget then
         API.DoAction_NPC__Direct(0x2a, API.OFF_ACT_AttackNPC_route, target)
         self.state.poolTargetId = target.Unique_Id
         self.state.lastPoolTargetTick = tick
     end
 
-    -- Close a long gap with Dive, but ONLY onto a tile that clears every hazard
-    -- — a blind dive into a floor shadow is instant death. Skipped entirely when
-    -- Dive/Bladed Dive is on cooldown.
-    if nearest and nd > (pool.diveDistance or 8) and self:canDive() then
-        local tile = nearest.Tile_XYZ
+    -- Approach is measured against the pool we're actually going to hit, not
+    -- the nearest one — the cluster we picked above is the one that has to be in
+    -- range.
+    local approach = target or nearest
+    local ad = (approach and approach.Distance) or math.huge
+
+    -- Close a long gap with Dive, but ONLY onto a tile that clears the LETHAL
+    -- ground — a blind dive into a floor shadow is instant death. Skipped
+    -- entirely when Dive/Bladed Dive is on cooldown.
+    --
+    -- Lethal-only, deliberately, and this is what makes the dive fire at all.
+    -- Checked against getAllHazardTiles it could never succeed: that list puts a
+    -- box around every anima pool with a clearance of 2, and the destination
+    -- here IS a pool's tile — zero tiles from its own box, so "clear" was false
+    -- on every single approach and we walked the whole way instead. Bombs are
+    -- excluded for the same reason they aren't dodged during a clear: landing in
+    -- one costs damage, not the kill.
+    if approach and ad > (pool.diveDistance or 8) and self:canDive() then
+        local tile = approach.Tile_XYZ
         local player = Player:getCoords()
         if tile and player then
             local tx, ty = math.floor(tile.x), math.floor(tile.y)
-            if tileIsClear(tx, ty, self:getAllHazardTiles()) then
+            if tileIsClear(tx, ty, self:getLethalHazardTiles()) then
                 ---@diagnostic disable-next-line: undefined-global
                 local dest = WPOINT.new(tx, ty, math.floor(player.z or 0))
                 if self:diveToTile(dest) then
                     self:log(string.format("dived to pool at (%d, %d), %.1f away",
-                                           tx, ty, nd))
+                                           tx, ty, ad))
                     return true
                 end
             else
@@ -1673,25 +2592,30 @@ function Mechanics:handleAnimaPools()
     -- walking.
     --
     -- Surge fires along our CURRENT FACING, and clicking a target does not turn
-    -- us instantly — the rotation plays out over the next tick or two. The
-    -- previous version surged on the SAME iteration as the click, so it launched
-    -- us along whatever direction we happened to be facing beforehand. That is
-    -- why we ended up surging all over the arena instead of at the pool.
+    -- us instantly — the turn plays out over the next tick or two. So we click
+    -- first (above) and only surge once POOL_SURGE_FACE_TICKS have passed and
+    -- we're genuinely pointed at it; surging on the same iteration as the click
+    -- is what used to launch us across the arena in whatever direction we
+    -- happened to already be facing.
     --
-    -- So the approach is four deliberate beats:
-    --   1. Click the pool (handled above) — this starts the turn.
-    --   2. Wait POOL_SURGE_FACE_TICKS for the turn to actually land.
-    --   3. Surge, now genuinely pointed at it.
-    --   4. Clear poolTargetId, which makes the next iteration re-click and
-    --      resume the attack from wherever the surge dropped us.
-    if nearest and nd > (pool.surgeDistance or 6) and self.state.poolTargetId and
+    -- The target is KEPT afterwards. Clearing it forced a re-click on the next
+    -- pass, and that re-click cancelled the attack we'd just started — a wasted
+    -- tick at the end of every approach. Walking on after a surge resumes the
+    -- same attack by itself.
+    --
+    -- lastPoolSurgeTick is what now stops a double-surge. Clearing the target
+    -- used to do that as a side effect; the ability bar's cooldown alone isn't
+    -- enough, because it doesn't update within the same tick and this runs a
+    -- dozen-plus times per tick.
+    if approach and ad > (pool.surgeDistance or 6) and self.state.poolTargetId and
         (tick - self.state.lastPoolTargetTick) >= POOL_SURGE_FACE_TICKS and
+        (tick - self.state.lastPoolSurgeTick) >= POOL_SURGE_REPEAT_TICKS and
         Utils:canUseAbility("Surge") then
+        self.state.lastPoolSurgeTick = tick
         if Utils:useAbility("Surge") then
             self:log(string.format(
                          "surged toward pool %.1f away (faced it for %d ticks)",
-                         nd, tick - self.state.lastPoolTargetTick))
-            self.state.poolTargetId = nil -- beat 4: re-click on the next pass
+                         ad, tick - self.state.lastPoolTargetTick))
             return true
         end
     end
@@ -1706,13 +2630,10 @@ function Mechanics:handleAnimaPools()
         return true -- still own the tick; wait out the GCD
     end
 
-    -- Threads of Fate for the AoE, then DPS the targeted pool directly.
-    if pool.aoeAbility and Utils:canUseAbility(pool.aoeAbility) then
-        self:log(pool.aoeAbility .. " for pool AoE")
-        Utils:useAbility(pool.aoeAbility)
-        self.state.lastPoolAbilityTick = tick
-        return true
-    end
+    -- One ordered list, Threads of Fate first. The old version tried the AoE
+    -- through a separate `aoeAbility` branch and then fell into a second list
+    -- that led with single-target damage, so whenever Threads was on cooldown we
+    -- went back to killing pools one at a time.
     for _, ability in ipairs(POOL_DPS_ABILITIES) do
         if Utils:canUseAbility(ability) then
             self:log("pool DPS: " .. ability)
@@ -1725,25 +2646,75 @@ function Mechanics:handleAnimaPools()
     return true
 end
 
+--- Starts a pool clear from the rotation, regardless of how many are up.
+---
+--- PVME's phase 3 line reaches "Threads of fate + target pools" at a specific
+--- point and expects the pools to be dealt with there, which is a different
+--- trigger from the count threshold and the siphon cue. Cleared automatically
+--- once the last pool dies.
+function Mechanics:requestPoolClear()
+    self.state.poolClearRequested = true
+end
+
 ------------------------------------------
 -- # SHADOW MANIFESTATION (kill fast)
 ------------------------------------------
 
 --- Shadow manifestation (NPC 27355) spawns and must be killed fast. We target
---- it, stun it with Soul Strike, and DPS it down. Soul Strike needs a residual
---- soul (buff 30123); if we have none we Soul Sap it first, which generates one.
---- Casting an ability consumes the tick; on the other ticks we hand off so the
---- rotation fires its remaining abilities on the targeted manifestation.
+--- it, stun it with Soul Strike, and DPS it down with
+--- MANIFESTATION_DPS_ABILITIES. Soul Strike needs a residual soul (buff 30123);
+--- if we have none we Soul Sap it first, which generates one.
+---
+--- This ALWAYS owns the tick while the manifestation is up. It used to return
+--- false once the stun was handled so the phase rotation could add its damage,
+--- and that was the wrong trade: the rotation is written against Raksha, so
+--- letting it run here fed Death Skulls, Volley and the specs into an add and
+--- then resumed the phase several steps further on than it should have. The
+--- rotation is held instead (see Mechanics:rotationOnHold) and picks up exactly
+--- where it left off once the manifestation is dead.
 --- @return boolean consumed
 function Mechanics:handleShadowManifestation()
     local sm = Constants.ADDS.SHADOW_MANIFESTATION
-    local present = self:findAnyType(sm.id, sm.range)
+
+    -- ENDGAME SKIP: close enough to phase 4 that phasing him beats killing an
+    -- add the transition is about to remove anyway.
+    --
+    -- Checked before the scan so the common case is cheap, and it drops an
+    -- in-progress kill too — the manifestation owns every tick while it lives,
+    -- so a latch that survived into this window would hold the fight right where
+    -- we most want damage going into Raksha.
+    --
+    -- Mirrors the pools' skipBelowHpInPhase3; both are party-scaled.
+    if sm.skipBelowHp and self.state.bossLife > 0 and self.state.bossLife <
+        sm.skipBelowHp then
+        if self.state.manifestationActive then
+            self.state.manifestationActive = false
+            self.state.manifestTargetId = nil
+            self:log(string.format(
+                         "boss at %d hp (< %d) — ignoring manifestation, pushing to phase 4",
+                         self.state.bossLife, sm.skipBelowHp))
+            self:reattackBoss()
+        end
+        return false
+    end
+
+    -- LIVE manifestations only — the same filter the pools needed, and the same
+    -- reason we were slow coming off it. A manifestation that has just died
+    -- keeps appearing in the scan for a tick or two with Life at 0, so
+    -- `#present > 0` stayed true, the latch stayed on, the rotation stayed held
+    -- and we carried on clicking a corpse. Dropping the dead ones hands the
+    -- target back to Raksha on the very next iteration.
+    local present = {}
+    for _, m in ipairs(self:findAnyType(sm.id, sm.range)) do
+        if (m.Life or 0) > 0 then present[#present + 1] = m end
+    end
 
     if #present == 0 then
         -- Gone: hand the target back to Raksha once.
         if self.state.manifestationActive then
             self.state.manifestationActive = false
-            self:log("Shadow manifestation gone — back to Raksha")
+            self.state.manifestTargetId = nil
+            self:log("Shadow manifestation dead — back to Raksha")
             self:reattackBoss()
         end
         return false
@@ -1754,17 +2725,36 @@ function Mechanics:handleShadowManifestation()
         self:log("Shadow manifestation up — killing fast")
     end
 
-    -- Target it so our abilities (and the rotation's) land on it — once per tick,
-    -- or repeated clicks cancel each other.
     local tick = API.Get_tick()
-    if (tick - self.state.lastManifestAbilityTick) < GCD_TICKS then
-        return true -- own the tick while the GCD runs down
+    local target = present[1]
+
+    -- Acquire it ONCE, ahead of the global-cooldown gate.
+    --
+    -- Two fixes in one. The click used to sit behind the GCD gate, so a
+    -- manifestation that spawned mid-cast wasn't even targeted until the
+    -- previous ability finished — three ticks of standing still before the kill
+    -- started. And it fired on every pass through, which re-clicks an attack we
+    -- are already running; repeated attack clicks cancel each other, so we were
+    -- restarting the attack every three ticks and landing very little of it.
+    -- Now it's click once and hold, with MANIFEST_RECLICK_TICKS as a watchdog so
+    -- a click that silently failed can't strand us. Same shape as the pools.
+    local stale = (tick - self.state.lastManifestTargetTick) >=
+                      MANIFEST_RECLICK_TICKS
+    if self.state.manifestTargetId ~= target.Unique_Id or stale then
+        API.DoAction_NPC__Direct(0x2a, API.OFF_ACT_AttackNPC_route, target)
+        self.state.manifestTargetId = target.Unique_Id
+        self.state.lastManifestTargetTick = tick
     end
-    self:attackNpc(sm.id)
 
     -- Revolution owns damage — it's targeted, so the bar will kill it. We skip
     -- the manual Soul Strike stun rather than fighting the bar for the GCD.
     if self.revolution then return true end
+
+    -- Abilities are paced to the global cooldown; firing every loop iteration
+    -- just cancels the previous cast.
+    if (tick - self.state.lastManifestAbilityTick) < GCD_TICKS then
+        return true -- own the tick while the GCD runs down
+    end
 
     -- Soul Strike stuns but needs a residual soul (buff 30123). If we have one,
     -- stun; otherwise Soul Sap it first to generate a soul. Either uses the GCD,
@@ -1784,8 +2774,18 @@ function Mechanics:handleShadowManifestation()
         return true
     end
 
-    -- Stun handled / not ready this tick: let the rotation DPS the manifestation.
-    return false
+    -- Stunned (or Soul Strike is on cooldown): keep hitting it ourselves rather
+    -- than handing the tick to a rotation aimed at Raksha.
+    for _, ability in ipairs(MANIFESTATION_DPS_ABILITIES) do
+        if Utils:canUseAbility(ability) then
+            self:log("manifestation DPS: " .. ability)
+            Utils:useAbility(ability)
+            self.state.lastManifestAbilityTick = tick
+            return true
+        end
+    end
+
+    return true
 end
 
 ------------------------------------------
@@ -2038,7 +3038,23 @@ end
 --- @return boolean consumed
 function Mechanics:handleAdds()
     local add = Constants.ADDS.SHADOW_ENERGY
-    local present = self:findAnyType(add.id, add.range)
+
+    -- Fresh ONLY while a clear is actually in progress.
+    --
+    -- The first version of this bypassed the per-tick memo unconditionally,
+    -- because orbs dispel on click rather than on a tick boundary and the
+    -- round-robin below fires every EXPEL_INTERVAL_MS. That reasoning holds
+    -- while we are expelling — but it also meant an eight-object-type scan on
+    -- EVERY pass of the loop for the whole fight, and profiling put
+    -- Mechanics:update at the top of the cost table once the player-stat reads
+    -- were dealt with. Adds are up for a few seconds of a multi-minute kill, so
+    -- the bypass was paying its price ~99% of the time for no benefit.
+    --
+    -- Detection is not delayed by the cached path: the memo refreshes once per
+    -- game tick, so orbs are still seen on the tick they spawn, which is as
+    -- fresh as any other mechanic here. Only the CLEAR needs sub-tick reads, and
+    -- addsActive is exactly "a clear is in progress".
+    local present = self:findAnyType(add.id, add.range, self.state.addsActive)
 
     if #present > 0 then
         if not self.state.addsActive then
@@ -2121,6 +3137,9 @@ end
 ---   5. Shadow manifestation
 ---   6. Shadow anima pools
 ---   7. The boss (rotation — we return false and the fight loop DPSes)
+--- 5 and 6 own the fight outright while they're running: they cast from their
+--- own ability lists and the fight loop holds the phase rotation for the whole
+--- clear (see rotationOnHold), so nothing aimed at Raksha is spent on an add.
 --- Phase 4 collapses most of this: we hold one tile east of Raksha so bombs and
 --- bombardment never come out, pools are left alone (see killThresholdByPhase),
 --- and the only thing that moves us is escaping the tail sweep — after which
@@ -2129,10 +3148,13 @@ end
 --- relative `priority` decides which wins if a new animation starts while
 --- another response is still running.
 function Mechanics:update()
+    local tProf = os.clock()
+
     -- Read the boss once up front and refresh the arena anchor BEFORE anything
     -- moves us. Every movement decision is constrained to a radius around this,
     -- which is what keeps the fight near the middle of the arena.
     local boss = self:getBoss()
+    tProf = Profiler.mark("mech:getBoss", tProf)
 
     -- Track Raksha's tile first: phase 4 home is derived from it.
     if boss.found then
@@ -2148,6 +3170,7 @@ function Mechanics:update()
     elseif boss.found then
         self.state.arenaCenter = {x = boss.x, y = boss.y}
     end
+    tProf = Profiler.mark("mech:getHome", tProf)
 
     if boss.found then
         self.state.bossLife = boss.life
@@ -2223,6 +3246,7 @@ function Mechanics:update()
     elseif self.state.activeDef then
         self:finish()
     end
+    tProf = Profiler.mark("mech:register", tProf)
 
     -- 0. ALWAYS dodge the lethal ground (floor shadows + 2789 highlight). This
     --    is instant death, so it outranks everything including Expel.
@@ -2230,10 +3254,28 @@ function Mechanics:update()
     --    It reports whether it spent the tick's ACTION, not whether it moved.
     --    Walking costs no global cooldown, so a dodge that only walks lets the
     --    rotation keep firing — see the movement lock in handleInstakill.
-    if self:handleInstakill() then return true end
+    if self:handleInstakill() then
+        Profiler.mark("mech:instakill", tProf)
+        return true
+    end
+    tProf = Profiler.mark("mech:instakill", tProf)
+
+    -- 0b. Tail sweep safety net. Below the lethal ground, which is instant
+    --     death, but above everything else — a sweep that nothing registered a
+    --     response for still has to be walked out of. See ensureClearOfSweep for
+    --     why phase 4's dome made that a routine occurrence.
+    if self:ensureClearOfSweep(boss) then
+        Profiler.mark("mech:sweep", tProf)
+        return true
+    end
+    tProf = Profiler.mark("mech:sweep", tProf)
 
     -- 1. Expel Shadow Energy — top of the actioned priorities.
-    if self:handleAdds() then return true end
+    if self:handleAdds() then
+        Profiler.mark("mech:adds", tProf)
+        return true
+    end
+    tProf = Profiler.mark("mech:adds", tProf)
 
     -- 2-4. Boss animation responses: Freedom (bind/bombardment), bomb dodge,
     --      tail sweep. These beat the manifestation and the pools, so a boss
@@ -2251,20 +3293,46 @@ function Mechanics:update()
         exclusive = (self.state.activeDef ~= nil) and
                         (self.state.activeDef.exclusive == true)
 
-        if consumed then return true end
+        if consumed then
+            Profiler.mark("mech:runActive", tProf)
+            return true
+        end
     end
+    tProf = Profiler.mark("mech:runActive", tProf)
 
-    -- 5-6. Manifestation, then anima pools — unless an exclusive response is
+    -- 5-6. Anima pools, THEN the manifestation — unless an exclusive response is
     --      still mid-flight, or the lethal-ground dodge owns our movement.
     --      Presence-based, so they run whether or not Raksha is targetable.
+    --
+    --      POOLS GO FIRST. Both handlers own the tick when they act, so whichever
+    --      is tested first starves the other for as long as it is running. With
+    --      the manifestation first, a manifestation that spawned during a pool
+    --      sweep held the tick for its whole life while the pools kept stacking
+    --      up behind it — and pools are the ones that heal Raksha 5,000 apiece on
+    --      the next siphon. The manifestation does not heal him; it just has to
+    --      die reasonably soon.
+    --
+    --      This is bounded now in a way it would not have been before: the pool
+    --      clear stops at the configured count rather than running to zero, so
+    --      the manifestation waits for a handful of kills, not for the arena to
+    --      be swept clean.
     --
     --      The instakillActive check is the movement lock: these handlers Dive,
     --      Surge and walk, so letting them run mid-dodge would fight the dodge
     --      for control of where we stand — which is how you die to the thing you
     --      were already running from.
     if not exclusive and not self.state.instakillActive then
-        if self:handleShadowManifestation() then return true end
-        if self:handleAnimaPools() then return true end
+        if self:handleAnimaPools() then
+            Profiler.mark("mech:pools", tProf)
+            return true
+        end
+        tProf = Profiler.mark("mech:pools", tProf)
+
+        if self:handleShadowManifestation() then
+            Profiler.mark("mech:manifest", tProf)
+            return true
+        end
+        tProf = Profiler.mark("mech:manifest", tProf)
     end
 
     -- 7. Nothing threatening: drift back to our home tile so the next mechanic
@@ -2276,6 +3344,7 @@ function Mechanics:update()
     --    a large part of why phase 4 looked so frantic.
     if not exclusive and not self.state.activeDef and
         not self.state.instakillActive then self:returnHome() end
+    Profiler.mark("mech:returnHome", tProf)
     return false
 end
 
@@ -2341,6 +3410,27 @@ function Mechanics:tracking()
                     return string.format("ignored (phase %d)", self.state.phase)
                 end
                 if self.state.poolsActive then return "KILLING (to zero)" end
+
+                -- Which END of the phase 3 window we're outside, when we are.
+                -- "idle" alone was ambiguous the moment the window existed:
+                -- above the top gate and below the bottom one look identical
+                -- from the outside, and they mean opposite things.
+                local life = self.state.bossLife or 0
+                if self.state.phase == 3 and life > 0 then
+                    local startBelow = pool.startBelowHpInPhase3
+                    if startBelow and life > startBelow then
+                        return string.format("holding on boss (>%d hp)%s",
+                                             startBelow,
+                                             self.state.poolClearRequested and
+                                                 ", ROTATION ARMED" or "")
+                    end
+                    local skipBelow = pool.skipBelowHpInPhase3
+                    if skipBelow and life < skipBelow then
+                        return string.format("done (<%d hp, pushing to P4)",
+                                             skipBelow)
+                    end
+                end
+
                 return string.format("idle (<%d)", threshold)
             end)()
         },

@@ -7,7 +7,7 @@
 --- if a value is not in this file, the code must not assume it.
 ---@diagnostic disable: undefined-global
 
-local PrayerFlicker = require("core.prayer_flicker")
+local PrayerFlicker = require("raksha.core.prayer_flicker")
 
 local Constants = {}
 
@@ -96,7 +96,7 @@ Constants.INSTAKILL = {
     id = 2789,
     type = 4,
     lethalRange = 4, -- die within this many tiles
-    triggerRange = 5, -- start dodging when a highlight is this close
+    triggerRange = 4, -- start dodging when a highlight is this close
     safeRange = 6 -- move to a tile at least this far from every highlight
 }
 
@@ -130,12 +130,70 @@ Constants.SHADOW_FLOOR = {
 -- # PHASES
 ------------------------------------------
 
---- Solo HP thresholds (wiki). Phase drives how aggressively we clear pools:
+--- SOLO HP thresholds (wiki). Phase drives how aggressively we clear pools:
 ---   P1 800k-600k  Raksha does NOT siphon pools yet — pure DPS, ignore them
 ---   P2 600k-400k  Energy waves start; he siphons, so pools must die
 ---   P3 400k-200k  8 pools per sweep and he siphons after EVERY special
 ---   P4 200k-0     Antechamber; shadow detonation dome
-Constants.PHASE_HP = {P2 = 600000, P3 = 400000, P4 = 200000}
+---
+--- These are the BASE values. Constants.PHASE_HP is rebuilt from them by
+--- setPartySize, so read PHASE_HP everywhere and never these directly.
+Constants.PHASE_HP_SOLO = {P2 = 600000, P3 = 400000, P4 = 200000}
+
+--- Live thresholds, scaled for the party we are actually in. Starts at solo.
+Constants.PHASE_HP = {
+    P2 = Constants.PHASE_HP_SOLO.P2,
+    P3 = Constants.PHASE_HP_SOLO.P3,
+    P4 = Constants.PHASE_HP_SOLO.P4
+}
+
+--- Players the thresholds are currently scaled for.
+Constants.partySize = 1
+
+--- Rescales the phase thresholds for a party of `size`.
+---
+--- Raksha's life points scale exactly with the party: 800,000 solo, 1,600,000
+--- in a duo, and the wiki's strategy page confirms every transition doubles with
+--- them — phases at 1.2M / 800k / 400k rather than 600k / 400k / 200k. The
+--- enrage heal follows the same rule: he returns to phase 3's starting health,
+--- which is 400k solo and 800k duo.
+---
+--- Getting this wrong is not a cosmetic reporting error. mechanics.getPhase
+--- derives the phase from these numbers, and the phase decides which rotation is
+--- loaded and which mechanic definitions apply — so a duo fight read against
+--- solo thresholds sits in "phase 4" for most of the kill, loading the phase 4
+--- rotation and its overrides against a boss still in phase 1.
+---
+--- Mutates the SAME table rather than replacing it, because constants.lua is
+--- required once and other modules hold a reference to Constants.PHASE_HP.
+--- @param size number Players in the instance (1 = solo, 2 = duo)
+function Constants.setPartySize(size)
+    size = math.max(math.floor(tonumber(size) or 1), 1)
+
+    Constants.partySize = size
+    Constants.PHASE_HP.P2 = Constants.PHASE_HP_SOLO.P2 * size
+    Constants.PHASE_HP.P3 = Constants.PHASE_HP_SOLO.P3 * size
+    Constants.PHASE_HP.P4 = Constants.PHASE_HP_SOLO.P4 * size
+
+    -- Reassigned rather than mutated: this one is a number, and every reader
+    -- looks it up through Constants at call time.
+    Constants.LUCK_RING_HP = Constants.LUCK_RING_HP_SOLO * size
+
+    -- The phase 3 anima-pool window, for the same reason and by the same rule:
+    -- these are HP thresholds INSIDE a phase whose own boundaries just doubled,
+    -- so they have to double with it or they fall outside the phase entirely and
+    -- silently stop firing. See the comment on them in ADDS.ANIMA_POOL.
+    --
+    -- Mutated in place: mechanics.lua reads them off Constants.ADDS.ANIMA_POOL,
+    -- which it holds a reference to.
+    local pool = Constants.ADDS.ANIMA_POOL
+    pool.startBelowHpInPhase3 = pool.startBelowHpInPhase3Solo * size
+    pool.skipBelowHpInPhase3 = pool.skipBelowHpInPhase3Solo * size
+
+    -- Same treatment for the manifestation's endgame skip.
+    local manifestation = Constants.ADDS.SHADOW_MANIFESTATION
+    manifestation.skipBelowHp = manifestation.skipBelowHpSolo * size
+end
 
 --- Phase 4 is a different, smaller arena and Raksha heals back to 400k on entry
 --- — which reads as phase 3 on HP alone, so the phase is LATCHED and only ever
@@ -181,7 +239,13 @@ Constants.SIPHON_CHAT = "anchors you to the shadows"
 
 --- HP at which we swap in the luck ring, so the drop rolls with it. Phase 4
 --- only — he sits above this for most of the fight.
-Constants.LUCK_RING_HP = 50000
+---
+--- Scaled with the party by setPartySize, like the phase thresholds. Left at a
+--- flat 50,000 it would be half the warning it is meant to be in a duo, where
+--- phase 4 starts at 800,000 rather than 400,000 — the ring would go on with
+--- proportionally half as much fight left to spare.
+Constants.LUCK_RING_HP_SOLO = 50000
+Constants.LUCK_RING_HP = Constants.LUCK_RING_HP_SOLO
 
 ------------------------------------------
 -- # ARENA
@@ -262,14 +326,19 @@ Constants.OBJECTS = {
 Constants.ADDS = {
         --- Shadow anima pool — an NPC (confirmed) that spawns during the 33709 bomb
     --- phase and must be killed. All of them need to die, AoE'd down with Threads
-    --- of Fate, while we keep dodging the bombs. See mechanics.clearAnimaPools.
+    --- of Fate, while we keep dodging the bombs. See mechanics.handleAnimaPools.
+    ---
+    --- The ability list itself lives in mechanics.lua (POOL_DPS_ABILITIES) with
+    --- Threads of Fate at the head, so there is no separate `aoeAbility` here
+    --- any more: having the AoE in one place and the rest of the damage in
+    --- another meant that whenever Threads was on cooldown we silently dropped
+    --- back to killing pools one at a time.
     ANIMA_POOL = {
         id = 27354,
         type = 1, -- NPC (confirmed)
         name = "Shadow anima pool",
         action = "Attack",
         range = 60,
-        aoeAbility = "Threads of Fate",
 
         -- Standing in a pool is ~1500 damage PER TICK, and we deliberately move
         -- toward them to kill them — so they have to be a movement hazard too or
@@ -277,14 +346,41 @@ Constants.ADDS = {
         -- them, still far inside Necromancy's attack range.
         avoidClearance = 2,
 
-        -- Threshold to START clearing, per phase. PHASE 3 ONLY — see
-        -- killThresholdByPhase below. Once started we always clear to ZERO.
-        killThreshold = 10,
+        -- How many pools we tolerate, per phase. PHASE 3 ONLY — see
+        -- killThresholdByPhase below.
+        --
+        -- Doubles as both ends of the clear: we START clearing when the count
+        -- reaches it and STOP as soon as we are back at or under it, rather than
+        -- killing every pool. A siphon overrides both — once announced, all of
+        -- them go.
+        killThreshold = 2,
 
-        -- Phase 3 endgame. Below this HP we're close enough to the phase 4
+        -- THE PHASE 3 POOL WINDOW: start below `startBelowHpInPhase3`, stop
+        -- below `skipBelowHpInPhase3`. Outside it we are on Raksha.
+        --
+        -- Phase 3 OPENS with damage on the boss, not a detour. He enters it at
+        -- full phase health with no pools worth the walk yet, and the rotation's
+        -- first six steps (the Finger pair, Death Skulls, Bloat, Volley) are the
+        -- burst the phase is built around — breaking off for pools before those
+        -- land trades the best damage in the phase for a handful of 5,000 heals.
+        -- So we hold until he is 10,000 down.
+        --
+        -- The bottom of the window is the mirror: close enough to the phase 4
         -- transition (200k) that pushing damage straight into Raksha beats
         -- spending the time on pools — he'll phase before they matter.
-        skipBelowHpInPhase3 = 300000,
+        --
+        -- BOTH ARE SOLO NUMBERS and both are rescaled by setPartySize, exactly
+        -- like PHASE_HP. Left flat they do not merely drift, they stop working
+        -- altogether: a duo fights phase 3 from 800,000 down to 400,000, so a
+        -- flat 390,000 start gate is never reached and pools would NEVER be
+        -- cleared, while a flat 325,000 stop gate is never reached either and
+        -- the endgame skip would never fire. Read the live fields, never the
+        -- _SOLO ones.
+        startBelowHpInPhase3Solo = 375000,
+        startBelowHpInPhase3 = 375000,
+
+        skipBelowHpInPhase3Solo = 325000,
+        skipBelowHpInPhase3 = 325000,
 
         -- POOLS ARE CLEARED IN PHASE 3 ONLY.
         --
@@ -302,10 +398,19 @@ Constants.ADDS = {
         --
         -- They remain a MOVEMENT hazard in every phase (avoidClearance above) —
         -- ignoring them means not hunting them, not standing in them.
+        -- Phase 3 is 6: up to six pools standing is acceptable, and above that we
+        -- clear down to six and go straight back on Raksha. Enough that he never
+        -- siphons himself into being unkillable, without spending the phase
+        -- walking the arena.
+        --
+        -- Overwritten by the GUI's pool slider at startup (see main.lua) — this
+        -- is the default, not the last word. It used to be 3 and was NOT being
+        -- overwritten, so the slider silently did nothing for the only phase that
+        -- clears pools at all.
         killThresholdByPhase = {
             [1] = math.huge,
             [2] = math.huge,
-            [3] = 3,
+            [3] = 6,
             [4] = math.huge
         },
 
@@ -341,7 +446,21 @@ Constants.ADDS = {
         action = "Attack",
         id = 27355,
         type = 1, -- NPC
-        range = 60
+        range = 60,
+
+        -- Endgame skip: below this much boss health we ignore the manifestation
+        -- entirely and push damage into Raksha to phase him.
+        --
+        -- Phase 4 starts at 200,000, so 230,000 is the last stretch of phase 3.
+        -- A manifestation that spawns here is not worth killing — the phase
+        -- transition despawns it, and it owns every tick while it lives, so
+        -- fighting it trades the phase push for an add that is about to vanish.
+        --
+        -- SOLO number, rescaled by setPartySize exactly like PHASE_HP and the
+        -- pool gates. Left flat it would never be reached in a duo, where phase 3
+        -- runs 800,000 down to 400,000. Read the live field, never the _SOLO one.
+        skipBelowHpSolo = 230000,
+        skipBelowHp = 230000
     }
 }
 
@@ -411,6 +530,57 @@ Constants.PRAYER_FLICKER = {
 -- # MECHANIC DEFINITIONS
 ------------------------------------------
 
+--- Tiles from Raksha we have to reach to be clear of the tail sweep, used by
+--- both `escapeSweepWhenNotTargeting` and `walkFromBossWhenNotTargeting` so the
+--- two routes can never disagree about what "out of it" means.
+---
+--- The sweep is a 7x7 centred on Raksha, so +/-3 tiles — but every distance here
+--- is measured against his REPORTED tile (Tile_XYZ), and for a 5x5 NPC it is not
+--- certain whether that is his centre or a corner. The rest of this file assumes
+--- centre (PHASE4.homeOffsetX of 4 is described as "2 tiles off the edge of his
+--- blocked 5x5", which only works from the centre), and on that reading 5 would
+--- do. This is 7 because the cost of being wrong is asymmetric: two extra tiles
+--- costs nothing — Necromancy reaches ~10, so we stay in range of the add we
+--- were killing — while being two tiles short means eating a sweep that also
+--- disables prayers. Tune down if the logs show us clearing it comfortably.
+Constants.TAIL_SWEEP_CLEARANCE = 7
+
+--- Clearance for PHASE 4 escapes, two tiles further out than everywhere else.
+---
+--- Phase 4 is the one phase we take the sweep from melee range: we hold the home
+--- tile four out and the escape is a short hop, so any shortfall in it leaves us
+--- inside. Observed in play — a Dive to the seven tile ring still got clipped.
+---
+--- Two tiles is also exactly the error the note above worries about. If the
+--- reported tile is a CORNER of his 5x5 rather than the centre, a tile seven
+--- from it can be barely five from where the sweep is really centred, and five
+--- is not enough. Nine absorbs that either way.
+---
+--- Still inside Necromancy's ~10 tile reach, so the rotation keeps hitting him
+--- from out here and the extra distance costs no damage. Left at 7 for phases
+--- 1-3, where we are usually already off him on an add and moving further only
+--- risks dropping the add out of range.
+Constants.TAIL_SWEEP_CLEARANCE_P4 = 9
+
+--- Tiles to retreat when a sweep answer's movement ability is on cooldown.
+---
+--- Escape has a long cooldown next to how often Raksha sweeps at melee range, so
+--- "Escape is down" is the common case, not the rare one. It used to mean we did
+--- not move AT ALL: runStep logged the ability as unavailable and the sequence
+--- marched on to the reattack, so we stood in the 7x7 and wore it.
+---
+--- Five tiles, measured from where we STAND rather than from Raksha. Phase 4
+--- holds a tile PHASE4.homeOffsetX (4) east of him, so five more puts us nine
+--- out — which is TAIL_SWEEP_CLEARANCE_P4 exactly, and that agreement is
+--- load-bearing rather than tidy. clearOfSweepRadius latches the "we are clear,
+--- stop moving" flag at the phase 4 clearance, so a retreat that stopped short
+--- of it would never satisfy the latch and we would shuffle in and out for the
+--- rest of the animation. Change one of these two and change the other.
+---
+--- Still inside the phase 4 arenaRadius of 10, and within Necromancy's ~10 tile
+--- reach so the rotation keeps hitting him on the way back in.
+Constants.TAIL_SWEEP_FALLBACK_WALK = 5
+
 --- How the fight loop should respond to each mechanic animation.
 ---
 --- kind:
@@ -447,7 +617,7 @@ Constants.MECHANICS = {
             -- costs no global cooldown, so it doesn't interrupt the add.
             {
                 ability = "Escape",
-                walkFromBossWhenNotTargeting = 5,
+                walkFromBossWhenNotTargeting = Constants.TAIL_SWEEP_CLEARANCE,
                 delayWhenNotTargeting = 2,
                 wait = 2
             },
@@ -455,7 +625,22 @@ Constants.MECHANICS = {
         },
         priority = 50,
         exclusive = true,
-        useTicks = true
+        useTicks = true,
+
+        -- Not on Raksha when this starts (killing the manifestation, clearing
+        -- pools): get out of the 7x7 immediately, by Dive, then tile-targeted
+        -- Surge, then walking. See Mechanics:escapeSweep.
+        --
+        -- Handled in Mechanics:runActive rather than as a step, and retried
+        -- every tick, because the whole point is skipping the 2 tick pre-delay
+        -- above: waiting it out and then WALKING loses the race with the
+        -- animation, which is why we kept eating sweeps while on the add.
+        escapeSweepWhenNotTargeting = Constants.TAIL_SWEEP_CLEARANCE,
+
+        -- The step above that actually MOVES us. ensureClearOfSweep waits on the
+        -- sequence only while this ability can genuinely fire; the moment it
+        -- can't, walking takes over. See Mechanics:ensureClearOfSweep.
+        sweepMover = "Escape"
         -- retriggerAfter = 0
     },
 
@@ -471,12 +656,22 @@ Constants.MECHANICS = {
             {ability = "Anticipation", waitMs = 2000},
             -- Same reasoning as the other sweep: Surge follows our facing, so
             -- while we're on an add it won't clear a sweep centred on Raksha.
-            {ability = "Surge", walkFromBossWhenNotTargeting = 5, wait = 2},
+            {ability = "Surge", walkFromBossWhenNotTargeting = Constants.TAIL_SWEEP_CLEARANCE, wait = 2},
             {attackBoss = true}
         },
         priority = 50,
         exclusive = true,
-        retriggerAfter = 5
+        retriggerAfter = 5,
+
+        -- See the note on the other sweep. It matters more here: this variant
+        -- holds on Anticipation for a full 2000ms before it moves us at all, so
+        -- while we were on the manifestation that was two seconds of standing in
+        -- the 7x7 before we even started walking out. escapeSweep jumps straight
+        -- past it.
+        escapeSweepWhenNotTargeting = Constants.TAIL_SWEEP_CLEARANCE,
+
+        -- Surge is this variant's mover — see the note on the other sweep.
+        sweepMover = "Surge"
     },
 
     [Constants.ANIM.INSTAKILL_BIND] = {
@@ -503,11 +698,26 @@ Constants.MECHANICS = {
         -- presence-based and runs regardless of this animation.
         behaviour = "dodgeBombs",
         hazard = "BOMB_HAZARD",
-        escapeDistance = 5, -- tiles clear of a bomb's tile (covers the 2x2 + margin)
-        moveEveryTicks = 1, -- re-evaluate every tick; bombs drop quickly
+        escapeDistance = 8, -- tiles clear of a bomb's tile (covers the 2x2 + margin)
+
+        -- Re-issue the walk every 3 ticks, not every 1. A walk order takes
+        -- several ticks to actually arrive, and re-issuing one each tick
+        -- CANCELS the path in progress — so with bombs landing continuously we
+        -- picked a new "nearest safe tile" every tick and never reached any of
+        -- them. That is the shuffling on the spot, and it is a separate fault
+        -- from the pool tug-of-war: this one happens whether or not pools are
+        -- up. 3 is comfortably inside the bombs' own timing and long enough to
+        -- cover ground.
+        moveEveryTicks = 3,
         priority = 70,
         duration = 20,
-        retriggerAfter = 1
+
+        -- Also 3, and not only to limit re-registration noise: Mechanics:begin()
+        -- resets poolsActive to false, so at 1 this definition was knocking the
+        -- pool-clear latch down every couple of ticks for the whole bomb phase.
+        -- Mechanics:poolClearInProgress() is what actually makes that harmless
+        -- now, but there is no reason to re-arm this fast either.
+        retriggerAfter = 3
     },
 
     [Constants.ANIM.SHADOW_BOMBARDMENT] = {
@@ -558,15 +768,19 @@ Constants.MECHANICS_BY_PHASE = {
             name = "Tail Sweep (P4) — Escape",
             kind = "sequence",
             steps = {
-                -- Anticipation first: it prevents the stun and prayer-disable,
-                -- and it is off the global cooldown so it costs us no damage.
-                {ability = "Anticipation", wait = 1},
-                {ability = "Escape", walkFromBossWhenNotTargeting = 5, wait = 2},
+                {
+                    ability = "Escape",
+                    walkFromBossWhenNotTargeting = Constants.TAIL_SWEEP_CLEARANCE_P4,
+                    retreatWhenUnavailable = Constants.TAIL_SWEEP_FALLBACK_WALK,
+                    wait = 4
+                },
                 {attackBoss = true}
             },
             priority = 60,
             exclusive = true,
-            retriggerAfter = 5
+            retriggerAfter = 5,
+            escapeSweepWhenNotTargeting = Constants.TAIL_SWEEP_CLEARANCE_P4,
+            sweepMover = "Escape"
         },
 
         -- The detonation dome. If the bar above Raksha fills it is an instant
@@ -581,6 +795,37 @@ Constants.MECHANICS_BY_PHASE = {
             exclusive = true,
             duration = 30,
             retriggerAfter = 5
+        },
+
+        -- Shadow bomb, answered WITHOUT a Surge.
+        --
+        -- The general definition Surges out of the anima cloud, and in phase 4
+        -- that is the wrong tool: Surge travels along our FACING, which nothing
+        -- in the script controls, so it lands us on whichever side of Raksha we
+        -- happened to be pointing at. The whole phase is built on holding ONE
+        -- tile east of him — every other side gives up the adjacency that keeps
+        -- him tail sweeping instead of bombing — so a movement that picks its
+        -- own direction cannot be used here.
+        --
+        -- Stepping back instead keeps us on the line we are already on, which in
+        -- phase 4 is due east. It clears the 5x5 cloud centred on us just as
+        -- well, costs no global cooldown, and returnHome walks us back onto the
+        -- tile the moment the sequence ends.
+        --
+        -- Worth saying plainly: this should be rare. Bombs only come out while
+        -- we are off melee distance, so seeing this fire regularly means we are
+        -- not holding the tile in the first place.
+        [Constants.ANIM.SHADOW_BOMBARDMENT] = {
+            name = "Shadow Bomb (P4) — Freedom + step east",
+            kind = "sequence",
+            steps = {
+                {ability = "Freedom", wait = 4, useTicks = true},
+                {retreat = Constants.TAIL_SWEEP_FALLBACK_WALK, wait = 2},
+                {attackBoss = true}
+            },
+            priority = 90,
+            exclusive = true,
+            retriggerAfter = 10
         }
     }
 }

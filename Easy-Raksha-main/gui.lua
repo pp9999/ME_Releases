@@ -10,7 +10,7 @@
 ---@diagnostic disable: undefined-global
 
 local API    = require("api")
-local GUILib = require("core.gui_lib")
+local GUILib = require("raksha.core.gui_lib")
 
 local RakshaGUI = {}
 
@@ -38,6 +38,25 @@ RakshaGUI.config = {
     bankPin = "",
     waitForFullHp = true,
     useRevolution = false,
+
+    -- Discord embeds on death and on a unique drop, same as Rasial.
+    --
+    -- The WEBHOOK URL is not a script setting: Discord:SendEmbedEx posts to the
+    -- url in the client's own settings.json, so this only decides whether we
+    -- send anything. With no url configured there, sending is simply a no-op.
+    useDiscord = true,
+
+    -- Party / duo. Modelled on kerapac/config.lua, which uses the same three
+    -- settings: are we in a party at all, are we the one who owns the instance,
+    -- and who is the owner if it isn't us.
+    --
+    -- inParty is what scales Raksha's phase thresholds — he has double the life
+    -- points in duo and every transition doubles with them, so getting this
+    -- wrong does not just misreport a number, it puts the whole phase machine
+    -- on the wrong rotation. See Constants.setPartySize.
+    inParty = false,
+    isPartyLeader = false,
+    partyLeader = "",
 
     -- Health thresholds (percent). Set high for Raksha: anima clouds ramp to
     -- 2,000 a tick, pools are ~1,500 a tick and a countered shadow bomb still
@@ -72,7 +91,7 @@ RakshaGUI.config = {
 
     -- Raksha mechanics
     ignoreAnimaPools = false,
-    poolKillThreshold = 10,
+    poolKillThreshold = 6,
     poolDiveDistance = 8,
     -- Measured from the edge of the shadow's 4x4 box, not its centre, so these
     -- stay small — larger values make a big exclusion zone and we shuffle
@@ -155,6 +174,8 @@ local PRAYER_COLOR = {0.45, 0.78, 0.98}
 local ADRENALINE_COLOR = {0.98, 0.72, 0.28}
 local DANGER_COLOR = {0.95, 0.30, 0.35}
 local IDLE_COLOR = {0.45, 0.43, 0.52}
+local SUCCESS_COLOR = {0.45, 0.85, 0.55} -- gp figures that are actually money
+local RARE_COLOR = {1.00, 0.84, 0.35} -- gold, for anything off the unique table
 
 --- Rounds to a whole number for %d formatting.
 ---
@@ -212,6 +233,10 @@ local function saveConfigToFile(cfg)
         BankPin = cfg.bankPin,
         WaitForFullHp = cfg.waitForFullHp,
         UseRevolution = cfg.useRevolution,
+        UseDiscord = cfg.useDiscord,
+        InParty = cfg.inParty,
+        IsPartyLeader = cfg.isPartyLeader,
+        PartyLeader = cfg.partyLeader,
         HealthSolid = cfg.healthSolid,
         HealthJellyfish = cfg.healthJellyfish,
         HealthPotion = cfg.healthPotion,
@@ -339,6 +364,11 @@ function RakshaGUI.loadConfig()
     str("BankPin", "bankPin")
     bool("WaitForFullHp", "waitForFullHp")
     bool("UseRevolution", "useRevolution")
+    bool("UseDiscord", "useDiscord")
+
+    bool("InParty", "inParty")
+    bool("IsPartyLeader", "isPartyLeader")
+    str("PartyLeader", "partyLeader")
 
     num("HealthSolid", "healthSolid")
     num("HealthJellyfish", "healthJellyfish")
@@ -389,6 +419,18 @@ function RakshaGUI.getConfig()
         waitForFullHp = c.waitForFullHp,
         useRevolution = c.useRevolution,
         usePrebuild = c.usePrebuild,
+        useDiscord = c.useDiscord,
+
+        party = {
+            inParty = c.inParty,
+            -- Only meaningful inside a party. Resolved here rather than at every
+            -- call site so nothing downstream has to remember the combination.
+            isLeader = c.inParty and c.isPartyLeader or false,
+            leaderName = c.partyLeader or "",
+            -- Two in a duo, one otherwise. This is the number the phase
+            -- thresholds scale on.
+            size = c.inParty and 2 or 1
+        },
 
         playerManager = {
             health = {
@@ -475,6 +517,42 @@ local function drawGeneralTab(cfg)
                     "on to hand damage over to a full Revolution bar instead.",
                 "hint")
     end
+
+    ui:separator()
+    ui:sectionHeader("Party", "Solo or duo, and who owns the instance.")
+
+    cfg.inParty = ui:checkbox("Duo (in a party)##inparty", cfg.inParty)
+
+    if not cfg.inParty then
+        ui:text("Solo. Raksha has 800,000 life points and phases at 600k, " ..
+                    "400k and 200k.", "hint")
+        return
+    end
+
+    ui:text("Duo. Raksha has 1,600,000 life points and phases at 1.2M, 800k " ..
+                "and 400k — every threshold doubles, so this must match the " ..
+                "instance you are actually in or the phase rotations load at " ..
+                "the wrong time.", "hint")
+
+    ui:spacing(1)
+    cfg.isPartyLeader = ui:checkbox("I own the instance##ispartyleader",
+                                    cfg.isPartyLeader)
+
+    if cfg.isPartyLeader then
+        ui:text("You create the instance and set it to 2 players. Your partner " ..
+                    "joins you by name.", "hint")
+        return
+    end
+
+    cfg.partyLeader = ui:labeledInput("Owner's name", "##partyleader",
+                                      cfg.partyLeader)
+    if cfg.partyLeader == nil or cfg.partyLeader == "" then
+        ui:statusText("Owner's name required to join their instance", "warning",
+                      true)
+    else
+        ui:text("You join this player's instance rather than creating one.",
+                "hint")
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -534,7 +612,7 @@ end
 --------------------------------------------------------------------------------
 
 local function drawWarsTaskOrderTab(cfg)
-    local WarsRetreat = require("core.wars_retreat")
+    local WarsRetreat = require("raksha.core.wars_retreat")
 
     ui:spacing(1)
     ui:sectionHeader("Task Execution Order",
@@ -635,6 +713,14 @@ local function drawPlayerManagerTab(cfg)
     cfg.prayerSpecial = ui:labeledInputInt("Elven shard below (points)",
                                            "##prayerSpecial", cfg.prayerSpecial,
                                            10)
+
+    ui:separator()
+    ui:sectionHeader("Notifications", "Configure alerts and notifications.")
+
+    cfg.useDiscord = ui:checkbox("Discord Notifications##discord",
+                                 cfg.useDiscord)
+    ui:text("Embeds on death and on a unique drop. The webhook URL comes " ..
+                "from the client's settings.json, not from here.", "hint")
 end
 
 --------------------------------------------------------------------------------
@@ -654,11 +740,14 @@ local function drawMechanicsTab(cfg)
 
     if not cfg.ignoreAnimaPools then
         ui:spacing(1)
-        cfg.poolKillThreshold = ui:labeledSliderInt("Start clearing at (pools)",
+        cfg.poolKillThreshold = ui:labeledSliderInt("Tolerate up to (pools)",
                                                     "##poolThreshold",
                                                     cfg.poolKillThreshold, 1, 20,
                                                     "%d")
-        ui:text("Fewer than this are ignored so we keep DPSing the boss.", "hint")
+        ui:text("Phase 3 only. This many standing is fine and we stay on " ..
+                    "Raksha; above it we clear back down to this number and " ..
+                    "return to him. An announced siphon still clears them all.",
+                "hint")
 
         cfg.poolDiveDistance = ui:labeledSliderInt(
                                    "Dive when further than (tiles)", "##poolDive",
@@ -754,7 +843,58 @@ local function drawInfoTab(data)
     if ui:beginInfoTable("##rakshainfo", 0.45) then
         ui:tableRow("Location", data.location or "Unknown")
         ui:tableRow("Runtime", API.ScriptRuntimeString())
+
+        -- Loop health. "Are we keeping up with the game?" as a number.
+        --
+        -- Passes/tick should sit in the low teens. `skipped` counts game ticks
+        -- the main loop never got a pass in at all — on those the boss could
+        -- start AND finish an animation without us ever reading it, which is
+        -- exactly how mechanics and rotation steps end up late. Anything other
+        -- than 0 here is the thing to chase; a rising number means the loop is
+        -- being starved, not that a handler is mistuned.
+        local health = data.loopHealth
+        if health then
+            local skipped = whole(health.skippedTicks)
+            ui:tableRow("Loop passes / tick", tostring(whole(health.itersLastTick)),
+                        skipped > 0 and DANGER_COLOR or nil)
+            ui:tableRow("Ticks skipped", string.format("%d (worst jump %d)",
+                                                       skipped,
+                                                       whole(health.worstJump)),
+                        skipped > 0 and DANGER_COLOR or nil)
+        end
         ui:endColumns()
+    end
+
+    ----------------------------------------------------------------
+    -- Pass profile
+    ----------------------------------------------------------------
+    -- Only shown while the loop is actually behind. When passes/tick is healthy
+    -- this is noise, and the dashboard is already dense.
+    --
+    -- Sorted worst-first by main.lua. "worst" is the column to read: the bug we
+    -- are chasing is a section that is normally instant and occasionally blocks
+    -- for most of a game tick, which an average would hide completely.
+    local prof = data.profile
+    if prof and #prof > 0 and data.loopHealth and
+        whole(data.loopHealth.skippedTicks) > 0 then
+        ui:separator()
+        ui:sectionHeader("Pass profile (ms)", "Worst offender first.")
+
+        if ui:beginInfoTable("##rakshaprof", 0.45) then
+            -- Ten rows now, not six: Mechanics:update is broken into its own
+            -- sections (mech:*), so the table is longer and the interesting
+            -- entry is no longer guaranteed to be in the top few.
+            for index, row in ipairs(prof) do
+                if index > 10 then break end
+                ui:tableRow(tostring(row.name),
+                            string.format("%.1f last / %.1f worst",
+                                          tonumber(row.last) or 0,
+                                          tonumber(row.worst) or 0),
+                            (tonumber(row.worst) or 0) >= 100 and DANGER_COLOR or
+                                nil)
+            end
+            ui:endColumns()
+        end
     end
 
     ----------------------------------------------------------------
@@ -872,6 +1012,86 @@ local function drawInfoTab(data)
 end
 
 --------------------------------------------------------------------------------
+-- RUNTIME TAB: LOOT
+--------------------------------------------------------------------------------
+
+--- Whole gp with thousands separators.
+---
+--- Not GUILib.formatNumber, which rounds to "1.2M". That reads well for a health
+--- bar and badly for money — the whole point of a gp column is being able to see
+--- the difference between two drops that both abbreviate to the same thing.
+--- @param n number|nil
+--- @return string
+local function gp(n)
+    n = math.floor(tonumber(n) or 0)
+    local formatted = tostring(n)
+    -- Insert separators right to left until no more fit.
+    while true do
+        local replaced
+        formatted, replaced = formatted:gsub("^(-?%d+)(%d%d%d)", "%1,%2")
+        if replaced == 0 then break end
+    end
+    return formatted
+end
+
+local function drawLootTab(data)
+    local loot = data.loot or {}
+    local rares = loot.rares or {}
+    local history = loot.history or {}
+
+    ----------------------------------------------------------------
+    -- Totals
+    ----------------------------------------------------------------
+    ui:sectionHeader("Session Value", "")
+
+    if ui:beginInfoTable("##rakshalootvalue", 0.45) then
+        ui:tableRow("Total looted", gp(loot.totalValue) .. " gp")
+        ui:tableRow("GP / hr", gp(loot.gpPerHour), SUCCESS_COLOR)
+        ui:tableRow("GP / kill", gp(loot.gpPerKill))
+        ui:tableRow("Best kill", gp(loot.bestKill))
+        ui:tableRow("Kills", tostring(whole(data.killCount)))
+        ui:endColumns()
+    end
+
+    ----------------------------------------------------------------
+    -- Rares
+    ----------------------------------------------------------------
+    ui:separator()
+    ui:sectionHeader("Rare Drops", "")
+
+    if #rares == 0 then
+        ui:text("None yet.", "hint")
+    elseif ui:beginColumns("##rakshararetable", {0.44, 0.14, 0.22, 0.20}) then
+        ui:tableRow({"Item", "Kill", "Value", "Time"})
+        for _, r in ipairs(rares) do
+            ui:tableRow({r.name, "#" .. tostring(r.kill), gp(r.value), r.time},
+                        {RARE_COLOR, nil, SUCCESS_COLOR, nil})
+        end
+        ui:endColumns()
+    end
+
+    ----------------------------------------------------------------
+    -- Per kill
+    ----------------------------------------------------------------
+    ui:separator()
+    ui:sectionHeader("Loot Per Kill", "")
+
+    if #history == 0 then
+        ui:text("Nothing looted yet.", "hint")
+        return
+    end
+
+    if ui:beginColumns("##rakshaloothistory", {0.30, 0.42, 0.28}) then
+        ui:tableRow({"Kill", "Value", "Time"})
+        for _, k in ipairs(history) do
+            ui:tableRow({"#" .. tostring(k.kill), gp(k.gp), k.time},
+                        {nil, k.gp > 0 and SUCCESS_COLOR or nil, nil})
+        end
+        ui:endColumns()
+    end
+end
+
+--------------------------------------------------------------------------------
 -- RUNTIME TAB: MECHANICS DEBUG
 --------------------------------------------------------------------------------
 
@@ -973,6 +1193,12 @@ local function drawRuntimeContent(data, gui)
         if ui:beginTab("Dashboard###info", infoFlags) then
             ui:spacing(1)
             safeDraw(drawInfoTab, data)
+            ui:endTab()
+        end
+
+        if ui:beginTab("Loot###loot") then
+            ui:spacing(1)
+            safeDraw(drawLootTab, data)
             ui:endTab()
         end
 
