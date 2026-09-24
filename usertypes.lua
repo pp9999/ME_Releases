@@ -35,31 +35,35 @@
 ---@field enabled boolean
 ---@field modkey number
 
----@class AllObject
----@field Mem number
----@field MemE number
----@field TileX number
----@field TileY number
----@field TileZ number
----@field Id number
----@field Life number
----@field Anim number
----@field Name string
----@field Action string
----@field Floor number
----@field Amount number
----@field Type number
----@field Bool1 number
----@field ItemIndex number
----@field ViewP number
----@field ViewF number
----@field Distance number
----@field Cmb_lv number
----@field Unique_Id number
----@field CalcX number
----@field CalcY number
----@field Tile_XYZ FFPOINT
----@field Pixel_XYZ WPOINT
+---@class AllObject -- universal struct for NPCs, players, objects, ground items, projectiles, effects and decor
+---@field Mem number -- memory address of the object data struct (passed with action dispatch)
+---@field MemE number -- memory address of the entity render holder (used for orientation)
+---@field TileX number -- raw unnormalized tile x (RS3: 512 units per tile, OSRS: 128; see Tile_XYZ)
+---@field TileY number -- raw unnormalized tile y (RS3: 512 units per tile, OSRS: 128; see Tile_XYZ)
+---@field TileZ number -- raw unnormalized tile z/height
+---@field Id number -- entity/object id (item id for ground items, 1 for players)
+---@field Life number -- NPC life points/hitpoints (type-specific; objects store orientation here)
+---@field Anim number -- animation id for NPCs/players, noted flag for ground items (type-specific)
+---@field Name string -- entity name (empty for unnamed types like projectiles)
+---@field Action string -- first non-empty action/menu option text (empty when none)
+---@field Floor number -- plane/height level
+---@field Amount number -- stack amount for ground items
+---@field Type number -- 0=Object 1=NPC 2=Player 3=GroundItem 4=Highlight 5=Projectile 8=Effect 12=Decor 13/17=Pathing
+---@field Bool1 number -- per-type flag: 0 = has action text, 1 = no action available (OSRS ground items store the amount)
+---@field ItemIndex number -- legacy index into Parsed_ItemsL (unused, stays 0)
+---@field ViewP number -- render holder screen timer/on-screen value
+---@field ViewF number -- entity orientation in degrees (0-360)
+---@field Distance number -- distance in normal tiles from the local player
+---@field Cmb_lv number -- combat level (NPCs/players)
+---@field Unique_Id number -- unique entity instance id (object unique id for objects)
+---@field CalcX number -- integer tile x used for action dispatch
+---@field CalcY number -- integer tile y used for action dispatch
+---@field Tile_XYZ FFPOINT -- normalized world tile coords (x,y = tile, z = floor)
+---@field Pixel_XYZ WPOINT -- on-screen canvas pixel coords
+---@field Hitsplats WPOINT[] -- recent damage splats on this entity (NPCs/players): x=splat type, y=amount, z=client frametime; only splats newer than ~100 frametime units are kept
+---@field StatusBar1 number -- health bar fill 0-255, -1 when no bar is shown (players only)
+---@field StatusBar2 number -- adrenaline/stamina bar fill 0-255, falls back to any other active bar, -1 when no bar is shown (players only)
+---@field MovingPoints FFPOINT[] -- expected walk path of this entity: x,y = normal tile coords, z = speed (stand/walk/run)
 
 ---@class Bbar
 ---@field id number
@@ -72,6 +76,8 @@
 ---@field addr number
 ---@field indexaddr_orig number
 ---@field id number
+---@field valid boolean
+---@field found boolean
 
 ---@class IInfo
 ---@field x number
@@ -247,14 +253,6 @@
 ---@field spriteId number -- Sprite/icon ID (BuffID)
 ---@field name string -- Buff/debuff name
 ---@field isDebuff boolean -- true = debuff, false = buff
-
----@class SPLAT
----@field Type number
----@field Amount number
----@field EInfo1 number
----@field EInfo2 number
----@field Time number
----@field Slot number
 
 ---@class Varbit
 ---@field id number

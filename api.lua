@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.079
+API.VERSION = 1.081
 
 --[[
 Known shortcuts
@@ -118,13 +118,6 @@ API.I_buffb = I_buffb
 --- checks if bool is true. it is now always enabled so means nothing now. IsCacheLoaded check is more sensible nows
 ---@return boolean
 API.CacheEnabled = CacheEnabled
-
--- Get those from "Splats diagnosis"
----@param clear boolean clean array
----@return SPLAT
-function API.GatherEvents_splat_check(clear)
-	return GatherEvents_splat_check(clear)
-end
 
 
 -- Turn on/off default on
@@ -845,6 +838,12 @@ function API.Get_tick()
 	return Get_tick()
 end
 
+--- Get the current RS3 client logic cycle, or nil when unavailable.
+---@return number|nil
+function API.GetClientCycle()
+	return GetClientCycle()
+end
+
 --- count ticks
 ---@param val number --how many ticks
 ---@return boolean
@@ -1311,6 +1310,33 @@ function API.FindObject_string(ObjectName, maxdistance)
 	return FindObject_str(ObjectName, maxdistance)
 end
 
+--- Returns all entities currently tracked by the engine, one AllObject per entity (full class in usertypes.lua).
+--- AllObject fields:
+---   Mem           number     memory address of the object data struct (used in action dispatch)
+---   MemE          number     memory address of the entity render holder (used for orientation)
+---   TileX/Y/Z     number     raw unnormalized tile coords (RS3: 512 units per tile, OSRS: 128)
+---   Tile_XYZ      FFPOINT    normalized world tile coords (x,y = tile, z = floor)
+---   Pixel_XYZ     WPOINT     on-screen canvas pixel coords
+---   Id            number     entity/object id (item id for ground items, 1 for players)
+---   Name          string     entity name (empty for unnamed types like projectiles)
+---   Action        string     first non-empty action/menu option text (empty when none)
+---   Type          number     0=Object 1=NPC 2=Player 3=GroundItem 4=Highlight 5=Projectile 8=Effect 12=Decor 13/17=Pathing
+---   Floor         number     plane/height level
+---   Life          number     NPC life points/hitpoints (type-specific; objects store orientation here)
+---   Anim          number     animation id for NPCs/players, noted flag for ground items
+---   Amount        number     stack amount for ground items
+---   Bool1         number     per-type flag: 0 = has action text, 1 = no action available
+---   Cmb_lv        number     combat level (NPCs/players)
+---   Unique_Id     number     unique entity instance id (object unique id for objects)
+---   CalcX/CalcY   number     integer tile coords used for action dispatch
+---   Distance      number     distance in normal tiles from the local player
+---   ViewP         number     render holder screen timer/on-screen value
+---   ViewF         number     entity orientation in degrees (0-360)
+---   ItemIndex     number     legacy index into Parsed_ItemsL (unused, stays 0)
+---   Hitsplats     WPOINT[]   recent damage splats: x=splat type, y=amount, z=client frametime (NPCs/players)
+---   StatusBar1    number     health bar fill 0-255, -1 when no bar is shown (players only)
+---   StatusBar2    number     adrenaline/stamina bar fill 0-255, -1 when no bar is shown (players only)
+---   MovingPoints  FFPOINT[]  expected walk path: x,y = normal tile coords, z = speed (stand/walk/run)
 ---@param types number[] -- possible types are: 0,1,2,3,5,8,12,all -1
 ---@param ids number[] -- if no ids are filtered then {}
 ---@param names string[] --leave empty with {}
@@ -1533,8 +1559,8 @@ end
 -- Returns the value of the player var mapped to `id`
 ---@param id number
 ---@return VB
-function API.VB_FindPSett(id)
-	return VB_FindPSett(id)
+function API.VP_FindPSett(id)
+	return VP_FindPSett(id)
 end
 
 -- Returns the value of the client var mapped to `id`
