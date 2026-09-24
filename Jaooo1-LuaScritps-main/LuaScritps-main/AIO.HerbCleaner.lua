@@ -5,7 +5,6 @@ local API = require("api")
 local afk = os.time()
 API.SetDrawTrackedSkills(true)
 MAX_IDLE_TIME_MINUTES = 10
-API.Write_fake_mouse_do(false)
 
 
 
@@ -51,8 +50,13 @@ local function cleanHerbs()
             print("Has grimy Herbs!")
             API.DoAction_Inventory1(herb_id, 0, 1, API.OFF_ACT_GeneralInterface_route)
             API.RandomSleep2(1200, 300, 500)
-            API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1370, 30, -1, API.OFF_ACT_GeneralInterface_Choose_option)
-            API.RandomSleep2(1200, 300, 500)
+            if API.Math_RandomNumber(100) > 70 then
+                API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1370, 30, -1, API.OFF_ACT_GeneralInterface_Choose_option)
+                API.RandomSleep2(2200, 300, 2500)
+            else
+                API.KeyboardPress(' ', 40, 80)
+                API.RandomSleep2(2200, 300, 2500)
+            end
             break
         end
     end

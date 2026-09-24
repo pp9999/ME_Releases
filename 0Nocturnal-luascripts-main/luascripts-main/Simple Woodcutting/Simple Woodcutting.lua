@@ -217,7 +217,7 @@ local function cutNearestTree()
         pauseAction()
         return true
     end
-    local trees = API.GetAllObjArrayInteract_str({itemToGather}, 2, {0, 1, 12})
+    local trees = API.GetAllObjArrayInteract_str({itemToGather}, 5, {0, 1, 12})
 
     for _, tree in ipairs(trees) do
         if API.DoAction_Object_valid2(0x3B, API.OFF_ACT_GeneralObject_route0, {tree.Id}, 50, WPOINT.new(tree.TileX / 512, tree.TileY / 512, 1), true) then

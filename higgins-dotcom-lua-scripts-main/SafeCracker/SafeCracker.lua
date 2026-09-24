@@ -3,10 +3,11 @@
     Description: Safe cracking
 
     Author: Higgins
-    Version: 2.9
+    Version: 3.0
     Release Date: 21/09/2025
 
     Release Notes:
+    - Version 3.0 : General Updates
     - Version 2.9 : Ardougne teleport fix
     - Version 2.8 : Removed old progressBar code - uses XpTracker now
     - Version 2.7 : Switched to Chat Events
@@ -37,9 +38,9 @@
 --    Lodestones unlocked (Lumbridge, Draynor, Edgeville and Varrock)
 --    If you have Ring of Fortune or Luck of the Dwarves then place it onto the Action Bar (else it will use Varrock lodestone)
 
-local API            = require('API')
+local API          = require('API')
 
-local ID             = {
+local ID           = {
     SAFE = 111233,
     TRAPDOOR = 52309,
     CRACKING_ANIMATION = 31668,
@@ -55,7 +56,7 @@ local ID             = {
     BAG = { 42611, 42612, 42613, 42614 }
 }
 
-local AREA           = {
+local AREA         = {
     LUMBRIDGE_LODESTONE = { x = 3233, y = 3221, z = 0 },
     EDGEVILLE_LODESTONE = { x = 3067, y = 3505, z = 0 },
     DRAYNOR_LODESTONE = { x = 3106, y = 3299, z = 0 },
@@ -76,7 +77,7 @@ local AREA           = {
     YANILLE_PUB = { x = 2553, y = 3080, z = 0 },
 }
 
-local SAFES          = {
+local SAFES        = {
     ROUTES = {
         KANDARIN = {
             CAMELOT = { 7887, { 12, 18 } }
@@ -84,7 +85,7 @@ local SAFES          = {
     }
 }
 
-local ROUTES         = {
+local ROUTES       = {
     ASGARNIA = {
         BOBS_AXES = 1,
         RODDECKS_HOUSE = 2,
@@ -105,16 +106,16 @@ local ROUTES         = {
     },
 }
 
-local LODESTONES     = {
-    ["Edgeville"] = 16,
-    ["Lumbridge"] = 18,
-    ["Draynor Village"] = 15,
-    ["Varrock"] = 22,
-    ["Yanille"] = 26,
-    ["Ardougne"] = 12,
+local LODESTONES   = {
+    ["Edgeville"] = 15,
+    ["Lumbridge"] = 17,
+    ["Draynor Village"] = 14,
+    ["Varrock"] = 21,
+    ["Yanille"] = 25,
+    ["Ardougne"] = 11,
 }
 
-local TELEPORTS      = {
+local TELEPORTS    = {
     ["Ardougne Teleport"] = 14340,
     ["Camelot Teleport"] = 14339,
     ["Varrock Teleport"] = 14336,
@@ -127,21 +128,21 @@ local TELEPORTS      = {
     ["Yanille Lodestone"] = 31869,
 }
 
-local route          = nil
-LOCATIONS            = nil
-local location       = 1
-local oldLocation    = nil
-local lastTile       = nil
-local scriptPaused   = true
-local walking        = true
-local firstRun       = true
-local lastVisit      = os.time()
-local skill          = "THIEVING"
+local route        = nil
+LOCATIONS          = nil
+local location     = 1
+local oldLocation  = nil
+local lastTile     = nil
+local scriptPaused = true
+local walking      = true
+local firstRun     = true
+local lastVisit    = os.time() - 300
+local skill        = "THIEVING"
 local rewardChoice
 local needLockpick
 local needStethoscope
-local errors         = {}
-local version        = "2.9"
+local errors       = {}
+local version      = "3.0"
 
 local function tableLength(tbl)
     local count = 0
@@ -262,8 +263,23 @@ local function isAtLocation(location, distance)
     return API.PInArea(location.x, distance, location.y, distance, location.z)
 end
 
+local function scanForInterface(fullPath, paths)
+    if type(API.ScanForInterfaceTest2Get2) == "function" then
+        local path = paths
+        if type(paths) == "table" and type(paths[1]) == "table" then
+            path = paths[#paths]
+        end
+        if type(path) == "table" then
+            path = { path[1], path[2], path[3], path[4] }
+        end
+        return API.ScanForInterfaceTest2Get2(fullPath, path)
+    end
+    return API.ScanForInterfaceTest2Get(fullPath, paths)
+end
+
 local function isLodestoneInterfaceUp()
-    return (#API.ScanForInterfaceTest2Get(true, { { 1092, 1, -1, -1, 0 }, { 1092, 54, -1, 1, 0 } }) > 0) or API.VB_FindPSettinOrder(2874, 1).state == 30 or API.Compare2874Status(30)
+    return (#scanForInterface(true, { { 1092, 1, -1, -1, 0 }, { 1092, 54, -1, 1, 0 } }) > 0) or
+    API.VB_FindPSettinOrder(2874, 1).state == 30 or API.Compare2874Status(30)
 end
 
 local function getABS_id(id, name)
@@ -291,8 +307,8 @@ local function teleportToLodestone(name)
         API.DoAction_Interface(0xffffffff, 0xffffffff, 1, 1092, id, -1, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(1600, 800, 800)
     else
-        API.DoAction_Interface(0xffffffff, 0xffffffff, 1, 1465, 18, -1, API.OFF_ACT_GeneralInterface_route)
-        API.RandomSleep2(300, 300, 300)
+        API.DoAction_Interface(0xffffffff, 0xffffffff, 1, 1465, 34, -1, API.OFF_ACT_GeneralInterface_route)
+        API.RandomSleep2(quickTeleport and 1600 or 1800, quickTeleport and 1600 or 1800, quickTeleport and 1600 or 1800)
     end
 end
 
@@ -304,7 +320,8 @@ local function teleportToDestination(destination, isLodestone)
     local hasLodestone = LODESTONES[destination] ~= nil
     -- local teleportAbility = (id ~= nil) and getABS_id(id, destinationStr) or API.GetABs_name1(destinationStr) or API.GetABs_name1(destinationStrLower)
     local teleportAbility = API.GetABs_name1(destinationStr)
-    teleportAbility = teleportAbility.enabled and teleportAbility or API.GetABs_name1(destinationStrLower).enabled and API.GetABs_name1(destinationStrLower) or nil
+    teleportAbility = teleportAbility.enabled and teleportAbility or
+    API.GetABs_name1(destinationStrLower).enabled and API.GetABs_name1(destinationStrLower) or nil
     if teleportAbility and teleportAbility.enabled then
         API.DoAction_Ability_Direct(teleportAbility, 1, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(1200, 300, 300)
@@ -346,7 +363,7 @@ local function walkToTile(tile)
 end
 
 local function findDoor(doorId, tile, floor)
-    local allObj = API.ReadAllObjectsArray({0, 12}, {doorId}, {})
+    local allObj = API.ReadAllObjectsArray({ 0, 12 }, { doorId }, {})
     for _, v in pairs(allObj) do
         if v.Id > 0 and v.Id == doorId and v.CalcX == tile[1] and v.CalcY == tile[2] and v.Floor == floor then
             return v
@@ -363,7 +380,7 @@ local function getSafe()
             or LOCATIONS.YANILLE) then
         distance = 18
     end
-    local safes = API.GetAllObjArray1({ ID.SAFE }, distance, {0})
+    local safes = API.GetAllObjArray1({ ID.SAFE }, distance, { 0 })
     if #safes > 0 then
         local floor = API.GetFloorLv_2()
         for _, v in ipairs(safes) do
@@ -380,11 +397,11 @@ local function isCracking()
 end
 
 local function hasPulse()
-    return #API.GetAllObjArray1({ ID.PULSE }, 10, {4}) > 0
+    return #API.GetAllObjArray1({ ID.PULSE }, 10, { 4 }) > 0
 end
 
 local function clickSafe(safe)
-    API.DoAction_Object_Direct(0x29, 0, safe)
+    API.DoAction_Object_Direct(0x29, API.OFF_ACT_GeneralObject_route0, safe)
     API.RandomSleep2(600, 400, 400)
 end
 
@@ -415,8 +432,8 @@ local function walk()
 
     if (os.time() - lastVisit) > 300 then
         if (Inventory:IsFull() and hasLoot() or lootBagFull) and location ~= LOCATIONS.GUILD then
-            print("Going to guild...", API.ChatFind("Your loot bag is full", 2).pos_found, location, oldLocation)
-            print(Inventory:IsFull(), hasLoot(), lootBagFull, location)
+            -- print("Going to guild...", API.ChatFind("Your loot bag is full", 2).pos_found, location, oldLocation)
+            -- print(Inventory:IsFull(), hasLoot(), lootBagFull, location)
             oldLocation = location
             location = tableLength(LOCATIONS)
         end
@@ -426,8 +443,12 @@ local function walk()
         print("G:", Inventory:IsFull(), hasLoot(), lootBagFull, location, oldLocation)
         if isAtLocation(AREA.GUILD, 50) then
             if hasLoot() then
-                if API.Select_Option(rewardChoice) then
-                    API.RandomSleep2(400, 400, 400)
+                if GetInterfaceOpenBySize(1188) and scanForInterface(false, { 1188, 6, -1, 0 })[1].textids == "Pilfer Points" then
+                    if rewardChoice == "Pilfer Points" then
+                        API.KeyboardPress2(0x31, 60, 100)
+                    else
+                        API.KeyboardPress2(0x32, 60, 100)
+                    end
                 else
                     API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route2, { ID.DARREN }, 50) -- Darren
                     API.RandomSleep2(400, 300, 300)
@@ -449,7 +470,7 @@ local function walk()
                 oldLocation = nil
             end
         elseif isAtLocation(AREA.TRAPDOOR, 15) then
-            API.DoAction_Object2(0x39, 0, { ID.TRAPDOOR }, 50, WPOINT.new(3223, 3268, 0))
+            API.DoAction_Object2(0x39, API.OFF_ACT_GeneralObject_route0, { ID.TRAPDOOR }, 50, WPOINT.new(3223, 3268, 0))
             API.RandomSleep2(3200, 1000, 1000)
         elseif isAtLocation(AREA.LUMBRIDGE_LODESTONE, 10) then
             local tile = WPOINT.new(3217 + math.random(-2, 2), 3264 + math.random(-2, 2), 0)
@@ -459,12 +480,16 @@ local function walk()
             local mch = API.GetABs_name1("Master camouflage head")
             if #mch.name > 0 then
                 if isTeleportOptionsUp() then
-                    local opts = API.ScanForInterfaceTest2Get(true, { { 720, 2, -1, -1, 0 }, { 720, 16, -1, 2, 0 } })
-                    if opts[1].y > 35 then
-                        API.KeyboardPress2(0x33, 60, 100)
+                    -- local opts = scanForInterface(true, { { 720, 2, -1, -1, 0 }, { 720, 16, -1, 2, 0 } })
+                    -- if opts[1].y > 35 then
+
+                    local firstOpt = scanForInterface(false,
+                        { { 720, 2, -1, 0 }, { 720, 16, -1, 0 }, { 720, 4, -1, 0 }, { 720, 14, -1, 0 } })
+                    if string.find(firstOpt[1].textids, "Iorwerth") then
+                        API.KeyboardPress2(0x30, 60, 100)
                         API.RandomSleep2(300, 300, 300)
                     else
-                        API.KeyboardPress2(0x30, 60, 100)
+                        API.KeyboardPress2(0x33, 60, 100)
                         API.RandomSleep2(300, 300, 300)
                     end
                 else
@@ -493,7 +518,8 @@ local function walk()
                     end
                 else
                     if floor == 0 then
-                        API.DoAction_Object2(0x34, 0, { 45483 }, 50, WPOINT.new(3230, 3205, 0))
+                        API.DoAction_Object2(0x34, API.OFF_ACT_GeneralObject_route0, { 45483 }, 50,
+                            WPOINT.new(3230, 3205, 0))
                         API.RandomSleep2(800, 600, 600)
                     elseif floor == 1 then
                         walking = false
@@ -506,7 +532,7 @@ local function walk()
         elseif location == LOCATIONS.RODDECKS_HOUSE then
             if isAtLocation(AREA.BOBS_AXES, 15) then
                 if floor == 1 then
-                    API.DoAction_Object2(0x35, 0, { 45484 }, 50, WPOINT.new(3230, 3205, 0))
+                    API.DoAction_Object2(0x35, API.OFF_ACT_GeneralObject_route0, { 45484 }, 50, WPOINT.new(3230, 3205, 0))
                     API.RandomSleep2(800, 600, 600)
                 else
                     if findDoor(45476, { 3234, 3203 }, 0) then
@@ -602,9 +628,9 @@ local function walk()
                         API.RandomSleep2(1200, 600, 600)
                     end
                 elseif floor == 1 then
-                    if not findDoor(15535, { 3218, 3472 }, 1) then
-                        door = findDoor(15536, { 3219, 3472 }, 1)
-                        API.DoAction_Object_Direct(0x31, 0, door)
+                    if not findDoor(15535, { 3219, 3472 }, 1) then
+                        door = findDoor(15536, { 3218, 3472 }, 1)
+                        API.DoAction_Object_Direct(0x31, API.OFF_ACT_GeneralObject_route0, door)
                         API.RandomSleep2(800, 600, 600)
                     else
                         API.DoAction_Object2(0x34, API.OFF_ACT_GeneralObject_route0, { 24361 }, 50,
@@ -619,7 +645,8 @@ local function walk()
                         if API.PInArea21(3200, 3206, 3469, 3475) then
                             walking = false
                         else
-                            API.DoAction_Object2(0xc3, 0, { 111230 }, 50, WPOINT.new(3203, 3476, 0))
+                            API.DoAction_Object2(0xc3, API.OFF_ACT_GeneralObject_route0, { 111230 }, 50,
+                                WPOINT.new(3203, 3476, 0))
                             API.RandomSleep2(800, 800, 800)
                         end
                     end
@@ -679,7 +706,7 @@ local function walk()
                             API.RandomSleep2(300, 600, 600)
                         end
                     else
-                        if API.DoAction_Object2(0x34, 0, { 34498 }, 50, WPOINT.new(2649, 3297, 0)) then
+                        if API.DoAction_Object2(0x34, API.OFF_ACT_GeneralObject_route0, { 34498 }, 50, WPOINT.new(2649, 3297, 0)) then
                             API.RandomSleep2(3800, 600, 600)
                         end
                     end
@@ -698,15 +725,15 @@ local function walk()
         elseif location == LOCATIONS.ARDOUGNE_NORTH then
             if API.PInArea(2650, 5, 3301, 5, 0) and floor == 1 then
                 -- if not teleportToDestination("Ardougne", true) then
-                    if not findDoor(34813, { 2649, 3300 }, floor) then
-                        if API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, { 34811 }, 8, WPOINT.new(2648, 3300, 0)) then
-                            API.RandomSleep2(300, 600, 600)
-                        end
-                    else
-                        API.DoAction_Object2(0x35, API.OFF_ACT_GeneralObject_route0, { 34499 }, 50,
-                            WPOINT.new(2649, 3297, 0))
-                        API.RandomSleep2(800, 800, 800)
+                if not findDoor(34813, { 2649, 3300 }, floor) then
+                    if API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, { 34811 }, 8, WPOINT.new(2648, 3300, 0)) then
+                        API.RandomSleep2(300, 600, 600)
                     end
+                else
+                    API.DoAction_Object2(0x35, API.OFF_ACT_GeneralObject_route0, { 34499 }, 50,
+                        WPOINT.new(2649, 3297, 0))
+                    API.RandomSleep2(800, 800, 800)
+                end
                 -- end
             elseif isAtLocation(AREA.ARDOUGNE, 40) then
                 if API.PInArea(2650, 10, 3301, 10, 0) and not findDoor(34808, { 2651, 3302 }, floor) then
@@ -768,7 +795,8 @@ local function walk()
                                 API.RandomSleep2(900, 600, 600)
                             end
                         else
-                            API.DoAction_Object2(0x34, 0, { 117943 }, 50, WPOINT.new(2556, 3081, 0))
+                            API.DoAction_Object2(0x34, API.OFF_ACT_GeneralObject_route0, { 117943 }, 50,
+                                WPOINT.new(2556, 3081, 0))
                             API.RandomSleep2(2800, 400, 400)
                         end
                     end
@@ -861,8 +889,9 @@ local function invCheck()
     -- Other checks
     local hasRequiredLevel = API.XPLevelTable(API.GetSkillXP(skill)) >= 65
     local hasLootBag = hasLootBag()
-    check(hasRequiredLevel, "You need at least Level 65 Thieving")
+    -- check(hasRequiredLevel, "You need at least Level 65 Thieving")
     check(hasLootBag, "You need a loot bag in your inventory!")
+    check(API.GetVarbitValue(15932) == 0, "Your Camelot teleport must be set to Camelot, not Seers' Village")
 
     -- Action bar checks
     if not isTeleportOptionsUp() then
@@ -927,6 +956,7 @@ while API.Read_LoopyLoop() do
 
     API.DoRandomEvents()
     p = API.PlayerCoordfloat()
+    quickTeleport = API.GetVarbitValue(28622) == 1
 
     if API.Compare2874Status(12) then
         API.KeyboardPress2(0x20, 60, 100)
@@ -968,19 +998,6 @@ while API.Read_LoopyLoop() do
             end
             walking = true
 
-            -- if API.ChatFind("Your loot bag is full", 2).pos_found > 0 and location ~= LOCATIONS.GUILD then
-            --     oldLocation = location
-            --     location = LOCATIONS.GUILD
-            --     walking = true
-            -- else
-            --     if location == LOCATIONS.GUILD then
-            --         location = oldLocation + 1
-            --     else
-            --         location = location + 1
-            --     end
-            --     if location > (tableLength(LOCATIONS) - 1) then location = 1 end
-            --     walking = true
-            -- end
             API.RandomSleep2(300, 300, 300)
         end
     end

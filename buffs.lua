@@ -518,14 +518,14 @@ Buffs.DEBUFF.POTS.PowerburstPotionIsOnCooldown = { name = "Powerburst potion is 
 Buffs.DEBUFF.POTS.AdrenalinePotionPrevention = { name = "Adrenaline potion prevention", id = 26094 }
 
 Buffs.DEBUFF.PRAYERS = {}
-Buffs.DEBUFF.PRAYERS.YouHaveAPrayerActiveDraining = { name = "You have a prayer active, draining your prayer points.", id = 25835 }
+Buffs.DEBUFF.PRAYERS.YouHaveAPrayerActiveDraining = { name = "You have a prayer active, draining your prayer points.", id = 18857 }
 
 Buffs.DEBUFF.REDUCED = {}
 Buffs.DEBUFF.REDUCED.AttackStatReduced = { name = "Attack Stat Reduced", id = 25831 }
 Buffs.DEBUFF.REDUCED.StrengthStatReduced = { name = "Strength Stat Reduced", id = 25832 }
 Buffs.DEBUFF.REDUCED.DefenceStatReduced = { name = "Defence Stat Reduced", id = 25833 }
 Buffs.DEBUFF.REDUCED.RangedStatReduced = { name = "Ranged Stat Reduced", id = 25834 }
-Buffs.DEBUFF.REDUCED.PrayerPointsReduced = { name = "Prayer Points Reduced", id = 25835 }
+Buffs.DEBUFF.REDUCED.PrayerPointsReduced = { name = "Prayer Points Reduced", id = 18857 }
 Buffs.DEBUFF.REDUCED.MagicStatReduced = { name = "Magic Stat Reduced", id = 25836 }
 Buffs.DEBUFF.REDUCED.LifePointsReduced = { name = "Life Points Reduced", id = 25837 }
 Buffs.DEBUFF.REDUCED.WoodcuttingStatReduced = { name = "Woodcutting Stat Reduced", id = 16197 }

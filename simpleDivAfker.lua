@@ -1,13 +1,10 @@
 local API = require("api")
-print("Run Lua port fish script afker.")
+print("Run Lua.")
 
---18204,18205 chronicle
---wisps 18150,18150,18151,18151,18153,18153,18155,18155,18157,18157,18159,18159
---springs 18173,18173,18174,18174,18176,18176,18178,18178,18180,18180,1818218182
---crater 87306, 93489
 API.SetDrawTrackedSkills(true)
 while API.Read_LoopyLoop() do
     API.DoRandomEvents()
+
     if not Inventory:IsFull() then
         API.DoAction_NPC(0x2a,API.OFF_ACT_InteractNPC_route,{ 18204,18205 },10)
         API.RandomSleep2(4000, 300, 400)
@@ -21,7 +18,6 @@ while API.Read_LoopyLoop() do
         end
         API.RandomSleep2(2000, 300, 400)
     end
-
-    
+ 
 API.RandomSleep2(1000, 3000, 4000)
 end
