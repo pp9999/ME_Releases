@@ -1220,6 +1220,58 @@ function API.PlayerCoordfloatRaw()
 	return PlayerCoordfloatRaw()
 end
 
+--- the server ("true") tile, read from the movement path queue. while walking the render
+--- position trails the server by up to ~3 ticks at walk start; this is the tile the server
+--- already has you on. falls back to API.PlayerCoord() when standing (queue empty).
+---@param object number|nil entity address, defaults to the local player
+---@return WPOINT
+function API.GetTrueTile(object)
+	if object == nil then
+		return GetTrueTile()
+	end
+	return GetTrueTile(object)
+end
+
+--- exact float tile coords (x512 / 512) of API.GetTrueTile, falls back to API.PlayerCoordfloat().
+---@param object number|nil entity address, defaults to the local player
+---@return FFPOINT
+function API.GetTrueTileF(object)
+	if object == nil then
+		return GetTrueTileF()
+	end
+	return GetTrueTileF(object)
+end
+
+--- the server ("true") facing in degrees, 0 = north, 90 = east, from the movement path queue
+--- (direction of the newest step). while walking the render facing turns a tick or more behind.
+--- falls back to API.calculatePlayerOrientation() when standing or fewer than 2 queued steps.
+---@param object number|nil entity address, defaults to the local player
+---@return number degrees 0..360
+function API.GetTrueOrientation(object)
+	if object == nil then
+		return GetTrueOrientation()
+	end
+	return GetTrueOrientation(object)
+end
+
+--- local player server ("true") tile, same as API.GetTrueTile().
+---@return WPOINT
+function API.GetLocalPlayerTrueTile()
+	return GetLocalPlayerTrueTile()
+end
+
+--- local player server ("true") tile as exact float coords, same as API.GetTrueTileF().
+---@return FFPOINT
+function API.GetLocalPlayerTrueTileF()
+	return GetLocalPlayerTrueTileF()
+end
+
+--- local player server ("true") facing in degrees, same as API.GetTrueOrientation().
+---@return number degrees 0..360
+function API.GetLocalPlayerTrueOrientation()
+	return GetLocalPlayerTrueOrientation()
+end
+
 ---@param addr number
 ---@return WPOINT
 function API.GetProjectileDestination(addr)
@@ -2292,6 +2344,18 @@ end
 ---@return boolean
 function API.DoAction_Interface(command1, command2, command3, numbererface1, numbererface2, numbererface3, offset, pixel_x, pixel_y)
 	return DoAction_Interface(command1, command2, command3, numbererface1, numbererface2, numbererface3, offset, pixel_x, pixel_y)
+end
+
+---Drag an item from one interface slot to another
+---@param from_interface number
+---@param from_component number
+---@param from_slot number
+---@param to_interface number
+---@param to_component number
+---@param to_slot number
+---@return boolean
+function API.DoAction_Drag(from_interface, from_component, from_slot, to_interface, to_component, to_slot)
+	return DoAction_Drag(from_interface, from_component, from_slot, to_interface, to_component, to_slot)
 end
 
 --1 That mini logout button attached to minimap
