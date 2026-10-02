@@ -709,18 +709,6 @@ function API.Write_ScripCuRunning0(status)
 	return Write_ScripCuRunning0(status)
 end
 
----@param status string
----@return void
-function API.Write_ScripCuRunning1(status)
-	return Write_ScripCuRunning1(status)
-end
-
----@param status string
----@return void
-function API.Write_ScripCuRunning2(status)
-	return Write_ScripCuRunning2(status)
-end
-
 --- Return array of bank inventory
 ---@return IInfo[]
 function API.FetchBankInvArray()
@@ -1372,7 +1360,7 @@ end
 ---   Id            number     entity/object id (item id for ground items, 1 for players)
 ---   Name          string     entity name (empty for unnamed types like projectiles)
 ---   Action        string     first non-empty action/menu option text (empty when none)
----   Type          number     0=Object 1=NPC 2=Player 3=GroundItem 4=Highlight 5=Projectile 8=Effect 12=Decor 13/17=Pathing
+---   Type          number     0=Object 1=NPC 2=Player 3=GroundItem 4=Highlight 5=Projectile 8=Effect 12=Decor 13=Scenery 17=Wall (13/17 are OSRS-only)
 ---   Floor         number     plane/height level
 ---   Life          number     NPC life points/hitpoints (type-specific; objects store orientation here)
 ---   Anim          number     animation id for NPCs/players, noted flag for ground items
@@ -1622,7 +1610,7 @@ function API.VC_FindPSett(id)
 	return VC_FindPSett(id)
 end
 
--- use this instead VB_FindPSett. Almost same as VB_FindPSett
+-- use this instead VP_FindPSett. Almost same as VP_FindPSett
 ---@param id number 
 ---@return VB
 function API.VB_FindPSettinOrder(id)
@@ -3017,6 +3005,15 @@ end
 ---@return boolean True if the interface is open (has size > 0), false otherwise
 function API.GetInterfaceOpenBySize(ID)
 	return GetInterfaceOpenBySize(ID)
+end
+
+--- Checks if an interface is open/loaded by its full id triple (id1, id2, id3).
+---@param id1 number Interface group ID
+---@param id2 number Component ID
+---@param id3 number Slot ID
+---@return boolean True if the interface is open, false otherwise
+function API.Interface_IsOpen(id1, id2, id3)
+	return Interface_IsOpen(id1, id2, id3)
 end
 
 ---@param item number

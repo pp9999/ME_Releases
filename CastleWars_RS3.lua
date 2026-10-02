@@ -129,6 +129,8 @@ local TASKS = {
     },
 }
 
+local INTERFACE_RESULTS = { id1 = 985, id2 = 88, id3 = -1 }
+
 -- ────────────────────────────────────────────────────────────────────────────
 --  HELPERS
 -- ────────────────────────────────────────────────────────────────────────────
@@ -220,20 +222,6 @@ local function actIfInAreaAndNear(task)
     return true
 end
 
---- Debug: dump nearby objects/NPCs so you can read the doactions from console.
-local function dumpNearby(maxdist)
-    print(string.format("[DBG] player floor=%d", API.GetFloorLv_2()))
-    local objs = API.ReadAllObjectsArray({ 0, 1, 12 }, {}, {})
-    for _, o in ipairs(objs) do
-        if o.Distance and o.Distance <= maxdist then
-            print(string.format(
-                "[DBG] type=%d id=%d name=%s floor=%s dist=%d action=%s",
-                o.Type, o.Id, tostring(o.Name), tostring(o.Floor),
-                math.floor(o.Distance), tostring(o.Action or "")))
-        end
-    end
-end
-
 --- Accept the team/enter dialogue if the waiting-room prompt is up.
 local function handleDialog()
     if API.Dialog_Option("Yes, please!") then
@@ -285,6 +273,7 @@ end)
 -- ────────────────────────────────────────────────────────────────────────────
 
 API.Write_LoopyLoop(true)
+::continue::
 while API.Read_LoopyLoop() do
 
     if not API.PlayerLoggedIn() then
@@ -293,8 +282,11 @@ while API.Read_LoopyLoop() do
         break
     end
 
-    if DEBUG_SCAN then
-        dumpNearby(DEBUG_RANGE)
+    if API.Interface_IsOpen(INTERFACE_RESULTS.id1,INTERFACE_RESULTS.id2,INTERFACE_RESULTS.id3) then
+        --API.DoAction_Interface(0xc2,0xffffffff,1,985,88,-1,API.OFF_ACT_GeneralInterface_route)
+        API.DoAction_Interface(0xc2,-1,1,INTERFACE_RESULTS.id1,INTERFACE_RESULTS.id2,INTERFACE_RESULTS.id3,API.OFF_ACT_GeneralInterface_route)
+        API.RandomSleep2(1200, 800, 2000)
+        goto continue
     end
 
     handleDialog()
