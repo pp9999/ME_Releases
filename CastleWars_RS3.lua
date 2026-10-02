@@ -273,7 +273,6 @@ end)
 -- ────────────────────────────────────────────────────────────────────────────
 
 API.Write_LoopyLoop(true)
-::continue::
 while API.Read_LoopyLoop() do
 
     if not API.PlayerLoggedIn() then
@@ -286,7 +285,6 @@ while API.Read_LoopyLoop() do
         --API.DoAction_Interface(0xc2,0xffffffff,1,985,88,-1,API.OFF_ACT_GeneralInterface_route)
         API.DoAction_Interface(0xc2,-1,1,INTERFACE_RESULTS.id1,INTERFACE_RESULTS.id2,INTERFACE_RESULTS.id3,API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(1200, 800, 2000)
-        goto continue
     end
 
     handleDialog()
