@@ -1,0 +1,31 @@
+{
+  "servers": {
+    "botclient-rs3": {
+      "type": "stdio",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/MemoryError/botclientmcp/mcp_botclient.py",
+        "--bot-rpc",
+        "http://127.0.0.1:18642"
+      ]
+    },
+    "botclient-runelite": {
+      "type": "stdio",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/MemoryError/botclientmcp/mcp_botclient.py",
+        "--bot-rpc",
+        "http://127.0.0.1:18643"
+      ]
+    },
+    "botclient-osrs": {
+      "type": "stdio",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/MemoryError/botclientmcp/mcp_botclient.py",
+        "--bot-rpc",
+        "http://127.0.0.1:18644"
+      ]
+    }
+  }
+}
