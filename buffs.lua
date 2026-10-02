@@ -411,6 +411,8 @@ Buffs.BUFF.SKILLING.YourAbilityToFishWithinThe = { name = "Your ability to fish 
 Buffs.BUFF.SKILLING.YourSkillAtTheSandcastleBuilding = { name = "Your skill at the 'Sandcastle Building' activity is improved.<br>XP gain is increased by +10%.<br>You can shovel sand up to 60 times before you need a rest.<br>This effect lasts 15 mins.", id = 51733 }
 Buffs.BUFF.SKILLING.Havoc = { name = "Havoc", id = 53378 }
 Buffs.BUFF.SKILLING.EssenceCorruptionAdrenaline = { name = "Essence Corruption: Adrenaline", id = 33963 }
+Buffs.BUFF.SKILLING.VampyreSlayer = { name = "Vampyre slayer - Boosts your damage against vampyric creatures by 15%.", id = 36578 }
+Buffs.BUFF.SKILLING.VitalDrain = { name = "Vital drain - Steals health from enemies hit.", id = 36569 }
 
 Buffs.BUFF.SUMMON = {}
 Buffs.BUFF.SUMMON.FamiliarSummoned = { name = "Familiar Summoned", id = 26095 }
@@ -512,6 +514,7 @@ Buffs.DEBUFF.MISC.Pulverised = { name = "Pulverised", id = 14266 }
 Buffs.DEBUFF.MISC.Severed = { name = "Severed", id = 14209 }
 Buffs.DEBUFF.MISC.ApmekenSBurden = { name = "Apmeken's Burden", id = 35063 }
 Buffs.DEBUFF.MISC.Interceptor = { name = "Interceptor", id = 35067 }
+Buffs.DEBUFF.MISC.AfflictedWound = { name = "Afflicted Wound", id = 36579 }
 
 Buffs.DEBUFF.POTS = {}
 Buffs.DEBUFF.POTS.PowerburstPotionIsOnCooldown = { name = "Powerburst potion is on cooldown.", id = 48960 }

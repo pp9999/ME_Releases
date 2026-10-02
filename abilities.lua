@@ -60,10 +60,12 @@ Abilities.HP.UndeadSlayer = { name = "Undead Slayer", id = 1524 }
 Abilities.HP.Limitless = { name = "Limitless", id = 1522 }
 Abilities.HP.SlayerSInsight = { name = "Slayer's Insight", id = 1523 }
 Abilities.HP.KuradalSFavour = { name = "Kuradal's Favour", id = 1519 }
-Abilities.HP.EatFood = { name = "Eat Food", id = 1601 }
+Abilities.HP.EatFood = { name = "Eat Food", id = 36566 }
 Abilities.HP.PhantomStrike = { name = "Phantom Strike.", id = 49552 }
 Abilities.HP.DeepBurn = { name = "Deep Burn", id = 49553 }
 Abilities.HP.SoulfireDamageOverTime = { name = "Soulfire - Damage over time", id = 30372 }
+Abilities.HP.VampyreSlayer = { name = "Vampyre Slayer", id = 36568 }
+Abilities.HP.VitalDrain = { name = "Vital Drain", id = 36569 }
 
 Abilities.INCANTATION = {}
 Abilities.INCANTATION.LifeTransfer = { name = "Life Transfer", id = 30704 }
@@ -107,6 +109,7 @@ Abilities.MAGIC.MagmaTempestTargeted = { name = "Magma Tempest (Targeted)", id =
 Abilities.MAGIC.GreaterSunshine = { name = "Greater Sunshine", id = 20184 }
 Abilities.MAGIC.TempestOfArmadyl = { name = "Tempest of Armadyl", id = 47055 }
 Abilities.MAGIC.GreaterSonicWave = { name = "Greater Sonic Wave", id = 27432 }
+Abilities.MAGIC.SanguineOffering = { name = "Sanguine offering", id = 36573 }
 
 Abilities.MELEE = {}
 Abilities.MELEE.BladedDive = { name = "Bladed Dive", id = 30331 }

@@ -534,7 +534,7 @@ local stageFunctions = {
             local health = API.GetHPrecent()
             print("Health: " .. health)
             local canEat = UTILS.canUseSkill("Eat Food")
-            print("Can Eat: " .. canEat)
+            print("Can Eat: " .. tostring(canEat))
             if health < 50 and canEat == true then
                 while API.Read_LoopyLoop() and health < 80 do
                     UseAbilityByName("Eat Food")
