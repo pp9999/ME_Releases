@@ -133,8 +133,17 @@ local TASKS = {
 --  HELPERS
 -- ────────────────────────────────────────────────────────────────────────────
 
+-- API.Write_ScripCuRunning0 is deprecated. Status is shown through the new
+-- direct ImGui wrapper (ClearRender + DrawImGui) registered further below.
+local UI = {
+    status = "Castle Wars: starting",
+    floor  = 0,
+    dist   = -1,   -- -1 = no target yet
+}
+
+--- Update the overlay status text (replaces the old ScriptRunning0 line).
 local function status(msg)
-    API.Write_ScripCuRunning0(msg)
+    UI.status = msg
 end
 
 local function inArea(area)
@@ -204,7 +213,9 @@ local function actIfInAreaAndNear(task)
     end
 
     -- 4. DOACTION
-    status(string.format("%s (z=%d dist %d)", task.name, API.GetFloorLv_2(), math.floor(obj.Distance)))
+    UI.floor = API.GetFloorLv_2()
+    UI.dist  = math.floor(obj.Distance)
+    status(string.format("%s (z=%d dist %d)", task.name, UI.floor, UI.dist))
     API.DoAction_Object1(task.action, API.OFF_ACT_GeneralObject_route0, task.ids, maxd)
     return true
 end
@@ -236,7 +247,38 @@ end
 -- ────────────────────────────────────────────────────────────────────────────
 
 API.SetMaxIdleTime(5)          -- auto anti-idle while AFK in the game
-API.Write_ScripCuRunning0("Castle Wars: starting")
+status("Castle Wars: starting")
+
+-- Text overlay via the new ImGui wrapper. Register the render callback once,
+-- before the loop; update UI.* values inside the loop and the overlay redraws.
+ClearRender()
+DrawImGui(function()
+    ImGui.SetNextWindowPos(20, 120, ImGuiCond.FirstUseEver)
+    ImGui.SetNextWindowSize(400, 0, ImGuiCond.FirstUseEver)
+
+    if ImGui.Begin("Castle Wars##cw_rs3_ui") then
+        ImGui.TextColored(0.40, 0.80, 1.00, 1.00, "Castle Wars (RS3)")
+        ImGui.Separator()
+
+        ImGui.Text("Status:")
+        ImGui.SameLine()
+        ImGui.TextColored(1.00, 0.85, 0.20, 1.00, UI.status)
+
+        ImGui.Text(string.format("Floor: %d", UI.floor))
+
+        if UI.dist >= 0 then
+            ImGui.Text(string.format("Target distance: %d", UI.dist))
+        else
+            ImGui.Text("Target distance: -")
+        end
+
+        ImGui.Separator()
+        if ImGui.Button("Stop", 100, 22) then
+            API.Write_LoopyLoop(false)
+        end
+    end
+    ImGui.End()
+end)
 
 -- ────────────────────────────────────────────────────────────────────────────
 --  MAIN LOOP
@@ -270,9 +312,11 @@ while API.Read_LoopyLoop() do
 
     if not acted then
         status("Castle Wars: idle (no area/action)")
+        UI.dist = -1
         API.RandomSleep2(1200, 800, 2000)
     end
 
 end
 
 status("Castle Wars: stopped")
+ClearRender()   -- remove the overlay once the loop has ended
