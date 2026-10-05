@@ -22,6 +22,29 @@ local WHIRLIGIG_IDS = {28711, 28712, 28713, 28714, 28715, 28716, 28717, 28718, 2
 local BUFF_ID = 52770
 local MAX_BUFF_STACKS = API.GetVarbitValue(50818) == 1 and 5 or 3 --Thanks Higgins
 
+local INactionWhirls = {}
+local INACTION_WHIRLS_MAX = 5
+
+-- FIFO of the last 5 whirligig Unique_Ids; oldest is dropped once full
+local function addINactionWhirl(uniqueId)
+    if type(uniqueId) ~= "number" then
+        return
+    end
+    table.insert(INactionWhirls, uniqueId)
+    if #INactionWhirls > INACTION_WHIRLS_MAX then
+        table.remove(INactionWhirls, 1)
+    end
+end
+
+local function isINactionWhirl(uniqueId)
+    for _, id in ipairs(INactionWhirls) do
+        if id == uniqueId then
+            return true
+        end
+    end
+    return false
+end
+
 local States = {
     INIT = "INIT",
     HANDLE_CROC = "HANDLE_CROC",
@@ -118,7 +141,7 @@ local function findWhirligigByName(name)
     end
 
     for i, whirlie in ipairs(foundWhirlies) do
-        if whirlie and whirlie.Name == name then
+        if whirlie and whirlie.Name == name and not isINactionWhirl(whirlie.Unique_Id) then
             return whirlie
         end
     end
@@ -128,9 +151,14 @@ end
 local function catchWhirligig(name)
     local whirlie = findWhirligigByName(name)
     if whirlie and whirlie.Id then
-        API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, {whirlie.Id}, 30)
+        ---API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, {whirlie.Id}, 30)
+        if whirlie.Distance < 30 then
+            addINactionWhirl(whirlie.Unique_Id)
+            API.DoAction_NPC__Direct(0x29, API.OFF_ACT_InteractNPC_route, whirlie)
+        end
         API.logInfo("Catching: " .. name)
-        sleepTickRandom(0)
+        API.RandomSleep2(500, 3600, 8400)
+        stateMachine.whirligigsCaught = stateMachine.whirligigsCaught + 1
         return true
     end
     API.logWarn("Could not find whirligig: " .. name)
@@ -258,7 +286,6 @@ API.logWarn("=== Ernie Whirligigs Started ===")
 API.logInfo("Initial Whirligig: " .. INITIAL_WHIRLIGIG)
 API.logInfo("Stacking Whirligig: " .. STACKING_WHIRLIGIG)
 API.logInfo("Max Buff Stacks: " .. MAX_BUFF_STACKS)
-API.Write_fake_mouse_do(false)
 API.SetDrawTrackedSkills(true)
 API.SetDrawLogs(true)
 API.GetTrackedSkills()
