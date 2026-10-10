@@ -235,16 +235,6 @@ function API.ReadFriendChatList()
 	return ReadFriendChatList()
 end
 
---Hide rendering, switch
-function API.HidePlayers()
-	return HidePlayers()
-end
-
---Hide rendering, switch
-function API.HideNPCs()
-	return HideNPCs()
-end
-
 --Read localplayer name from data pointer
 ---@return string
 function API.ReadLPNameP()
@@ -3867,7 +3857,7 @@ function Inventory:CheckInvStuffCheckAllSS(items, size, sizeorstack) end
 function Inventory:DoAction(target, action, offset) end
 
 --- Checks whether the Inventory contains any food items.
---- Food is identified by ge_category (param 2195) = 12 with positive healing values (params 963 or 1397).
+--- Food must be unnoted, have an Eat option, and have a positive healing value (params 963, 642 or 964).
 ---@return boolean true if the Inventory contains any food items, false otherwise.
 function Inventory:HasFood() end
 

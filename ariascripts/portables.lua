@@ -13,7 +13,7 @@ local SCENE_OBJECTS = {
     FLETCHER = 106599, --might also be 106598?
     RANGE = 89768,
     WELL = 89770,
-    CRAFTER = 106595,
+    CRAFTER = 106594,
     BRAZIER = 106601, --could also be 106602
 
     BANK_CHEST = 125115, --Fort Forinthry bank chest
@@ -266,9 +266,9 @@ while (API.Read_LoopyLoop()) do
         printProgressReport()
         API.DoRandomEvents()
 
-        --stop script if no exp gained in the past 30s
-        if (os.time() - lastTimeGainedXp) > 30 then
-            print("No exp gained in the last 30 seconds")
+        --stop script if no exp gained in the past 15s
+        if (os.time() - lastTimeGainedXp) > 15 then
+            print("No exp gained in the last 15 seconds")
             API.Write_LoopyLoop(false)
         elseif API.isProcessing() or (PORTABLES[chosenPortable].id == SCENE_OBJECTS.BRAZIER and API.CheckAnim(200)) then
             API.RandomSleep2(600, 50, 100)
@@ -279,7 +279,7 @@ while (API.Read_LoopyLoop()) do
                 --The script currently doesn't validate whether the selected item in the creation interface is the correct item
                 --which could be a problem if there are multiple items that use the same ingredients i.e. urns
                 print("Interacting with portable")
-                if API.DoAction_Object1(PORTABLES[chosenPortable].action, 0, { PORTABLES[chosenPortable].id }, 5) then
+                if API.DoAction_Object1(PORTABLES[chosenPortable].action,API.OFF_ACT_GeneralObject_route0, { PORTABLES[chosenPortable].id }, 5) then
                     if PORTABLES[chosenPortable].id == SCENE_OBJECTS.BRAZIER then
                         print("Waiting for animation")
 		                API.RandomSleep2(1000, 50, 100)
@@ -300,7 +300,8 @@ while (API.Read_LoopyLoop()) do
             loadPreset()
         elseif API.VB_FindPSettinOrder(9932, 0).state > 0 then
             print("Loading last preset")
-            if API.DoAction_Object1(0x33, 240, { SCENE_OBJECTS.BANK_CHEST }, 5) then
+            if API.DoAction_Object1(0x33,API.OFF_ACT_GeneralObject_route3,{ SCENE_OBJECTS.BANK_CHEST },5) then
+            --if API.DoAction_Object1(0x33, 240, { SCENE_OBJECTS.BANK_CHEST }, 5) then
                 waitUntil(hasAllItems, 2)
             end
         else

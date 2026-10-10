@@ -48,8 +48,8 @@
 ---@field Action string -- first non-empty action/menu option text (empty when none)
 ---@field Floor number -- plane/height level
 ---@field Amount number -- stack amount for ground items
----@field Type number -- 0=Object 1=NPC 2=Player 3=GroundItem 4=Highlight 5=Projectile 8=Effect 12=Decor 13/17=Pathing
----@field Bool1 number -- per-type flag: 0 = has action text, 1 = no action available (OSRS ground items store the amount)
+---@field Type number -- 0=Object 1=NPC 2=Player 3=GroundItem 4=Highlight 5=Projectile 8=Effect 12=Decor 13=Scenery 17=Wall (13/17 are OSRS-only)
+---@field Bool1 number -- per-type flag: 0 = has action text, 1 = no action available
 ---@field ItemIndex number -- legacy index into Parsed_ItemsL (unused, stays 0)
 ---@field ViewP number -- render holder screen timer/on-screen value
 ---@field ViewF number -- entity orientation in degrees (0-360)

@@ -734,10 +734,8 @@ API.SetDrawTrackedSkills(true)
 API.ScriptRuntimeString()
 API.GetTrackedSkills()
 
-API.Write_ScripCuRunning1("Current Task: Runespan")
-
 while API.Read_LoopyLoop() do
-    API.Write_ScripCuRunning2("Elapsed Time: " .. API.ScriptRuntimeString() .. " | LVL: " .. getRunecraftingLevel())
+    API.Write_ScripCuRunning0("Elapsed Time: " .. API.ScriptRuntimeString() .. " | LVL: " .. getRunecraftingLevel())
     API.DoRandomEvents()
     gameStateChecks()
     idleCheck()

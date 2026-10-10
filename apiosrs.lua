@@ -348,4 +348,166 @@ end
 
 
 
+--============================================================================
+-- Entity actions. Interact with the game world without searching the mouse
+-- menu: every entry does a real mouse click on the entity's own screen pixel
+-- (AllObject.Pixel_XYZ) and rewrites the action it produced. No pixel
+-- arguments are ever passed by scripts.
+--
+-- operation codes are legacy and map to 1-based menu options:
+--   NPC      9..13          -> options 1..5   (9 = default click, e.g. Talk-to)
+--   OBJECT   3..7           -> options 1..5   (3 = default click, e.g. Chop down)
+--   GROUND   20,21,22,24,25 -> options 1..5   (20 = Take; note 23 is walk)
+--   PLAYER   2045..2052     -> options 1..8
+--   WALK     23
+--
+-- Selection rules:
+--   npc/player: by Unique_Id (unique per entity, even with 1k same-id on screen).
+--     Unique_Id is regenerated every client session - always resolve it from
+--     ReadAllObjectsArray at runtime (health/coords/name), never hardcode.
+--   objects/ground items: by config id + world tile (they have no unique id)
+--============================================================================
+
+--- Act on one specific entity table from ReadAllObjectsArray. The caller is
+--- responsible for the entity being loaded in.
+-- @param obj AllObject
+-- @param operation number
+-- @return boolean
+function APIOSRS.DoAction_Direct(obj, operation)
+	return OSRS_DoAction_Direct(obj, operation)
+end
+
+--- NPC/player by Unique_Id: first matching entity in the list, then Direct.
+--- NOTE: Unique_Id is generated per client session (npc/player runtime key).
+--- Never hardcode it - resolve it at runtime from ReadAllObjectsArray, for
+--- example by health/coordinates/name, then pass it here.
+-- @param uid number          AllObject.Unique_Id
+-- @param operation number
+-- @param distance number|nil default 10
+-- @return boolean
+function APIOSRS.DoAction_UID(uid, operation, distance)
+	distance = distance or 10
+	return OSRS_DoAction_UID(uid, operation, distance)
+end
+
+--- Nearest NPC by config id.
+-- @param id number
+-- @param operation number
+-- @param distance number|nil default 10
+-- @return boolean
+function APIOSRS.DoAction_NPC(id, operation, distance)
+	distance = distance or 10
+	return OSRS_DoAction_NPC(id, operation, distance)
+end
+
+--- Nearest NPC by name.
+-- @param name string
+-- @param operation number
+-- @param distance number|nil default 10
+-- @return boolean
+function APIOSRS.DoAction_NPC_str(name, operation, distance)
+	distance = distance or 10
+	return OSRS_DoAction_NPC_str(name, operation, distance)
+end
+
+--- Nearest player by name.
+-- @param name string
+-- @param operation number
+-- @param distance number|nil default 10
+-- @return boolean
+function APIOSRS.DoAction_Player(name, operation, distance)
+	distance = distance or 10
+	return OSRS_DoAction_Player(name, operation, distance)
+end
+
+--- Nearest object by config id.
+-- @param id number
+-- @param operation number
+-- @param distance number|nil default 10
+-- @return boolean
+function APIOSRS.DoAction_DOBJ(id, operation, distance)
+	distance = distance or 10
+	return OSRS_DoAction_DOBJ(id, operation, distance)
+end
+
+--- Nearest object by cache name (LocType).
+-- @param name string
+-- @param operation number
+-- @param distance number|nil default 10
+-- @return boolean
+function APIOSRS.DoAction_DOBJ_str(name, operation, distance)
+	distance = distance or 10
+	return OSRS_DoAction_DOBJ_str(name, operation, distance)
+end
+
+--- Object by config id at an exact world tile.
+-- @param id number
+-- @param operation number
+-- @param tilex number
+-- @param tiley number
+-- @param plane number|nil default 0 (0 = any plane)
+-- @return boolean
+function APIOSRS.DoAction_DOBJ_Tile(id, operation, tilex, tiley, plane)
+	plane = plane or 0
+	return OSRS_DoAction_DOBJ_Tile(id, operation, WPOINT.new(tilex, tiley, plane))
+end
+
+--- Nearest ground item by config id.
+-- @param id number
+-- @param operation number
+-- @param distance number|nil default 10
+-- @return boolean
+function APIOSRS.DoAction_GI(id, operation, distance)
+	distance = distance or 10
+	return OSRS_DoAction_GI(id, operation, distance)
+end
+
+--- Nearest ground item by cache name (ObjType).
+-- @param name string
+-- @param operation number
+-- @param distance number|nil default 10
+-- @return boolean
+function APIOSRS.DoAction_GI_str(name, operation, distance)
+	distance = distance or 10
+	return OSRS_DoAction_GI_str(name, operation, distance)
+end
+
+--- Ground item by config id at an exact world tile.
+-- @param id number
+-- @param operation number
+-- @param tilex number
+-- @param tiley number
+-- @param plane number|nil default 0 (0 = any plane)
+-- @return boolean
+function APIOSRS.DoAction_GI_Tile(id, operation, tilex, tiley, plane)
+	plane = plane or 0
+	return OSRS_DoAction_GI_Tile(id, operation, WPOINT.new(tilex, tiley, plane))
+end
+
+--- Walk to a world tile by clicking its screen position.
+-- @param tilex number
+-- @param tiley number
+-- @param plane number|nil default 0
+-- @return boolean
+function APIOSRS.DoAction_Tile(tilex, tiley, plane)
+	plane = plane or 0
+	return OSRS_DoAction_Tile(WPOINT.new(tilex, tiley, plane))
+end
+
+--- Interface action: click a component and substitute the option byte of the
+--- widget task the click produced. The widget/slot/item come from the click;
+--- only the option (raw engine byte: bank withdraw = 1, inventory "Wield" = 3)
+--- is rewritten. Sniff valid option bytes with the key132 "DO:action" dump.
+--- Component triple matches the interface draw cache ids, e.g. inventory
+--- slot 1 = (149, 0, 1), bank slot 22 = (12, 12, 22).
+-- @param id1 number         interface group id (e.g. 149 inventory, 12 bank)
+-- @param id2 number         container component id (e.g. 0 inventory, 12 bank)
+-- @param id3 number         slot/child id (e.g. 1)
+-- @param option number      raw engine option byte (desc[2]); 0 = keep clicked
+-- @param item_id number|nil item id override (desc[4]); 0/nil = keep clicked
+-- @return boolean
+function APIOSRS.DoAction_Interface2(id1, id2, id3, option, item_id)
+	return OSRS_DoAction_Interface2(id1, id2, id3, option, item_id or 0)
+end
+
 return APIOSRS
