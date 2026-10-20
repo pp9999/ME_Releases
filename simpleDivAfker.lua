@@ -16,7 +16,7 @@ while API.Read_LoopyLoop() do
     print(tostring(API.CheckAnim(100)) .. " " .. tostring(Inventory:IsFull()))
     if not API.CheckAnim(100) then
         if not Inventory:IsFull() then
-            API.DoAction_NPC(0x2a,API.OFF_ACT_InteractNPC_route,{ 18159 },10)
+            API.DoAction_NPC(0x2a,API.OFF_ACT_InteractNPC_route,{ 18150 },10)
         else
            API.DoAction_Object1(0xc8,API.OFF_ACT_GeneralObject_route0,{ 87306, 93489 },20);          
         end

@@ -36,8 +36,8 @@
 ---@field modkey number
 
 ---@class AllObject -- universal struct for NPCs, players, objects, ground items, projectiles, effects and decor
----@field Mem number -- memory address of the object data struct (passed with action dispatch)
----@field MemE number -- memory address of the entity render holder (used for orientation)
+---@field Mem number -- memory address of the object data struct (passed with action dispatch); type 6/99 tiles: raw cell link byte address, or the deciding wall record address for type 99
+---@field MemE number -- memory address of the entity render holder (used for orientation); type 6/99 tiles: mapSquare (occupancy word at +0xED70)
 ---@field TileX number -- raw unnormalized tile x (RS3: 512 units per tile, OSRS: 128; see Tile_XYZ)
 ---@field TileY number -- raw unnormalized tile y (RS3: 512 units per tile, OSRS: 128; see Tile_XYZ)
 ---@field TileZ number -- raw unnormalized tile z/height
@@ -48,7 +48,7 @@
 ---@field Action string -- first non-empty action/menu option text (empty when none)
 ---@field Floor number -- plane/height level
 ---@field Amount number -- stack amount for ground items
----@field Type number -- 0=Object 1=NPC 2=Player 3=GroundItem 4=Highlight 5=Projectile 8=Effect 12=Decor 13=Scenery 17=Wall (13/17 are OSRS-only)
+---@field Type number -- 0=Object 1=NPC 2=Player 3=GroundItem 4=Highlight 5=Projectile 6=WalkTile 8=Effect/Wall 9=Chunk 10=Platform 12=Decor 13=Scenery 17=Wall 99=CombinedBlocker (13/17 are OSRS-only; 6/9/10/99 are RS3 map data)
 ---@field Bool1 number -- per-type flag: 0 = has action text, 1 = no action available
 ---@field ItemIndex number -- legacy index into Parsed_ItemsL (unused, stays 0)
 ---@field ViewP number -- render holder screen timer/on-screen value

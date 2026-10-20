@@ -1342,15 +1342,15 @@ end
 
 --- Returns all entities currently tracked by the engine, one AllObject per entity (full class in usertypes.lua).
 --- AllObject fields:
----   Mem           number     memory address of the object data struct (used in action dispatch)
----   MemE          number     memory address of the entity render holder (used for orientation)
+---   Mem           number     memory address of the object data struct (used in action dispatch); type 6/99 tiles: cell link byte addr, or deciding wall record addr (type 99)
+---   MemE          number     memory address of the entity render holder (used for orientation); type 6/99 tiles: mapSquare (occupancy at +0xED70)
 ---   TileX/Y/Z     number     raw unnormalized tile coords (RS3: 512 units per tile, OSRS: 128)
 ---   Tile_XYZ      FFPOINT    normalized world tile coords (x,y = tile, z = floor)
 ---   Pixel_XYZ     WPOINT     on-screen canvas pixel coords
 ---   Id            number     entity/object id (item id for ground items, 1 for players)
 ---   Name          string     entity name (empty for unnamed types like projectiles)
 ---   Action        string     first non-empty action/menu option text (empty when none)
----   Type          number     0=Object 1=NPC 2=Player 3=GroundItem 4=Highlight 5=Projectile 8=Effect 12=Decor 13=Scenery 17=Wall (13/17 are OSRS-only)
+---   Type          number     0=Object 1=NPC 2=Player 3=GroundItem 4=Highlight 5=Projectile 6=WalkTile 8=Effect/Wall 9=Chunk 10=Platform 12=Decor 13=Scenery 17=Wall 99=CombinedBlocker (13/17 are OSRS-only; 6/9/10/99 are RS3 map data)
 ---   Floor         number     plane/height level
 ---   Life          number     NPC life points/hitpoints (type-specific; objects store orientation here)
 ---   Anim          number     animation id for NPCs/players, noted flag for ground items
@@ -2237,11 +2237,38 @@ function API.DoAction_Dive_Tile_sleep(normal_tile,sleep)
 	return DoAction_Dive_Tile(normal_tile,sleep)
 end
 
+--For Dive, only fires when the landing tile is free of objects (types 0 and 12).
+--errorrange: 0 = fail on an occupied tile; 1-7 = aim at the closest free tile around it instead
+---@param normal_tile WPOINT
+---@param errorrange number
+---@param sleep number
+---@return boolean
+function API.DoAction_Dive_Tile2(normal_tile, errorrange, sleep)
+	return DoAction_Dive_Tile2(normal_tile, errorrange, sleep or 0)
+end
+
+--For Bladed Dive, only fires when the landing tile is free of objects (types 0 and 12).
+--errorrange: 0 = fail on an occupied tile; 1-7 = aim at the closest free tile around it instead
+---@param normal_tile WPOINT
+---@param errorrange number
+---@param sleep number
+---@return boolean
+function API.DoAction_BDive_Tile2(normal_tile, errorrange, sleep)
+	return DoAction_BDive_Tile2(normal_tile, errorrange, sleep or 0)
+end
+
+--Aim and fire Surge towards a tile. The landing is predicted from live objects (types 0 and 12,
+--player floor only): straight N/S/E/W goes up to 10 tiles and stops before the first object;
+--diagonal passes through objects but the 10th tile (landing) must be free.
+--errorrange: already-there tolerance and, when 1-7, the free-tile rescue radius around the expected
+--landing (aim at the closest free tile instead and re-derive direction and landing from it).
+--Draws the predicted path while API.Write_Doaction_paint(true) is active (5s timeout):
+--path green, last tile blue on a full surge, red when an object stops it; on failure only the failed tile purple.
 ---@param normal_tile WPOINT
 ---@param errorrange number
 ---@return boolean
-function API.DoAction_Surge_Tile(normal_tile, errorrange)
-	return DoAction_Surge_Tile(normal_tile, errorrange)
+function API.DoAction_Surge_Tile2(normal_tile, errorrange)
+	return DoAction_Surge_Tile2(normal_tile, errorrange)
 end
 
 --Auto-retaliate button
@@ -2322,6 +2349,16 @@ end
 ---@return boolean
 function API.DoAction_Interface(command1, command2, command3, numbererface1, numbererface2, numbererface3, offset, pixel_x, pixel_y)
 	return DoAction_Interface(command1, command2, command3, numbererface1, numbererface2, numbererface3, offset, pixel_x, pixel_y)
+end
+
+---Select an enabled option in an open native radio/list. Already selected is a no-op.
+---@param interface number Interface group ID
+---@param component number Component ID
+---@param child number Child ID (-1 for the component itself)
+---@param optionId number Logical option ID, not its position or child ID
+---@return boolean accepted True when queued; the client processes native change events normally
+function API.DoAction_InterfaceSelect(interface, component, child, optionId)
+    return DoAction_InterfaceSelect(interface, component, child, optionId)
 end
 
 ---Drag an item from one interface slot to another
@@ -2505,6 +2542,21 @@ function API.DoAction_Object_r(action, offset, obj, maxdistance, tile, tile_rang
 	return DoAction_Object_r(action, offset, obj, maxdistance, tile, tile_range)
 end
 
+---Read whether one valid furniture preview is selected and native placement is available.
+---This snapshot does not validate a target tile or reserve the current selection.
+---@return boolean ready
+function API.IsFurniturePlacementReady()
+	return IsFurniturePlacementReady()
+end
+
+---Place the currently selected furniture preview at a world tile without walking.
+---Only one selected furniture item is supported. Uses the existing preview rotation.
+---@param tile WPOINT World coordinates; z is plane 0-3.
+---@return boolean accepted True means queued, not server-confirmed placement.
+function API.DoAction_PlaceFurniture(tile)
+	return DoAction_PlaceFurniture(tile)
+end
+
 ---@param normal_tile WPOINT
 ---@return boolean
 function API.DoAction_Tile(normal_tile)
@@ -2548,6 +2600,21 @@ end
 ---@return boolean
 function API.DoAction_WalkerW(normal_tile)
 	return DoAction_WalkerW(normal_tile)
+end
+
+---NOTE: for now the goal tile should not be further than 150 tiles away.
+---@param goal WPOINT
+---@param allow_map_links boolean|nil
+---@return boolean
+function API.StarPathReachable(goal, allow_map_links)
+	return StarPathReachable(goal, allow_map_links)
+end
+
+---NOTE: for now the goal tile should not be further than 150 tiles away.
+---@param goal WPOINT
+---@return boolean arrived
+function API.StarPathWalker(goal)
+	return StarPathWalker(goal)
 end
 
 ---@param action number

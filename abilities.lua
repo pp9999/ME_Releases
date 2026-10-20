@@ -79,6 +79,7 @@ Abilities.INCANTATION.LesserBoneShield = { name = "Lesser Bone Shield", id = 306
 Abilities.INCANTATION.GreaterBoneShield = { name = "Greater Bone Shield", id = 30628 }
 Abilities.INCANTATION.Darkness = { name = "Darkness", id = 30700 }
 Abilities.INCANTATION.InvokeLordOfBones = { name = "Invoke Lord of Bones", id = 33147 }
+Abilities.INCANTATION.InvokeArisenFlesh = { name = "Invoke Arisen Flesh", id = 36582 }
 
 Abilities.MAGIC = {}
 Abilities.MAGIC.RunicCharge = { name = "Runic Charge", id = 23725 }

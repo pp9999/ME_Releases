@@ -120,6 +120,8 @@ Buffs.BUFF.ABIL.SearingWinds = { name = "Searing Winds", id = 23877 }
 Buffs.BUFF.ABIL.ShadowImbued = { name = "Shadow Imbued", id = 31925 }
 Buffs.BUFF.ABIL.Vampyrism = { name = "Vampyrism", id = 35768 }
 Buffs.BUFF.ABIL.Penance = { name = "Penance", id = 35769 }
+Buffs.BUFF.ABIL.ArisenFleshInvocation = { name = "Arisen Flesh invocation", id = 36581 }
+Buffs.BUFF.ABIL.CrimsonSalvo = { name = "Crimson Salvo", id = 36575 }
 
 Buffs.BUFF.COMBATBOOST = {}
 Buffs.BUFF.COMBATBOOST.AttackStatBoosted = { name = "Attack Stat Boosted", id = 25824 }
@@ -130,6 +132,7 @@ Buffs.BUFF.COMBATBOOST.PrayerPointsBoosted = { name = "Prayer Points Boosted", i
 Buffs.BUFF.COMBATBOOST.MagicStatBoosted = { name = "Magic Stat Boosted", id = 25829 }
 Buffs.BUFF.COMBATBOOST.LifePointsBoosted = { name = "Life Points Boosted", id = 25830 }
 Buffs.BUFF.COMBATBOOST.NecromancyStatBoosted = { name = "Necromancy Stat Boosted", id = 30125 }
+Buffs.BUFF.COMBATBOOST.CloseFormation = { name = "Close Formation", id = 25826 }
 
 Buffs.BUFF.MISC = {}
 Buffs.BUFF.MISC.SpiritDragonCharmEffect = { name = "Spirit dragon charm effect", id = 37731 }
@@ -178,6 +181,7 @@ Buffs.BUFF.MISC.StrongestPoison = { name = "Strongest poison - Purple spikes", i
 Buffs.BUFF.MISC.SugiliteMoth = { name = "Sugilite moth", id = 60700 }
 Buffs.BUFF.MISC.CalciteMoth = { name = "Calcite moth", id = 60702 }
 Buffs.BUFF.MISC.AzuriteMoth = { name = "Azurite moth", id = 60704 }
+Buffs.BUFF.MISC.SanguineInfluence = { name = "Sanguine Influence", id = 36598 }
 
 Buffs.BUFF.POTS = {}
 Buffs.BUFF.POTS.Overloaded = { name = "Overloaded", id = 61365 }
@@ -476,6 +480,7 @@ Buffs.DEBUFF.ABIL.Combusted = { name = "Combusted", id = 23401 }
 Buffs.DEBUFF.ABIL.Rend = { name = "Rend", id = 14211 }
 Buffs.DEBUFF.ABIL.Slaughter = { name = "Slaughter", id = 21362 }
 Buffs.DEBUFF.ABIL.Massacre = { name = "Massacre", id = 21296 }
+Buffs.DEBUFF.ABIL.SanguineVolley = { name = "Sanguine Volley", id = 64191 }
 
 Buffs.DEBUFF.MISC = {}
 Buffs.DEBUFF.MISC.Stunned = { name = "Stunned", id = 26103 }
@@ -515,6 +520,11 @@ Buffs.DEBUFF.MISC.Severed = { name = "Severed", id = 14209 }
 Buffs.DEBUFF.MISC.ApmekenSBurden = { name = "Apmeken's Burden", id = 35063 }
 Buffs.DEBUFF.MISC.Interceptor = { name = "Interceptor", id = 35067 }
 Buffs.DEBUFF.MISC.AfflictedWound = { name = "Afflicted Wound", id = 36579 }
+Buffs.DEBUFF.MISC.SanguineStrike = { name = "Sanguine Strike", id = 36601 }
+Buffs.DEBUFF.MISC.Haemorrhage = { name = "Haemorrhage", id = 36579 }
+Buffs.DEBUFF.MISC.Exsanguinated = { name = "Exsanguinated", id = 36576 }
+Buffs.DEBUFF.MISC.CrimsonLament = { name = "Crimson Lament", id = 36599 }
+Buffs.DEBUFF.MISC.BloodChallenge = { name = "Blood Challenge", id = 36600 }
 
 Buffs.DEBUFF.POTS = {}
 Buffs.DEBUFF.POTS.PowerburstPotionIsOnCooldown = { name = "Powerburst potion is on cooldown.", id = 48960 }
