@@ -6,7 +6,7 @@ API.SetDrawTrackedSkills(true)
 while API.Read_LoopyLoop() do
     API.DoRandomEvents()
 
-    Interact:NPC("Fishing spot", "Cage")
+    GamePlugin:Invoke("World.IsMembers")
 
 
     

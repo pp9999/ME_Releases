@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.081
+API.VERSION = 1.082
 
 --[[
 Known shortcuts
@@ -431,13 +431,6 @@ function API.GatherEvents_glisten_check()
 end
 
 --- Player position against tile and get distance
----@param wp WPOINT
----@return number
-function API.Dist_FLPW(wp)
-	return Dist_FLPW(wp)
-end
-
---- Player position against tile and get distance
 ---@param fp FFPOINT
 ---@return number
 function API.Dist_FLP(fp)
@@ -862,7 +855,7 @@ function API.calculatePlayerOrientation()
 end
 
 --- is localplayer facing in direction of tile. to be safeside it should be more than 1 tile away
----@param Tile WPOINT
+---@param Tile FFPOINT
 ---@param howfar number -- in tiles
 ---@param errorrange number -- starts from 0 - 1
 ---@return boolean
@@ -871,17 +864,17 @@ function API.IsPlayerInDirection(Tile, howfar, errorrange)
 end
 
 --- is localplayer facing in direction of tile
----@param input WPOINT -- tile 
+---@param input FFPOINT -- tile
 ---@param angle number -- int
 ---@param steps number -- int
----@return WPOINT[]
+---@return FFPOINT[]
 function API.Math_AnglePixels(input,angle,steps)
 	return Math_AnglePixels(input,angle,steps)
 end
 
 --- is localplayer facing in direction of tile
----@param ArrayOfPoints WPOINT[] -- vectors of tiles to check vs
----@param OnePoint WPOINT -- tile vs
+---@param ArrayOfPoints FFPOINT[] -- vectors of tiles to check vs
+---@param OnePoint FFPOINT -- tile vs
 ---@param inrangeof number -- how far to predict
 ---@return boolean
 function API.Math_PointsCrossEach(ArrayOfPoints, OnePoint, inrangeof)
@@ -926,7 +919,7 @@ function API.Read_LoopyLoop()
 end
 
 --- Get window in pixels
----@return WPOINT
+---@return FFPOINT
 function API.GetRsResolution2()
 	return GetRsResolution2()
 end
@@ -952,35 +945,20 @@ function API.Math_W2Sv2(entity)
 	return Math_W2Sv2(entity)
 end
 
---- Calculate pixels
----@param entity FFPOINT
----@return WPOINT
-function API.Math_W2Sv2W(entity)
-	return Math_W2Sv2W(entity)
-end
-
 --- Distance between 2 objets
----@param object1 WPOINT
----@param object2 WPOINT
+---@param object1 FFPOINT
+---@param object2 FFPOINT
 ---@return number
 function API.Math_DistanceRounded(object1, object2)
 	return Math_DistanceRounded(object1, object2)
 end
 
 --- Distance between 2 objets
----@param object1 WPOINT
----@param object2 WPOINT
----@return number
-function API.Math_DistanceW(object1, object2)
-	return Math_DistanceW(object1, object2)
-end
-
---- Distance between 2 objets
 ---@param object1 FFPOINT
 ---@param object2 FFPOINT
 ---@return number
-function API.Math_DistanceF(object1, object2)
-	return Math_DistanceF(object1, object2)
+function API.Math_Distance(object1, object2)
+	return Math_Distance(object1, object2)
 end
 
 --- Save FFPOINTs to disk
@@ -997,38 +975,15 @@ function API.LoadFFPOINTs(name)
 	return LoadFFPOINTs(name)
 end
 
----@return WPOINT
+---@return FFPOINT
 function API.GetTilesUnderCurrentMouse()
 	return GetTilesUnderCurrentMouse()
 end
 
----@return FFPOINT
-function API.GetTilesUnderCurrentMouseF()
-	return GetTilesUnderCurrentMouseF()
-end
-
----@param xy WPOINT
----@return WPOINT
-function API.TilesToPixelsWW(xy)
-	return TilesToPixelsWW(xy)
-end
-
----@param xy FFPOINT
----@return WPOINT
-function API.TilesToPixelsFW(xy)
-	return TilesToPixelsFW(xy)
-end
-
 ---@param xy FFPOINT
 ---@return FFPOINT
-function API.TilesToPixelsFF(xy)
-	return TilesToPixelsFF(xy)
-end
-
----@param xy WPOINT
----@return FFPOINT
-function API.TilesToPixelsWF(xy)
-	return TilesToPixelsWF(xy)
+function API.TilesToPixels(xy)
+	return TilesToPixels(xy)
 end
 
 ---@param SummPointer number
@@ -1201,23 +1156,14 @@ end
 --- the server ("true") tile, read from the movement path queue. while walking the render
 --- position trails the server by up to ~3 ticks at walk start; this is the tile the server
 --- already has you on. falls back to API.PlayerCoord() when standing (queue empty).
+--- exact float tile coords (x512 / 512).
 ---@param object number|nil entity address, defaults to the local player
----@return WPOINT
+---@return FFPOINT
 function API.GetTrueTile(object)
 	if object == nil then
 		return GetTrueTile()
 	end
 	return GetTrueTile(object)
-end
-
---- exact float tile coords (x512 / 512) of API.GetTrueTile, falls back to API.PlayerCoordfloat().
----@param object number|nil entity address, defaults to the local player
----@return FFPOINT
-function API.GetTrueTileF(object)
-	if object == nil then
-		return GetTrueTileF()
-	end
-	return GetTrueTileF(object)
 end
 
 --- the server ("true") facing in degrees, 0 = north, 90 = east, from the movement path queue
@@ -1233,15 +1179,9 @@ function API.GetTrueOrientation(object)
 end
 
 --- local player server ("true") tile, same as API.GetTrueTile().
----@return WPOINT
+---@return FFPOINT
 function API.GetLocalPlayerTrueTile()
 	return GetLocalPlayerTrueTile()
-end
-
---- local player server ("true") tile as exact float coords, same as API.GetTrueTileF().
----@return FFPOINT
-function API.GetLocalPlayerTrueTileF()
-	return GetLocalPlayerTrueTileF()
 end
 
 --- local player server ("true") facing in degrees, same as API.GetTrueOrientation().
@@ -1251,13 +1191,13 @@ function API.GetLocalPlayerTrueOrientation()
 end
 
 ---@param addr number
----@return WPOINT
+---@return FFPOINT
 function API.GetProjectileDestination(addr)
 	return GetProjectileDestination(addr)
 end
 
 ---@param allObj AllObject
----@return WPOINT
+---@return FFPOINT
 function API.GetProjectileDestination(allObj)
 	return GetProjectileDestination(allObj)
 end
@@ -1312,7 +1252,7 @@ function API.ReadPlayerMovin2()
 	return ReadPlayerMovin2()
 end
 
----@return WPOINT
+---@return FFPOINT
 --[[
 returns x,y coords of the mouse cursor relative to the game window
 ]]
@@ -1346,7 +1286,7 @@ end
 ---   MemE          number     memory address of the entity render holder (used for orientation); type 6/99 tiles: mapSquare (occupancy at +0xED70)
 ---   TileX/Y/Z     number     raw unnormalized tile coords (RS3: 512 units per tile, OSRS: 128)
 ---   Tile_XYZ      FFPOINT    normalized world tile coords (x,y = tile, z = floor)
----   Pixel_XYZ     WPOINT     on-screen canvas pixel coords
+---   Pixel_XYZ     FFPOINT     on-screen canvas pixel coords
 ---   Id            number     entity/object id (item id for ground items, 1 for players)
 ---   Name          string     entity name (empty for unnamed types like projectiles)
 ---   Action        string     first non-empty action/menu option text (empty when none)
@@ -1363,7 +1303,7 @@ end
 ---   ViewP         number     render holder screen timer/on-screen value
 ---   ViewF         number     entity orientation in degrees (0-360)
 ---   ItemIndex     number     legacy index into Parsed_ItemsL (unused, stays 0)
----   Hitsplats     WPOINT[]   recent damage splats: x=splat type, y=amount, z=client frametime (NPCs/players)
+---   Hitsplats     FFPOINT[]   recent damage splats: x=splat type, y=amount, z=client frametime (NPCs/players)
 ---   StatusBar1    number     health bar fill 0-255, -1 when no bar is shown (players only)
 ---   StatusBar2    number     adrenaline/stamina bar fill 0-255, -1 when no bar is shown (players only)
 ---   MovingPoints  FFPOINT[]  expected walk path: x,y = normal tile coords, z = speed (stand/walk/run)
@@ -1500,13 +1440,6 @@ end
 ---@return boolean
 function API.PInArea(x, xrange, y, yrange, zfloor)
 	return PInArea(x, xrange, y, yrange, zfloor)
-end
-
----@param norm_tile WPOINT
----@param range number
----@return boolean
-function API.PInAreaW(norm_tile, range)
-	return PInAreaW(norm_tile, range)
 end
 
 ---@param codes number --char
@@ -1705,15 +1638,15 @@ function API.GetRun2()
 	return GetRun2()
 end
 
----@return WPOINT
+---@return FFPOINT
 function API.PlayerCoord()
 	return PlayerCoord()
 end
 
---- WPOINT.x `RegionX`<br>
---- WPOINT.y `RegionY`<br>
---- WPOINT.z `RegionId`
----@return WPOINT
+--- FFPOINT.x `RegionX`<br>
+--- FFPOINT.y `RegionY`<br>
+--- FFPOINT.z `RegionId`
+---@return FFPOINT
 function API.PlayerRegion()
 	return PlayerRegion()
 end
@@ -1725,7 +1658,7 @@ function API.InInstancedArea()
 end
 
 ---@param item number
----@return WPOINT
+---@return FFPOINT
 function API.BankGetItem(item)
 	return BankGetItem(item)
 end
@@ -1737,12 +1670,12 @@ function API.BankGetItemStack_Inv(item)
 end
 
 ---@param item number
----@return WPOINT
+---@return FFPOINT
 function API.BankGetItem_Inv(item)
 	return BankGetItem_Inv(item)
 end
 
----@return WPOINT
+---@return FFPOINT
 function API.BankGetLimits()
 	return BankGetLimits()
 end
@@ -1902,7 +1835,7 @@ end
 ---@param obj number
 ---@param distance number
 ---@param type number
----@param adjust_tile WPOINT
+---@param adjust_tile FFPOINT
 ---@return AllObject
 function API.GetAllObj_dist(obj, distance, type, adjust_tile)
 	return GetAllObj_dist(obj, distance, type, adjust_tile)
@@ -2119,7 +2052,7 @@ function API.Wait_Timer(wait_time, random_time, reset)
 	return Wait_Timer(wait_time, random_time, reset)
 end
 
----@param walktile WPOINT
+---@param walktile FFPOINT
 ---@param stopdistance number
 ---@return boolean
 function API.WalkUntilClose(walktile, stopdistance)
@@ -2209,28 +2142,28 @@ function API.DoAction_Bank_Inv(id, m_action, offset)
 end
 
 --For 2 part action. Dive/Bladeddive/bombs from interface ab -> then this
----@param normal_tile WPOINT
+---@param normal_tile FFPOINT
 ---@return boolean
 function API.DoAction_SpecialWalk(normal_tile)
 	return DoAction_SpecialWalk(normal_tile)
 end
 
 --For Dive
----@param normal_tile WPOINT
+---@param normal_tile FFPOINT
 ---@return boolean
 function API.DoAction_Dive_Tile(normal_tile)
 	return DoAction_Dive_Tile(normal_tile)
 end
 
 --For Bladed Dive
----@param normal_tile WPOINT
+---@param normal_tile FFPOINT
 ---@return boolean
 function API.DoAction_BDive_Tile(normal_tile)
 	return DoAction_BDive_Tile(normal_tile)
 end
 
 --For Bladed Dive and just Dive
----@param normal_tile WPOINT
+---@param normal_tile FFPOINT
 ---@param sleep number
 ---@return boolean
 function API.DoAction_Dive_Tile_sleep(normal_tile,sleep)
@@ -2239,7 +2172,7 @@ end
 
 --For Dive, only fires when the landing tile is free of objects (types 0 and 12).
 --errorrange: 0 = fail on an occupied tile; 1-7 = aim at the closest free tile around it instead
----@param normal_tile WPOINT
+---@param normal_tile FFPOINT
 ---@param errorrange number
 ---@param sleep number
 ---@return boolean
@@ -2249,7 +2182,7 @@ end
 
 --For Bladed Dive, only fires when the landing tile is free of objects (types 0 and 12).
 --errorrange: 0 = fail on an occupied tile; 1-7 = aim at the closest free tile around it instead
----@param normal_tile WPOINT
+---@param normal_tile FFPOINT
 ---@param errorrange number
 ---@param sleep number
 ---@return boolean
@@ -2264,7 +2197,7 @@ end
 --landing (aim at the closest free tile instead and re-derive direction and landing from it).
 --Draws the predicted path while API.Write_Doaction_paint(true) is active (5s timeout):
 --path green, last tile blue on a full surge, red when an object stops it; on failure only the failed tile purple.
----@param normal_tile WPOINT
+---@param normal_tile FFPOINT
 ---@param errorrange number
 ---@return boolean
 function API.DoAction_Surge_Tile2(normal_tile, errorrange)
@@ -2444,7 +2377,7 @@ end
 ---@param offset number
 ---@param obj number[]
 ---@param maxdistance number
----@param tile WPOINT
+---@param tile FFPOINT
 ---@param ignore_star boolean
 ---@param health number
 ---@return boolean
@@ -2488,8 +2421,8 @@ end
 ---@param offset number
 ---@param obj number[]
 ---@param maxdistance number
----@param bottom_left WPOINT
----@param top_right WPOINT
+---@param bottom_left FFPOINT
+---@param top_right FFPOINT
 ---@return boolean
 function API.DoAction_NPC_In_Area(action, offset, obj, maxdistance, bottom_left, top_right, ignore_star, health)
 	return DoAction_NPC_In_Area(action, offset, obj, maxdistance, bottom_left, top_right, ignore_star, health)
@@ -2535,11 +2468,26 @@ end
 ---@param offset number
 ---@param obj number[]
 ---@param maxdistance number
----@param tile WPOINT
+---@param tile FFPOINT
 ---@param tile_range number max distance FROM tile to found object, tile and tile_range range cant be zero
 ---@return boolean
 function API.DoAction_Object_r(action, offset, obj, maxdistance, tile, tile_range)
 	return DoAction_Object_r(action, offset, obj, maxdistance, tile, tile_range)
+end
+
+---Read whether a multi-object room/group preview is selected and native placement is available.
+---@return boolean ready
+function API.IsRoomPlacementReady()
+    return IsRoomPlacementReady()
+end
+
+---Place the selected room/group at a world anchor using its existing rotation.
+---The anchor can differ from the clicked tile; room layout rules still apply.
+---The selection and rotation must remain unchanged until dispatch.
+---@param tile WPOINT Desired room anchor in world tiles; z is plane 0-3.
+---@return boolean accepted True means queued, not server-confirmed placement.
+function API.DoAction_PlaceRoom(tile)
+    return DoAction_PlaceRoom(tile)
 end
 
 ---Read whether one valid furniture preview is selected and native placement is available.
@@ -2551,22 +2499,16 @@ end
 
 ---Place the currently selected furniture preview at a world tile without walking.
 ---Only one selected furniture item is supported. Uses the existing preview rotation.
----@param tile WPOINT World coordinates; z is plane 0-3.
+---@param tile FFPOINT World coordinates; z is plane 0-3.
 ---@return boolean accepted True means queued, not server-confirmed placement.
 function API.DoAction_PlaceFurniture(tile)
 	return DoAction_PlaceFurniture(tile)
 end
 
----@param normal_tile WPOINT
+---@param normal_tile FFPOINT
 ---@return boolean
 function API.DoAction_Tile(normal_tile)
 	return DoAction_Tile(normal_tile)
-end
-
----@param normal_tile FFPOINT
----@return boolean
-function API.DoAction_TileF(normal_tile)
-	return DoAction_TileF(normal_tile)
 end
 
 ---@param obj AllObject
@@ -2579,43 +2521,142 @@ end
 ---@param normal_tile FFPOINT
 ---@param sleep number --50 is ok number
 ---@return boolean
-function API.DoAction_WalkerF1(normal_tile, sleep)
-	return DoAction_WalkerF(normal_tile, sleep)
+function API.DoAction_Walker(normal_tile, sleep)
+	return DoAction_Walker(normal_tile, sleep or 50)
 end
 
----@param normal_tile FFPOINT
----@return boolean
-function API.DoAction_WalkerF(normal_tile)
-	return DoAction_WalkerF(normal_tile)
+---@param start FFPOINT
+---@param goal FFPOINT
+---@param allow_map_links boolean|nil
+---@return StarPathResult
+function API.StarPathPlan(start, goal, allow_map_links)
+	return StarPathPlan(start, goal, allow_map_links)
 end
 
----@param normal_tile FFPOINT
----@param sleep number --50 is ok number
----@return boolean
-function API.DoAction_WalkerF1(normal_tile, sleep)
-	return DoAction_WalkerF(normal_tile, sleep)
+---@param goal FFPOINT
+---@param allow_map_links boolean|nil
+---@return StarPathResult
+function API.StarPathFind(goal, allow_map_links)
+	return StarPathFind(goal, allow_map_links)
 end
 
----@param normal_tile WPOINT
----@return boolean
-function API.DoAction_WalkerW(normal_tile)
-	return DoAction_WalkerW(normal_tile)
-end
-
----NOTE: for now the goal tile should not be further than 150 tiles away.
----@param goal WPOINT
+---Reachability check. Uses the live local planner first, then the precomputed
+---StarPath web for long-distance destinations.
+---@param goal FFPOINT
 ---@param allow_map_links boolean|nil
 ---@return boolean
 function API.StarPathReachable(goal, allow_map_links)
 	return StarPathReachable(goal, allow_map_links)
 end
 
----NOTE: for now the goal tile should not be further than 150 tiles away.
----@param goal WPOINT
+---Walk to a tile. Local goals use the live A* planner; far goals use the
+---precomputed navpath web.
+---@param goal FFPOINT
 ---@return boolean arrived
 function API.StarPathWalker(goal)
 	return StarPathWalker(goal)
 end
+
+---Walk to a named location from the StarPath locations table.
+---@param name string
+---@return boolean arrived
+function API.StarPathWalkLocation(name)
+	return StarPathWalkLocation(name)
+end
+
+---@param name string
+---@return boolean
+function API.StarPathCanReachLocation(name)
+	return StarPathCanReachLocation(name)
+end
+
+---@return StarPathLocation[]
+function API.StarPathLocations()
+	return StarPathLocations()
+end
+
+---@param name string
+---@return StarPathRoute
+function API.StarPathRouteToLocation(name)
+	return StarPathRouteToLocation(name)
+end
+
+---The exported StarPath class. Use colon syntax for methods.
+---@type StarPath
+API.StarPath = StarPath
+
+---Names accepted by API.StarPathWalkLocation() and StarPath:WalkToLocation().
+---This is the list of destinations with a precomputed navpath route.
+---Use API.StarPathLocations() for categories, aliases and availability.
+---@type string[]
+API.StarPathLocationNames = {
+	"Air Altar",
+	"Al Kharid",
+	"Ardougne",
+	"Barbarian Village",
+	"Barrows",
+	"Body Altar",
+	"Burthorpe",
+	"Canifis",
+	"Castle Wars",
+	"Catherby",
+	"Champions Guild",
+	"Chaos Altar",
+	"Chaos Tunnels Entrance",
+	"Cooking Guild",
+	"Crafting Guild",
+	"Digsite",
+	"Draynor Village",
+	"Dwarven Mine",
+	"Dwarven Mine Entrance",
+	"Earth Altar",
+	"Edgeville",
+	"Edgeville Dungeon Entrance",
+	"Falador",
+	"Feldip Hills",
+	"Fire Altar",
+	"Fishing Guild",
+	"Fort Forinthry",
+	"Fremennik Slayer Dungeon",
+	"Fremennik Slayer Dungeon Entrance",
+	"Gnome Stronghold",
+	"God Wars Dungeon",
+	"Grand Exchange",
+	"Gu Tanoth",
+	"Heroes Guild",
+	"Jatizso",
+	"Keldagrim",
+	"Lava Maze Entrance",
+	"Legends Guild",
+	"Lumbridge",
+	"Lumbridge Swamp",
+	"Magic Guild",
+	"Mind Altar",
+	"Mining Guild",
+	"Mort Myre",
+	"Mortton",
+	"Neitiznot",
+	"Nightmare Zone",
+	"Oo'glog",
+	"Port Sarim",
+	"Ranging Guild",
+	"Rellekka",
+	"Rimmington",
+	"Seers Village",
+	"Shantay Pass",
+	"Slayer Tower",
+	"Stronghold of Security",
+	"Taverley",
+	"Taverley Dungeon",
+	"Taverley Dungeon Entrance",
+	"Tree Gnome Village",
+	"Varrock",
+	"Warriors Guild",
+	"Water Altar",
+	"Wilderness Volcano Entrance",
+	"Wizard Tower",
+	"Yanille"
+}
 
 ---@param action number
 ---@param offset number
@@ -2694,7 +2735,7 @@ end
 ---@param obj number[]
 ---@param maxdistance number
 ---@param type number[] {}
----@param tile WPOINT
+---@param tile FFPOINT
 ---@return AllObject
 function API.GetAllObjArrayFirstTile(obj, maxdistance, type, tile)
 	return GetAllObjArrayFirstTile(obj, maxdistance,type, tile)
@@ -2731,19 +2772,19 @@ end
 ---@param obj number[]
 ---@param maxdistance number
 ---@param type number[] {}
----@param tile WPOINT
+---@param tile FFPOINT
 ---@return AllObject[]
 function API.GetAllObjArray2(obj, maxdistance, type, tile)
 	return GetAllObjArray(obj, maxdistance, type, tile)
 end
 
----@param tile WPOINT
+---@param tile FFPOINT
 ---@return boolean
 function API.CheckTileforObjects1(tile)
 	return CheckTileforObjects(tile)
 end
 
----@param tile WPOINT
+---@param tile FFPOINT
 ---@param object number
 ---@param thresh number --float
 ---@return boolean
@@ -2751,7 +2792,7 @@ function API.CheckTileforObjects2(tile, object, thresh)
 	return CheckTileforObjects(tile, object, thresh)
 end
 
----@param tile WPOINT
+---@param tile FFPOINT
 ---@param item number
 ---@return boolean
 function API.CheckTileforItems(tile, item)
@@ -2821,7 +2862,7 @@ end
 ---@param obj number[]
 ---@param maxdistance number
 ---@param accuracy number
----@param objtile WPOINT
+---@param objtile FFPOINT
 ---@param usemap boolean
 ---@param action number
 ---@param sidetext string
@@ -2847,7 +2888,7 @@ end
 ---@param usemap boolean
 ---@param action number
 ---@param sidetext string
----@param tile WPOINT
+---@param tile FFPOINT
 ---@return boolean
 function API.FindObjCheck_2(obj, maxdistance, accuracy, usemap, action, sidetext, tile)
 	return FindObjCheck_(obj, maxdistance, accuracy, usemap, action, sidetext, tile)
@@ -2974,13 +3015,13 @@ function API.Math_RandomNumber3(number)
 end
 
 ---@param spot number
----@return WPOINT
+---@return FFPOINT
 function API.W2ScreenNat1(spot)
 	return W2ScreenNat(spot)
 end
 
 ---@param entity FFPOINT
----@return WPOINT
+---@return FFPOINT
 function API.W2ScreenNat2(entity)
 	return W2ScreenNat(entity)
 end
@@ -3160,7 +3201,7 @@ end
 ---@param action number
 ---@param obj number[]
 ---@param maxdistance number
----@param atTile WPOINT
+---@param atTile FFPOINT
 ---@return boolean
 function API.DoAction_G_Items2(action, obj, maxdistance, atTile)
 	return DoAction_G_Items(action, obj, maxdistance, atTile)
@@ -3227,7 +3268,7 @@ end
 ---@param offset number
 ---@param obj number[]
 ---@param maxdistance number
----@param tile WPOINT
+---@param tile FFPOINT
 ---@return boolean
 function API.DoAction_Object2(action, offset, obj, maxdistance, tile)
 	return DoAction_Object(action, offset, obj, maxdistance, tile)
@@ -3247,7 +3288,7 @@ end
 ---@param offset number
 ---@param obj number[]
 ---@param maxdistance number
----@param tile WPOINT
+---@param tile FFPOINT
 ---@param valid boolean
 ---@return boolean
 function API.DoAction_Object_valid2(action, offset, obj, maxdistance, tile, valid)
@@ -3268,7 +3309,7 @@ end
 ---@param offset number
 ---@param obj string[]
 ---@param maxdistance number
----@param tile WPOINT
+---@param tile FFPOINT
 ---@param valid boolean
 ---@return boolean
 function API.DoAction_Object_string2(action, offset, obj, maxdistance, tile, valid)
@@ -3373,15 +3414,15 @@ function API.SetDrawLogs(val)
 	return SetDrawLogs(val)
 end
 
---  API.MarkTiles({FFPOINT.new(3179,2705,0)},0,0,2,false,false,WPOINT.new(0,0,0),WPOINT.new(0,0,0)) something like this
+--  API.MarkTiles({FFPOINT.new(3179,2705,0)},0,0,2,false,false,FFPOINT.new(0,0,0),FFPOINT.new(0,0,0)) something like this
 ---@param tiles FFPOINT[] table of FFPOINT Tile_XYZ from object tiles
 ---@param fortime number millisec how long hold it on screen
 ---@param color number hex number 0xnumber https://www.rapidtables.com/web/color/RGB_Color.html
 ---@param thick number line thickness in float
 ---@param filled boolean true filled
 ---@param square boolean true not square
----@param pixelshape WPOINT if pixel numbers here are present then use these as boxsize
----@param pixellocation WPOINT if numbers here then use these instead of tile calculations
+---@param pixelshape FFPOINT if pixel numbers here are present then use these as boxsize
+---@param pixellocation FFPOINT if numbers here then use these instead of tile calculations
 function API.MarkTiles(tiles, fortime, color, thick, filled, square, pixelshape, pixellocation)
 	MarkTiles(tiles, fortime, color, thick, filled, square, pixelshape, pixellocation)
 end
@@ -4099,7 +4140,7 @@ function Interact:SetSleep(wait, sleep, sleep2) end
 --- Carries out DoAction to the specified NPC (in place of DoAction_NPC)
 ---@param name string The Name of the NPC
 ---@param action string The Action to do against the NPC (e.g. "Attack")
----@param tile WPOINT Optional - coordinate to search around. if not specified will use player location.
+---@param tile FFPOINT Optional - coordinate to search around. if not specified will use player location.
 ---@param distance number Optional - max distance to search across. defaults to 60 if not specified.
 ---@retun boolean If action was sent or not
 function Interact:NPC(name, action, tile, distance) end
@@ -4107,7 +4148,7 @@ function Interact:NPC(name, action, tile, distance) end
 --- Carries out DoAction to the specified Object (in place of DoAction_Object)
 ---@param name string The Name of the Object
 ---@param action string The Action to do against the Object (e.g. "Search")
----@param tile WPOINT Optional - coordinate to search around. if not specified will use player location.
+---@param tile FFPOINT Optional - coordinate to search around. if not specified will use player location.
 ---@param distance number Optional - max distance to search across. defaults to 60 if not specified.
 ---@retun boolean If action was sent or not
 function Interact:Object(name, action, tile, distance) end
@@ -6039,6 +6080,141 @@ function WS_Start() end
 
 --- Stops the WebSocket client, disconnects, and joins the worker thread.
 function WS_Stop() end
+
+-------------------------------------------------------------------------------
+-- GamePlugin (client Lua plugin VM bridge)
+-------------------------------------------------------------------------------
+
+---@class GamePlugin
+GamePlugin = GamePlugin
+
+--- The client plugin API is defined as nested functions in GamePluginAPI.lua, e.g.:
+---   GamePlugin.World.IsMembers()
+---   GamePlugin.Player.GetCombatLevel()
+--- Each wrapper calls GamePlugin.CallExe(name, ...) and returns the first client return value.
+
+--- Returns true when the live client plugin Lua VM is reachable.
+---@return boolean
+function GamePlugin:IsAvailable() end
+
+--- Returns the live client plugin lua_State address (0 when unavailable).
+---@return number
+function GamePlugin:GetLuaState() end
+
+--- Runs Lua code inside the client plugin VM.
+--- Returns "OK|<result>" or "ERR|<error>" (result is tostring'd).
+---@param code string
+---@return string
+function GamePlugin:Exec(code) end
+
+--- Evaluates a Lua expression inside the client plugin VM.
+--- Returns "OK|<result>" or "ERR|<error>".
+---@param expr string
+---@return string
+function GamePlugin:Eval(expr) end
+
+--- Runs a raw Lua chunk inside the client plugin VM; the chunk must return a string.
+--- Returns the raw result or "ERR|<error>".
+---@param chunk string
+---@return string
+function GamePlugin:ExecRaw(chunk) end
+
+--- Serializes a client plugin API value (expression path) to JSON.
+--- Returns the JSON string, or "ERR|<error>".
+---@param path string
+---@return string
+function GamePlugin:GetJson(path) end
+
+--- Returns the client plugin API function list.
+--- Each entry: {name=string, path=string, params=int, vararg=bool, cfunction=bool, address=int}.
+--- withAddresses is optional and slow (resolves each C function pointer).
+---@param withAddresses? boolean default false
+---@return table|string
+function GamePlugin:GetFunctions(withAddresses) end
+
+--- Calls a client plugin API function by path, e.g. "World.GetGroundHeight".
+--- Arguments are converted from Lua values to client Lua literals.
+--- Returns "OK|<result>" or "ERR|<error>".
+---@param path string
+---@param ... any
+---@return string
+function GamePlugin:Call(path, ...) end
+
+--- Calls a client plugin API function by dotted name, e.g. "World.IsMembers".
+--- Returns the first client return value as a Lua value; raises on client error.
+---@param name string
+---@param ... any
+---@return any
+function GamePlugin:CallExe(name, ...) end
+
+--- Calls a client plugin API function by path expression and returns the typed result.
+--- Raises a Lua error when the client call fails.
+---@param path string
+---@param ... any
+---@return any
+function GamePlugin:CallTyped(path, ...) end
+
+---@class GamePluginObjType
+---@field id number
+---@field configName string
+---@field typeName string
+---@field name string
+---@field isMembers boolean
+---@field category number
+---@field teamID number
+---@field cost number
+---@field stackType number
+---@field isStockmarket boolean
+---@field stockmarketBuyLimit number
+---@field isTradeable boolean
+
+---@class GamePluginGrandExchangeOffer
+---@field stage number 0=EMPTY, 1=ADDING, 2=ADDED, 3=VERIFYING, 4=ABORTING, 5=FINISHED
+---@field type number 0=BUY, 1=SELL
+---@field item GamePluginObjType|nil
+---@field price number
+---@field itemCount number
+---@field soldCount number
+---@field goldFromSale number
+
+GamePlugin.GrandExchange = GamePlugin.GrandExchange or {}
+
+--- Returns the maximum number of Grand Exchange offer slots.
+---@return number
+function GamePlugin.GrandExchange.MaxOffers() end
+
+--- Returns the offer in the given 1-indexed slot, or nil.
+---@param slot number
+---@return GamePluginGrandExchangeOffer|nil
+function GamePlugin.GrandExchange.GetOffer(slot) end
+
+---@class GamePluginHeadbarType
+---@field id number
+---@field configName string
+---@field typeName string
+---@field displayOrder number
+
+---@class GamePluginHitmarkType
+---@field id number
+---@field configName string
+---@field typeName string
+---@field duration number
+
+GamePlugin.config = GamePlugin.config or {}
+GamePlugin.id = GamePlugin.id or {}
+
+--- Missing keys on GamePlugin.config.<Type> and GamePlugin.id.<Type> are resolved
+--- through GamePlugin.GetJson and cached, e.g. GamePlugin.config.Headbar.ADRENALINE_DEFAULT.
+
+--- Returns a HeadbarType config by ID.
+---@param id number
+---@return GamePluginHeadbarType|nil
+function GamePlugin.config.Headbar.FromID(id) end
+
+--- Returns a HitmarkType config by ID.
+---@param id number
+---@return GamePluginHitmarkType|nil
+function GamePlugin.config.Hitmark.FromID(id) end
 
 
 

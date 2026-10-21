@@ -13,16 +13,11 @@
 ---@field left number
 ---@field top number
 
----@class WPOINT
----@field x number
----@field y number
----@field z number
----@field fromLocal fun(localX: number, localY: number, plane: number): WPOINT -- Convert local coords (0-63) to world coords
-
 ---@class FFPOINT
 ---@field x number
 ---@field y number
 ---@field z number
+---@field fromLocal fun(localX: number, localY: number, plane: number): FFPOINT -- Convert local coords (0-63) to world coords
 
 ---@class Abilitybar
 ---@field slot number
@@ -59,8 +54,8 @@
 ---@field CalcX number -- integer tile x used for action dispatch
 ---@field CalcY number -- integer tile y used for action dispatch
 ---@field Tile_XYZ FFPOINT -- normalized world tile coords (x,y = tile, z = floor)
----@field Pixel_XYZ WPOINT -- on-screen canvas pixel coords
----@field Hitsplats WPOINT[] -- recent damage splats on this entity (NPCs/players): x=splat type, y=amount, z=client frametime; only splats newer than ~100 frametime units are kept
+---@field Pixel_XYZ FFPOINT -- on-screen canvas pixel coords
+---@field Hitsplats FFPOINT[] -- recent damage splats on this entity (NPCs/players): x=splat type, y=amount, z=client frametime; only splats newer than ~100 frametime units are kept
 ---@field StatusBar1 number -- health bar fill 0-255, -1 when no bar is shown (players only)
 ---@field StatusBar2 number -- adrenaline/stamina bar fill 0-255, falls back to any other active bar, -1 when no bar is shown (players only)
 ---@field MovingPoints FFPOINT[] -- expected walk path of this entity: x,y = normal tile coords, z = speed (stand/walk/run)
@@ -156,8 +151,8 @@
 ---@field item_stackable boolean  -- filled by InventoryClass
 ---@field item_tradeable boolean  -- filled by InventoryClass
 ---@field item_bankable boolean  -- filled by InventoryClass
----@field item_interface WPOINT  -- filled by InventoryClass
----@field item_xyz WPOINT  -- filled by InventoryClass
+---@field item_interface FFPOINT  -- filled by InventoryClass
+---@field item_xyz FFPOINT  -- filled by InventoryClass
 ---@field Pmap table<number>  -- filled by InventoryClass
 ---@field Extra_mem table<number> -- by debug so never
 ---@field Extra_ints table<number>  -- filled by container
@@ -340,3 +335,44 @@
 ---@field keybindVK number Virtual key code for keybind (e.g., 0x24 for Delete)
 ---@field lootAllWhenFull boolean Use loot-all when inventory full with stackables (default: false)
 ---@field debug boolean Extra debug logging (default: false)
+
+---@class StarPathLocation
+---@field name string
+---@field category string city|guild|skilling|boss|cave|dungeon|altar|other
+---@field x number
+---@field y number
+---@field z number
+---@field available boolean
+---@field aliases string[]
+
+---@class StarPathRoute
+---@field found boolean
+---@field goal FFPOINT
+---@field points FFPOINT[]
+---@field actions table
+---@field cost number
+---@field report string
+
+---@class StarPathResult
+---@field found boolean
+---@field direct boolean
+---@field used_classic_link boolean
+---@field cost number
+---@field report string
+---@field map_link_index number
+---@field map_link_object number
+---@field link_path_index number
+---@field map_link_destination_unknown boolean
+---@field map_link_fallback boolean
+---@field path FFPOINT[]
+
+---@class StarPath
+---@field Plan fun(self: StarPath, start: FFPOINT, goal: FFPOINT, allow_map_links: boolean|nil): StarPathResult
+---@field Find fun(self: StarPath, goal: FFPOINT, allow_map_links: boolean|nil): StarPathResult
+---@field CanReach fun(self: StarPath, goal: FFPOINT, allow_map_links: boolean|nil): boolean
+---@field Walker fun(self: StarPath, goal: FFPOINT): boolean
+---@field WalkToLocation fun(self: StarPath, name: string): boolean
+---@field CanReachLocation fun(self: StarPath, name: string): boolean
+---@field Locations fun(self: StarPath): StarPathLocation[]
+---@field LocationNames fun(self: StarPath): string[]
+---@field RouteToLocation fun(self: StarPath, name: string): StarPathRoute

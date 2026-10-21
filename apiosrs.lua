@@ -197,7 +197,7 @@ function APIOSRS.RL_DrawSpriteHead(spriteId)
 end
 
 -- draws sprites at a list of world positions
--- @param spriteTargets WPOINT[] where WPOINT is x = coord x, y = coord y, z = spriteId
+-- @param spriteTargets FFPOINT[] where FFPOINT is x = coord x, y = coord y, z = spriteId
 function APIOSRS.RL_DrawSprites(spriteTargets)
 	return RL_DrawSprites(spriteTargets)
 end
@@ -449,7 +449,7 @@ end
 -- @return boolean
 function APIOSRS.DoAction_DOBJ_Tile(id, operation, tilex, tiley, plane)
 	plane = plane or 0
-	return OSRS_DoAction_DOBJ_Tile(id, operation, WPOINT.new(tilex, tiley, plane))
+	return OSRS_DoAction_DOBJ_Tile(id, operation, FFPOINT.new(tilex, tiley, plane))
 end
 
 --- Nearest ground item by config id.
@@ -481,7 +481,7 @@ end
 -- @return boolean
 function APIOSRS.DoAction_GI_Tile(id, operation, tilex, tiley, plane)
 	plane = plane or 0
-	return OSRS_DoAction_GI_Tile(id, operation, WPOINT.new(tilex, tiley, plane))
+	return OSRS_DoAction_GI_Tile(id, operation, FFPOINT.new(tilex, tiley, plane))
 end
 
 --- Walk to a world tile by clicking its screen position.
@@ -491,7 +491,7 @@ end
 -- @return boolean
 function APIOSRS.DoAction_Tile(tilex, tiley, plane)
 	plane = plane or 0
-	return OSRS_DoAction_Tile(WPOINT.new(tilex, tiley, plane))
+	return OSRS_DoAction_Tile(FFPOINT.new(tilex, tiley, plane))
 end
 
 --- Interface action: click a component and substitute the option byte of the
