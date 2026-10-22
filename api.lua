@@ -2544,9 +2544,10 @@ end
 ---StarPath web for long-distance destinations.
 ---@param goal FFPOINT
 ---@param allow_map_links boolean|nil
+---@param tolerance integer|nil accept any tile within this many tiles of goal
 ---@return boolean
-function API.StarPathReachable(goal, allow_map_links)
-	return StarPathReachable(goal, allow_map_links)
+function API.StarPathReachable(goal, allow_map_links, tolerance)
+	return StarPathReachable(goal, allow_map_links, tolerance)
 end
 
 ---Walk to a tile. Local goals use the live A* planner; far goals use the

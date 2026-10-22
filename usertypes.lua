@@ -369,7 +369,7 @@
 ---@class StarPath
 ---@field Plan fun(self: StarPath, start: FFPOINT, goal: FFPOINT, allow_map_links: boolean|nil): StarPathResult
 ---@field Find fun(self: StarPath, goal: FFPOINT, allow_map_links: boolean|nil): StarPathResult
----@field CanReach fun(self: StarPath, goal: FFPOINT, allow_map_links: boolean|nil): boolean
+---@field CanReach fun(self: StarPath, goal: FFPOINT, allow_map_links: boolean|nil, tolerance: integer|nil): boolean
 ---@field Walker fun(self: StarPath, goal: FFPOINT): boolean
 ---@field WalkToLocation fun(self: StarPath, name: string): boolean
 ---@field CanReachLocation fun(self: StarPath, name: string): boolean
