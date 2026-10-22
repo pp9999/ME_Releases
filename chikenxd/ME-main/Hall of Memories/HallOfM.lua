@@ -885,6 +885,12 @@ local function grabJars()
         return directJarCount ~= before or playerIsMoving() or isGrabbingJars()
     end)
 
+    --stop it getting full inventory
+    if Inventory.FreeSpaces() < 5 then
+        setStatus("Inventory full; cannot grab jars", "Waiting")
+        return false
+    end
+
     if directResponded then
         waitForJarGrabToSettle()
         updateJarCounts()
@@ -895,7 +901,7 @@ local function grabJars()
     end
 
     setStatus("Moving closer to jar depot", "Grab jars")
-    API.DoAction_WalkerW(randomTileAround(2227, 9116, 1))
+    API.DoAction_Walker(randomTileAround(2227, 9116, 1))
     RUNTIME.lastActionMs = nowMs()
     if API.WaitUntilMovingandAnimEnds then
         API.WaitUntilMovingandAnimEnds(10, 20)
@@ -995,16 +1001,15 @@ local function runHallTick()
 
     handleXpDropReclick()
 
-    if RUNTIME.fullJars >= 2 then
+    if RUNTIME.fullJars > 5 then
         depositJars()
-    elseif isInventoryFull() then
         if RUNTIME.emptyJars > 0 or RUNTIME.partialJars > 0 then
             fillJars()
         else
-            setStatus("Inventory full with no actionable jar state", "Waiting")
+           if Inventory.FreeSpaces() > 0 then  
+            grabJars()
+           end
         end
-    else
-        grabJars()
     end
 end
 
