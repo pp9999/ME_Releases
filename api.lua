@@ -6132,6 +6132,43 @@ function GamePlugin:GetJson(path) end
 ---@return table|string
 function GamePlugin:GetFunctions(withAddresses) end
 
+--- Returns the plugins loaded by the client plugin manager.
+--- Each entry: {name=string, identifier=string, version=string, folder=string,
+--- archive=string, remoteId=int, enabled=bool, handle=int, descriptor=int,
+--- metadata=int, package=int}.
+--- handle is the shared_ptr pair used to start/control the plugin;
+--- descriptor is the client plugin instance object pointer; package is the
+--- client source-package object holding folder and archive paths.
+--- Returns "ERR|<error>" on failure.
+---@return table|string
+function GamePlugin:GetPlugins() end
+
+--- Dumps a loaded plugin's .lua/.json files plus its source zip and the
+--- extracted zip contents to <MemoryError base>/PluginDumps/<identifier>/.
+--- Returns "OK|<dump path>" or "ERR|<error>".
+---@param identifier string
+---@return string
+function GamePlugin:DumpPlugin(identifier) end
+
+--- Installs/loads a local custom plugin folder without restarting the client.
+--- The folder must contain plugin.json and a .zip archive (main.lua inside).
+--- The remoteID is read from plugin.json (or the optional second argument).
+--- The plugin is copied to plugins\<remoteID>\, its state is registered as
+--- enabled and the plugin list is reloaded. The state is runtime-only; call
+--- again after a client restart (or enable it through the game UI once).
+--- Returns "OK|..." or "ERR|<error>".
+---@param folder string
+---@param remoteId? number
+---@return string
+function GamePlugin:InstallLocalPlugin(folder, remoteId) end
+
+--- Marks the client plugin (Mod.io) auth state as authenticated and sends the
+--- same notification the normal login path uses. Search/download use the
+--- embedded api_key, so no real Mod.io token is required.
+--- Returns "OK|..." or "ERR|<error>".
+---@return string
+function GamePlugin:SkipAuth() end
+
 --- Calls a client plugin API function by path, e.g. "World.GetGroundHeight".
 --- Arguments are converted from Lua values to client Lua literals.
 --- Returns "OK|<result>" or "ERR|<error>".
