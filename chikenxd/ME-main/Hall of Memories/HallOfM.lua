@@ -1003,6 +1003,7 @@ local function runHallTick()
 
     if RUNTIME.fullJars > 5 then
         depositJars()
+    else
         if RUNTIME.emptyJars > 0 or RUNTIME.partialJars > 0 then
             fillJars()
         else
