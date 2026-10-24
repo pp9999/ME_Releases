@@ -886,7 +886,7 @@ local function grabJars()
     end)
 
     --stop it getting full inventory
-    if Inventory.FreeSpaces() < 5 then
+    if Inventory:FreeSpaces() < 5 then
         setStatus("Inventory full; cannot grab jars", "Waiting")
         return false
     end
@@ -977,7 +977,7 @@ end
 
 local function handleRandomEvents()
     if API and type(API.DoRandomEvents) == "function" then
-        API.DoRandomEvents()
+        API.DoRandomEvents(true)
     end
 end
 
@@ -1007,7 +1007,7 @@ local function runHallTick()
         if RUNTIME.emptyJars > 0 or RUNTIME.partialJars > 0 then
             fillJars()
         else
-           if Inventory.FreeSpaces() > 0 then  
+           if Inventory:FreeSpaces() > 0 then  
             grabJars()
            end
         end
