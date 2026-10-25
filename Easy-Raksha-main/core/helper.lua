@@ -180,7 +180,7 @@ end
 --- @field id         integer    -- entity ID, –1 if not found
 --- @field name       string     -- boss name or "UNKNOWN"
 --- @field animation  integer    -- current animation ID, –1 if not found
---- @field tile       WPOINT     -- map-tile coordinates
+--- @field tile       FFPOINT     -- map-tile coordinates
 
 --- Retrieves structured info about an entity
 --- @param objId integer | integer[]
@@ -196,7 +196,7 @@ function Utils:getEntityInfo(objId, type, distance)
         health    = (#entity > 0) and entity[1].Life or -1,
         animation = (#entity > 0) and entity[1].Anim or -1,
         --- @diagnostic disable-next-line: undefined-global
-        tile      = (#entity > 0) and entity[1].Tile_XYZ or WPOINT.new(0, 0, 0)
+        tile      = (#entity > 0) and entity[1].Tile_XYZ or FFPOINT.new(0, 0, 0)
     }
 end
 

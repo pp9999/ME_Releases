@@ -23,7 +23,7 @@ local SeedInterface = { InterfaceComp5.new(720, 2, -1, 0) }
 local ObeliskInterface = { InterfaceComp5.new(1371, 7, -1, 0) }
 
 local function isSeedInterfaceOpen()
-    return #API.ScanForInterfaceTest2Get(true, SeedInterface) > 0
+    return #API.ScanForInterfaceTest2Get2(true, SeedInterface) > 0
 end
 
 local function getSelectedItemId()
@@ -87,8 +87,8 @@ local function Clickobelisk()
 end
 
 local function TeleportIthell()
-    local item49508Count = API.InvItemcount_1(49508)
-    local item49504Count = API.InvItemcount_1(49504)
+    local item49508Count = Inventory:InvItemcount(49508)
+    local item49504Count = Inventory:InvItemcount(49504)
 
     if item49508Count > 0 or item49504Count > 0 then
         UTILS.countTicks(4)
@@ -110,7 +110,7 @@ end
 
 local function hasEnoughCharms()
     for _, charm in ipairs(Charms) do
-        if API.InvStackSize(charm) >= 25 then
+        if Inventory:InvStackSize(charm) >= 25 then
             return true
         end
     end
@@ -121,11 +121,11 @@ local function Bank()
     API.DoAction_Object1(0x33, API.OFF_ACT_GeneralObject_route3, { Bankchest }, 10)
     UTILS.randomSleep(2000 * 2)
 
-    local shardCount = API.InvStackSize(Shards)
-    local pouchCount = API.InvStackSize(Pouches)
+    local shardCount = Inventory:InvStackSize(Shards)
+    local pouchCount = Inventory:InvStackSize(Pouches)
     local charmsOk = hasEnoughCharms()
 
-    if not API.InvFull_() then
+    if not Inventory:IsFull() then
         print("Inventory is not full. Stopping script.")
         ShouldContinue = false
         return

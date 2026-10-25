@@ -13,7 +13,7 @@ do
         local success = APIOSRS.RL_ClickEntity(1, {1634}, 25)
         print(success)
     elseif TestingApiType == 1 then
-        local success = API.RL_ClickEntity(1, {1634}, 25)
+        local success = APIOSRS.RL_ClickEntity(1, {1634}, 25)
         print(success)
     elseif TestingApiType == 2 then
         local success = RL_ClickEntity(1, {1634}, 25)

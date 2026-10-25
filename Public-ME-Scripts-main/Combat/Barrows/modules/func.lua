@@ -141,7 +141,7 @@ function FUNC:GetNextBrother()
 end
 
 function FUNC:ChestInterfaceIsOpen()
-    return #API.ScanForInterfaceTest2Get(true, DATA.Interfaces.LootChest) > 0
+    return #API.ScanForInterfaceTest2Get2(true, DATA.Interfaces.LootChest) > 0
 end
 
 function FUNC:HasLootedChest()
@@ -190,7 +190,7 @@ function FUNC:DialogBoxOpen()
 end
 
 function FUNC:DialogHasOption()
-    local option = API.ScanForInterfaceTest2Get(false, { { 1188, 5, -1, -1}, { 1188, 3, -1, 5}, { 1188, 3, 14, 3} })
+    local option = API.ScanForInterfaceTest2Get2(false, { { 1188, 5, -1, -1}, { 1188, 3, -1, 5}, { 1188, 3, 14, 3} })
 
     if #option > 0 and #option[1].textids > 0 then
         return option[1].textids

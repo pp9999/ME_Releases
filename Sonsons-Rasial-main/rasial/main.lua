@@ -26,7 +26,6 @@ local Timer             = require("core.timer") -- file saved in Lua_Scripts/cor
 ------------------------------------------
 
 Interact:SetSleep(0, 0, 0)
-API.Write_fake_mouse_do(false)
 API.ClearLog()
 
 ------------------------------------------
@@ -240,7 +239,7 @@ RasialLobby = {
         location = {
             name = "Rasial's Citadel (Lobby)",
             ---@diagnostic disable-next-line: undefined-global
-            coords = WPOINT.new(864, 1742, 0),
+            coords = FFPOINT.new(864, 1742, 0),
             range = 25
         },
         objects = {
@@ -584,9 +583,9 @@ function RasialFight:gatherData()
         Utils:log(("++ Gate tile: (%s, %s, 0)"):format(gateTile.x, gateTile.y))
 
         -- Calculate safe spot relative to gate
-        ---@type WPOINT
+        ---@type FFPOINT
         ---@diagnostic disable-next-line:undefined-global
-        self.variables.safeSpot = WPOINT.new(gateTile.x - 1, gateTile.y + 28, 0)
+        self.variables.safeSpot = FFPOINT.new(gateTile.x - 1, gateTile.y + 28, 0)
         if self.variables.safeSpot then
             Utils:log(("++ Safe spot tile: (%s, %s, 0)"):format(self.variables
                                                                     .safeSpot.x,
@@ -599,7 +598,7 @@ function RasialFight:gatherData()
 
         -- Set loot collection position
         ---@diagnostic disable-next-line:undefined-global
-        self.variables.lootTile = WPOINT.new(gateTile.x - 1, gateTile.y + 26, 0)
+        self.variables.lootTile = FFPOINT.new(gateTile.x - 1, gateTile.y + 26, 0)
 
         -- Define final phase fighting zone
         self.variables.finalZone = {
@@ -640,7 +639,7 @@ end
 -- Move player to safe spot
 function RasialFight:getInSafeSpot()
     if self.variables.safeSpot ~= nil then
-        return API.DoAction_WalkerW(self.variables.safeSpot)
+        return API.DoAction_Walker(self.variables.safeSpot)
     end
     return false
 end
@@ -663,7 +662,7 @@ function RasialFight:dodgeLightning()
         local centerX = math.floor(obj.Tile_XYZ.x)
         local centerY = math.floor(obj.Tile_XYZ.y)
         ---@diagnostic disable-next-line:undefined-global
-        if Player:isAtCoord(WPOINT.new(centerX, centerY, 1)) then
+        if Player:isAtCoord(FFPOINT.new(centerX, centerY, 1)) then
             onLightning = true
         end
     end
@@ -709,7 +708,7 @@ function RasialFight:dodgeLightning()
 
         if bestTile then
             ---@diagnostic disable-next-line
-            return API.DoAction_WalkerW(WPOINT.new(bestTile.x, bestTile.y, 0))
+            return API.DoAction_Walker(FFPOINT.new(bestTile.x, bestTile.y, 0))
         end
     end
     return false
@@ -791,7 +790,7 @@ end
 function RasialFight:getInLootPosition()
     if not self.variables.lootTile then return false end
     if self.variables.lootTile ~= nil then
-        return API.DoAction_WalkerW(self.variables.lootTile)
+        return API.DoAction_Walker(self.variables.lootTile)
     end
     return false
 end

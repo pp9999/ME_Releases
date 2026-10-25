@@ -14,7 +14,7 @@ while API.Read_LoopyLoop() do
         goto continue
     end
 
-    if API.InvItemcount_1(unstableProteanBars) > 0 then 
+    if Inventory:InvItemcount(unstableProteanBars) > 0 then 
         API.DoAction_Object1(0x3f,API.OFF_ACT_GeneralObject_route0,{ 113262 },50);
         goto continue
     end

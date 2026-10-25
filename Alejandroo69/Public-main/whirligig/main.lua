@@ -41,7 +41,6 @@ end
 
 API.SetDrawTrackedSkills(true)
 
-API.Write_fake_mouse_do(false)
 
 if CONFIG then
     print(CONFIG.flower)  -- See the user flower
@@ -79,14 +78,14 @@ while (API.Read_LoopyLoop()) do
     end
 
     if basket ~= 0 and UTILS:basket1() < 26 then  
-        API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route3,{basket},50,WPOINT.new(3384,3213,0));
+        API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route3,{basket},50,FFPOINT.new(3384,3213,0));
         print("Filling basket 01")
         idleTicksIsh = 2
         goto continue
     end
 
     if basket ~= 0 and UTILS:basket2() < 26 then  
-        API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route3,{basket},50,WPOINT.new(3375,3206,0));
+        API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route3,{basket},50,FFPOINT.new(3375,3206,0));
         print("Filling basket 02")
         idleTicksIsh = 2
         goto continue

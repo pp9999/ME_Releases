@@ -92,7 +92,7 @@ local ITEM_FIELD = {
 }
 
 -- Helper to read all relevant inventory counts in one call (moved early so other helpers can use it)
--- Adds short-term caching to avoid repeated API.InvStackSize calls within a short window.
+-- Adds short-term caching to avoid repeated Inventory:InvStackSize calls within a short window.
 local _cachedCounts = nil
 local _cachedCountsTime = 0
 local function getCounts()
@@ -101,10 +101,10 @@ local function getCounts()
         return _cachedCounts
     end
     local counts = {
-        shard = API.InvStackSize(ID.Sharp_Shell_Shard) or 0,
-        headless = API.InvStackSize(ID.Headless_Dinarrow) or 0,
-        tip = API.InvStackSize(ID.Rune_Dart_Tip) or 0,
-        feather = API.InvStackSize(ID.Feather) or 0
+        shard = Inventory:InvStackSize(ID.Sharp_Shell_Shard) or 0,
+        headless = Inventory:InvStackSize(ID.Headless_Dinarrow) or 0,
+        tip = Inventory:InvStackSize(ID.Rune_Dart_Tip) or 0,
+        feather = Inventory:InvStackSize(ID.Feather) or 0
     }
     _cachedCounts = counts
     _cachedCountsTime = now
@@ -207,22 +207,22 @@ local _interfaceScanThrottleSec = 0.5
 -- Check if fletching interface is present (robust: GetInterfaceStatus + Scan fallback)
 local function isFletchingInterfacePresent()
     -- Primary: fast status check
-    if API.GetInterfaceStatus and API.GetInterfaceStatus(PRIMARY_IFACE) then
+    if API.GetInterfaceOpenBySize and API.GetInterfaceOpenBySize(PRIMARY_IFACE) then
         return true
     end
     -- Fallback: scan for interface components (safer across client states)
-    if API.ScanForInterfaceTest2Get then
+    if API.ScanForInterfaceTest2Get2 then
         local now = os.clock()
         if now - _lastInterfaceScan > _interfaceScanThrottleSec then
             _lastInterfaceScan = now
-            local ok, result = pcall(API.ScanForInterfaceTest2Get, true, {{PRIMARY_IFACE, 7, -1, 0}})
+            local ok, result = pcall(API.ScanForInterfaceTest2Get2, true, {{PRIMARY_IFACE, 7, -1, 0}})
             if ok and result and #result > 0 then
                 return true
             end
         end
     end
     -- Also check the confirm interface as a last resort
-    if API.GetInterfaceStatus and API.GetInterfaceStatus(CONFIRM_IFACE) then
+    if API.GetInterfaceOpenBySize and API.GetInterfaceOpenBySize(CONFIRM_IFACE) then
         return true
     end
     return false
@@ -439,7 +439,6 @@ end
 -- Script Execution
 -- -----------------------------------------------------------------------------
 local utils = UTILS.new()
-API.Write_fake_mouse_do(false)
 print("Fake mouse disabled")
 
 -- Startup check: ensure we have some materials to start (but defer full totalLoops calc until after first loop)

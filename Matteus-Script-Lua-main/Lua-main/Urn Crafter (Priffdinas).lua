@@ -16,7 +16,7 @@ local MIN_SOFT_CLAY_COUNT = 2
 API.SetDrawTrackedSkills(true)
 
 local function hasEnoughSoftClay()
-    return (API.InvItemcount_1(SOFT_CLAY_ID) or 0) >= MIN_SOFT_CLAY_COUNT
+    return (Inventory:InvItemcount(SOFT_CLAY_ID) or 0) >= MIN_SOFT_CLAY_COUNT
 end
 
 local function getSelectedItemId()
@@ -51,7 +51,7 @@ while API.Read_LoopyLoop() do
     end
 
     if not hasEnoughSoftClay() then
-        if not API.InvFull_() then
+        if not Inventory:IsFull() then
             API.DoAction_Object1(0x33, API.OFF_ACT_GeneralObject_route3, { BANK_CHEST }, 50)
             API.RandomSleep2(200, 300, 400)
         end

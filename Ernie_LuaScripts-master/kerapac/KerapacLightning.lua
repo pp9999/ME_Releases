@@ -96,7 +96,7 @@ function KerapacLightning:AvoidLightningBolts()
 end
 
 function KerapacLightning:CreateSafeWPOINT(tile)
-    return WPOINT.new(State.centerOfArenaPosition.x + Data.deltaTileMap[tile].x, State.centerOfArenaPosition.y + Data.deltaTileMap[tile].y, 1)
+    return FFPOINT.new(State.centerOfArenaPosition.x + Data.deltaTileMap[tile].x, State.centerOfArenaPosition.y + Data.deltaTileMap[tile].y, 1)
 end
 
 function KerapacLightning:MapValueToKey(directions)

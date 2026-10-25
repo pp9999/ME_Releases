@@ -21,17 +21,17 @@ do------------------------------------------------------------------------------
 
     if not API.PInArea21(2388, 2421, 3358, 3388) then
         local random = math.random(-4, 4)
-        API.DoAction_Tile(WPOINT.new(2403 + random,3373 + random,0))
+        API.DoAction_Tile(FFPOINT.new(2403 + random,3373 + random,0))
         API.RandomSleep2(3000, 600, 600)
     end
     
 
     local shakingBushes = API.GetAllObjArray1({26808}, 30, {0})
     
-    if #shakingBushes > 0 and API.InvItemFound1(19805) then
+    if #shakingBushes > 0 and Inventory:InvItemFound(19805) then
         for i = 1, #shakingBushes do
             if (API.Mem_Read_int(shakingBushes[i].Mem + 0x2F4) ~= 0) and not isOnFire(shakingBushes[i]) then
-                API.DoAction_Object2(0x2a,API.OFF_ACT_GeneralObject_route0,{ shakingBushes[i].Id },50,WPOINT.new(shakingBushes[i].TileX / 512,shakingBushes[i].TileY / 512,0))
+                API.DoAction_Object2(0x2a,API.OFF_ACT_GeneralObject_route0,{ shakingBushes[i].Id },50,FFPOINT.new(shakingBushes[i].TileX / 512,shakingBushes[i].TileY / 512,0))
                 API.RandomSleep2(600, 100, 200)
                 break
             end

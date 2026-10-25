@@ -102,15 +102,15 @@ end
 API.Write_LoopyLoop(true)
 while (API.Read_LoopyLoop()) do
 
-    if API.InvItemcount_1(ID.Ashes) == 0 and API.InvItemcount_1(ID.VialofWater) == 0 then
+    if Inventory:InvItemcount(ID.Ashes) == 0 and Inventory:InvItemcount(ID.VialofWater) == 0 then
         print("Getting Materials")
         bank()
     end
 
-    Necroplasm = API.ScanForInterfaceTest2Get(false,{ { 1473,0,-1,-1,0 }, { 1473,2,-1,0,0 }, { 1473,5,-1,2,0 }, { 1473,5,0,5,0 } }) [1]
+    Necroplasm = API.ScanForInterfaceTest2Get2(false,{ { 1473,0,-1,-1,0 }, { 1473,2,-1,0,0 }, { 1473,5,-1,2,0 }, { 1473,5,0,5,0 } }) [1]
     API.RandomSleep2(1000,500,1000)
     if (Necroplasm.itemid1 > 0 and Necroplasm.itemid1_size <= 19) or (Necroplasm.itemid1 < 0) then
-        if API.InvItemcount_1(ID.Ashes) >=1 and API.InvItemcount_1(ID.VialofWater) >= 1 then
+        if Inventory:InvItemcount(ID.Ashes) >=1 and Inventory:InvItemcount(ID.VialofWater) >= 1 then
             print("Getting materials")
             bank()
         else
@@ -119,8 +119,8 @@ while (API.Read_LoopyLoop()) do
         end
     end
 
-    if API.InvItemcount_1(ID.Ashes) >=1 and API.InvItemcount_1(ID.VialofWater) >= 1 then
-        Necroplasm = API.ScanForInterfaceTest2Get(false,{ { 1473,0,-1,-1,0 }, { 1473,2,-1,0,0 }, { 1473,5,-1,2,0 }, { 1473,5,0,5,0 } }) [1]
+    if Inventory:InvItemcount(ID.Ashes) >=1 and Inventory:InvItemcount(ID.VialofWater) >= 1 then
+        Necroplasm = API.ScanForInterfaceTest2Get2(false,{ { 1473,0,-1,-1,0 }, { 1473,2,-1,0,0 }, { 1473,5,-1,2,0 }, { 1473,5,0,5,0 } }) [1]
         API.RandomSleep2(1000,500,1000)
         if Necroplasm.itemid1 > 0 and Necroplasm.itemid1_size >= 20 then
             print("Mixing Ink")
@@ -132,10 +132,10 @@ while (API.Read_LoopyLoop()) do
             print("No more NecroPlasm, Stopping Script")
             API.Write_LoopyLoop(false)
         end
-    elseif API.InvItemcount_1(ID.Ashes) == 0 and API.InvItemcount_1(ID.VialofWater) >= 1 then
+    elseif Inventory:InvItemcount(ID.Ashes) == 0 and Inventory:InvItemcount(ID.VialofWater) >= 1 then
         print("No more ashes, stopping Script")
         API.Write_LoopyLoop(false)
-    elseif API.InvItemcount_1(ID.Ashes) >= 1 and API.InvItemcount_1(ID.VialofWater) == 0 then
+    elseif Inventory:InvItemcount(ID.Ashes) >= 1 and Inventory:InvItemcount(ID.VialofWater) == 0 then
         print("No more vial of water, stopping Script")
         API.Write_LoopyLoop(false)
     end

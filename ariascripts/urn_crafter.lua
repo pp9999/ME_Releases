@@ -125,7 +125,7 @@ while (API.Read_LoopyLoop()) do
     elseif unfiredUrnId == -1 then
         print("Waiting for user to select urn")
         API.RandomSleep2(600, 50, 100)
-    elseif API.InvItemcount_1(unfiredUrnId) >= 28 then
+    elseif Inventory:InvItemcount(unfiredUrnId) >= 28 then
         if CreationInterface.isOpen() then
             if CreationInterface.selectAndProcess(finishedUrnId, urnCategory) then
                 waitUntil(API.isProcessing, 5)
@@ -136,7 +136,7 @@ while (API.Read_LoopyLoop()) do
         else
             interactCrafter()
         end
-    elseif API.InvItemcount_1(1761) >= 28 then
+    elseif Inventory:InvItemcount(1761) >= 28 then
         if CreationInterface.isOpen() then
             if CreationInterface.selectAndProcess(unfiredUrnId, urnCategory) then
                 waitUntil(API.isProcessing, 5)

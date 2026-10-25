@@ -64,7 +64,7 @@ end
 
 function UTILS:getbasket1()
     local Baskets = {122499, 122495, 122496, 122497, 122498, 122494}
-    local objects = API.GetAllObjArray2(Baskets, 100, {0}, WPOINT.new(3384,3213,0))
+    local objects = API.GetAllObjArray2(Baskets, 100, {0}, FFPOINT.new(3384,3213,0))
     if #objects > 0 then
         return objects[1].Id
     end
@@ -73,7 +73,7 @@ end
 
 function UTILS:getbasket2()
     local Baskets = {122499, 122495, 122496, 122497, 122498, 122494}
-    local objects = API.GetAllObjArray2(Baskets, 100, {0}, WPOINT.new(3375,3206,0))
+    local objects = API.GetAllObjArray2(Baskets, 100, {0}, FFPOINT.new(3375,3206,0))
     if #objects > 0 then
         return objects[1].Id
     end

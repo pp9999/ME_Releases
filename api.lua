@@ -1540,6 +1540,20 @@ function API.VB_FindPSettinOrder(id)
 	return VB_FindPSettinOrder(id)
 end
 
+-- Compatibility shim for the removed API.VB_FindPSett.
+-- VP_FindPSett reads the player-var table and VC_FindPSett the client-var table.
+-- A var lives in exactly one of the two, so try the player table first and fall
+-- back to the client table. `found` tells which table actually held the var.
+---@param id number
+---@return VB
+function API.VB_FindPSett(id)
+	local vb = VP_FindPSett(id)
+	if vb and vb.found then
+		return vb
+	end
+	return VC_FindPSett(id)
+end
+
 ---@return IInfo
 function API.LootWindow_GetData()
 	return LootWindow_GetData()
@@ -2484,7 +2498,7 @@ end
 ---Place the selected room/group at a world anchor using its existing rotation.
 ---The anchor can differ from the clicked tile; room layout rules still apply.
 ---The selection and rotation must remain unchanged until dispatch.
----@param tile WPOINT Desired room anchor in world tiles; z is plane 0-3.
+---@param tile FFPOINT Desired room anchor in world tiles; z is plane 0-3.
 ---@return boolean accepted True means queued, not server-confirmed placement.
 function API.DoAction_PlaceRoom(tile)
     return DoAction_PlaceRoom(tile)

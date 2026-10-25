@@ -4,7 +4,6 @@ local isOoglogLodeUnlocked = true
 local isCanafisLodeUnlocked = true
 
 local API = require("api")
-API.Write_fake_mouse_do(false)
 local UTILS = require("utils")
 local LODESTONES = require("lodestones")
 
@@ -25,13 +24,13 @@ local function run_to_tile(x, y, z)
 
     local rand1 = math.random(-2, 2)
     local rand2 = math.random(-2, 2)
-    local tile = WPOINT.new(x + rand1, y + rand2, z)
+    local tile = FFPOINT.new(x + rand1, y + rand2, z)
 
-    API.DoAction_WalkerW(tile)
+    API.DoAction_Walker(tile)
 
 
     local threshold = math.random(4, 6)
-    while API.Read_LoopyLoop() and API.Math_DistanceW(API.PlayerCoord(), tile) > threshold do
+    while API.Read_LoopyLoop() and API.Math_Distance(API.PlayerCoord(), tile) > threshold do
         API.RandomSleep2(200, 200, 200)
     end
 end
@@ -39,7 +38,7 @@ end
 
 
 local function harvest()
-    if not API.Read_LoopyLoop() or not API.PlayerLoggedIn() or API.InvFull_() then return end
+    if not API.Read_LoopyLoop() or not API.PlayerLoggedIn() or Inventory:IsFull() then return end
 
     print("Harvesting")
     if API.GetAllObjArrayInteract_str({"Enriched"}, 50, {1})[1] ~= nil then
@@ -55,7 +54,7 @@ local function harvest()
         if i >= 10 then
             if API.GetAllObjArray1({87306, 93489}, 1, {12})[1] ~= nil or not API.ReadPlayerMovin2() then
                 math.randomseed(os.time())
-                API.DoAction_Tile(WPOINT.new(API.PlayerCoord().x + math.random(-2, 2), API.PlayerCoord().y + math.random(-2, 2), API.PlayerCoord().z))
+                API.DoAction_Tile(FFPOINT.new(API.PlayerCoord().x + math.random(-2, 2), API.PlayerCoord().y + math.random(-2, 2), API.PlayerCoord().z))
                 API.RandomSleep2(600, 100, 200)
             end
             break
@@ -74,8 +73,8 @@ local function getDivinationLevel()
 end
 
 local function isInterfaceVisible(interface_components)
-    return API.ScanForInterfaceTest2Get(false, interface_components)[1].x ~= nil 
-        and API.ScanForInterfaceTest2Get(false, interface_components)[1].x ~= 0
+    return API.ScanForInterfaceTest2Get2(false, interface_components)[1].x ~= nil 
+        and API.ScanForInterfaceTest2Get2(false, interface_components)[1].x ~= 0
 end
 
 local function divDiv()
@@ -92,13 +91,13 @@ local function divDiv()
         API.RandomSleep2(600, 0, 1200)
     end
 
-    if API.InvItemFound1(39486) then
+    if Inventory:InvItemFound(39486) then
         API.DoAction_Inventory1(39486,0,3,API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(300, 300, 300)
     end
     
 
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         print("Dumping")
 
         if API.DoAction_Object1(0xc8,API.OFF_ACT_GeneralObject_route0,{ 93489 },50) then
@@ -108,13 +107,13 @@ local function divDiv()
         end
         
         local i = 0
-        local memoryCount = API.InvItemcount_String("memory")
-        while API.Read_LoopyLoop() and API.InvItemcount_String("memory") > 0 do
+        local memoryCount = Inventory:InvItemcount_String("memory")
+        while API.Read_LoopyLoop() and Inventory:InvItemcount_String("memory") > 0 do
             API.RandomSleep2(200, 200, 200)
-            if i >= 6 and memoryCount == API.InvItemcount_String("memory") then
+            if i >= 6 and memoryCount == Inventory:InvItemcount_String("memory") then
                 i = 0
                 math.randomseed(os.time())
-                API.DoAction_Tile(WPOINT.new(API.PlayerCoord().x + math.random(-2, 2), API.PlayerCoord().y + math.random(-2, 2), API.PlayerCoord().z))
+                API.DoAction_Tile(FFPOINT.new(API.PlayerCoord().x + math.random(-2, 2), API.PlayerCoord().y + math.random(-2, 2), API.PlayerCoord().z))
                 API.RandomSleep2(600, 100, 200)
                 break
             else
@@ -122,7 +121,7 @@ local function divDiv()
             end
             i = i + 1
         end
-    elseif API.InvStackSize(chronicleFragment) >= 10 or API.InvStackSize(enhancedChronicleFragment) >= 10 then
+    elseif Inventory:InvStackSize(chronicleFragment) >= 10 or Inventory:InvStackSize(enhancedChronicleFragment) >= 10 then
         print("Empowering")
         if API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route2,{ 93489 },50) then
             print("guthix empowering")
@@ -130,12 +129,12 @@ local function divDiv()
             print("normal empowering")
         end
         local x = 0
-        while API.Read_LoopyLoop() and API.InvItemcount_String("fragment") > 0 do
+        while API.Read_LoopyLoop() and Inventory:InvItemcount_String("fragment") > 0 do
             API.RandomSleep2(200, 200, 200)
             if x >= 10 and not API.ReadPlayerMovin2() then
                 x = 0
                 math.randomseed(os.time())
-                API.DoAction_Tile(WPOINT.new(API.PlayerCoord().x + math.random(-2, 2), API.PlayerCoord().y + math.random(-2, 2), API.PlayerCoord().z))
+                API.DoAction_Tile(FFPOINT.new(API.PlayerCoord().x + math.random(-2, 2), API.PlayerCoord().y + math.random(-2, 2), API.PlayerCoord().z))
                 API.RandomSleep2(600, 100, 200)
                 break
             end
@@ -146,10 +145,10 @@ local function divDiv()
             end
         end
     elseif API.GetAllObjArray1({18204, 18205}, 50, {1})[1] ~= nil then
-        local currectChronicleCount = API.InvStackSize(chronicleFragment)
-        local currecntEnrichedChronicleCount = API.InvStackSize(enhancedChronicleFragment)
+        local currectChronicleCount = Inventory:InvStackSize(chronicleFragment)
+        local currecntEnrichedChronicleCount = Inventory:InvStackSize(enhancedChronicleFragment)
         API.DoAction_NPC(0x29,API.OFF_ACT_InteractNPC_route,{ 18204, 18205 },50)
-        while API.Read_LoopyLoop() and ( currecntEnrichedChronicleCount == API.InvStackSize(enhancedChronicleFragment) and currectChronicleCount == API.InvStackSize(chronicleFragment) ) do
+        while API.Read_LoopyLoop() and ( currecntEnrichedChronicleCount == Inventory:InvStackSize(enhancedChronicleFragment) and currectChronicleCount == Inventory:InvStackSize(chronicleFragment) ) do
             API.RandomSleep2(200, 200, 200)
         end
     elseif not API.IsPlayerAnimating_(API.GetLocalPlayerName(), 30) and API.PlayerLoggedIn() then
@@ -163,7 +162,7 @@ local function waitAnim()
         API.RandomSleep2(600, 600, 600)
     end
     API.RandomSleep2(600, 600, 600)
-    if API.InvItemcount_String("energy") > 0 then
+    if Inventory:InvItemcount_String("energy") > 0 then
         API.DoAction_Inventory3("energy",0,8,API.OFF_ACT_GeneralInterface_route2)
         API.RandomSleep2(300, 300, 300)
     end
@@ -209,7 +208,7 @@ local function newArea()
         run_to_tile(3302, 3394, 0)
     elseif getDivinationLevel() < 40 then
         if API.PInArea(2734, 10, 3414, 10, 0) then return end
-        if not API.PInArea(2756, 5, 3477, 5, 0) and API.InvItemFound1(8010) then
+        if not API.PInArea(2756, 5, 3477, 5, 0) and Inventory:InvItemFound(8010) then
             waitAnim()
             API.DoAction_Inventory1(8010,0,1,API.OFF_ACT_GeneralInterface_route)
             while API.Read_LoopyLoop() and not API.PInArea(2756, 5, 3477, 5, 0) do
@@ -226,8 +225,8 @@ local function newArea()
         end
     elseif getDivinationLevel() < 50 then
         if API.PInArea(2769, 12, 3597, 12, 0) then return end
-        if not API.PInArea(2769, 12, 3597, 12, 0) and not API.PInArea(2756, 8, 3477, 8, 0) and API.InvItemFound1(8010) then
-            if API.InvItemFound1(8010) then
+        if not API.PInArea(2769, 12, 3597, 12, 0) and not API.PInArea(2756, 8, 3477, 8, 0) and Inventory:InvItemFound(8010) then
+            if Inventory:InvItemFound(8010) then
                 waitAnim()
                 API.DoAction_Inventory1(8010,0,1,API.OFF_ACT_GeneralInterface_route)
                 while API.Read_LoopyLoop() and not API.PInArea(2756, 8, 3477, 8, 0) do
@@ -254,7 +253,7 @@ local function newArea()
         
     elseif getDivinationLevel() < 60 then
         if API.PInArea(2888, 12, 3047, 12, 0) then return end
-        if API.InvItemFound1(19479) then
+        if Inventory:InvItemFound(19479) then
             waitAnim()
             API.DoAction_Inventory1(19479,0,1,API.OFF_ACT_GeneralInterface_route)
             while API.Read_LoopyLoop() and not API.PInArea(2803, 8, 3086, 8, 0) do
@@ -277,7 +276,7 @@ local function newArea()
             run_to_tile(2887,3046,0)
         end
     elseif getDivinationLevel() < 70 then
-        if not API.PInArea(2420, 12, 2863, 12, 0) and API.InvItemFound1(2552) then
+        if not API.PInArea(2420, 12, 2863, 12, 0) and Inventory:InvItemFound(2552) then
             waitAnim()
             API.DoAction_Inventory1(2552,0,7,API.OFF_ACT_GeneralInterface_route2)
             while API.Read_LoopyLoop() and not API.Compare2874Status(13, false) do
@@ -315,7 +314,7 @@ while(API.Read_LoopyLoop())
 do-----------------------------------------------------------------------------------
     
 
-if not API.InvFull_() and API.ReadPlayerAnim() == 0 then newArea() end  
+if not Inventory:IsFull() and API.ReadPlayerAnim() == 0 then newArea() end  
 
 
 divDiv()

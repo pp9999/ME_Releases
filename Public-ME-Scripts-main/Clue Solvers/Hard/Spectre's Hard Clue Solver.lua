@@ -587,7 +587,7 @@ local function Emote(EmoteName)
 end
 
 local function InterfaceIsOpen(interfaceName)
-    return #API.ScanForInterfaceTest2Get(true, Interfaces[interfaceName]) > 0
+    return #API.ScanForInterfaceTest2Get2(true, Interfaces[interfaceName]) > 0
 end
 
 local function DialogBoxIsOpen()
@@ -600,7 +600,7 @@ local function DialogBoxIsOpen()
 end
 
 local function HasOption()
-    local option = API.ScanForInterfaceTest2Get(false, Interfaces["ChatOptions"])
+    local option = API.ScanForInterfaceTest2Get2(false, Interfaces["ChatOptions"])
 
     if #option > 0 and #option[1].textids > 0 then
         return option[1].textids
@@ -1932,11 +1932,11 @@ ClueSteps = {
             Slib:MoveTo(2199, 3169, 0)
 
         elseif Slib:IsPlayerInArea(2188, 3168, 0, 2) then
-            API.DoAction_Object_r(0x39,API.OFF_ACT_GeneralObject_route0,{3998},50,WPOINT.new(2187,3169,0),5)--Enter Dense Forest
+            API.DoAction_Object_r(0x39,API.OFF_ACT_GeneralObject_route0,{3998},50,FFPOINT.new(2187,3169,0),5)--Enter Dense Forest
             IdleCycles = 15
 
         elseif Slib:IsPlayerInArea(2188, 3165, 0, 2) then
-            API.DoAction_Object_r(0x39,API.OFF_ACT_GeneralObject_route0,{3939},50,WPOINT.new(2187,3166,0),5) --Enter Dense Forest
+            API.DoAction_Object_r(0x39,API.OFF_ACT_GeneralObject_route0,{3939},50,FFPOINT.new(2187,3166,0),5) --Enter Dense Forest
             IdleCycles = 15
 
         elseif Slib:IsPlayerInArea(2188, 3160, 0, 3) then
@@ -2136,7 +2136,7 @@ ClueSteps = {
             API.DoAction_Object1(0x35,API.OFF_ACT_GeneralObject_route2,{69271},50) --Climb down ladder
 
         elseif Slib:IsPlayerInArea(2466, 3494, 3, 20) then
-            API.DoAction_Object_r(0x35,API.OFF_ACT_GeneralObject_route0,{107377},50,WPOINT.new(2466,3495,0),5) --Climb down Ladder
+            API.DoAction_Object_r(0x35,API.OFF_ACT_GeneralObject_route0,{107377},50,FFPOINT.new(2466,3495,0),5) --Climb down Ladder
 
         elseif Slib:IsPlayerInArea(2466, 3494, 0, 2) then
             Interact:Object("Ladder", "Climb-up", 20) --Sometimes it goes to the top floor?
@@ -2470,10 +2470,10 @@ ClueSteps = {
         if Slib:IsPlayerInArea(2561, 3322, 0, 2) then
             if Slib:FindObj2(34530, 10, 12, 2561, 3323, 2).Bool1 == 0 then
                 --Open Drawer
-                API.DoAction_Object_r(0x31,API.OFF_ACT_GeneralObject_route0,{34530},50,WPOINT.new(2561,3323,0),5)
+                API.DoAction_Object_r(0x31,API.OFF_ACT_GeneralObject_route0,{34530},50,FFPOINT.new(2561,3323,0),5)
             else
                 --Search Drawer
-                API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{34531},50,WPOINT.new(2561,3323,0))
+                API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{34531},50,FFPOINT.new(2561,3323,0))
             end
 
         elseif Slib:IsPlayerInArea(2565, 3320, 0, 1) then
@@ -3698,7 +3698,6 @@ ClueSteps = {
     end
 }
 
-API.Write_fake_mouse_do(false)
 while API.Read_LoopyLoop() do
     if IsFirstRun then
         if not OnlyOnceSafetyChecks() then

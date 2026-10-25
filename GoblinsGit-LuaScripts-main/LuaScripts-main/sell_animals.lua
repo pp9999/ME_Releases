@@ -34,7 +34,7 @@ end
 
 
 local function isInterfaceVisible(interface_components)
-    return API.ScanForInterfaceTest2Get(false, interface_components)[1].x ~= 0
+    return API.ScanForInterfaceTest2Get2(false, interface_components)[1].x ~= 0
 end
 
 
@@ -56,7 +56,7 @@ while API.Read_LoopyLoop() do
         API.Write_LoopyLoop(false)
     end
 
-    if not API.BankOpen2() and not API.InvFull_() then
+    if not API.BankOpen2() and not Inventory:IsFull() then
         print("Opening bank")
         API.DoAction_Object1(0x2e,80,{ 112369 },50)
         waitUntil(function()return API.BankOpen2()end, 3)
@@ -69,13 +69,13 @@ while API.Read_LoopyLoop() do
         goto continue
     end
 
-    if API.InvItemcount_String(UNCHECKED_STR) > 0 then
+    if Inventory:InvItemcount_String(UNCHECKED_STR) > 0 then
         print("Checking animals")
-        check(API.InvItemcount_String(UNCHECKED_STR))
+        check(Inventory:InvItemcount_String(UNCHECKED_STR))
         goto continue
     end
 
-    if API.InvItemcount_String(CHECKED_STR) > 0 and not isInterfaceVisible(PICKLE_CHAT_INTERFACE) then
+    if Inventory:InvItemcount_String(CHECKED_STR) > 0 and not isInterfaceVisible(PICKLE_CHAT_INTERFACE) then
         API.DoAction_NPC(0x29,3328,{ 8947 },50)
         waitUntil(function()return isInterfaceVisible(PICKLE_CHAT_INTERFACE)end, 3)
         goto continue
@@ -85,7 +85,7 @@ while API.Read_LoopyLoop() do
         API.KeyboardPress(' ')
         waitUntil(function()return isInterfaceVisible(PICKLE_SELL_INTERFACE)end, 3)
         API.KeyboardPress('1')
-        waitUntil(function()return not API.InvFull_()end, 3)
+        waitUntil(function()return not Inventory:IsFull()end, 3)
         if not isInterfaceVisible(PICKLE_CHAT_INTERFACE) and not isInterfaceVisible(PICKLE_SELL_INTERFACE) then
             print("Animals sold, updating timeout")
             last_action = os.time()

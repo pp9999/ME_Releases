@@ -61,7 +61,7 @@ local function handleElidinisEvents()
     while #eventObjs > 0 and API.Read_LoopyLoop() do
         if eventObjs[1].Id == mimickingSoul then
            -- API.DoAction_Dive_Tile(eventObjs[1].Tile_XYZ) 
-            API.DoAction_TileF(eventObjs[1].Tile_XYZ)
+            API.DoAction_Tile(eventObjs[1].Tile_XYZ)
         elseif eventObjs[1].Id == unstableSoul or eventObjs[1].Id == lostSoul then
             -- API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, { eventObjs[1].Id }, 50)
             API.DoAction_NPC__Direct(0x29, API.OFF_ACT_InteractNPC_route, eventObjs[1])
@@ -71,7 +71,7 @@ local function handleElidinisEvents()
         eventObjs = API.GetAllObjArray1(eventIDs, 50, { 1 })
     end
 
-    if found then API.DoAction_TileF(originTile) end
+    if found then API.DoAction_Tile(originTile) end
 end
 
 local function findThing(ID, range, type)
@@ -105,7 +105,7 @@ local function takeFishingPot()
     end
 
     for _, pot in ipairs(POTIONS) do
-        if API.InvItemcount_1(pot) > 0 then
+        if Inventory:InvItemcount(pot) > 0 then
             print("Drinking potion!")
             API.DoAction_Inventory1(pot, 0, 1, API.OFF_ACT_GeneralInterface_route)
             API.RandomSleep2(800,1800,2400)
@@ -116,10 +116,10 @@ end
 
 local function applyBoosts()
     local torstol = API.Buffbar_GetIDstatus(torstolID, false)
-    if not torstol.found and API.InvStackSize(torstolID) >= 10 then
+    if not torstol.found and Inventory:InvStackSize(torstolID) >= 10 then
         API.DoAction_Inventory1(torstolID, 0, 2, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(600, 500, 500)
-    elseif torstol.found and torstol.conv_text > 0 and torstol.conv_text < 3 and API.InvStackSize(torstolID) >= 1 then
+    elseif torstol.found and torstol.conv_text > 0 and torstol.conv_text < 3 and Inventory:InvStackSize(torstolID) >= 1 then
         API.DoAction_Inventory1(torstolID, 0, 1, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(600, 500, 500)
     end
@@ -134,7 +134,7 @@ local ArcJournalTeleporInterface = {
 }
 
 local function isArcJournalTeleporInterfacePresent()
-    local result = API.ScanForInterfaceTest2Get(true, ArcJournalTeleporInterface)
+    local result = API.ScanForInterfaceTest2Get2(true, ArcJournalTeleporInterface)
     if #result > 0 then
         return true
     else return false end
@@ -157,7 +157,7 @@ local Suppliesinterface = {
 }
 
 local function checkSupplies()
-    local valueInterface = API.ScanForInterfaceTest2Get(false, Suppliesinterface)
+    local valueInterface = API.ScanForInterfaceTest2Get2(false, Suppliesinterface)
     local suppliesNumber = tonumber(string.match(valueInterface[1].textids, "%d+"))
     return suppliesNumber
 end
@@ -199,7 +199,7 @@ local function travelToNewIsland()
         local boatLocation = getObjFFPoint({Rowboat}, 0)
         if API.Dist_FLP(boatLocation) > 25 then
             print("Walk towards boat")
-            API.DoAction_WalkerF1(boatLocation,100)
+            API.DoAction_Walker(boatLocation,100)
             API.RandomSleep2(1200,1200,1200) 
             API.WaitUntilMovingEnds(20,4)
         else
@@ -249,7 +249,7 @@ local function islandStuff()
     local chestLocation = getObjFFPoint({supplies, treasureChest, treasureChest2, treasureChest3}, 0)
     if API.Dist_FLP(chestLocation) > 25 then
         print("Walk near chest")
-        API.DoAction_WalkerF1(chestLocation,100)
+        API.DoAction_Walker(chestLocation,100)
         API.RandomSleep2(1200,1200,1200) 
         API.WaitUntilMovingEnds(20,4)
     else
@@ -272,7 +272,7 @@ local function doFishing()
     local fishLocation = getObjFFPoint({WobbegongSpot}, 1)
     if API.Dist_FLP(fishLocation) > 25 then
         print("Walk towards boat")
-        API.DoAction_WalkerF1(fishLocation,100)
+        API.DoAction_Walker(fishLocation,100)
         API.RandomSleep2(1200,1200,1200) 
         API.WaitUntilMovingEnds(20,4)
     elseif not API.CheckAnim(20) then
@@ -289,7 +289,7 @@ local function depositFish()
         local boatLocation = getObjFFPoint({Rowboat}, 0)
         if API.Dist_FLP(boatLocation) > 25 then
             print("Walk towards boat")
-            API.DoAction_WalkerF1(boatLocation,100)
+            API.DoAction_Walker(boatLocation,100)
             API.RandomSleep2(1200,1200,1200) 
             API.WaitUntilMovingEnds(20,4)
         else

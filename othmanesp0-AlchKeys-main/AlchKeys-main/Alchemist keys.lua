@@ -3,7 +3,6 @@ local UTILS = require("utils")
 local War = API.GetABs_name1("War's Retreat Teleport")
 local InventoryItemCounter = {}
 local MAX_IDLE_TIME_MINUTES = 5
-API.Write_fake_mouse_do(false)
 API.SetMaxIdleTime(MAX_IDLE_TIME_MINUTES)
 local familiar_id = 12031
 
@@ -87,9 +86,9 @@ local function WalkaToChest()
     local safeY = 1335 + math.random(3, 7)
     local safeX2 = 1757 + math.random(0, 3)  
     local safeY2 = 1301 + math.random(3, 7)
-    API.DoAction_Tile(WPOINT.new(safeX2,safeY2,0))
+    API.DoAction_Tile(FFPOINT.new(safeX2,safeY2,0))
     API.RandomSleep2(4000, 500, 500)
-    API.DoAction_Tile(WPOINT.new(safeX,safeY,0))
+    API.DoAction_Tile(FFPOINT.new(safeX,safeY,0))
     API.WaitUntilMovingEnds(20,2)
 end
 
@@ -120,7 +119,7 @@ end
 
 
 local function OpenChests()
-    while API.InvItemFound1(52498) do
+    while Inventory:InvItemFound(52498) do
         API.DoAction_Object1(0x31,API.OFF_ACT_GeneralObject_route0,{ 122065 },50);
         API.RandomSleep2(1500, 500, 500)
         API.DoAction_Interface(0x24,0xffffffff,1,168,27,-1,API.OFF_ACT_GeneralInterface_route)
@@ -129,7 +128,7 @@ local function OpenChests()
             API.DoAction_Button_FO(7)
             API.RandomSleep2(2000, 500, 500)
         end
-        if API.Invfreecount_() == familiar_backpack then
+        if Inventory:Invfreecount() == familiar_backpack then
             API.DoAction_Button_FO(9)
             UTILS.randomSleep(600)
         end

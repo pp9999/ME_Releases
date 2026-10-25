@@ -4,6 +4,7 @@
 # Version:      <2>
 # Datum:        <2025.02.11>
 # Author:       <Frank-key>
+--]]
 
 ------------------------------------------------------------
 -- Module Imports and Global Variables
@@ -41,7 +42,7 @@ local function checkHP()
             API.WaitUntilMovingandAnimEnds(5, 5)
             API.RandomSleep2(1000, 500, 1000)
             if API.BankOpen2() then
-                API.BankAllItems()
+                Bank:DepositInventory()
             end
             hppercent = (API.GetHP_() / API.GetHPMax_()) * 100
         until hppercent == 100 or not API.Read_LoopyLoop()

@@ -58,7 +58,7 @@ local function waitUntil(x, timeout)
 end
 
 local function getInterfaceText(interface, nested)
-    local inter = API.ScanForInterfaceTest2Get(nested, interface)
+    local inter = API.ScanForInterfaceTest2Get2(nested, interface)
     if (#inter > 0) then
         return inter[1].textids
     else
@@ -71,7 +71,7 @@ local function getButtonText()
 end
 
 function AURAS.isAuraInterfaceOpen()
-    local inter = API.ScanForInterfaceTest2Get(false, auraTitleInterface)
+    local inter = API.ScanForInterfaceTest2Get2(false, auraTitleInterface)
     if (#inter > 0) then
         local status = inter[1].textids
         if (string.len(status) > 0) and (doesStringInclude(status, CONSTANTS.AURA_MANAGEMENT)) then
@@ -130,7 +130,7 @@ end
 function AURAS.canUseAura()
 
     local statusText = getInterfaceText(auraStatusTextInterface, false)
-    local inter = API.ScanForInterfaceTest2Get(false, auraStatusTextInterface)
+    local inter = API.ScanForInterfaceTest2Get2(false, auraStatusTextInterface)
     if (#inter > 0) then
         local status = inter[1].textids
         if (string.len(status) > 0) and doesStringInclude(status, CONSTANTS.READY) then

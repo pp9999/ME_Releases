@@ -19,12 +19,12 @@ local debugMessages = true
 local function logDebugMessage(message)
     if debugMessages then
         print(message)
-        API.Write_ScripCuRunning1(message)
+        API.Write_ScripCuRunning0(message)
     end
 end
 
 local function gameStateChecks()
-    local gameState = API.GetGameState()
+    local gameState = API.GetGameState2()
     if (gameState ~= 3) then
         print('Not ingame with state:', gameState)
         API.Write_LoopyLoop(false)
@@ -38,8 +38,8 @@ end
 
 -- Function to check if the door is closed
 local function doorClosed()
-    local drClosed = API.GetAllObjArray2({24381}, 40, 12, WPOINT.new(3253, 3398, 0))
-    local drOpened = API.GetAllObjArray2({24379}, 40, 0, WPOINT.new(3253, 3399, 0))
+    local drClosed = API.GetAllObjArray2({24381}, 40, 12, FFPOINT.new(3253, 3398, 0))
+    local drOpened = API.GetAllObjArray2({24379}, 40, 0, FFPOINT.new(3253, 3399, 0))
     return (#drClosed > 0 and #drOpened == 0)
 end
 
@@ -65,7 +65,7 @@ local function bankOpen()
 end
 
 local function inventoryFull()
-    return API.InvFull_()
+    return Inventory:IsFull()
 end
 
 local function isMining()
@@ -75,7 +75,7 @@ end
 local function openDoor()
     logDebugMessage("openDoor()")
     if doorClosed() then
-        local doors =API.GetAllObjArray2({24381}, 40, 12, WPOINT.new(3253, 3398, 0))
+        local doors =API.GetAllObjArray2({24381}, 40, 12, FFPOINT.new(3253, 3398, 0))
         local door = doors[1]
         if API.DoAction_Object_Direct(0x31, 0, door) then
             UTILS.randomSleep(500)

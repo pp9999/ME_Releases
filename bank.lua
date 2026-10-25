@@ -408,7 +408,7 @@ end
 -- Check if PIN interface is open.
 ---@return boolean
 function BANK:IsPINOpen()
-    local pin = API.ScanForInterfaceTest2Get(true, self.Interfaces.PIN)
+    local pin = API.ScanForInterfaceTest2Get2(true, self.Interfaces.PIN)
     if #pin > 0 then
         print("[BANK] Bank PIN interface open.")
         return true
@@ -464,7 +464,7 @@ end
 -- Get the total number of spaces in the bank.
 ---@return number
 function BANK:GetTotalSpaces()
-    local TotalSpace = API.ScanForInterfaceTest2Get(false, self.Interfaces.BankSpaces[2])
+    local TotalSpace = API.ScanForInterfaceTest2Get2(false, self.Interfaces.BankSpaces[2])
     local CleanText = string.gsub(TotalSpace[1].textids, ",", "")
     local SpaceCount = tonumber(CleanText)
     
@@ -480,7 +480,7 @@ end
 -- Get the total number of items in the bank.
 ---@return number
 function BANK:GetUsedSpaces()
-    local TotalItems = API.ScanForInterfaceTest2Get(false, self.Interfaces.BankSpaces[1])    
+    local TotalItems = API.ScanForInterfaceTest2Get2(false, self.Interfaces.BankSpaces[1])    
     local CleanText = string.gsub(TotalItems[1].textids, ",", "")
     local ItemCount = tonumber(CleanText)
     
@@ -2667,7 +2667,7 @@ end
 function BANK:DepositBoxContains(ItemID)
     local FoundItem = false
     for i = 1, 28 do
-        local slot = API.ScanForInterfaceTest2Get(false, self.Interfaces.DepositBoxSlots[i])[1]
+        local slot = API.ScanForInterfaceTest2Get2(false, self.Interfaces.DepositBoxSlots[i])[1]
         if slot.itemid1 and slot.itemid1 == itemID then
             FoundItem = true
         end
@@ -2687,7 +2687,7 @@ end
 ---@return number|boolean
 function BANK:DepositBoxGetSlot(ItemID)
     for i = 1, 28 do
-        local slot = API.ScanForInterfaceTest2Get(false, self.Interfaces.DepositBoxSlots[i])[1]
+        local slot = API.ScanForInterfaceTest2Get2(false, self.Interfaces.DepositBoxSlots[i])[1]
         if slot.itemid1 and slot.itemid1 == ItemID then
             print("[BANK] Item ID: "..ItemID.." found in slot: "..(i)..".")
             return i - 1
@@ -2936,7 +2936,7 @@ function BANK:ColletionBoxHasItems()
     local FoundItem = false
 
     for i = 1, 16 do
-        local slot = API.ScanForInterfaceTest2Get(false, self.Interfaces.CollectionBoxSlots[i])[1]
+        local slot = API.ScanForInterfaceTest2Get2(false, self.Interfaces.CollectionBoxSlots[i])[1]
         if slot.itemid1 and slot.itemid1 ~= -1 then
             FoundItem = true
         end
@@ -2958,7 +2958,7 @@ function BANK:ColletionBoxContains(itemID)
     local FoundItem = false
 
     for i = 1, 16 do
-        local slot = API.ScanForInterfaceTest2Get(false, self.Interfaces.CollectionBoxSlots[i])[1]
+        local slot = API.ScanForInterfaceTest2Get2(false, self.Interfaces.CollectionBoxSlots[i])[1]
         if slot.itemid1 and slot.itemid1 == itemID then
             FoundItem = true
         end
@@ -3103,7 +3103,7 @@ function BANK:PresetSettingsGetInventory()
     local inventory = {}
 
     for i = 1, 28 do
-        local slot = API.ScanForInterfaceTest2Get(false, self.Interfaces.PresetSettings.Inventory[i])[1]
+        local slot = API.ScanForInterfaceTest2Get2(false, self.Interfaces.PresetSettings.Inventory[i])[1]
         if slot and slot.itemid1 then
             table.insert(inventory, { index = i, itemid1 = slot.itemid1, textitem = slot.textitem })
         end
@@ -3122,7 +3122,7 @@ function BANK:PresetSettingsGetEquipment()
     local equipment = {}
 
     for i = 1, 13 do
-        local slot = API.ScanForInterfaceTest2Get(false, self.Interfaces.PresetSettings.Equipment[i])[1]
+        local slot = API.ScanForInterfaceTest2Get2(false, self.Interfaces.PresetSettings.Equipment[i])[1]
         if slot and slot.itemid1 then
             table.insert(equipment, { index = i, itemid1 = slot.itemid1, textitem = slot.textitem })
         end

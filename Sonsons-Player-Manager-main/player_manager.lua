@@ -92,7 +92,7 @@ PlayerManager.__index = PlayerManager
 ---@field adrenaline number
 ---@field location string
 ---@field orientation number
----@field coords WPOINT
+---@field coords FFPOINT
 ---@field animation number
 ---@field moving boolean
 ---@field inCombat boolean
@@ -487,7 +487,7 @@ function PlayerManager:_hasExcalibur()
     }
 
     for _, id in ipairs(excalIds) do
-        if API.InvItemFound1(id) then -- check inventory
+        if Inventory:InvItemFound(id) then -- check inventory
             return { location = "inventory", id = id }
         end
         if API.GetEquipSlot(5).itemid1 == id then -- check offhand
@@ -591,7 +591,7 @@ end
 ---checks if player has elven ritual shard in inventory
 ---@return boolean
 function PlayerManager:_hasElvenShard()
-    return API.InvItemFound1(43358)
+    return Inventory:InvItemFound(43358)
 end
 
 ---uses elven ritual shard
@@ -615,7 +615,7 @@ function PlayerManager:drink(potionId)
     if API.Get_tick() - self.timestamp.drink < BUFF_INTERVAL_CHECK then return false end
 
     local itemId = potionId or self.inventory.prayer[1].id
-    if not API.CheckInvStuff2(itemId) then return false end
+    if not Inventory:CheckInvStuffCheckAll({ itemId }) then return false end
 
     if API.DoAction_Inventory1(itemId, 0, 1, API.OFF_ACT_GeneralInterface_route) then
         self.timestamp.drink = API.Get_tick()

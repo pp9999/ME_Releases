@@ -53,8 +53,8 @@ local function loadBankPreset()
         -- Pause to give the game time to update the inventory
         API.RandomSleep2(3000, 200, 300)
 
-        local orbCount = API.InvItemcount_1(orbChoosed)
-        local staffCount = API.InvItemcount_1(ID.Battlestaff)
+        local orbCount = Inventory:InvItemcount(orbChoosed)
+        local staffCount = Inventory:InvItemcount(ID.Battlestaff)
         log("Orb count in inventory: " .. orbCount)
         log("Staff count in inventory: " .. staffCount)
         if orbCount > 0 and staffCount > 0 then 
@@ -84,7 +84,7 @@ end
 
 
 while API.Read_LoopyLoop() do 
-    if API.InvItemcount_1(orbChoosed) > 0 and API.InvItemcount_1(ID.Battlestaff) > 0 and not API.isProcessing() then
+    if Inventory:InvItemcount(orbChoosed) > 0 and Inventory:InvItemcount(ID.Battlestaff) > 0 and not API.isProcessing() then
         log("STARTING")
         craftStaves()
         UTILS.countTicks(3)

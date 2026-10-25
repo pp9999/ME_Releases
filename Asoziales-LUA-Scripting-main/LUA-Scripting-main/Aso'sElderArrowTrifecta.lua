@@ -128,16 +128,16 @@ while API.Read_LoopyLoop() do
     end
 
     if selected == "Eggsperimentation" then
-        if API.InvItemFound1(goodegg) or API.InvItemFound1(badegg) then
-            if API.InvItemFound1(goodegg) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
-                print("good eggs:", API.InvItemcount_1(goodegg))
+        if Inventory:InvItemFound(goodegg) or Inventory:InvItemFound(badegg) then
+            if Inventory:InvItemFound(goodegg) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
+                print("good eggs:", Inventory:InvItemcount(goodegg))
                 incubator()
-            elseif API.InvItemFound1(badegg) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
-                print("bad eggs:", API.InvItemcount_1(badegg))
+            elseif Inventory:InvItemFound(badegg) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
+                print("bad eggs:", Inventory:InvItemcount(badegg))
                 compostbin()
             end
         else
-            if not API.InvItemFound1(goodegg) and not API.InvItemFound1(badegg) then
+            if not Inventory:InvItemFound(goodegg) and not Inventory:InvItemFound(badegg) then
                 grabDinoeggs()
                 API.RandomSleep2(600, 200, 300)
                 API.WaitUntilMovingandAnimEnds()
@@ -148,21 +148,21 @@ while API.Read_LoopyLoop() do
     end
 
     if selected == "Dinosaur Shit" then
-        if API.InvFull_() then
-            if API.InvItemFound1(tummisaurus) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
-                print("rootlesaurus:", API.InvItemcount_1(rootlesaurus))
+        if Inventory:IsFull() then
+            if Inventory:InvItemFound(tummisaurus) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
+                print("rootlesaurus:", Inventory:InvItemcount(rootlesaurus))
                 feedRoots()
-            elseif API.InvItemFound1(rootlesaurus) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
-                print("barnasaurus:", API.InvItemcount_1(barnasaurus))
+            elseif Inventory:InvItemFound(rootlesaurus) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
+                print("barnasaurus:", Inventory:InvItemcount(barnasaurus))
                 feedCereal()
-            elseif API.InvItemFound1(barnasaurus) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
-                print("berrisaurus:", API.InvItemcount_1(berrisaurus))
+            elseif Inventory:InvItemFound(barnasaurus) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
+                print("berrisaurus:", Inventory:InvItemcount(berrisaurus))
                 feedBerries()
-            elseif API.InvItemFound1(berrisaurus) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
-                print("propellant:", API.InvItemcount_1(fertilizer))
+            elseif Inventory:InvItemFound(berrisaurus) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
+                print("propellant:", Inventory:InvItemcount(fertilizer))
                 feedBeans()
-            elseif API.InvItemFound1(fertilizer) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
-                print("propellant:", API.InvItemcount_1(fertilizer))
+            elseif Inventory:InvItemFound(fertilizer) and not API.CheckAnim(50) and not API.ReadPlayerMovin() then
+                print("propellant:", Inventory:InvItemcount(fertilizer))
                 burnPropellant()
             end
         elseif not API.isProcessing() then

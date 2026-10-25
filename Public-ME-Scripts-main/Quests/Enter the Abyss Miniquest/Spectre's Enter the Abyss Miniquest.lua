@@ -131,12 +131,12 @@ local interface = {
 }
 
 local function isInterfaceVisible(interface_components)
-    return API.ScanForInterfaceTest2Get(false, interface_components)[1].x ~= nil 
-        and API.ScanForInterfaceTest2Get(false, interface_components)[1].x ~= 0
+    return API.ScanForInterfaceTest2Get2(false, interface_components)[1].x ~= nil 
+        and API.ScanForInterfaceTest2Get2(false, interface_components)[1].x ~= 0
 end
 
 local function MoveTo(X, Y, Z, Tolerance)
-    API.DoAction_WalkerW(WPOINT.new(X + math.random(-Tolerance, Tolerance),Y + math.random(-Tolerance, Tolerance),Z))
+    API.DoAction_Walker(FFPOINT.new(X + math.random(-Tolerance, Tolerance),Y + math.random(-Tolerance, Tolerance),Z))
     while API.Read_LoopyLoop() and not SpectreUtils.IsPlayerInArea(X, Y, Z, Tolerance + 1) do
         UTILS.randomSleep(300)
     end
@@ -149,7 +149,7 @@ local function DialogBoxOpen()
 end
 
 local function HasOption()
-    local option = API.ScanForInterfaceTest2Get(false, { { 1188, 5, -1, -1}, { 1188, 3, -1, 5}, { 1188, 3, 14, 3} })
+    local option = API.ScanForInterfaceTest2Get2(false, { { 1188, 5, -1, -1}, { 1188, 3, -1, 5}, { 1188, 3, 14, 3} })
 
     if #option > 0 and #option[1].textids > 0 then
         return option[1].textids
@@ -202,12 +202,12 @@ end
 ---@param Obj12ID number
 ---@return boolean
 local function OpenDoor(Obj0ID, Obj0XCoord, Obj0YCoord, Obj12ID)
-    local door = #API.GetAllObjArray2({Obj0ID}, 50, {0}, WPOINT.new(Obj0XCoord, Obj0YCoord, 0))    
+    local door = #API.GetAllObjArray2({Obj0ID}, 50, {0}, FFPOINT.new(Obj0XCoord, Obj0YCoord, 0))    
     if door == 0 then 
         API.DoAction_Object1(0x31,API.OFF_ACT_GeneralObject_route0,{Obj12ID},50) --Open door
         while API.Read_LoopyLoop() and door == 0 do
             UTILS.randomSleep(100)
-            door = #API.GetAllObjArray2({Obj0ID}, 50, {0}, WPOINT.new(Obj0XCoord, Obj0YCoord, 0))  
+            door = #API.GetAllObjArray2({Obj0ID}, 50, {0}, FFPOINT.new(Obj0XCoord, Obj0YCoord, 0))  
         end
         return true
     end
@@ -323,7 +323,6 @@ local function executeStage(stageID)
     end
 end
 
-Write_fake_mouse_do(false)
 while (API.Read_LoopyLoop()) do
     UTILS:antiIdle()
     print("State: ", API.VB_FindPSettinOrder(3149).state)

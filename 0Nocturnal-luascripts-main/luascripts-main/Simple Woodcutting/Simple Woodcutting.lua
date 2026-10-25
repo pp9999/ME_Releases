@@ -118,7 +118,7 @@ local function populateDropdown()
     local objects = {}
     if #allNPCS > 0 then
         for _, a in pairs(allNPCS) do
-            local distance = API.Math_DistanceF(a.Tile_XYZ, API.PlayerCoordfloat())
+            local distance = API.Math_Distance(a.Tile_XYZ, API.PlayerCoordfloat())
             a.Distance = distance;
             if a.Id ~= 0 and distance < 50 and a.Name ~= "" then
                 for _, v in pairs(actionSpots) do
@@ -220,7 +220,7 @@ local function cutNearestTree()
     local trees = API.GetAllObjArrayInteract_str({itemToGather}, 5, {0, 1, 12})
 
     for _, tree in ipairs(trees) do
-        if API.DoAction_Object_valid2(0x3B, API.OFF_ACT_GeneralObject_route0, {tree.Id}, 50, WPOINT.new(tree.TileX / 512, tree.TileY / 512, 1), true) then
+        if API.DoAction_Object_valid2(0x3B, API.OFF_ACT_GeneralObject_route0, {tree.Id}, 50, FFPOINT.new(tree.TileX / 512, tree.TileY / 512, 1), true) then
             API.RandomSleep2(1200, 100, 200)
             API.WaitUntilMovingEnds()
             return true

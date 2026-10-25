@@ -106,7 +106,7 @@ end
 ------------------------------------------
 
 --- Gets the player's current coordinates.
---- @return WPOINT: The player's coordinates as a WPOINT.
+--- @return FFPOINT: The player's coordinates as a FFPOINT.
 function Player:getCoords()
     return API.PlayerCoord()
 end
@@ -118,18 +118,18 @@ function Player:getRegion()
 end
 
 --- Checks if the player is at a specific coordinate.
---- @param tile WPOINT: The tile coordinate to check.
+--- @param tile FFPOINT: The tile coordinate to check.
 --- @return boolean: True if the player is at the specified coordinate, false otherwise.
 function Player:isAtCoord(tile)
-    return API.Dist_FLPW(tile) < 1
+    return API.Dist_FLP(tile) < 1
 end
 
 --- Checks if the player is within a specified radius of a coordinate.
---- @param tile WPOINT: The tile coordinate to check.
+--- @param tile FFPOINT: The tile coordinate to check.
 --- @param radius number: The radius within which to check.
 --- @return boolean: True if the player is within the specified radius, false otherwise.
 function Player:isAtCoordWithRadius(tile, radius)
-    return API.Dist_FLPW(tile) < radius
+    return API.Dist_FLP(tile) < radius
 end
 
 --- Gets the player's orientation in degrees.

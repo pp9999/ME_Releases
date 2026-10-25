@@ -49,7 +49,7 @@ local function walk()
         else
             if API.DoAction_Object1(0x29, API.OFF_ACT_GeneralObject_route1, { ID.FURNACE }, 50) then
                 ores = ores + 120
-                ores = ores + API.InvItemcount_1(ID.ORE)
+                ores = ores + Inventory:InvItemcount(ID.ORE)
 
                 local elapsedMinutes = (os.time() - startTime) / 60
                 local oresPH = math.floor((ores * 60) / elapsedMinutes);
@@ -147,7 +147,7 @@ while API.Read_LoopyLoop() do
         goto continue
     end
 
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         if not isOreBoxFull() then
             fillOreBox()
         else

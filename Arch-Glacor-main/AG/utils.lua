@@ -361,7 +361,7 @@ end
 
 function Utils.getLootValue()
     local inter = { {863,33,-1,0}, {863,35,-1,0}, {863,36,-1,0}, {863,38,-1,0}, {863,8,-1,0}, {863,97,-1,0} }
-    local value = API.ScanForInterfaceTest2Get(false, inter)[1].textids
+    local value = API.ScanForInterfaceTest2Get2(false, inter)[1].textids
     if value then
         local fixedText = value:gsub("[%p%c%s]", "")
         return tonumber(fixedText) or 0
@@ -382,7 +382,7 @@ function Utils.formatNumber(number)
 end
 
 function Utils.getEnrage()
-    local text = API.ScanForInterfaceTest2Get(false,
+    local text = API.ScanForInterfaceTest2Get2(false,
                      {{863, 33, -1, -1, 0}, {863, 35, -1, 33, 0}, {863, 36, -1, 35, 0}, {863, 37, -1, 36, 0},
                       {863, 11, -1, 37, 0}, {863, 15, -1, 11, 0}})[1].textids
     local fixedText = text:gsub("[%p%c%s]", "")

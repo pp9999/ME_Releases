@@ -730,7 +730,7 @@ local function getRouteSteps(route)
 end
 
 local function lodestoneInterfaceOpen()
-    return (#API.ScanForInterfaceTest2Get(true, {{ 1092, 1, -1, -1, 0 }, { 1092, 54, -1, 1, 0 }}) > 0)
+    return (#API.ScanForInterfaceTest2Get2(true, {{ 1092, 1, -1, -1, 0 }, { 1092, 54, -1, 1, 0 }}) > 0)
         or (API.Compare2874Status and API.Compare2874Status(30, false) == true)
 end
 

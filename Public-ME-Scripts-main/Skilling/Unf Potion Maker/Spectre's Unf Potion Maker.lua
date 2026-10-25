@@ -337,7 +337,6 @@ local function executeStage(stageID)
     end
 end
 
-Write_fake_mouse_do(false)
 while (API.Read_LoopyLoop()) do    
     executeStage(stageID)
     collectgarbage("collect")

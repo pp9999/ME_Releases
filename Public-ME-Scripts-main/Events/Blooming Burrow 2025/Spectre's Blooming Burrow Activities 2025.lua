@@ -253,7 +253,7 @@ local function MoveTo(X, Y, Z, Tolerance)
     while API.Read_LoopyLoop() and not IsPlayerInArea(X, Y, Z, Tolerance + 2) do
         if not API.IsPlayerMoving_(API.GetLocalPlayerName()) then
             print("Not moving. Walking...")
-            API.DoAction_WalkerW(WPOINT.new(X + math.random(-Tolerance, Tolerance),Y + math.random(-Tolerance, Tolerance),Z))
+            API.DoAction_Walker(FFPOINT.new(X + math.random(-Tolerance, Tolerance),Y + math.random(-Tolerance, Tolerance),Z))
         end
         UTILS.randomSleep(300)
     end
@@ -513,7 +513,7 @@ local stageFunctions = {
     
         local function CheckBurrowAndGetDirection(target)
             print(string.format("[CheckBurrowAndGetDirection] Checking burrow at (%d, %d)", target.x, target.y))
-            API.DoAction_Object2(0x29, API.OFF_ACT_GeneralObject_route1, IDS.Cocoamancy.ChocolateBurrow, 50, WPOINT.new(target.x, target.y, 0))
+            API.DoAction_Object2(0x29, API.OFF_ACT_GeneralObject_route1, IDS.Cocoamancy.ChocolateBurrow, 50, FFPOINT.new(target.x, target.y, 0))
             UTILS.randomSleep(2000)
             local messages = API.GatherEvents_chat_check()
             local direction = nil
@@ -579,7 +579,7 @@ local stageFunctions = {
     
             if rabbitsFound then
                 print("[Main] Digging burrow...")
-                API.DoAction_Object2(0x38, API.OFF_ACT_GeneralObject_route0, IDS.Cocoamancy.ChocolateBurrow, 50, WPOINT.new(currentBurrow.x, currentBurrow.y, 0))
+                API.DoAction_Object2(0x38, API.OFF_ACT_GeneralObject_route0, IDS.Cocoamancy.ChocolateBurrow, 50, FFPOINT.new(currentBurrow.x, currentBurrow.y, 0))
                 API.RandomSleep2(3000, 1000, 1000)
                 API.WaitUntilMovingEnds(20, 2)
                 while API.Read_LoopyLoop() and API.IsPlayerAnimating_(API.GetLocalPlayerName(), 30) do
@@ -640,7 +640,7 @@ local stageFunctions = {
             UpdateStatus("Moving to Mixing Station")
             print("Moving to Mixing Station")
             if not API.IsPlayerMoving_(API.GetLocalPlayerName()) then
-                API.DoAction_WalkerW(WPOINT.new(3751, 4942, 0))
+                API.DoAction_Walker(FFPOINT.new(3751, 4942, 0))
                 UTILS.randomSleep(1000)
             end
         else
@@ -699,7 +699,7 @@ local stageFunctions = {
             UpdateStatus("Moving to Moulding Station")
             print("Moving to Moulding Station")
             if not API.IsPlayerMoving_(API.GetLocalPlayerName()) then
-                API.DoAction_WalkerW(WPOINT.new(3751, 4946, 0))
+                API.DoAction_Walker(FFPOINT.new(3751, 4946, 0))
                 UTILS.randomSleep(1000)
             end
         else
@@ -758,7 +758,7 @@ local stageFunctions = {
             UpdateStatus("Moving to Foiling Station")
             print("Moving to Foiling Station")
             if not API.IsPlayerMoving_(API.GetLocalPlayerName()) then
-                API.DoAction_WalkerW(WPOINT.new(3751, 4950, 0))
+                API.DoAction_Walker(FFPOINT.new(3751, 4950, 0))
                 UTILS.randomSleep(1000)
             end
         else
@@ -794,7 +794,6 @@ local function executeStage(stageID)
     end
 end
 
-API.Write_fake_mouse_do(false)
 while (API.Read_LoopyLoop()) do
     if not API.CacheEnabled then
         print("Cache not enabled. Exiting script.")

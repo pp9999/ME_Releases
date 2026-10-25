@@ -31,7 +31,7 @@ local gui              = GUILib.new()
 local instanceTimer    = { { 861, 0, -1, -1, 0 }, { 861, 2, -1, 0, 0 }, { 861, 4, -1, 2, 0 }, { 861, 8, -1, 4, 0 } }
 
 local function isInstanceTimerPresent()
-    local result = API.ScanForInterfaceTest2Get(false, instanceTimer)
+    local result = API.ScanForInterfaceTest2Get2(false, instanceTimer)
     print("[DEBUG][Timer] #result=" .. #result)
     if #result > 0 then
         local inter = result[1]
@@ -248,7 +248,7 @@ local function walkToStartPos()
     if bossRoomStartPos == nil then return end
     state = "TERUG_START"
     print("[Hermod] Terug naar startpositie: " .. bossRoomStartPos.x .. "," .. bossRoomStartPos.y)
-    API.DoAction_Tile(WPOINT.new(bossRoomStartPos.x, bossRoomStartPos.y, bossRoomStartPos.z))
+    API.DoAction_Tile(FFPOINT.new(bossRoomStartPos.x, bossRoomStartPos.y, bossRoomStartPos.z))
     API.WaitUntilMovingEnds(6, 8)
 end
 
@@ -266,7 +266,7 @@ local function dodgeAttack()
     else
         dx = -dist -- west
     end
-    API.DoAction_Tile(WPOINT.new(p.x + dx, p.y + dy, p.z))
+    API.DoAction_Tile(FFPOINT.new(p.x + dx, p.y + dy, p.z))
 end
 
 local function loot()
@@ -374,7 +374,7 @@ local function handleBossRoom()
             lastDodgeTime = now
             -- Wacht tot speler de nieuwe tile bereikt heeft, dan pas aanvallen
             API.WaitUntilMovingEnds(2, 4)
-            API.DoAction_NPC(0x29, API.OFF_ACT_AttackNPC_route, { HERMOD_BOSS }, 20, WPOINT.new(0, 0, 0), true, 0)
+            API.DoAction_NPC(0x29, API.OFF_ACT_AttackNPC_route, { HERMOD_BOSS }, 20, FFPOINT.new(0, 0, 0), true, 0)
         else
             state = "DODGE_WACHT"
         end
@@ -387,7 +387,7 @@ local function handleBossRoom()
         .. " Hermod=" .. (hermod and "ja Anim=" .. hermod.Anim or "nee"))
     if zombies and #zombies > 0 then
         state = "KILLING_ZOMBIE"
-        API.DoAction_NPC(0x29, API.OFF_ACT_AttackNPC_route, { ARMORED_ZOMBIE }, 20, WPOINT.new(0, 0, 0), true, 0)
+        API.DoAction_NPC(0x29, API.OFF_ACT_AttackNPC_route, { ARMORED_ZOMBIE }, 20, FFPOINT.new(0, 0, 0), true, 0)
         return
     end
 
@@ -436,7 +436,7 @@ local function handleBossRoom()
     lootTriggered = false
     state = "ATTACK_HERMOD"
     if not hasTarget() then
-        API.DoAction_NPC(0x29, API.OFF_ACT_AttackNPC_route, { HERMOD_BOSS }, 20, WPOINT.new(0, 0, 0), true, 0)
+        API.DoAction_NPC(0x29, API.OFF_ACT_AttackNPC_route, { HERMOD_BOSS }, 20, FFPOINT.new(0, 0, 0), true, 0)
     end
 end
 

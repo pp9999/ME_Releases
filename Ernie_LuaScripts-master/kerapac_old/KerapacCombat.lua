@@ -93,7 +93,7 @@ function KerapacCombat:CheckAvailableBuffs()
 end
 
 function KerapacCombat:CheckForDebilitateOnTarget()
-    for _, value in ipairs(API.ReadTargetInfo().Buff_stack) do
+    for _, value in ipairs(API.ReadTargetInfo99().Buff_stack) do
         if value == Data.extraAbilities.debilitateAbility.debuffId then
             return true
         end
@@ -102,7 +102,7 @@ function KerapacCombat:CheckForDebilitateOnTarget()
 end
 
 function KerapacCombat:CheckForBloatOnTarget()
-    for _, value in ipairs(API.ReadTargetInfo().Buff_stack) do
+    for _, value in ipairs(API.ReadTargetInfo99().Buff_stack) do
         if value == Data.extraAbilities.bloatAbility.buffId then
             return true
         end
@@ -321,7 +321,7 @@ function KerapacCombat:CheckForStun()
     if API.DeBuffbar_GetIDstatus(Data.stun).found then
         Logger:Info("I am stunned")
         self:UseFreedomAbility()
-        API.DoAction_TileF(State.centerOfArenaPosition)
+        API.DoAction_Tile(State.centerOfArenaPosition)
         Utils:SleepTickRandom(2)
     end
 end
@@ -377,7 +377,7 @@ end
 function KerapacCombat:ApplyVulnerability()
     if not Inventory:Contains("Vulnerability bomb") and not API.GetABs_name1("Vulnerability bomb").enabled then return end
     
-    if API.ReadTargetInfo().Target_Name ~= "Kerapac, the bound" and API.ReadTargetInfo().Target_Name ~= "Echo of Kerapac" then return end
+    if API.ReadTargetInfo99().Target_Name ~= "Kerapac, the bound" and API.ReadTargetInfo99().Target_Name ~= "Echo of Kerapac" then return end
     
     if not (API.Get_tick() - State.vulnTicks > 12) then return end
     
@@ -389,7 +389,7 @@ function KerapacCombat:ApplyVulnerability()
     end
     
     local hasVuln = false
-    for _, value in ipairs(API.ReadTargetInfo().Buff_stack) do
+    for _, value in ipairs(API.ReadTargetInfo99().Buff_stack) do
         if value == 14395 then
             hasVuln = true
         end
@@ -398,9 +398,9 @@ function KerapacCombat:ApplyVulnerability()
     local vulnAB = API.GetABs_name1("Vulnerability bomb")
     if not hasVuln then
         API.DoAction_Ability_Direct(vulnAB, 1, API.OFF_ACT_GeneralInterface_route)
-        if API.ReadTargetInfo().Target_Name == "Kerapac, the bound" then
+        if API.ReadTargetInfo99().Target_Name == "Kerapac, the bound" then
             self:AttackKerapac()
-        elseif API.ReadTargetInfo().Target_Name == "Echo of Kerapac" then
+        elseif API.ReadTargetInfo99().Target_Name == "Echo of Kerapac" then
             local HardMode = require("kerapac/KerapacHardMode")
             HardMode:AttackEcho()
         end
@@ -425,8 +425,8 @@ function KerapacCombat:HandleCombatState(state)
         end
         State.canAttack = false
         Utils:SleepTickRandom(2)
-        if not API.DoAction_Dive_Tile(WPOINT.new(math.floor(self:GetKerapacInformation().TileX / 512), math.floor(self:GetKerapacInformation().TileY / 512), math.floor(self:GetKerapacInformation().TileZ / 512))) then
-            API.DoAction_Tile(WPOINT.new(math.floor(self:GetKerapacInformation().TileX / 512), math.floor(self:GetKerapacInformation().TileY / 512), math.floor(self:GetKerapacInformation().TileZ / 512)))
+        if not API.DoAction_Dive_Tile(FFPOINT.new(math.floor(self:GetKerapacInformation().TileX / 512), math.floor(self:GetKerapacInformation().TileY / 512), math.floor(self:GetKerapacInformation().TileZ / 512))) then
+            API.DoAction_Tile(FFPOINT.new(math.floor(self:GetKerapacInformation().TileX / 512), math.floor(self:GetKerapacInformation().TileY / 512), math.floor(self:GetKerapacInformation().TileZ / 512)))
         end
         self:EnableMagePray()
         State.isRiftDodged = true
@@ -467,7 +467,7 @@ function KerapacCombat:HandleCombatState(state)
     
     if state == Data.bossStateEnum.JUMP_ATTACK_LANDED.name and self:GetKerapacInformation().Distance < 4 then
         self:EnableMeleePray()
-        API.DoAction_TileF(State.centerOfArenaPosition)
+        API.DoAction_Tile(State.centerOfArenaPosition)
         Utils:SleepTickRandom(1)
         self:AttackKerapac()
     end
@@ -475,7 +475,7 @@ function KerapacCombat:HandleCombatState(state)
     if state == Data.bossStateEnum.LIGHTNING_ATTACK.name and not State.islightningPhase then
         Logger:Info("Lightning Phase active ------------")
         local surgeAB = API.GetABs_name("Surge")
-        API.DoAction_Tile(WPOINT.new(State.centerOfArenaPosition.x, State.centerOfArenaPosition.y, 1))
+        API.DoAction_Tile(FFPOINT.new(State.centerOfArenaPosition.x, State.centerOfArenaPosition.y, 1))
         Utils:SleepTickRandom(6)
         self:AttackKerapac()
         State.islightningPhase = true
@@ -672,7 +672,7 @@ function KerapacCombat:CastNextAbility()
     self:InitAbilities()
     
     --local attackTick = API.VB_FindPSettinOrder(4501).state
-    local timeWarpActionButton = API.ScanForInterfaceTest2Get(false, { { 743,0,-1,0 }, { 743,1,-1,0 } })[1].textitem == "<col=FFFFFF>Warp time"
+    local timeWarpActionButton = API.ScanForInterfaceTest2Get2(false, { { 743,0,-1,0 }, { 743,1,-1,0 } })[1].textitem == "<col=FFFFFF>Warp time"
     --if attackTick == State.lastAttackTick then return end
     if not (API.Get_tick() - State.globalCooldownTicks > 2) then return end
     if not State.canAttack then return end

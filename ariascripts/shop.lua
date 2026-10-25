@@ -15,7 +15,7 @@ SHOP.BUY_OPTIONS = {
 --- `shop_index` = index of the item in the shop's list of items (0 based)
 --- i.e. the first item in the shop has an shop_index of 0
 local function getItemIC(shop_index)
-  return API.ScanForInterfaceTest2Get(false, {
+  return API.ScanForInterfaceTest2Get2(false, {
     {SHOP_CONTAINER,7,-1,-1,0},
     {SHOP_CONTAINER,9,-1,7,0},
     {SHOP_CONTAINER,10,-1,9,0},
@@ -28,7 +28,7 @@ end
 
 --- `sample_index` = index of the item in the shop's list of free samples (0 based)
 local function getFreeSampleItemIC(sample_index)
-  return API.ScanForInterfaceTest2Get(false, {
+  return API.ScanForInterfaceTest2Get2(false, {
     {SHOP_CONTAINER,7,-1,-1,0},
     {SHOP_CONTAINER,9,-1,7,0},
     {SHOP_CONTAINER,10,-1,9,0},
@@ -69,7 +69,7 @@ end
 ---@param shop_index number
 ---@return string
 function SHOP.getPrice(shop_index)
-  local ic = API.ScanForInterfaceTest2Get(false, {
+  local ic = API.ScanForInterfaceTest2Get2(false, {
     {SHOP_CONTAINER,7,-1,-1,0},
     {SHOP_CONTAINER,9,-1,7,0},
     {SHOP_CONTAINER,10,-1,9,0},

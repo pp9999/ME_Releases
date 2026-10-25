@@ -630,13 +630,13 @@ Routes.TO_ANACHRONIA_SW = {
         desc = "Teleport to Ardougne lodestone"
     },
     {
-        action = { interact = { object = "Stairs", action = "Climb up", tile = WPOINT.new(2654, 3362, 0) } },
+        action = { interact = { object = "Stairs", action = "Climb up", tile = FFPOINT.new(2654, 3362, 0) } },
         wait = { coord = {x = 2656, y = 3362}, floor = 1 },
         timeout = 20,
         desc = "Climb stairs to first floor"
     },
     {
-        action = { interact = { object = "Mystical tree", action = "Teleport", tile = WPOINT.new(2655, 3365, 1) } },
+        action = { interact = { object = "Mystical tree", action = "Teleport", tile = FFPOINT.new(2655, 3365, 1) } },
         wait = { coord = {x = 5201, y = 2374} },
         timeout = 15,
         desc = "Teleport via Mystical tree"
@@ -651,7 +651,7 @@ Routes.TO_ANACHRONIA_SW = {
         desc = "Verify near Mystical tree for Bill teleport"
     },
     {
-        action = { interact = { object = "Mystical tree", action = "Teleport to Bill", tile = WPOINT.new(5244, 2332, 0) } },
+        action = { interact = { object = "Mystical tree", action = "Teleport to Bill", tile = FFPOINT.new(5244, 2332, 0) } },
         wait = { coord = {x = 5301, y = 2294} },
         timeout = 15,
         desc = "Teleport to Bill"
@@ -885,14 +885,14 @@ Routes.TO_DWARVEN_MINE = {
         desc = "Walk to Dwarven Mine entrance"
     },
     {
-        action = { interact = { object = "Door", action = "Open", tile = WPOINT.new(3061, 3374, 0) } },
+        action = { interact = { object = "Door", action = "Open", tile = FFPOINT.new(3061, 3374, 0) } },
         skip_if = { objectState = {id = 11714, type = 12, value = 1} },
         wait = { objectState = {id = 11714, type = 12, value = 1} },
         timeout = 10,
         desc = "Open door"
     },
     {
-        action = { interact = { object = "Stairs", action = "Climb-down", tile = WPOINT.new(3060, 3377, 0) } },
+        action = { interact = { object = "Stairs", action = "Climb-down", tile = FFPOINT.new(3060, 3377, 0) } },
         wait = { region = {x = 47, y = 152, z = 12184} },
         timeout = 20,
         desc = "Climb down stairs"
@@ -919,7 +919,7 @@ Routes.TO_ARTISANS_GUILD_FURNACE_FROM_DM = {
         desc = "Climb up stairs"
     },
     {
-        action = { interact = { object = "Door", action = "Open", tile = WPOINT.new(3061, 3374, 0) } },
+        action = { interact = { object = "Door", action = "Open", tile = FFPOINT.new(3061, 3374, 0) } },
         skip_if = { objectState = {id = 11714, type = 12, value = 1} },
         wait = { objectState = {id = 11714, type = 12, value = 1} },
         timeout = 10,
@@ -943,7 +943,7 @@ Routes.TO_ARTISANS_GUILD_FURNACE_FROM_DM_COAL = {
         desc = "Climb up stairs"
     },
     {
-        action = { interact = { object = "Door", action = "Open", tile = WPOINT.new(3061, 3374, 0) } },
+        action = { interact = { object = "Door", action = "Open", tile = FFPOINT.new(3061, 3374, 0) } },
         skip_if = { objectState = {id = 11714, type = 12, value = 1} },
         wait = { objectState = {id = 11714, type = 12, value = 1} },
         timeout = 10,
@@ -967,7 +967,7 @@ Routes.TO_ARTISANS_GUILD_BANK_FROM_DM = {
         desc = "Climb up stairs"
     },
     {
-        action = { interact = { object = "Door", action = "Open", tile = WPOINT.new(3061, 3374, 0) } },
+        action = { interact = { object = "Door", action = "Open", tile = FFPOINT.new(3061, 3374, 0) } },
         skip_if = { objectState = {id = 11714, type = 12, value = 1} },
         wait = { objectState = {id = 11714, type = 12, value = 1} },
         timeout = 10,
@@ -991,7 +991,7 @@ Routes.TO_ARTISANS_GUILD_BANK_FROM_DM_COAL = {
         desc = "Climb up stairs"
     },
     {
-        action = { interact = { object = "Door", action = "Open", tile = WPOINT.new(3061, 3374, 0) } },
+        action = { interact = { object = "Door", action = "Open", tile = FFPOINT.new(3061, 3374, 0) } },
         skip_if = { objectState = {id = 11714, type = 12, value = 1} },
         wait = { objectState = {id = 11714, type = 12, value = 1} },
         timeout = 10,
@@ -1015,7 +1015,7 @@ Routes.TO_FALADOR_EAST_BANK_FROM_DM = {
         desc = "Climb up stairs"
     },
     {
-        action = { interact = { object = "Door", action = "Open", tile = WPOINT.new(3061, 3374, 0) } },
+        action = { interact = { object = "Door", action = "Open", tile = FFPOINT.new(3061, 3374, 0) } },
         skip_if = { objectState = {id = 11714, type = 12, value = 1} },
         wait = { objectState = {id = 11714, type = 12, value = 1} },
         timeout = 10,
@@ -1039,7 +1039,7 @@ Routes.TO_FALADOR_EAST_BANK_FROM_DM_COAL = {
         desc = "Climb up stairs"
     },
     {
-        action = { interact = { object = "Door", action = "Open", tile = WPOINT.new(3061, 3374, 0) } },
+        action = { interact = { object = "Door", action = "Open", tile = FFPOINT.new(3061, 3374, 0) } },
         skip_if = { objectState = {id = 11714, type = 12, value = 1} },
         wait = { objectState = {id = 11714, type = 12, value = 1} },
         timeout = 10,
@@ -1057,14 +1057,14 @@ Routes.TO_DWARVEN_MINE_FROM_ARTISANS_GUILD_FURNACE = {
         desc = "Walk to Dwarven Mine entrance"
     },
     {
-        action = { interact = { object = "Door", action = "Open", tile = WPOINT.new(3061, 3374, 0) } },
+        action = { interact = { object = "Door", action = "Open", tile = FFPOINT.new(3061, 3374, 0) } },
         skip_if = { objectState = {id = 11714, type = 12, value = 1} },
         wait = { objectState = {id = 11714, type = 12, value = 1} },
         timeout = 10,
         desc = "Open door"
     },
     {
-        action = { interact = { object = "Stairs", action = "Climb-down", tile = WPOINT.new(3060, 3377, 0) } },
+        action = { interact = { object = "Stairs", action = "Climb-down", tile = FFPOINT.new(3060, 3377, 0) } },
         wait = { region = {x = 47, y = 152, z = 12184} },
         timeout = 20,
         desc = "Climb down stairs"
@@ -1077,14 +1077,14 @@ Routes.TO_DWARVEN_MINE_FROM_ARTISANS_GUILD_BANK = {
         desc = "Walk to Dwarven Mine entrance"
     },
     {
-        action = { interact = { object = "Door", action = "Open", tile = WPOINT.new(3061, 3374, 0) } },
+        action = { interact = { object = "Door", action = "Open", tile = FFPOINT.new(3061, 3374, 0) } },
         skip_if = { objectState = {id = 11714, type = 12, value = 1} },
         wait = { objectState = {id = 11714, type = 12, value = 1} },
         timeout = 10,
         desc = "Open door"
     },
     {
-        action = { interact = { object = "Stairs", action = "Climb-down", tile = WPOINT.new(3060, 3377, 0) } },
+        action = { interact = { object = "Stairs", action = "Climb-down", tile = FFPOINT.new(3060, 3377, 0) } },
         wait = { region = {x = 47, y = 152, z = 12184} },
         timeout = 20,
         desc = "Climb down stairs"
@@ -1097,14 +1097,14 @@ Routes.TO_DWARVEN_MINE_FROM_FALADOR_EAST_BANK = {
         desc = "Walk to Dwarven Mine entrance"
     },
     {
-        action = { interact = { object = "Door", action = "Open", tile = WPOINT.new(3061, 3374, 0) } },
+        action = { interact = { object = "Door", action = "Open", tile = FFPOINT.new(3061, 3374, 0) } },
         skip_if = { objectState = {id = 11714, type = 12, value = 1} },
         wait = { objectState = {id = 11714, type = 12, value = 1} },
         timeout = 10,
         desc = "Open door"
     },
     {
-        action = { interact = { object = "Stairs", action = "Climb-down", tile = WPOINT.new(3060, 3377, 0) } },
+        action = { interact = { object = "Stairs", action = "Climb-down", tile = FFPOINT.new(3060, 3377, 0) } },
         wait = { region = {x = 47, y = 152, z = 12184} },
         timeout = 20,
         desc = "Climb down stairs"
@@ -1234,14 +1234,14 @@ Routes.TO_DWARVEN_RESOURCE_DUNGEON = {
         desc = "Walk to Dwarven Mine entrance"
     },
     {
-        action = { interact = { object = "Door", action = "Open", tile = WPOINT.new(3061, 3374, 0) } },
+        action = { interact = { object = "Door", action = "Open", tile = FFPOINT.new(3061, 3374, 0) } },
         skip_if = { objectState = {id = 11714, type = 12, value = 1} },
         wait = { objectState = {id = 11714, type = 12, value = 1} },
         timeout = 10,
         desc = "Open door"
     },
     {
-        action = { interact = { object = "Stairs", action = "Climb-down", tile = WPOINT.new(3060, 3377, 0) } },
+        action = { interact = { object = "Stairs", action = "Climb-down", tile = FFPOINT.new(3060, 3377, 0) } },
         wait = { region = {x = 47, y = 152, z = 12184} },
         timeout = 20,
         desc = "Climb down stairs"

@@ -50,7 +50,7 @@ end
 local function GotoBeeHive()
     if isAtLocation(AREA.ARDOUGNE_LODESTONE, 20) then
         print("Walking to the beehives...")
-        API.DoAction_Tile(WPOINT.new(2683 + math.random(-1, 1), 3347 + math.random(-1, 1), 0))
+        API.DoAction_Tile(FFPOINT.new(2683 + math.random(-1, 1), 3347 + math.random(-1, 1), 0))
         API.RandomSleep2(20000, 1000)
     else
         print("We are not in the correct area yet!")

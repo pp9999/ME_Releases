@@ -44,7 +44,7 @@ local function round(val, decimal) -- rounds up from 0.25 to the nearest whole n
 end
 
 local function walktoTHall() -- Walks to the TownHall Building
-    API.DoAction_Tile(WPOINT.new( 3303 + API.Math_RandomNumber(4), 3565 + API.Math_RandomNumber(4), 0))
+    API.DoAction_Tile(FFPOINT.new( 3303 + API.Math_RandomNumber(4), 3565 + API.Math_RandomNumber(4), 0))
     API.RandomSleep2(1050, 1000, 1000)
     API.WaitUntilMovingEnds()
     API.RandomSleep2(1050, 1000, 1000)
@@ -64,7 +64,7 @@ end
 function clickHotspot() -- uses iterated data to determine Optimal Construction hotspots TileXY then clicks
     hotspot = findobjtile()
     if  hotspot then
-        tile = WPOINT.new(hotspot.CalcX, hotspot.CalcY, 0)
+        tile = FFPOINT.new(hotspot.CalcX, hotspot.CalcY, 0)
         API.DoAction_Object2(0x29, 0, {125061}, 30, tile);
         API.RandomSleep2(600, 800, 1000);
         API.WaitUntilMovingEnds()
@@ -75,7 +75,7 @@ end
 
 function resethotspots() -- Paths to the Blueprint table and reselects a TownHall Blueprint then paths back to Townhall
     print("walking to BP table")
-    API.DoAction_Tile(WPOINT.new( 3285 + API.Math_RandomNumber(4), 3555 + API.Math_RandomNumber(4), 0))
+    API.DoAction_Tile(FFPOINT.new( 3285 + API.Math_RandomNumber(4), 3555 + API.Math_RandomNumber(4), 0))
     print("walking to BP table")
     API.RandomSleep2(1050, 1000, 1000)
     API.WaitUntilMovingEnds()
@@ -93,7 +93,7 @@ end
     
 function aminexttoahotspot() -- sleeps while next to optimal hotspot
     hotspot = findobjtile()
-    tile = WPOINT.new(hotspot.CalcX, hotspot.CalcY, 0)
+    tile = FFPOINT.new(hotspot.CalcX, hotspot.CalcY, 0)
     if round(hotspot.Distance, 0) <= 1.5 then
         --print(hotspot.Distance/512, " Tiles away") -- debug
         return true
@@ -198,7 +198,7 @@ while (API.Read_LoopyLoop()) do
             walktoTHall()
         end
 
-        if API.InvItemcountStack_String("Magic frame") <= 59 or API.InvItemcountStack_String("Stone wall segment") <= 5 and
+        if Inventory:InvItemcountStack_Strings({ "Magic frame" }) <= 59 or Inventory:InvItemcountStack_Strings({ "Stone wall segment" }) <= 5 and
             not findobjtile() then
             print("out of resources")
             break

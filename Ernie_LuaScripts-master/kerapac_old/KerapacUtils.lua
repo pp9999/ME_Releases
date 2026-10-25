@@ -159,7 +159,7 @@ function KerapacUtils:HandleSpecialSummoning()
     if not (Familiars:GetSpellPoints() >= Data.summoningPointsForScroll) then return end
     if Familiars:GetName() ~= "Hellhound" then return end
     
-    local isHealable = self:IsFamiliarHpBelowPercentage(API.ScanForInterfaceTest2Get(false, { { 662,0,-1,0 }, { 662,43,-1,0 }, { 662,44,-1,0 }, { 662,64,-1,0 }, { 662,65,-1,0 }, { 662,66,-1,0 }, { 662,66,8,0 } })[1].textids, 70)
+    local isHealable = self:IsFamiliarHpBelowPercentage(API.ScanForInterfaceTest2Get2(false, { { 662,0,-1,0 }, { 662,43,-1,0 }, { 662,44,-1,0 }, { 662,64,-1,0 }, { 662,65,-1,0 }, { 662,66,-1,0 }, { 662,66,8,0 } })[1].textids, 70)
     if not isHealable then return end
     
     Familiars:CastSpecialAttack()
@@ -644,8 +644,8 @@ function KerapacUtils:SetupAutoFire()
     if Familiars:HasFamiliar() and not State.isAutoFireSetup and Familiars:GetName() ~= "Hellhound" then
         API.DoAction_Interface(0xffffffff,0xffffffff,1,662,74,-1,API.OFF_ACT_GeneralInterface_route)
         self:SleepTickRandom(2)
-        API.KeyPress_(0x01)
-        API.KeyPress_2(0x0D)
+        API.KeyboardPress(0x01, 40, 60)
+        API.KeyboardPress2(0x0D, 40, 60)
         Logger:Info("Setting up auto fire of scrolls")
         State.isAutoFireSetup = true
     else

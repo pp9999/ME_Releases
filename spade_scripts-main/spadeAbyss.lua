@@ -67,7 +67,7 @@ end
 
 local function moveToTrainingSpot(trainingSpots)
     print("Running to training spot.")
-    API.DoAction_TileF(trainingSpots[math.random(1, #trainingSpots)])
+    API.DoAction_Tile(trainingSpots[math.random(1, #trainingSpots)])
     waitForStillness()
 
     API.RandomSleep2(1000, 250, 500)
@@ -91,7 +91,7 @@ end
 
 local function playerNearTile(targetTile, dist)
     for _, p in ipairs(API.GetAllObjArray1({1}, 50, {2})) do
-        local distance = API.Math_DistanceF(p.Tile_XYZ, targetTile)
+        local distance = API.Math_Distance(p.Tile_XYZ, targetTile)
         if distance < dist and p.Name ~= API.GetLocalPlayerName() then
             print(string.format("%s is in the training spot! Dist: %f", p.Name, distance))
             return true
@@ -118,7 +118,7 @@ end
 
 if API.Dist_FLP(STARTING_SPOT) >= 20 then
     print("Running to starting spot.")
-    API.DoAction_TileF(STARTING_SPOT)
+    API.DoAction_Tile(STARTING_SPOT)
     waitForStillness()
 end
 
@@ -126,7 +126,7 @@ local TDATA = chooseTrainingData()
 if not TDATA then
     -- TODO: Hop worlds automatically
     print("Neither training spot is open, please hop worlds and try again!")
-    API.DoAction_TileF(SAFE_SPOT)
+    API.DoAction_Tile(SAFE_SPOT)
     return
 end
 
@@ -141,7 +141,7 @@ while API.Read_LoopyLoop() do
     if not API.CheckAnim(100) and not API.LocalPlayer_IsInCombat_() then
         print("Running to reset spot.")
         local resetTile = FFPOINT.new(TDATA.resetSpot[1] + math.random(-5, 5), TDATA.resetSpot[2] + math.random(0, 5), 0)
-        API.DoAction_TileF(resetTile)
+        API.DoAction_Tile(resetTile)
 
         waitForStillness()
         moveToTrainingSpot(TDATA.trainingSpots)

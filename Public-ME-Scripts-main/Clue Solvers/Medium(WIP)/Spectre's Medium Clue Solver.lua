@@ -221,7 +221,7 @@ local function MoveTo(X, Y, Z, WalkTolerance, AreaTolerance)
     while API.Read_LoopyLoop() and not IsPlayerInArea(X, Y, Z, (WalkTolerance + AreaTolerance)) do
         if not API.IsPlayerMoving_(API.GetLocalPlayerName()) then
             print("Not moving. Walking...")
-            API.DoAction_WalkerW(WPOINT.new(X + math.random(-WalkTolerance, WalkTolerance),Y + math.random(-WalkTolerance, WalkTolerance),Z))
+            API.DoAction_Walker(FFPOINT.new(X + math.random(-WalkTolerance, WalkTolerance),Y + math.random(-WalkTolerance, WalkTolerance),Z))
         end
         UTILS.randomSleep(300)
     end
@@ -538,7 +538,7 @@ local ClueSteps = {
         elseif IsPlayerInArea(2512, 3481, 0, 3) then
             API.DoAction_Inventory1(954,0,0,API.OFF_ACT_Bladed_interface_route) --Select Rope
             UTILS.randomSleep(100)
-            API.DoAction_Object2(0x24,API.OFF_ACT_GeneralObject_route00,{ 1996 },50,WPOINT.new(2512,3468,0)) --Use rope on rock
+            API.DoAction_Object2(0x24,API.OFF_ACT_GeneralObject_route00,{ 1996 },50,FFPOINT.new(2512,3468,0)) --Use rope on rock
             IdleCycles = 30
         elseif IsPlayerInArea(2513, 3495, 0, 3) then
             Interact:Object("Gate", "Open", 5)
@@ -669,7 +669,6 @@ local ClueSteps = {
     
 }
 
-API.Write_fake_mouse_do(false)
 API.SetMaxIdleTime(9)
 
 while API.Read_LoopyLoop() do

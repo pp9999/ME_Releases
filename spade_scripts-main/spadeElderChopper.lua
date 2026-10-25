@@ -31,7 +31,7 @@ local function goToLodestone(lode)
     LODESTONES.openLodestonesInterface()
     API.RandomSleep2(1000, 500, 1000)
     API.DoAction_Interface(0xffffffff, 0xffffffff, 1, 1092, lode.id, -1, API.OFF_ACT_GeneralInterface_route)
-    while API.Math_DistanceW(lode.loc, API.PlayerCoord()) > 100 and API.Read_LoopyLoop() do
+    while API.Math_Distance(lode.loc, API.PlayerCoord()) > 100 and API.Read_LoopyLoop() do
         API.RandomSleep2(1000, 250, 500)
     end
 end
@@ -56,7 +56,7 @@ action = 1
 local ACTIONS = {
     function() locationIdx = (locationIdx % #LOCATIONS) + 1 end,
     function() goToLodestone(LOCATIONS[locationIdx][1]) end,
-    function() API.DoAction_Tile(WPOINT.new(LOCATIONS[locationIdx][2] + math.random(1, 5), LOCATIONS[locationIdx][3] + math.random(1, 5), 0)) end,
+    function() API.DoAction_Tile(FFPOINT.new(LOCATIONS[locationIdx][2] + math.random(1, 5), LOCATIONS[locationIdx][3] + math.random(1, 5), 0)) end,
     function() API.DoAction_Object_string1(0x3b, API.OFF_ACT_GeneralObject_route0, { "Elder tree" }, 50, true) end,
     function() API.KeyboardPress32(0x31, 0) end,
     function() openBank() end,

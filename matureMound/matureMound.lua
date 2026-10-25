@@ -41,13 +41,13 @@ local function idleCheck()
 end
 
 local function gameStateChecks()
-    local gameState = API.GetGameState()
+    local gameState = API.GetGameState2()
     if (gameState ~= 3) then
         print('Not ingame with state:', gameState)
         API.Write_LoopyLoop(false)
         return
     end
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         print('inventory full, stopping')
         API.Write_LoopyLoop(false)
         return

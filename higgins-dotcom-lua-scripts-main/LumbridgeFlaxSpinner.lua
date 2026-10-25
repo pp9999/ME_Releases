@@ -31,7 +31,7 @@ ID = {
 }
 
 local function scanForInterface(interfaceComps)
-    return #(API.ScanForInterfaceTest2Get(true, interfaceComps)) > 0
+    return #(API.ScanForInterfaceTest2Get2(true, interfaceComps)) > 0
 end
 
 local function isCrafterOpen()
@@ -65,7 +65,7 @@ end
 
 local function bank()
     if API.BankOpen2() then
-        strings = strings + API.InvItemcount_1(ID.BOWSTRING)
+        strings = strings + Inventory:InvItemcount(ID.BOWSTRING)
         API.KeyboardPress2(0x31, 60, 100)
         API.RandomSleep2(300, 400, 400)
     else
@@ -81,10 +81,10 @@ while API.Read_LoopyLoop() do
         goto continue
     end
 
-    if API.InvItemcount_1(ID.BOWSTRING) > 0 or API.InvItemcount_1(ID.FLAX) < 1 then
+    if Inventory:InvItemcount(ID.BOWSTRING) > 0 or Inventory:InvItemcount(ID.FLAX) < 1 then
         if API.GetFloorLv_2() == 2 then
             bank()
-            if API.InvItemcount_1(ID.FLAX) < 1 then
+            if Inventory:InvItemcount(ID.FLAX) < 1 then
                 fail = fail + 1
             end
             if fail > 2 then
@@ -94,7 +94,7 @@ while API.Read_LoopyLoop() do
         else
             stairsUp()
         end
-    elseif API.InvItemcount_1(ID.FLAX) > 0 then
+    elseif Inventory:InvItemcount(ID.FLAX) > 0 then
         fail = 0
         if API.GetFloorLv_2() == 2 then
             stairsDown()

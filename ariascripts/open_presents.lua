@@ -3,7 +3,7 @@ local API = require("api")
 local supportedLamps = {[36073]=true, [36074]=true, [36075]=true, [36076]=true, [35450]=true, [35451]=true, [35452]=true, [35453]=true}
 
 local function isUseAllMenuVisible()
-    local ic = API.ScanForInterfaceTest2Get(false, {
+    local ic = API.ScanForInterfaceTest2Get2(false, {
         InterfaceComp5.new(678,3,-1,-1),
         InterfaceComp5.new(678,1,-1,3),
         InterfaceComp5.new(678,19,-1,1),
@@ -45,7 +45,7 @@ local function spamClickPresents()
     for i = 0, 30 do
         interact("Christmas Present", 0x31, 1, 5,API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(100, 50, 50)
-        if API.Invfreecount_() <= 3 then
+        if Inventory:Invfreecount() <= 3 then
             break
         end
     end
@@ -69,7 +69,7 @@ local skill_index = 14
 
 API.Write_LoopyLoop(true)
 while API.Read_LoopyLoop() do
-    local count = API.Invfreecount_()
+    local count = Inventory:Invfreecount()
     local vec = API.ReadInvArrays33()
     local lamp = nil
 
@@ -101,17 +101,17 @@ while API.Read_LoopyLoop() do
         print("Interacting with lamp")
         if API.DoAction_Interface(0x2e,lamp.itemid1,1,1473,5,lamp.index,API.OFF_ACT_GeneralInterface_route) then
             local f = function()
-                return API.Compare2874Status(18, false) or count ~= API.Invfreecount_()
+                return API.Compare2874Status(18, false) or count ~= Inventory:Invfreecount()
             end
             waitUntil(f, 5)
         end
     elseif count <= 3 then
         --script could get stuck here if the user started it with an inventory of lamps/stars that can't be deposited
-        if API.InvStackSize(40932) > 0 then
+        if Inventory:InvStackSize(40932) > 0 then
             interact("Oddments", 0x24, 3, 5,API.OFF_ACT_GeneralInterface_route)
         end
         openBank()
-    elseif API.InvItemcountStack_String("Present") > 0 then
+    elseif Inventory:InvItemcountStack_Strings({ "Present" }) > 0 then
         spamClickPresents()
         openBank()
     else

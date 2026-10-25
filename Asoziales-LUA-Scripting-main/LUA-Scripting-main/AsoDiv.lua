@@ -101,7 +101,7 @@ end
 
 local function gather()
     catchChronicle()
-    if API.InvFull_() then return end
+    if Inventory:IsFull() then return end
     if API.CheckAnim(25) then return end
     if API.ReadPlayerMovin2() then return end
     if gatherEnriched() then return end
@@ -115,7 +115,7 @@ local function gather()
 end
 
 function dunkmaster()
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         API.DoAction_Object_string1(0xc8, API.OFF_ACT_GeneralObject_route0, { "Energy rift", "Energy Rift" }, 50,true) 
         API.WaitUntilMovingandAnimEnds(50,2)
     end

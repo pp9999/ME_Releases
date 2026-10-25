@@ -102,7 +102,7 @@ function Utils.hasAllItems(invent)
             Utils.terminate("[RASIAL]: Undefined item ID in loadout.")
             return false
         end
-        if API.InvItemcount_1(invent[i].id) < invent[i].amount and API.InvStackSize(invent[i].id) < invent[i].amount then
+        if Inventory:InvItemcount(invent[i].id) < invent[i].amount and Inventory:InvStackSize(invent[i].id) < invent[i].amount then
             return false
         end
     end

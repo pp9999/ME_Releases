@@ -70,7 +70,7 @@ local function depositOreBox()
 end
 
 local function loot()
-    if API.Invfreecount_() >= 1 then
+    if Inventory:Invfreecount() >= 1 then
         if not API.LootWindowOpen_2() and gICheck() then
             API.DoAction_Interface(0xffffffff,0xffffffff,1,1678,8,-1,API.OFF_ACT_GeneralInterface_route)
             API.RandomSleep2(400,200,300)
@@ -114,23 +114,23 @@ while (API.Read_LoopyLoop()) do
 
     if API.PInArea(LOCATIONS.rock.x, LOCATIONS.rock.radius, LOCATIONS.rock.y, LOCATIONS.rock.radius, LOCATIONS.rock.z) then
         mine()
-        if API.InvFull_() and UTILS.getAmountInOrebox(444) << 99 then
+        if Inventory:IsFull() and UTILS.getAmountInOrebox(444) << 99 then
             API.logInfo('Filling Ore Box')
             fillOreBox()
             API.RandomSleep2(500, 200, 100)
         end 
-        if API.InvFull_() and UTILS.getAmountInOrebox(444) == 100 then
+        if Inventory:IsFull() and UTILS.getAmountInOrebox(444) == 100 then
             API.logWarn('Ore Box full Deposting')
-            API.DoAction_WalkerW(WPOINT.new(LOCATIONS.bank.x + math.random(-2, 3),LOCATIONS.bank.y + math.random(-2, 3),LOCATIONS.bank.z))
+            API.DoAction_Walker(FFPOINT.new(LOCATIONS.bank.x + math.random(-2, 3),LOCATIONS.bank.y + math.random(-2, 3),LOCATIONS.bank.z))
             API.WaitUntilMovingEnds(20,2)
             goto start
         end
-        if API.InvFull_() == false then loot() end
+        if Inventory:IsFull() == false then loot() end
 
     end
 
     if API.PInArea(LOCATIONS.bank.x, LOCATIONS.bank.radius, LOCATIONS.bank.y, LOCATIONS.bank.radius, LOCATIONS.bank.z) then
-        if API.InvFull_() then
+        if Inventory:IsFull() then
             API.logInfo('Depositing Loose Ore')
             API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,IDS.pulleyLift,50)
             API.WaitUntilMovingEnds(20,3)
@@ -148,9 +148,9 @@ while (API.Read_LoopyLoop()) do
 
         end
         
-        if not API.InvFull_() and UTILS.getAmountInOrebox(444) == 0 then
+        if not Inventory:IsFull() and UTILS.getAmountInOrebox(444) == 0 then
             API.logInfo('Walking back to Gold Deposit')
-            API.DoAction_WalkerW(WPOINT.new(LOCATIONS.rock.x + math.random(-2, 3),LOCATIONS.rock.y + math.random(-2, 3),LOCATIONS.rock.z))
+            API.DoAction_Walker(FFPOINT.new(LOCATIONS.rock.x + math.random(-2, 3),LOCATIONS.rock.y + math.random(-2, 3),LOCATIONS.rock.z))
             API.WaitUntilMovingEnds(20,2)
         end
     end

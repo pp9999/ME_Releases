@@ -85,12 +85,12 @@ while(API.Read_LoopyLoop()) do
     gameStateChecks()
 
     if not API.CheckAnim(100) and not isMoving() then 
-        if checkBait and API.InvStackSize(bait) == 0 then 
+        if checkBait and Inventory:InvStackSize(bait) == 0 then 
             API.logWarn("Out of bait")
             API.Write_LoopyLoop(false)
         end
 
-        if API.InvFull_() then 
+        if Inventory:IsFull() then 
             if vipArea then 
                 if API.BankOpen2() then 
                     API.KeyboardPress2(0x33,0,50) -- deposit all

@@ -197,7 +197,7 @@ LOCATIONS = {
         { -- 2: Run to mine entrance
             area = { x = 2899, y = 3544, z = 0, range = { 25, 25 } },
             next = function()
-                API.DoAction_WalkerW(MINER:RandomiseTile(2880, 3502, 0, 2, 2))
+                API.DoAction_Walker(MINER:RandomiseTile(2880, 3502, 0, 2, 2))
                 API.WaitUntilMovingEnds()
             end
         },
@@ -237,7 +237,7 @@ LOCATIONS = {
         { -- 2: Run to dwarven mine entrance
             area = { x = 2967, y = 3403, z = 0, range = { 12, 12 } },
             next = function()
-                API.DoAction_WalkerW(MINER:RandomiseTile(3016, 3449, 0, 2, 2))
+                API.DoAction_Walker(MINER:RandomiseTile(3016, 3449, 0, 2, 2))
             end
         },
         { -- 3: Climb down ladder
@@ -263,7 +263,7 @@ LOCATIONS = {
         { -- 2: Run to east mine
             area = { x = 3214, y = 3376, z = 0, range = { 12, 12 } },
             next = function()
-                API.DoAction_WalkerW(MINER:RandomiseTile(3287, 3363, 0, 3, 2))
+                API.DoAction_Walker(MINER:RandomiseTile(3287, 3363, 0, 3, 2))
             end
         }
     },
@@ -375,7 +375,7 @@ end
 
 function MINER:CancelMining() -- if currently mining, click ground under player to cancel it before TP
     if API.CheckAnim(50) then
-        API.DoAction_WalkerW(API.PlayerCoord())
+        API.DoAction_Walker(API.PlayerCoord())
     end
     API.RandomSleep2(300, 200, 600)
 end
@@ -428,7 +428,7 @@ function MINER:ShouldBank()
 end
 
 function MINER:CheckInventory()
-    if API.OpenInventoryInterface2() == false then
+    if Inventory:IsOpen() == false then
         print("Inventory interface not open, attempting to open it")
         if API.DoAction_Interface(0xc2, 0xffffffff, 1, 1431, 0, 9, API.OFF_ACT_GeneralInterface_route) then
             return true
@@ -441,7 +441,7 @@ function MINER:CheckInventory()
 end
 
 function MINER:CheckEquipment()
-    if API.OpenEquipInterface2() == false then
+    if Equipment:OpenInterface() == false then
         print("Equipment interface not open, attempting to open it")
         if API.DoAction_Interface(0xc2, 0xffffffff, 1, 1431, 0, 10, API.OFF_ACT_GeneralInterface_route) then
             return true
@@ -505,7 +505,7 @@ function MINER:Traverse(ore)
             end
 
             print("Moving to final spot")
-            API.DoAction_WalkerW(MINER:RandomiseTile(ore.Spot.x, ore.Spot.y, ore.Spot.z, 2, 2))
+            API.DoAction_Walker(MINER:RandomiseTile(ore.Spot.x, ore.Spot.y, ore.Spot.z, 2, 2))
             break
         end
 
@@ -533,7 +533,7 @@ function MINER:Traverse(ore)
 end
 
 function MINER:DwarvenMineBank()
-    API.DoAction_WalkerW(MINER:RandomiseTile(3013, 9814, 0, 2, 2))
+    API.DoAction_Walker(MINER:RandomiseTile(3013, 9814, 0, 2, 2))
 
     local attempts = 0
     while #API.GetAllObjArray1({ 113262 }, 25, { 12 }) == 0 do
@@ -560,7 +560,7 @@ end
 
 function MINER:DaemonheimSteps()
     local equippedRing = API.GetEquipSlot(RING_SLOT)
-    local hasRingOfKinship = API.InvItemFound1(RING_OF_KINSHIP) or
+    local hasRingOfKinship = Inventory:InvItemFound(RING_OF_KINSHIP) or
         (equippedRing ~= nil and equippedRing.itemid1 == RING_OF_KINSHIP)
 
 
@@ -655,7 +655,7 @@ function MINER:Bank(bank, ore, type)
     API.RandomSleep2(500, 500, 1200)
     print("Depositing items")
     for _, id in ipairs(ore.OreID) do
-        if API.InvItemcount_1(id) > 0 then
+        if Inventory:InvItemcount(id) > 0 then
             API.DoAction_Bank_Inv(id, DEPOSIT_ALL, API.OFF_ACT_GeneralInterface_route)
             API.RandomSleep2(80, 100, 500)
         end
@@ -666,7 +666,7 @@ function MINER:RandomiseTile(x, y, z, off_x, off_y)
     x = x + math.random(-off_x, off_x)
     y = y + math.random(-off_y, off_y)
 
-    return WPOINT.new(x, y, z)
+    return FFPOINT.new(x, y, z)
 end
 
 function MINER:PouchIDs()
@@ -685,7 +685,7 @@ function MINER:HasOreBox()
         ORE_BOX_IDS = MINER:PouchIDs()
     end
 
-    return API.InvItemFound2(ORE_BOX_IDS)
+    return Inventory:InvItemFounds(ORE_BOX_IDS)
 end
 
 function MINER:FillOreBox()
@@ -759,7 +759,7 @@ end
 function MINER:ClickRock(rock)
     local tile = rock.Tile_XYZ
 
-    if API.DoAction_Object2(0x3a, API.OFF_ACT_GeneralObject_route0, { rock.Id }, 25, WPOINT.new(tile.x, tile.y, tile.z)) then
+    if API.DoAction_Object2(0x3a, API.OFF_ACT_GeneralObject_route0, { rock.Id }, 25, FFPOINT.new(tile.x, tile.y, tile.z)) then
         MINER.CurrentRock = rock
         API.RandomSleep2(100, 500, 600)
     end
@@ -861,7 +861,7 @@ ORES.Iron = { -- Iron - Burthorpe Mine
         }
     ),
     Bank = function(self)
-        API.DoAction_WalkerW(MINER:RandomiseTile(ORES.Copper.Spot.x, ORES.Copper.Spot.y, ORES.Copper.Spot.z, 3, 3))
+        API.DoAction_Walker(MINER:RandomiseTile(ORES.Copper.Spot.x, ORES.Copper.Spot.y, ORES.Copper.Spot.z, 3, 3))
         ORES.Copper:Bank()
         -- MINER:Traverse(self)
     end
@@ -978,7 +978,7 @@ ORES.Luminite = { -- Luminite - Dwarven Mine
         }
     ),
     Bank = function(self)
-        API.DoAction_WalkerW(MINER:RandomiseTile(ORES.Coal.Spot.x, ORES.Coal.Spot.y, ORES.Coal.Spot.z, 3, 3)) -- Fails to start moving without running north a bit first
+        API.DoAction_Walker(MINER:RandomiseTile(ORES.Coal.Spot.x, ORES.Coal.Spot.y, ORES.Coal.Spot.z, 3, 3)) -- Fails to start moving without running north a bit first
         API.WaitUntilMovingEnds()
         MINER:DwarvenMineBank()
     end
@@ -1058,7 +1058,7 @@ ORES.Orichalcite = { -- Orichalcite - Mining Guild
         {
             area = { x = 2967, y = 3403, z = 0, range = { 25, 25 } },
             next = function()
-                API.DoAction_WalkerW(MINER:RandomiseTile(3018, 3338, 0, 2, 2))
+                API.DoAction_Walker(MINER:RandomiseTile(3018, 3338, 0, 2, 2))
             end
         },
         {
@@ -1137,7 +1137,7 @@ ORES.Necrite = { -- Necrite - Wilderness (north of bandit camp)
         {
             area = { x = 3143, y = 3635, z = 0, range = { 25, 25 } },
             next = function()
-                API.DoAction_WalkerW(MINER:RandomiseTile(3115, 3752, 0, 3, 3))
+                API.DoAction_Walker(MINER:RandomiseTile(3115, 3752, 0, 3, 3))
             end
         },
         {
@@ -1205,7 +1205,7 @@ ORES.Banite = { -- Banite - Deep Wilderness (by Mandrith)
         {
             area = { x = 3067, y = 3505, z = 0, range = { 8, 8 } },
             next = function()
-                API.DoAction_WalkerW(MINER:RandomiseTile(3094, 3475, 0, 3, 3))
+                API.DoAction_Walker(MINER:RandomiseTile(3094, 3475, 0, 3, 3))
             end
         },
         {
@@ -1221,7 +1221,7 @@ ORES.Banite = { -- Banite - Deep Wilderness (by Mandrith)
         {
             area = { x = 3154, y = 3924, z = 0, range = { 10, 10 } },
             next = function()
-                API.DoAction_WalkerW(MINER:RandomiseTile(3158, 3949, 0, 3, 3))
+                API.DoAction_Walker(MINER:RandomiseTile(3158, 3949, 0, 3, 3))
             end
         },
         {
@@ -1325,7 +1325,7 @@ ORES.LightAnimica = { -- Light Animica - Anachronia South-West Mine
         {
             area = { x = 5430, y = 2339, z = 0, range = { 30, 30 } },
             next = function()
-                API.DoAction_WalkerW(MINER:RandomiseTile(5387, 2336, 0, 3, 3))
+                API.DoAction_Walker(MINER:RandomiseTile(5387, 2336, 0, 3, 3))
                 API.WaitUntilMovingEnds()
             end
         },
@@ -1360,13 +1360,13 @@ ORES.DarkAnimica = { -- Dark Animica - Empty Throne Room
         {
             area = { x = 3214, y = 3376, z = 0, range = { 100, 100 } },
             next = function()
-                API.DoAction_WalkerW(MINER:RandomiseTile(3294, 3372, 0, 2, 2))
+                API.DoAction_Walker(MINER:RandomiseTile(3294, 3372, 0, 2, 2))
             end
         },
         {
             area = { x = 3294, y = 3372, z = 0, range = { 4, 4 } },
             next = function()
-                API.DoAction_WalkerW(MINER:RandomiseTile(3378, 3404, 0, 4, 4))
+                API.DoAction_Walker(MINER:RandomiseTile(3378, 3404, 0, 4, 4))
             end
         },
         {
@@ -1664,7 +1664,7 @@ ORES.Promethium = {
             {
                 area = { x = 3449, y = 3697, z = 0, range = { 12, 12 } },
                 next = function()
-                    API.DoAction_WalkerW(MINER:RandomiseTile(3394, 3692, 0, 2, 2))
+                    API.DoAction_Walker(MINER:RandomiseTile(3394, 3692, 0, 2, 2))
                     while API.PInArea(3394, 4, 3692, 8, 0) == false and API.Read_LoopyLoop() == true do
                         MINER:DrawGui()
                         API.RandomSleep2(200, 100, 500)
@@ -1747,7 +1747,7 @@ ORES.PreciousGem = { -- Precious Gem Rock - Al Kharid Mine Resource Dungeon
         {
             area = { x = 3297, y = 3184, z = 0, range = { 30, 30 } },
             next = function()
-                API.DoAction_WalkerW(MINER:RandomiseTile(3300, 3307, 0, 2, 3))
+                API.DoAction_Walker(MINER:RandomiseTile(3300, 3307, 0, 2, 3))
             end
         },
         { -- Click mysterious entrance 3300, 3307, 0
@@ -1832,7 +1832,7 @@ ORES.Limestone = {
         {
             area = { x = 3214, y = 3376, z = 0, range = { 20, 20 } },
             next = function()
-                API.DoAction_WalkerW(MINER:RandomiseTile(3295, 3372, 0, 3, 3))
+                API.DoAction_Walker(MINER:RandomiseTile(3295, 3372, 0, 3, 3))
                 API.WaitUntilMovingEnds()
             end
         },
@@ -1873,7 +1873,7 @@ ORES.Limestone = {
         API.DoAction_Interface(0xffffffff, 0xc8b, 4, 11, 19, slot, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(300, 300, 1000)
 
-        API.DoAction_WalkerW(MINER:RandomiseTile(self.Spot.x, self.Spot.y, self.Spot.z, 1, 1))
+        API.DoAction_Walker(MINER:RandomiseTile(self.Spot.x, self.Spot.y, self.Spot.z, 1, 1))
         API.WaitUntilMovingandAnimEnds()
     end
 }

@@ -260,7 +260,7 @@ local function getNearestNpc(list)
     for i = 1, #list do
         local npc = list[i]
         if npc and npc.Tile_XYZ then
-            local d = API.Math_DistanceF(player, npc.Tile_XYZ)
+            local d = API.Math_Distance(player, npc.Tile_XYZ)
             if d and d < nearestDist then
                 nearestDist = d
                 nearest = npc
@@ -399,7 +399,8 @@ local function manageBuffs()
 
     -- Restore prayer if low
     if GUI.config.enablePrayerRestore and prayer > 0 and prayer < 100 then
-        local itemId = API.GetItemSlotId(GUI.config.restoreName)
+        local restore = Inventory:GetItem(GUI.config.restoreName)
+        local itemId = restore and restore.slot or -1
         if itemId and itemId ~= -1 then
             API.DoAction_Inventory1(itemId, 0, 1, API.OFF_ACT_GeneralInterface_route)
             randomSleep(200)

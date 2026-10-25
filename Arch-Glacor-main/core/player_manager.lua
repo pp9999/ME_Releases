@@ -100,7 +100,7 @@ PlayerManager.__index = PlayerManager
 ---@field location string
 ---@field orientation number
 ---@field status string
----@field coords WPOINT
+---@field coords FFPOINT
 ---@field animation number
 ---@field moving boolean
 ---@field inCombat boolean

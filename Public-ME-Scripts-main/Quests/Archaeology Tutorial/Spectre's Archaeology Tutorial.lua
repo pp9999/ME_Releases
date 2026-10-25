@@ -184,7 +184,6 @@ IDS = {
     Guildmaster2 = 26929,
     Ezreal = 26937
 }
-Write_fake_mouse_do(false)
 while (API.Read_LoopyLoop()) do
     questProgress = API.VB_FindPSettinOrder(9235, 0).state >> 0 & 0x7f
     print("Quest Progress: ", questProgress)
@@ -192,7 +191,7 @@ while (API.Read_LoopyLoop()) do
     if questProgress >= 0 and questProgress < 10 then
         print("Starting quest: 0-10 progress")
         UpdateStatus("0/100")
-        API.DoAction_WalkerW(WPOINT.new(3385 + math.random(-4, 4), 3392 + math.random(-4, 4), 0))
+        API.DoAction_Walker(FFPOINT.new(3385 + math.random(-4, 4), 3392 + math.random(-4, 4), 0))
         WaitForObjectToAppear(IDS.Guildmaster, 1)
         API.DoAction_NPC(0x2c,API.OFF_ACT_InteractNPC_route,{IDS.Guildmaster},50)
         HandleDialog()
@@ -255,7 +254,7 @@ while (API.Read_LoopyLoop()) do
     elseif questProgress == 50 then
         print("Progress: 50/100 - Moving to Material Storage")
         UpdateStatus("50/100")
-        API.DoAction_WalkerW(WPOINT.new(3356 + math.random(-1, 1), 3396 + math.random(-1, 1), 0))
+        API.DoAction_Walker(FFPOINT.new(3356 + math.random(-1, 1), 3396 + math.random(-1, 1), 0))
         WaitForObjectToAppear(IDS.MaterialStorage, 0)
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,{IDS.MaterialStorage},50)
         while API.Read_LoopyLoop() and not IsPlayerInArea(3358, 3395, 0, 2) do
@@ -280,14 +279,14 @@ while (API.Read_LoopyLoop()) do
     elseif questProgress == 60 then
         print("Progress: 60/100 - Returning to Guildmaster")
         UpdateStatus("60/100")
-        API.DoAction_WalkerW(WPOINT.new(3385 + math.random(-4, 4), 3392 + math.random(-4, 4), 0))
+        API.DoAction_Walker(FFPOINT.new(3385 + math.random(-4, 4), 3392 + math.random(-4, 4), 0))
         WaitForObjectToAppear(IDS.Guildmaster, 1)
         API.DoAction_NPC(0x2c,API.OFF_ACT_InteractNPC_route,{IDS.Guildmaster},50)
         HandleDialog()
     elseif questProgress == 65 then
         print("Progress: 65/100 - Interacting with Velucia")
         UpdateStatus("65/100")
-        API.DoAction_WalkerW(WPOINT.new(3343, 3385, 0))
+        API.DoAction_Walker(FFPOINT.new(3343, 3385, 0))
         WaitForObjectToAppear(IDS.Velucia, 1)
         API.DoAction_NPC(0x2c,API.OFF_ACT_InteractNPC_route,{IDS.Velucia},50)
         HandleDialog()
@@ -299,14 +298,14 @@ while (API.Read_LoopyLoop()) do
     elseif questProgress == 75 then
         print("Progress: 75/100 - Returning to Guildmaster")
         UpdateStatus("75/100")
-        API.DoAction_WalkerW(WPOINT.new(3385 + math.random(-4, 4), 3392 + math.random(-4, 4), 0))
+        API.DoAction_Walker(FFPOINT.new(3385 + math.random(-4, 4), 3392 + math.random(-4, 4), 0))
         WaitForObjectToAppear(IDS.Guildmaster, 1)
         API.DoAction_NPC(0x2c,API.OFF_ACT_InteractNPC_route,{IDS.Guildmaster},50)
         HandleDialog()
     elseif questProgress == 80 then
         print("Progress: 80/100 - Interacting with Monolith")
         UpdateStatus("80/100")
-        API.DoAction_WalkerW(WPOINT.new(3363, 3383, 0))
+        API.DoAction_Walker(FFPOINT.new(3363, 3383, 0))
         WaitForObjectToAppear(IDS.Monolith, 0)
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route1,{IDS.Monolith},50)
         HandleDialog()
@@ -325,7 +324,7 @@ while (API.Read_LoopyLoop()) do
         print("Progress: 95/100 - Final steps with Guildmaster2")
         UpdateStatus("95/100")
         Sleep(3)
-        API.DoAction_WalkerW(WPOINT.new(3325 + math.random(-1, 1), 3376 + math.random(-1, 1), 0))
+        API.DoAction_Walker(FFPOINT.new(3325 + math.random(-1, 1), 3376 + math.random(-1, 1), 0))
         WaitForObjectToAppear(IDS.Guildmaster2, 1)
         API.DoAction_NPC(0x2c,API.OFF_ACT_InteractNPC_route,{IDS.Guildmaster2},50)
         HandleDialog()

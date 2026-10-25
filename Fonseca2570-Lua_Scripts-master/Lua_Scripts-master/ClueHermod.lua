@@ -155,7 +155,7 @@ local function deactivateSoulSplit()
 end
 
 local function needBank() 
-    return API.InvItemcount_String(Names.Shark) < 25 or API.GetPrayPrecent() < 90
+    return Inventory:InvItemcount_String(Names.Shark) < 25 or API.GetPrayPrecent() < 90
 end
 
 local function healthCheck()
@@ -166,7 +166,7 @@ local function healthCheck()
             ClueUtils.DoAbility2(ClueUtils.AbilitiesID.HP.EatFood)
             API.RandomSleep2(600, 600, 600)
         end
-        elseif hp < 20 or API.InvItemcount_String(Names.Shark) < 1 then
+        elseif hp < 20 or Inventory:InvItemcount_String(Names.Shark) < 1 then
             print("Teleporting out")
             ClueUtils.DoAbility2(ClueUtils.AbilitiesID.Teleports.WarRetreatTeleport)
             CurrentState = States.Bank

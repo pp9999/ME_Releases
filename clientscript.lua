@@ -18,19 +18,19 @@ end
 --tiles must be always 6 numbers big
 local function Parser_DoAction_TileF(text)
     if (text ~nil) then
-        local i, j = string.find(text,"API.DoAction_TileF")
+        local i, j = string.find(text,"API.DoAction_Tile")
         local x_coord
         local y_coord
         if (j ~= nil and j > 1) then
-            x_coord = string.sub(text,j+14,j+14+5)
+            x_coord = string.sub(text,j+13,j+13+5)
             --print(x_coord)
         end
         if (j ~= nil and j > 1) then
-            y_coord = string.sub(text,j+14+7,j+14+12)
+            y_coord = string.sub(text,j+13+7,j+13+12)
             ---print(y_coord)        
         end
         if (x_coord ~= nil and y_coord ~= nil) then
-            API.DoAction_TileF(FFPOINT.new(tonumber(x_coord),tonumber(y_coord),0))
+            API.DoAction_Tile(FFPOINT.new(tonumber(x_coord),tonumber(y_coord),0))
         end
     end
 end

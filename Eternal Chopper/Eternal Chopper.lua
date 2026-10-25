@@ -36,9 +36,9 @@ end
 -- Actions to perform if the wood box is full. Loads last saved bank preset
 function bank()
     print("banking")
-    API.DoAction_Tile(WPOINT.new(2315 + math.random(-3, 3),3571 + math.random(-3, 3),0))
+    API.DoAction_Tile(FFPOINT.new(2315 + math.random(-3, 3),3571 + math.random(-3, 3),0))
     API.WaitUntilMovingEnds(5, 4)
-    API.DoAction_Tile(WPOINT.new(2286 + math.random(-3, 3),3556 + math.random(-3, 3),0))
+    API.DoAction_Tile(FFPOINT.new(2286 + math.random(-3, 3),3556 + math.random(-3, 3),0))
     API.WaitUntilMovingEnds(6, 4)
 
     -- Attempt to open the bank
@@ -84,7 +84,7 @@ function bank()
     end
 
     API.WaitUntilMovingEnds()
-    API.DoAction_Tile(WPOINT.new(2320 + math.random(-3, 3),3570 + math.random(-3, 3),0))
+    API.DoAction_Tile(FFPOINT.new(2320 + math.random(-3, 3),3570 + math.random(-3, 3),0))
     API.WaitUntilMovingEnds(6, 4)
     API.RandomSleep2(1200, 600, 200)
 end
@@ -116,8 +116,8 @@ local function checkHL()
         local hlTileX = (hls[1].TileX / 512) - 1
         local hlTileY = (hls[1].TileY / 512) - 1
         print("HL found at: " .. hlTileX .. " " .. hlTileY)
-        if not API.PInAreaW(WPOINT.new(hlTileX, hlTileY, 0), 2) then
-            local walkToTile = WPOINT.new(hlTileX, hlTileY, 0)
+        if not API.PInAreaF2(FFPOINT.new(hlTileX, hlTileY, 0), 2) then
+            local walkToTile = FFPOINT.new(hlTileX, hlTileY, 0)
             if API.DoAction_Tile(walkToTile) then
                 API.RandomSleep2(1200, 100, 100)
                 API.WaitUntilMovingandAnimEnds(10,5) -- Wait for animation to finish

@@ -59,19 +59,19 @@ local function FPF_AFK()
        
   
         local lpCoords = API.PlayerCoord()
-        local northwest_MixingMachine = API.Math_DistanceW(WPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),WPOINT.new(7284,1290,0))
-        local northeast_MixingMachine = API.Math_DistanceW(WPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),WPOINT.new(7304,1290,0))
-        local southwest_MixingMachine = API.Math_DistanceW(WPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),WPOINT.new(7284,1270,0))
-        local southeast_MixingMachine = API.Math_DistanceW(WPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),WPOINT.new(7304,1270,0))
+        local northwest_MixingMachine = API.Math_Distance(FFPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),FFPOINT.new(7284,1290,0))
+        local northeast_MixingMachine = API.Math_Distance(FFPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),FFPOINT.new(7304,1290,0))
+        local southwest_MixingMachine = API.Math_Distance(FFPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),FFPOINT.new(7284,1270,0))
+        local southeast_MixingMachine = API.Math_Distance(FFPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),FFPOINT.new(7304,1270,0))
     
-        local northwest_ChargeMachine = API.Math_DistanceW(WPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),WPOINT.new(7284,1300,0)) -- gears 64666
-        local southwest_Chargemachine = API.Math_DistanceW(WPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),WPOINT.new(7284,1260,0)) -- energy field 64667
-        local southeast_ChargeMachine = API.Math_DistanceW(WPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),WPOINT.new(7304,1260,0)) --inconvenient wall 64688
-        local northeast_ChargeMachine = API.Math_DistanceW(WPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),WPOINT.new(7304,1300,0)) -- inconvenient wall 64688
-        local northwest_outlier_ChargeMachine = API.Math_DistanceW(WPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),WPOINT.new(7274,1290,0)) --energy field 64667
-        local northeast_outlier_ChargeMachine = API.Math_DistanceW(WPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),WPOINT.new(7314,1290,0)) -- inconvenient wall 64667
-        local southwest_outlier_ChargeMachine = API.Math_DistanceW(WPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),WPOINT.new(7274,1270,0)) -- glowing void 64655
-        local southeast_outlier_ChargeMachine = API.Math_DistanceW(WPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),WPOINT.new(7314,1270,0)) -- gear wheel 64666
+        local northwest_ChargeMachine = API.Math_Distance(FFPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),FFPOINT.new(7284,1300,0)) -- gears 64666
+        local southwest_Chargemachine = API.Math_Distance(FFPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),FFPOINT.new(7284,1260,0)) -- energy field 64667
+        local southeast_ChargeMachine = API.Math_Distance(FFPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),FFPOINT.new(7304,1260,0)) --inconvenient wall 64688
+        local northeast_ChargeMachine = API.Math_Distance(FFPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),FFPOINT.new(7304,1300,0)) -- inconvenient wall 64688
+        local northwest_outlier_ChargeMachine = API.Math_Distance(FFPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),FFPOINT.new(7274,1290,0)) --energy field 64667
+        local northeast_outlier_ChargeMachine = API.Math_Distance(FFPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),FFPOINT.new(7314,1290,0)) -- inconvenient wall 64667
+        local southwest_outlier_ChargeMachine = API.Math_Distance(FFPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),FFPOINT.new(7274,1270,0)) -- glowing void 64655
+        local southeast_outlier_ChargeMachine = API.Math_Distance(FFPOINT.new(lpCoords.x,lpCoords.y,lpCoords.z),FFPOINT.new(7314,1270,0)) -- gear wheel 64666
     
         -- if (northwest_MixingMachine > 6 or northeast_MixingMachine > 6 or southwest_MixingMachine > 6 or southeast_MixingMachine > 6) then
         --     if northwest_ChargeMachine < 4 then

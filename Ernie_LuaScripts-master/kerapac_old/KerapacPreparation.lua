@@ -185,7 +185,7 @@ function KerapacPreparation:BeginFight()
     Logger:Info("Moving to starting position")
     local Combat = require("kerapac/KerapacCombat")
     Combat:EnableMagePray()
-    API.DoAction_TileF(State.startLocationOfArena)
+    API.DoAction_Tile(State.startLocationOfArena)
     
     if Data.extraAbilities.conjureUndeadArmyAbility.AB.enabled 
        and API.VB_FindPSettinOrder(10994).state < 1 
@@ -252,7 +252,7 @@ function KerapacPreparation:ReclaimItemsAtGrave()
     if #deathNPC > 0 then
         Interact:NPC("Death", "Reclaim items", 15)
         Utils:SleepTickRandom(5)
-        if API.ScanForInterfaceTest2Get(false, { {1626,57,-1,0}, {1626,59,-1,0}, {1626,12,-1,0}, {1626,13,-1,0}, {1626,23,-1,0}, {1626,24,-1,0}, {1626,30,-1,0}, {1626,31,-1,0}, {1626,33,-1,0}, {1626,8,-1,0}, {1626,10,-1,0}, {1626,10,0,0} })[1].itemid1 ~= 0 then
+        if API.ScanForInterfaceTest2Get2(false, { {1626,57,-1,0}, {1626,59,-1,0}, {1626,12,-1,0}, {1626,13,-1,0}, {1626,23,-1,0}, {1626,24,-1,0}, {1626,30,-1,0}, {1626,31,-1,0}, {1626,33,-1,0}, {1626,8,-1,0}, {1626,10,-1,0}, {1626,10,0,0} })[1].itemid1 ~= 0 then
             API.DoAction_Interface(0xffffffff, 0xffffffff, 1, 1626, 47, -1, API.OFF_ACT_GeneralInterface_route)
             Utils:SleepTickRandom(5)
             API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1626, 72, -1, API.OFF_ACT_GeneralInterface_Choose_option)

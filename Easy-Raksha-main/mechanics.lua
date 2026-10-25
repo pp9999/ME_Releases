@@ -628,7 +628,7 @@ end
 --- hazard. Zero means the route is genuinely safe to walk.
 ---
 --- THIS IS THE FIX FOR THE WHOLE PROBLEM. Every movement decision used to check
---- only the DESTINATION, then hand the tile to API.DoAction_WalkerW and hope.
+--- only the DESTINATION, then hand the tile to API.DoAction_Walker and hope.
 --- The client paths around BLOCKED tiles, but a shadow floor isn't blocked —
 --- it's ordinary ground that happens to kill you — so a walk to a perfectly safe
 --- tile on the far side of a shadow strolls straight through the middle of it.
@@ -702,7 +702,7 @@ local HOME_HURRY_DISTANCE = 3
 -- above HOME_HURRY_DISTANCE so short corrections never burn the cooldown.
 local HOME_DIVE_DISTANCE = 6
 
--- Error range handed to API.DoAction_Surge_Tile when escaping a tail sweep: how
+-- Error range handed to API.DoAction_Surge_Tile2 when escaping a tail sweep: how
 -- far off the requested tile the surge may land and still be worth taking. Surge
 -- travels a fixed distance, so demanding an exact tile would reject nearly every
 -- useful surge; two tiles of slack still lands us outside the 7x7.
@@ -750,7 +750,7 @@ function Mechanics:canDive()
 end
 
 --- Dives to a tile, preferring plain Dive over Bladed Dive.
---- @param tile WPOINT
+--- @param tile FFPOINT
 --- @return boolean
 function Mechanics:diveToTile(tile)
     if Utils:canUseAbility("Dive") then
@@ -1168,7 +1168,7 @@ function Mechanics:walkAvoiding(x, y, hazards, urgent)
 
     if pathHazardCost(player.x, player.y, x, y, hazards) == 0 then
         ---@diagnostic disable-next-line: undefined-global
-        API.DoAction_WalkerW(WPOINT.new(math.floor(x), math.floor(y), pz))
+        API.DoAction_Walker(FFPOINT.new(math.floor(x), math.floor(y), pz))
         return true
     end
 
@@ -1197,13 +1197,13 @@ function Mechanics:walkAvoiding(x, y, hazards, urgent)
         end
         self:log("no clean route, but standing here is lethal — going direct")
         ---@diagnostic disable-next-line: undefined-global
-        API.DoAction_WalkerW(WPOINT.new(math.floor(x), math.floor(y), pz))
+        API.DoAction_Walker(FFPOINT.new(math.floor(x), math.floor(y), pz))
         return true
     end
 
     self:log(string.format("routing around hazard via (%d, %d)", best.x, best.y))
     ---@diagnostic disable-next-line: undefined-global
-    API.DoAction_WalkerW(WPOINT.new(best.x, best.y, pz))
+    API.DoAction_Walker(FFPOINT.new(best.x, best.y, pz))
     return true
 end
 
@@ -1330,7 +1330,7 @@ function Mechanics:escapeSweep(clearance)
     -- 1. Dive.
     if self:canDive() then
         ---@diagnostic disable-next-line: undefined-global
-        if self:diveToTile(WPOINT.new(target.x, target.y, z)) then
+        if self:diveToTile(FFPOINT.new(target.x, target.y, z)) then
             self:log(string.format("tail sweep: DIVED clear to (%d, %d)",
                                    target.x, target.y))
             return true
@@ -1342,8 +1342,8 @@ function Mechanics:escapeSweep(clearance)
     -- 2. Tile-targeted Surge.
     if Utils:canUseAbility("Surge") then
         ---@diagnostic disable-next-line: undefined-global
-        local dest = WPOINT.new(target.x, target.y, z)
-        if API.DoAction_Surge_Tile(dest, SWEEP_SURGE_ERROR) then
+        local dest = FFPOINT.new(target.x, target.y, z)
+        if API.DoAction_Surge_Tile2(dest, SWEEP_SURGE_ERROR) then
             self:log(string.format("tail sweep: SURGED clear to (%d, %d)",
                                    target.x, target.y))
             return true
@@ -1514,7 +1514,7 @@ function Mechanics:retreatFromBoss(tiles)
     self:log(string.format("tail sweep: backing off %d tiles to (%d, %d)", tiles,
                            tx, ty))
     ---@diagnostic disable-next-line: undefined-global
-    API.DoAction_WalkerW(WPOINT.new(tx, ty, math.floor(player.z or 0)))
+    API.DoAction_Walker(FFPOINT.new(tx, ty, math.floor(player.z or 0)))
     return false
 end
 
@@ -1591,7 +1591,7 @@ function Mechanics:returnToPhase4Home(player, tick, hazards)
     if homeClear and distance > HOME_DIVE_DISTANCE and self:canDive() then
         self.state.lastHomeMoveTick = tick
         ---@diagnostic disable-next-line: undefined-global
-        local dest = WPOINT.new(home.x, home.y, math.floor(player.z or 0))
+        local dest = FFPOINT.new(home.x, home.y, math.floor(player.z or 0))
         if self:diveToTile(dest) then
             self:log(string.format("phase 4: dived home, %.1f tiles out",
                                    distance))
@@ -1605,7 +1605,7 @@ function Mechanics:returnToPhase4Home(player, tick, hazards)
         self.state.lastHomeMoveTick = tick
         ---@diagnostic disable-next-line: undefined-global
         --- Could add a delay here possibly
-        API.DoAction_WalkerW(WPOINT.new(home.x, home.y, home.z))
+        API.DoAction_Walker(FFPOINT.new(home.x, home.y, home.z))
         return
     end
 
@@ -1619,7 +1619,7 @@ function Mechanics:returnToPhase4Home(player, tick, hazards)
     if hop then
         self.state.lastHomeMoveTick = tick
         ---@diagnostic disable-next-line: undefined-global
-        API.DoAction_WalkerW(WPOINT.new(hop.x, hop.y, hop.z))
+        API.DoAction_Walker(FFPOINT.new(hop.x, hop.y, hop.z))
     end
 end
 
@@ -2575,7 +2575,7 @@ function Mechanics:handleAnimaPools()
             local tx, ty = math.floor(tile.x), math.floor(tile.y)
             if tileIsClear(tx, ty, self:getLethalHazardTiles()) then
                 ---@diagnostic disable-next-line: undefined-global
-                local dest = WPOINT.new(tx, ty, math.floor(player.z or 0))
+                local dest = FFPOINT.new(tx, ty, math.floor(player.z or 0))
                 if self:diveToTile(dest) then
                     self:log(string.format("dived to pool at (%d, %d), %.1f away",
                                            tx, ty, ad))
@@ -2964,7 +2964,7 @@ function Mechanics:handleInstakill()
                              "LETHAL GROUND — orbiting to slot %d via (%d, %d)",
                              target and target.slot or -1, hop.x, hop.y))
                 ---@diagnostic disable-next-line: undefined-global
-                API.DoAction_WalkerW(WPOINT.new(hop.x, hop.y, hop.z))
+                API.DoAction_Walker(FFPOINT.new(hop.x, hop.y, hop.z))
             end
             -- Movement only: the lock (instakillActive) keeps other handlers
             -- off our position, but the rotation still gets this tick.
@@ -3095,10 +3095,10 @@ function Mechanics:handleAdds()
 
             if tile then
                 -- Tile_XYZ is an FFPOINT (float world position); Interact:NPC
-                -- wants a WPOINT. Handing the raw field over throws a sol type
+                -- wants a FFPOINT. Handing the raw field over throws a sol type
                 -- error, the same trap as passing an id where a name is expected.
                 ---@diagnostic disable-next-line: undefined-global, missing-parameter
-                local at = WPOINT.new(math.floor(tile.x), math.floor(tile.y),
+                local at = FFPOINT.new(math.floor(tile.x), math.floor(tile.y),
                                       math.floor(tile.z or 0))
                 ---@diagnostic disable-next-line: missing-parameter
                 Interact:NPC(add.name, add.action, at)

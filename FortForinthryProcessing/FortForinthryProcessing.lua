@@ -157,7 +157,7 @@ local function isBusy()
 end
 
 local function hasMaterials()
-    return API.InvItemcount_String(material) - API.InvItemcount_String(MATERIALS[material:gsub(" ", "_")][1]) >= min_materials
+    return Inventory:InvItemcount_String(material) - Inventory:InvItemcount_String(MATERIALS[material:gsub(" ", "_")][1]) >= min_materials
 end
 
 local function isBankOpen()
@@ -175,7 +175,7 @@ local function openBank()
 end
 
 local function takePreset()
-    out = out + API.InvItemcount_String(product)
+    out = out + Inventory:InvItemcount_String(product)
     API.KeyboardPress2(0x31, 0, 50) -- presses 1 (first preset)
 end
 

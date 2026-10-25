@@ -21,7 +21,7 @@ local ID = {
     HARP = {94059, 94060},
 }
 
-local startDust = API.InvStackSize(ID.HARMONIC_DUST)
+local startDust = Inventory:InvStackSize(ID.HARMONIC_DUST)
 
 local function idleCheck()
     local timeDiff = os.difftime(os.time(), afk)
@@ -76,7 +76,7 @@ local function printProgressReport(final)
     local xpPH = round((diffXp * 60) / elapsedMinutes);
     local time = formatElapsedTime(startTime)
     local currentLevel = API.XPLevelTable(API.GetSkillXP(skill))
-    local dust = API.InvStackSize(ID.HARMONIC_DUST) - startDust
+    local dust = Inventory:InvStackSize(ID.HARMONIC_DUST) - startDust
     local dustPH = round((dust * 60) / ((os.time() - startTime) / 60));
     IGP.radius = calcProgressPercentage(skill, API.GetSkillXP(skill)) / 100
     IGP.string_value = time ..

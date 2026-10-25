@@ -44,7 +44,7 @@ local function gameStateChecks()
         API.Write_LoopyLoop(false)
         return
     end
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         print('inventory full, stopping')
         API.Write_LoopyLoop(false)
         return

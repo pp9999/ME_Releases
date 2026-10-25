@@ -1,16 +1,15 @@
 local API = require("api")
 local UTILS = require("utils")
-API.Write_fake_mouse_do(false)
 local Wartp = API.GetABs_name1("War's Retreat Teleport")
 
 
 local spaces = {
-    { id = 66115, pos = WPOINT.new(3557, 3298, 0) , npc = 2030 , stairs = 6707, chest = 66016},
-    { id = 66116, pos = WPOINT.new(3554, 3282, 0) , npc = 2029 , stairs = 6706, chest = 66019},
-    { id = 66115, pos = WPOINT.new(3564, 3277, 0) , npc = 2028 , stairs = 6705, chest = 66018},
-    { id = 66116, pos = WPOINT.new(3567, 3288, 0) , npc = 2025 , stairs = 6702, chest = 66017},
-    { id = 66116, pos = WPOINT.new(3575, 3298, 0) , npc = 2026 , stairs = 6703, chest = 63177},
-    { id = 66115, pos = WPOINT.new(3576, 3281, 0) , npc = 2027 , stairs = 6704, chest = 66020}
+    { id = 66115, pos = FFPOINT.new(3557, 3298, 0) , npc = 2030 , stairs = 6707, chest = 66016},
+    { id = 66116, pos = FFPOINT.new(3554, 3282, 0) , npc = 2029 , stairs = 6706, chest = 66019},
+    { id = 66115, pos = FFPOINT.new(3564, 3277, 0) , npc = 2028 , stairs = 6705, chest = 66018},
+    { id = 66116, pos = FFPOINT.new(3567, 3288, 0) , npc = 2025 , stairs = 6702, chest = 66017},
+    { id = 66116, pos = FFPOINT.new(3575, 3298, 0) , npc = 2026 , stairs = 6703, chest = 63177},
+    { id = 66115, pos = FFPOINT.new(3576, 3281, 0) , npc = 2027 , stairs = 6704, chest = 66020}
 }
 local portals    = {132113, 132112}
 local finalChest = 6774
@@ -119,7 +118,7 @@ while (API.Read_LoopyLoop()) do
         deferredSpace = nil
         API.printlua("Sequence complete", 1, true)
     end
-    if API.Invfreecount_() < 5 then
+    if Inventory:Invfreecount() < 5 then
         war()
     end
 end

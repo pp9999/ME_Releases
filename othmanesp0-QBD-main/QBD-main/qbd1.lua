@@ -1,6 +1,5 @@
 local API = require("api")
 local UTILS = require("utils")
-API.Write_fake_mouse_do(false)
 local antifire = API.GetABs_name1("Super antifire potion")
 local War = API.GetABs_name1("War's Retreat Teleport")
 local qbdIds = {15506, 15507, 15454}

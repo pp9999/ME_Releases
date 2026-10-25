@@ -24,17 +24,17 @@ local bloatedToadID = 1014
 local deadChompyID = 1016
 local chompyID = 1550
 local oldakCoilINV = 37408
-local fillSpot = WPOINT.new(2394, 3045, 0)
+local fillSpot = FFPOINT.new(2394, 3045, 0)
 
-local L1T1 = WPOINT.new(2392, 3046, 0)
-local L1T2 = WPOINT.new(2391, 3046, 0)
-local L1T3 = WPOINT.new(2390, 3046, 0)
-local L2T1 = WPOINT.new(2392, 3045, 0)
-local L2T2 = WPOINT.new(2391, 3045, 0)
-local L2T3 = WPOINT.new(2390, 3045, 0)
-local L3T1 = WPOINT.new(2392, 3044, 0)
-local L3T2 = WPOINT.new(2391, 3044, 0)
-local L3T3 = WPOINT.new(2390, 3044, 0)
+local L1T1 = FFPOINT.new(2392, 3046, 0)
+local L1T2 = FFPOINT.new(2391, 3046, 0)
+local L1T3 = FFPOINT.new(2390, 3046, 0)
+local L2T1 = FFPOINT.new(2392, 3045, 0)
+local L2T2 = FFPOINT.new(2391, 3045, 0)
+local L2T3 = FFPOINT.new(2390, 3045, 0)
+local L3T1 = FFPOINT.new(2392, 3044, 0)
+local L3T2 = FFPOINT.new(2391, 3044, 0)
+local L3T3 = FFPOINT.new(2390, 3044, 0)
 
 local function findThing(ID, range, type)
     local objList = {ID}
@@ -74,7 +74,7 @@ end
 
 --Spectre's clue hunter
 local function MoveTo(X, Y, Z, Tolerance)
-    API.DoAction_WalkerW(WPOINT.new(X + math.random(-Tolerance, Tolerance),Y + math.random(-Tolerance, Tolerance),Z))
+    API.DoAction_Walker(FFPOINT.new(X + math.random(-Tolerance, Tolerance),Y + math.random(-Tolerance, Tolerance),Z))
     local startTimer = os.clock()
     while API.Read_LoopyLoop() and not IsPlayerInArea(X, Y, Z, Tolerance + 1) do
         UTILS.randomSleep(300)

@@ -70,10 +70,10 @@ end
 local torstolID = 47715
 local function applyBoosts()
     local torstol = API.Buffbar_GetIDstatus(torstolID, false)
-    if not torstol.found and API.InvStackSize(torstolID) >= 10 then
+    if not torstol.found and Inventory:InvStackSize(torstolID) >= 10 then
         API.DoAction_Inventory1(torstolID, 0, 2, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(600, 500, 500)
-    elseif torstol.found and torstol.conv_text > 0 and torstol.conv_text < 2 and API.InvStackSize(torstolID) >= 1 then
+    elseif torstol.found and torstol.conv_text > 0 and torstol.conv_text < 2 and Inventory:InvStackSize(torstolID) >= 1 then
         API.DoAction_Inventory1(torstolID, 0, 1, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(600, 500, 500)
     end
@@ -120,7 +120,7 @@ end
 
 local fletchingInterface = {InterfaceComp5.new( 1371,7,-1,0)}
 local function isFletchingInterfacePresent()
-    local result = API.ScanForInterfaceTest2Get(true, fletchingInterface)
+    local result = API.ScanForInterfaceTest2Get2(true, fletchingInterface)
     if #result > 0 then
         return true
     else return false end

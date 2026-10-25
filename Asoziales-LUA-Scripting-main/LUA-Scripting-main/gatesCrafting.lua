@@ -56,7 +56,7 @@ local function startEncounter()
     local icthlarin = API.ReadAllObjectsArray({1}, {17693}, {})
     local ichyX = math.floor(icthlarin[1].TileX / 512)
     local ichyY = math.floor(icthlarin[1].TileY / 512)
-    API.DoAction_Tile(WPOINT.new(ichyX + 8, ichyY, 0))
+    API.DoAction_Tile(FFPOINT.new(ichyX + 8, ichyY, 0))
     API.WaitUntilMovingEnds()
     API.DoAction_NPC(0x29,API.OFF_ACT_InteractNPC_route,{ 17693 },50)
     fail = fail + 1

@@ -556,10 +556,10 @@ function PROC:HandleAtTreesState(config)
         local actionResult
         if string.find(BestTree.Name:lower(), "ivy") then
             -- Use ivy-specific action
-            actionResult = API.DoAction_Object2(0x3b,API.OFF_ACT_GeneralObject_route0,{ BestTree.Id },50,WPOINT.new(BestTree.Tile_XYZ.x, BestTree.Tile_XYZ.y, BestTree.Tile_XYZ.z))
+            actionResult = API.DoAction_Object2(0x3b,API.OFF_ACT_GeneralObject_route0,{ BestTree.Id },50,FFPOINT.new(BestTree.Tile_XYZ.x, BestTree.Tile_XYZ.y, BestTree.Tile_XYZ.z))
         else
             -- Use regular tree action
-            actionResult = API.DoAction_Object2(0x3b,API.OFF_ACT_GeneralObject_route0,{ BestTree.Id },50,WPOINT.new(BestTree.Tile_XYZ.x, BestTree.Tile_XYZ.y, BestTree.Tile_XYZ.z))
+            actionResult = API.DoAction_Object2(0x3b,API.OFF_ACT_GeneralObject_route0,{ BestTree.Id },50,FFPOINT.new(BestTree.Tile_XYZ.x, BestTree.Tile_XYZ.y, BestTree.Tile_XYZ.z))
         end
         if not actionResult then
             Slib:Warn("DEBUG: DoAction_Object2 returned false!")
@@ -571,7 +571,7 @@ function PROC:HandleAtTreesState(config)
             Slib:Warn("DEBUG: BestTree.Distance = " .. tostring(BestTree.Distance))
             Slib:Warn("DEBUG: BestTree.Bool1 = " .. tostring(BestTree.Bool1))
             Slib:Warn("DEBUG: Max distance = 50")
-            Slib:Warn("DEBUG: WPOINT = (" .. BestTree.CalcX .. ", " .. BestTree.CalcY .. ", 0)")
+            Slib:Warn("DEBUG: FFPOINT = (" .. BestTree.CalcX .. ", " .. BestTree.CalcY .. ", 0)")
         end
         Slib:RandomSleep(1000, 5000, "ms")
         return "AT_TREES"

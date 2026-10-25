@@ -134,8 +134,8 @@ local function isOpen()
 end
 
 local function OpenDoor(openDoorID, openX, openY, closedDoorID, closedX, closedY)
-    local openPoint = WPOINT.new(openX, openY, 0)
-    local closedPoint = WPOINT.new(closedX, closedY, 0)
+    local openPoint = FFPOINT.new(openX, openY, 0)
+    local closedPoint = FFPOINT.new(closedX, closedY, 0)
 
     local function isDoorOpen()
         local count = #API.GetAllObjArray2({openDoorID}, 5, {0}, openPoint)
@@ -153,7 +153,7 @@ end
 local function clickRandomTile(baseX, baseY, range)
     local offsetX = math.random(-range, range)
     local offsetY = math.random(-range, range)
-    local randomTile = WPOINT.new(baseX + offsetX, baseY + offsetY, 0)
+    local randomTile = FFPOINT.new(baseX + offsetX, baseY + offsetY, 0)
     API.DoAction_Tile(randomTile)
 end
 
@@ -161,7 +161,7 @@ local function randomizeDiveCoordinates(baseX, baseY, baseZ, range)
     local xOffset = math.random(-range, range)
     local yOffset = math.random(-range, range)
     local zOffset = math.random(-range, range)
-    return WPOINT.new(baseX + xOffset, baseY + yOffset, baseZ + zOffset)
+    return FFPOINT.new(baseX + xOffset, baseY + yOffset, baseZ + zOffset)
 end
 
 local function checkCues()
@@ -450,9 +450,9 @@ local function BuyMagebank()
     if canSurge() then UTILS.surge() else abilityWait() end
     clickRandomTile(3094, 3958, 1)
     UTILS.randomSleep(9000)
-    API.DoAction_Object_valid2(0x29, API.OFF_ACT_GeneralObject_route0, {64729}, 50, WPOINT.new(3094, 3958, 0), true)
+    API.DoAction_Object_valid2(0x29, API.OFF_ACT_GeneralObject_route0, {64729}, 50, FFPOINT.new(3094, 3958, 0), true)
     UTILS.randomSleep(3000)
-    API.DoAction_Object_valid2(0x29, API.OFF_ACT_GeneralObject_route0, {64729}, 50, WPOINT.new(3091, 3958, 0), true)
+    API.DoAction_Object_valid2(0x29, API.OFF_ACT_GeneralObject_route0, {64729}, 50, FFPOINT.new(3091, 3958, 0), true)
     UTILS.randomSleep(3000)
 
     Interact:Object("Lever", "Pull")

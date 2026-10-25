@@ -47,7 +47,7 @@ while API.Read_LoopyLoop() do
         local tile = API.PlayerCoord()
         UTILS.surge()
         UTILS.rangeSleep(200, 0, 100)
-        API.DoAction_Tile(WPOINT.new(tile.x, tile.y, tile.z))
+        API.DoAction_Tile(FFPOINT.new(tile.x, tile.y, tile.z))
         UTILS.countTicks(1)
         API.DoAction_Ability('Super restore potion', 1, API.OFF_ACT_GeneralInterface_route)
         cooldowns.Sear = currentTime

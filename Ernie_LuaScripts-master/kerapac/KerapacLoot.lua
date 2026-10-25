@@ -9,7 +9,7 @@ local KerapacLoot = {}
 function KerapacLoot:HandleLoot()
     local lootPiles = API.ReadAllObjectsArray({3},{-1},{})
     local lootPosition = FFPOINT.new(State.playerPosition.x + Data.lootPosition, State.playerPosition.y, 0)
-    API.DoAction_TileF(lootPosition)
+    API.DoAction_Tile(lootPosition)
     Logger:Info("Moving to loot")
     API.WaitUntilMovingEnds(10, 6)
 
@@ -25,7 +25,7 @@ function KerapacLoot:HandleLoot()
         end
         
         if API.LootWindowOpen_2() and (API.LootWindow_GetData()[1].itemid1 > 0) and not State.isLooted then 
-            local lootInterface = API.ScanForInterfaceTest2Get(true, { 
+            local lootInterface = API.ScanForInterfaceTest2Get2(true, { 
                 { 1622, 4, -1, 0 }, 
                 { 1622, 6, -1, 0 }, 
                 { 1622, 1, -1, 0 }, 

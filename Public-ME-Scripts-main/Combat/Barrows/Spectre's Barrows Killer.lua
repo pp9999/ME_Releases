@@ -28,7 +28,6 @@ local PROC = require("Barrows.modules.proc")
 local DATA = require("Barrows.modules.data")
 
 API.SetMaxIdleTime(7)
-API.Write_fake_mouse_do(false)
 API.TurnOffMrHasselhoff(false)
 
 --------------------START GUI STUFF--------------------

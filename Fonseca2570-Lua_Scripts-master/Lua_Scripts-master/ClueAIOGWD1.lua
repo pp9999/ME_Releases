@@ -227,7 +227,7 @@ local Bosses = {
             if door.Distance <= 1 then 
                 return
             end
-            API.DoAction_Tile(WPOINT.new(door.Tile_XYZ.x-1, door.Tile_XYZ.y, door.Tile_XYZ.z))
+            API.DoAction_Tile(FFPOINT.new(door.Tile_XYZ.x-1, door.Tile_XYZ.y, door.Tile_XYZ.z))
             API.RandomSleep2(600,100,300)
             API.WaitUntilMovingEnds()
         end
@@ -299,7 +299,7 @@ local timer = {
 }
 
 local function timerHitZero()
-    local result = API.ScanForInterfaceTest2Get(false, timer)
+    local result = API.ScanForInterfaceTest2Get2(false, timer)
     if result and #result > 0 and result[1].textids then
         local textids = result[1].textids
         local startIndex, endIndex = string.find(textids, "00:00")
@@ -318,7 +318,7 @@ local validSession = {
 }
 
 local function NoValidSessionFound() 
-    local serverMessage = API.ScanForInterfaceTest2Get(false, validSession)
+    local serverMessage = API.ScanForInterfaceTest2Get2(false, validSession)
     if serverMessage and #serverMessage > 0 and serverMessage[1].textids then
         local textids = serverMessage[1].textids
         local startIndex, endIndex = string.find(textids, "No valid")
@@ -412,7 +412,7 @@ local function CleanBossRoom()
 end
 
 local function Loot() 
-    if not API.InvFull_() then 
+    if not Inventory:IsFull() then 
         API.DoAction_Loot_w(SelectedBoss.Drops, 15, API.PlayerCoordfloat(), 15)
     else
         if TeleportToWarRetreat() then 
@@ -447,7 +447,7 @@ local function Bank()
     end 
 
 
-    if API.InvFull_() then 
+    if Inventory:IsFull() then 
         if TeleportToWarRetreat() then 
             currentState = States.Banking
             API.RandomSleep2(1200,0,300)
@@ -469,9 +469,9 @@ end
 
 local function DroppedPet() 
     if not droppedBossPet then 
-        if API.InvItemcount_1(SelectedBoss.Pet) > 0 then 
+        if Inventory:InvItemcount(SelectedBoss.Pet) > 0 then 
             droppedBossPet = true
-            API.Write_ScripCuRunning1("Dropped pet")
+            API.Write_ScripCuRunning0("Dropped pet")
         end
     end
 end
@@ -482,7 +482,7 @@ local function CorrectPosition()
     end
 end
 
-API.Write_ScripCuRunning1("no pet drop")
+API.Write_ScripCuRunning0("no pet drop")
 -- end boss functions
 
 -- try to figure out current state

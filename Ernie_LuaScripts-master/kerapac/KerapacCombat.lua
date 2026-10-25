@@ -406,7 +406,7 @@ function KerapacCombat:CheckForStun()
     if API.DeBuffbar_GetIDstatus(Data.stun).found then
         Logger:Info("I am stunned")
         self:UseFreedomAbility()
-        API.DoAction_TileF(State.centerOfArenaPosition)
+        API.DoAction_Tile(State.centerOfArenaPosition)
         Utils:SleepTickRandom(2)
     end
 end
@@ -522,8 +522,8 @@ function KerapacCombat:HandleCombatState(state)
         end
         State.canAttack = false
         Utils:SleepTickRandom(1)
-        if not API.DoAction_Dive_Tile(WPOINT.new(math.floor(self:GetKerapacInformation().TileX / 512), math.floor(self:GetKerapacInformation().TileY / 512), math.floor(self:GetKerapacInformation().TileZ / 512))) then
-            API.DoAction_Tile(WPOINT.new(math.floor(self:GetKerapacInformation().TileX / 512), math.floor(self:GetKerapacInformation().TileY / 512), math.floor(self:GetKerapacInformation().TileZ / 512)))
+        if not API.DoAction_Dive_Tile(FFPOINT.new(math.floor(self:GetKerapacInformation().TileX / 512), math.floor(self:GetKerapacInformation().TileY / 512), math.floor(self:GetKerapacInformation().TileZ / 512))) then
+            API.DoAction_Tile(FFPOINT.new(math.floor(self:GetKerapacInformation().TileX / 512), math.floor(self:GetKerapacInformation().TileY / 512), math.floor(self:GetKerapacInformation().TileZ / 512)))
         end
         self:EnableMagePray()
         State.isRiftDodged = true
@@ -564,7 +564,7 @@ function KerapacCombat:HandleCombatState(state)
     
     if state == Data.bossStateEnum.JUMP_ATTACK_LANDED.name and self:GetKerapacInformation().Distance < 4 then
         self:EnableMeleePray()
-        API.DoAction_TileF(State.centerOfArenaPosition)
+        API.DoAction_Tile(State.centerOfArenaPosition)
         Utils:SleepTickRandom(1)
         self:AttackKerapac()
     end
@@ -572,7 +572,7 @@ function KerapacCombat:HandleCombatState(state)
     if state == Data.bossStateEnum.LIGHTNING_ATTACK.name and not State.islightningPhase then
         Logger:Info("Lightning Phase active ------------")
         local surgeAB = API.GetABs_name("Surge")
-        API.DoAction_Tile(WPOINT.new(State.centerOfArenaPosition.x, State.centerOfArenaPosition.y, 1))
+        API.DoAction_Tile(FFPOINT.new(State.centerOfArenaPosition.x, State.centerOfArenaPosition.y, 1))
         Utils:SleepTickRandom(6)
         self:AttackKerapac()
         State.islightningPhase = true
@@ -1086,7 +1086,7 @@ function KerapacCombat:CastNextAbility()
     local currentTick = API.Get_tick()
     local tickDiff = currentTick - State.globalCooldownTicks
 
-    local timeWarpActionButton = API.ScanForInterfaceTest2Get(false, { { 743,0,-1,0 }, { 743,1,-1,0 } })[1].textitem == "<col=FFFFFF>Warp time"
+    local timeWarpActionButton = API.ScanForInterfaceTest2Get2(false, { { 743,0,-1,0 }, { 743,1,-1,0 } })[1].textitem == "<col=FFFFFF>Warp time"
 
     if tickDiff <= 2 then
         Logger:Debug("CastNextAbility: GCD active (tickDiff=" .. tickDiff .. ", current=" .. currentTick .. ", last=" .. State.globalCooldownTicks .. ")")

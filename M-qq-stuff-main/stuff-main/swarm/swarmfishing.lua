@@ -112,7 +112,7 @@ end
 local regions, nodes = {}, {}
 for name, coords in pairs(AREAS) do
     local x1, y1, x2, y2 = coords[1], coords[2], coords[3], coords[4]
-    regions[name] = {p1=WPOINT.new(x1,y1,0), p2=WPOINT.new(x2,y2,3)}
+    regions[name] = {p1=FFPOINT.new(x1,y1,0), p2=FFPOINT.new(x2,y2,3)}
     nodes[name] = {xMin=x1, xMax=x2, yMin=y1, yMax=y2}
 end
 
@@ -888,7 +888,7 @@ end
 local function doDirectFrenzyWalk(pr, dest)
     print(string.format("Direct walk %s -> %s", pr, dest))
     local pt = randomPointInRegion(regions[dest])
-    API.DoAction_Tile(WPOINT.new(pt.x, pt.y, 0))
+    API.DoAction_Tile(FFPOINT.new(pt.x, pt.y, 0))
     API.RandomSleep2(700, 600, 1800)
     repeat
         if not API.Read_LoopyLoop() then return end
@@ -983,7 +983,7 @@ local function walkPath(path, startPlayerPos, dest)
                 pt = { x = nodePt.x, y = nodePt.y, z = nodePt.z or 0 }
                 print(string.format("Walking to %s (%d/%d) @ (%.2f,%.2f) [getNodePoint] (distance: %.1f)", label, i, #path, pt.x, pt.y, dist2(player, pt)))
             end
-            API.DoAction_Tile(WPOINT.new(pt.x, pt.y, pt.z or 0))
+            API.DoAction_Tile(FFPOINT.new(pt.x, pt.y, pt.z or 0))
             API.RandomSleep2(1200,600,600)
             repeat
                 if not API.Read_LoopyLoop() then 
@@ -1737,7 +1737,6 @@ end
 --                      MAIN LOOP                      
 -- ═════════════════════════════════════════════════════
 
-API.Write_fake_mouse_do(false)
 initializeScript()
 
 while API.Read_LoopyLoop() do

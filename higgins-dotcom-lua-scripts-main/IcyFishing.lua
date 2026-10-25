@@ -21,7 +21,7 @@ local ID = {
 }
 
 local function hasFrozenFish()
-    local fish = API.InvItemcount_2(ID.FROZEN_FISH)
+    local fish = Inventory:InvItemcount(ID.FROZEN_FISH)
     for _, v in ipairs(fish) do
         if v > 0 then
             return true
@@ -58,7 +58,7 @@ while (API.Read_LoopyLoop()) do
     --     goto continue
     -- end
 
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         if hasFrozenFish() then
             depositFish()
         else

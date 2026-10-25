@@ -256,7 +256,7 @@ end
 ---@param z number
 ---@return boolean
 function SpectreUtils.WalkToCoordinates(x,y,z)
-    if API.DoAction_Tile(WPOINT.new(x,y,z)) then
+    if API.DoAction_Tile(FFPOINT.new(x,y,z)) then
         return true
     else
         return false
@@ -272,7 +272,7 @@ function SpectreUtils.TimerHitZero()
         InterfaceComp5.new(861, 4, -1, 0),
         InterfaceComp5.new(861, 8, -1, 0)
     }
-    local result = API.ScanForInterfaceTest2Get(false, timer)
+    local result = API.ScanForInterfaceTest2Get2(false, timer)
     if result and #result > 0 and result[1].textids then
         local textids = result[1].textids
         local startIndex, endIndex = string.find(textids, "00:00")
@@ -302,26 +302,18 @@ end
 ---@param max_seconds number
 ---@return string
 function SpectreUtils.CheckNPCMessagesRecent(search_strings, max_seconds)
-    local chat = API.ChatGetMessages()
-    local current_time = os.date("*t")
-    local current_seconds = current_time.hour * 3600 + current_time.min * 60 + current_time.sec
+    -- Chat is now event driven: GatherEvents_chat_check() returns the latest
+    -- message as an EventData struct (plain text, no <col=...> markup).
+    local chat = { API.GatherEvents_chat_check() }
     if type(search_strings) ~= "table" then
         search_strings = {search_strings}
     end
     for _, msg in ipairs(chat) do
-        local time_text = string.match(msg.text, "<col=7fa9ff>(%d%d:%d%d:%d%d)")
-        local message_text = string.match(msg.text, "<col=99ff99>(.-)</col>")
-        if time_text then
-            local hours, minutes, seconds = string.match(time_text, "(%d%d):(%d%d):(%d%d)")
-            if hours and minutes and seconds then
-                local message_time_seconds = tonumber(hours) * 3600 + tonumber(minutes) * 60 + tonumber(seconds)
-                local time_difference = current_seconds - message_time_seconds
-                if time_difference <= max_seconds and message_text then
-                    for _, search_string in ipairs(search_strings) do
-                        if string.find(message_text, search_string) then
-                            return search_strings[_] -- or return true
-                        end
-                    end
+        local message_text = msg and msg.text
+        if message_text then
+            for _, search_string in ipairs(search_strings) do
+                if string.find(message_text, search_string, 1, true) then
+                    return search_string
                 end
             end
         end
@@ -477,8 +469,8 @@ function SpectreUtils.RechargeSilverhawkBoots(minQuantity)
     local item = API.Container_Get_s(94,30924)
     if item.item_id == 30924 then
         if item.Extra_ints[2] < minQuantity then
-            local silverhawkFeather = API.CheckInvStuff0(30915)
-            local silverhawkDown = API.CheckInvStuff0(34823)
+            local silverhawkFeather = Inventory:CheckInvStuffCheckAll({ 30915 })
+            local silverhawkDown = Inventory:CheckInvStuffCheckAll({ 34823 })
             if silverhawkFeather ~= false then
                 API.DoAction_Inventory1(30915,0,1,API.OFF_ACT_GeneralInterface_route)
                 return true
@@ -533,8 +525,8 @@ function SpectreUtils.Dive(X, Y, Z)
     local Bdive = API.GetABs_id(30331)
     local Dive = API.GetABs_id(23714)
     if (Bdive.id ~= 0 and Bdive.enabled and Bdive.cooldown_timer < 1) or (Dive.id ~= 0 and Bdive.enabled and Dive.cooldown_timer < 1) then
-        if not API.DoAction_BDive_Tile(WPOINT.new(X, Y, Z)) then
-            if API.DoAction_Dive_Tile(WPOINT.new(X, Y, Z)) then
+        if not API.DoAction_BDive_Tile(FFPOINT.new(X, Y, Z)) then
+            if API.DoAction_Dive_Tile(FFPOINT.new(X, Y, Z)) then
                 return true
             else
                 return false
@@ -557,7 +549,7 @@ function SpectreUtils.GetGWD2KillCounts()
     local results = {}
 
     for i, baseAddress in ipairs(baseAddresses) do
-        local data = API.ScanForInterfaceTest2Get(false, baseAddress)
+        local data = API.ScanForInterfaceTest2Get2(false, baseAddress)
         if #data >= 0 then
             local amount = API.ReadCharsLimit(data[1].memloc + API.I_itemids3, 255)
             results[keyNames[i]] = tonumber(amount)

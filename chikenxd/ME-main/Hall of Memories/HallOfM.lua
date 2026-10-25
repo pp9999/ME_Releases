@@ -348,7 +348,7 @@ end
 local function randomTileAround(baseX, baseY, radius)
     local dx = math.random(-radius, radius)
     local dy = math.random(-radius, radius)
-    return WPOINT.new(baseX + dx, baseY + dy, 0)
+    return FFPOINT.new(baseX + dx, baseY + dy, 0)
 end
 
 local function waitForResponse(timeoutMs, condition)

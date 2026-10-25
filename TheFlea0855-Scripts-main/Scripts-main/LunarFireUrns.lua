@@ -16,7 +16,7 @@ local unfiredID = 40876
 API.SetDrawTrackedSkills(true)
 
 local function hasUnfired()
-    if API.InvItemcount_1(unfiredID) > 0 then
+    if Inventory:InvItemcount(unfiredID) > 0 then
         return true
     else
         return false

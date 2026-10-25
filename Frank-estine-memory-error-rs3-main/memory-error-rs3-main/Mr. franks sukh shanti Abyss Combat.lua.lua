@@ -409,9 +409,9 @@ local lastExcaliburDebugTime = os.time()
             end
         end
         local excalCD = API.DeBuffbar_GetIDstatus(IDS.EXCALIBUR, false)
-        local excalFound = API.InvItemcount_1(IDS.EXCALIBUR)
+        local excalFound = Inventory:InvItemcount(IDS.EXCALIBUR)
         local elvenCD = API.DeBuffbar_GetIDstatus(IDS.ELVEN_SHARD, false)
-        local elvenFound = API.InvItemcount_1(IDS.ELVEN_SHARD)
+        local elvenFound = Inventory:InvItemcount(IDS.ELVEN_SHARD)
         local eatFoodAB = API.GetABs_name1("Eat Food")
 
         -- Auto-activate Excalibur every ~5 minutes 5 seconds (+0 to 20 seconds random)
@@ -531,7 +531,7 @@ local function sleep_random(min, max)
 end
 
 local function wp(x, y, z)
-    return WPOINT.new(x, y, z)
+    return FFPOINT.new(x, y, z)
 end
 
 local function press_key(vk_code)
@@ -554,7 +554,7 @@ end
 local function buryBones()
     local bonesCount = 0
     for _, boneId in ipairs(bonesId) do
-        bonesCount = bonesCount + API.InvItemcount_1(boneId)
+        bonesCount = bonesCount + Inventory:InvItemcount(boneId)
     end
     if bonesCount > 0 and buryBonesEnabled then
         for i = 1, bonesCount, 1 do
@@ -635,7 +635,7 @@ local function loot()
         API.RandomSleep2(LOOT_COOLDOWN - (currentTime - lastLootAttempt), 500, 800)
     end
     
-    if not API.InvFull_()    then
+    if not Inventory:IsFull()    then
         API.DoAction_Interface(0x24,0xffffffff,1,1622,30,-1,API.OFF_ACT_GeneralInterface_route)
         local maxAttempts = math.random(1, 3)
         local attempts = 0
@@ -662,7 +662,7 @@ end
 -- == 6. CORE FUNCTIONS ==
 local function moveToTrainingSpot(trainingSpot)
     if DEBUG_LEVEL > 0 then print("Running to training spot.") end
-    API.DoAction_TileF(trainingSpot)
+    API.DoAction_Tile(trainingSpot)
     waitForStillness()
     API.RandomSleep2(1000, 250, 500)
     API.DoAction_NPC(0x2a, API.OFF_ACT_AttackNPC_route, NPCS, 2)
@@ -709,7 +709,7 @@ local function playerNearTile(targetTile, dist)
         if p and p.Name and p.Name ~= localPlayerName then
             local distance = 999
             if p.Tile_XYZ then
-                local success, calculated_dist = pcall(API.Math_DistanceF, p.Tile_XYZ, targetTile)
+                local success, calculated_dist = pcall(API.Math_Distance, p.Tile_XYZ, targetTile)
                 if success and type(calculated_dist) == "number" then
                     distance = calculated_dist
                 end
@@ -771,7 +771,7 @@ local function walktoabyss_debug()
     local isWildyStart = LODESTONES.WILDERNESS:IsAtLocation()
     local playerPos = API.PlayerCoordfloat()
 
-    if playerPos and API.Math_DistanceF(playerPos, WAR_RETREAT_BANK_AREA) < 10 then
+    if playerPos and API.Math_Distance(playerPos, WAR_RETREAT_BANK_AREA) < 10 then
         if DEBUG_LEVEL > 1 then print("[NAV] Player is near War's Retreat bank.") end
         if openBank() then
             if DEBUG_LEVEL > 1 then print("[NAV] Bank opened. Waiting 2 seconds.") end
@@ -837,7 +837,7 @@ local function walktoabyss_debug()
             local mageAreaTile = FFPOINT.new(3105, 3556, 0)
             local distToMageArea = nil
             if currentPos and mageAreaTile then
-                local success, calculated_dist = pcall(API.Math_DistanceF, currentPos, mageAreaTile)
+                local success, calculated_dist = pcall(API.Math_Distance, currentPos, mageAreaTile)
                 if success and type(calculated_dist) == "number" then
                     distToMageArea = calculated_dist
                 end
@@ -850,7 +850,7 @@ local function walktoabyss_debug()
                     local targetY = 3557 + math.random(-2, 2)
                     local walkTargetTile = FFPOINT.new(targetX, targetY, 0)
                     print(string.format("[walktoabyss_debug] Walking towards Mage area (Target: %d, %d)", targetX, targetY))
-                    if API.DoAction_TileF(walkTargetTile) then
+                    if API.DoAction_Tile(walkTargetTile) then
                         print("[walktoabyss_debug] Walk action initiated.")
                         API.RandomSleep2(1000, 500, 1000)
                         waitForStillness()
@@ -946,7 +946,7 @@ while API.Read_LoopyLoop() do
         TDATA = chooseTrainingData()
         if not TDATA then
             print("No training spots available. Stopping.")
-            API.DoAction_TileF(SAFE_SPOT)
+            API.DoAction_Tile(SAFE_SPOT)
             waitForStillness()
             API.Write_LoopyLoop(false)
             break
@@ -969,7 +969,7 @@ while API.Read_LoopyLoop() do
         if not attackNearestNPC() then
             print("No NPCs found, resetting position")
             local resetTile = FFPOINT.new(TDATA.resetSpot[1] + math.random(-5, 5), TDATA.resetSpot[2] + math.random(0, 5), 0)
-            API.DoAction_TileF(resetTile)
+            API.DoAction_Tile(resetTile)
             waitForStillness()
             moveToTrainingSpot(current_training_spot)
         end

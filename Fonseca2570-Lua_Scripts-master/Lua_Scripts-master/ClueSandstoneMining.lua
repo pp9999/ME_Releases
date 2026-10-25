@@ -84,7 +84,7 @@ while(API.Read_LoopyLoop()) do
     end
 
     if not API.CheckAnim(20) and not isMoving() then 
-        if API.InvFull_() then 
+        if Inventory:IsFull() then 
             API.DoAction_Object_string1(0x5, API.OFF_ACT_GeneralObject_route3, {"Bank chest"}, 50, true)
             API.RandomSleep2(600,200,400)
             API.WaitUntilMovingEnds()

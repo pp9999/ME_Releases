@@ -2114,7 +2114,7 @@ function Slib:PrintInterfaceInfo(TargetUnder, InterfaceToScan)
             
             -- Try to get the exact interface at this path
             local ExactSuccess, ExactInterface = pcall(function() 
-                return API.ScanForInterfaceTest2Get(false, CurrentPath) 
+                return API.ScanForInterfaceTest2Get2(false, CurrentPath) 
             end)
             
             if ExactSuccess and ExactInterface and #ExactInterface > 0 then
@@ -2366,7 +2366,7 @@ function Slib:PrintInterfaceInfo(TargetUnder, InterfaceToScan)
             
             -- Now get all children of this path
             local ChildrenSuccess, Children = pcall(function() 
-                return API.ScanForInterfaceTest2Get(true, CurrentPath) 
+                return API.ScanForInterfaceTest2Get2(true, CurrentPath) 
             end)
             
             if not ChildrenSuccess or not Children or #Children == 0 then
@@ -2421,7 +2421,7 @@ function Slib:PrintInterfaceInfo(TargetUnder, InterfaceToScan)
     else
         -- Single interface scan (exact path)
         local Success, Interface = pcall(function() 
-            return API.ScanForInterfaceTest2Get(false, InterfaceToScan) 
+            return API.ScanForInterfaceTest2Get2(false, InterfaceToScan) 
         end)
         
         if not Success then
@@ -2456,7 +2456,7 @@ function Slib:PrintInterfaceInfo(TargetUnder, InterfaceToScan)
             VisitedPaths[PathKey] = true
             
             local ExactSuccess, ExactInterface = pcall(function() 
-                return API.ScanForInterfaceTest2Get(false, CurrentPath) 
+                return API.ScanForInterfaceTest2Get2(false, CurrentPath) 
             end)
             
             if ExactSuccess and ExactInterface and #ExactInterface > 0 then
@@ -2884,7 +2884,7 @@ function Slib:PrintCurrencyPouch()
     
     -- Process each interface configuration
     for I = 1, #self.Interfaces.CurrencyPouch do
-        local Interface = API.ScanForInterfaceTest2Get(true, self.Interfaces.CurrencyPouch[I])
+        local Interface = API.ScanForInterfaceTest2Get2(true, self.Interfaces.CurrencyPouch[I])
         
         -- Count valid items in this interface
         local ValidItems = 0
@@ -3219,7 +3219,7 @@ function Slib:GetInstanceTimer()
         return ""
     end
     
-    local Result = API.ScanForInterfaceTest2Get(false, self.Interfaces.InstanceTimer[1])
+    local Result = API.ScanForInterfaceTest2Get2(false, self.Interfaces.InstanceTimer[1])
     if not Result then
         self:Warn("Failed to scan instance timer interface")
         return ""
@@ -3289,7 +3289,7 @@ function Slib:GetGWD1KillCounts()
         local FactionName = FactionNames[i]
         
         -- Scan interface for faction data
-        local Data = API.ScanForInterfaceTest2Get(false, BaseAddress)
+        local Data = API.ScanForInterfaceTest2Get2(false, BaseAddress)
         if not Data then
             self:Warn(string.format("[GetGWD1KillCounts] Failed to scan interface for %s", FactionName))
             Results[FactionName] = 0
@@ -3361,7 +3361,7 @@ function Slib:GetGWD2KillCounts()
         local FactionName = FactionNames[i]
         
         -- Scan interface for faction data
-        local Data = API.ScanForInterfaceTest2Get(false, BaseAddress)
+        local Data = API.ScanForInterfaceTest2Get2(false, BaseAddress)
         if not Data then
             self:Warn(string.format("[GetGWD2KillCounts] Failed to scan interface for %s", FactionName))
             Results[FactionName] = 0
@@ -3622,8 +3622,8 @@ function Slib:WaitForObjectToAppear2(ObjID, Range, ObjType, x, y, z, TimeoutSeco
     
     self:Info("Waiting for object ID(s) [" .. ObjIdStr .. "] (Type(s) [" .. ObjTypeStr .. "]) within range " .. Range .. " tiles " .. TileStr .. "...")
     
-    -- Construct WPOINT from x, y, z
-    local Tile = WPOINT.new(x, y, z)
+    -- Construct FFPOINT from x, y, z
+    local Tile = FFPOINT.new(x, y, z)
     
     while API.Read_LoopyLoop() do
         -- Check timeout
@@ -3758,8 +3758,8 @@ function Slib:FindObj2(ObjId, Distance, ObjType, x, y, z)
     local ObjIdTable = type(ObjId) == "table" and ObjId or {ObjId}
     local ObjTypeTable = type(ObjType) == "table" and ObjType or {ObjType}
     
-    -- Construct WPOINT from x, y, z
-    local Tile = WPOINT.new(x, y, z)
+    -- Construct FFPOINT from x, y, z
+    local Tile = FFPOINT.new(x, y, z)
     
     -- Search for objects using GetAllObjArray2
     local Objects = API.GetAllObjArray2(ObjIdTable, Distance, ObjTypeTable, Tile)
@@ -3910,7 +3910,7 @@ function Slib:CurrencyPouchContains(Ids)
     
     -- Scan all currency pouch interfaces
     for I = 1, #self.Interfaces.CurrencyPouch do
-        local Interface = API.ScanForInterfaceTest2Get(true, self.Interfaces.CurrencyPouch[I])
+        local Interface = API.ScanForInterfaceTest2Get2(true, self.Interfaces.CurrencyPouch[I])
         if Interface and (type(Interface) == "table" or type(Interface) == "userdata") then
             for _, Item in pairs(Interface) do
                 if Item and Item.itemid1 and Item.itemid1 >= 0 then
@@ -3940,7 +3940,7 @@ function Slib:AreaLootIsOpen()
     end
     
     -- Scan for the area loot interface
-    local Interface = API.ScanForInterfaceTest2Get(true, self.Interfaces.AreaLoot[1])
+    local Interface = API.ScanForInterfaceTest2Get2(true, self.Interfaces.AreaLoot[1])
     if not Interface then
         return false
     end
@@ -3976,7 +3976,7 @@ function Slib:AreaLootGetItems()
     end
     
     -- Scan for the area loot interface
-    local Interface = API.ScanForInterfaceTest2Get(true, self.Interfaces.AreaLoot[1])
+    local Interface = API.ScanForInterfaceTest2Get2(true, self.Interfaces.AreaLoot[1])
     if not Interface then
         self:Error("[AreaLootGetItems] Failed to scan area loot interface")
         return nil
@@ -4073,7 +4073,7 @@ end
 -- Checks if the instance interface is currently open
 ---@return boolean IsOpen True if instance interface is open, false otherwise
 function Slib:InstanceInterfaceIsOpen()
-    local Interface = API.ScanForInterfaceTest2Get(true, self.Interfaces.InstanceOptions[1])
+    local Interface = API.ScanForInterfaceTest2Get2(true, self.Interfaces.InstanceOptions[1])
     return #Interface > 0
 end
 
@@ -4093,10 +4093,10 @@ function Slib:GetInstanceInterfaceOptions()
     end
 
     -- Retrieve interface elements for each option
-    local MaxPlayersRaw = API.ScanForInterfaceTest2Get(true, self.Interfaces.InstanceOptions[2])
-    local MinCombatRaw = API.ScanForInterfaceTest2Get(true, self.Interfaces.InstanceOptions[3])
-    local SpawnSpeedRaw = API.ScanForInterfaceTest2Get(true, self.Interfaces.InstanceOptions[4])
-    local ProtectionRaw = API.ScanForInterfaceTest2Get(true, self.Interfaces.InstanceOptions[5])
+    local MaxPlayersRaw = API.ScanForInterfaceTest2Get2(true, self.Interfaces.InstanceOptions[2])
+    local MinCombatRaw = API.ScanForInterfaceTest2Get2(true, self.Interfaces.InstanceOptions[3])
+    local SpawnSpeedRaw = API.ScanForInterfaceTest2Get2(true, self.Interfaces.InstanceOptions[4])
+    local ProtectionRaw = API.ScanForInterfaceTest2Get2(true, self.Interfaces.InstanceOptions[5])
     
     -- Parse values with proper nil checking
     local MaxPlayersTreated = tonumber(API.ReadCharsLimit(MaxPlayersRaw[1].memloc + API.I_itemids3, 255))
@@ -4139,7 +4139,7 @@ end
 -- Checks if the text input interface is currently open
 ---@return boolean IsOpen True if text input interface is open, false otherwise
 function Slib:TextInputIsOpen()
-    local Interface = API.ScanForInterfaceTest2Get(true, self.Interfaces.TextInput[1])
+    local Interface = API.ScanForInterfaceTest2Get2(true, self.Interfaces.TextInput[1])
     return #Interface > 0
 end
 
@@ -4419,7 +4419,7 @@ function Slib:WalkToCoordinates(X, Y, Z)
         return true
     end
 
-    local WalkResult = API.DoAction_Tile(WPOINT.new(X, Y, Z))
+    local WalkResult = API.DoAction_Tile(FFPOINT.new(X, Y, Z))
     if not WalkResult then
         self:Error("[WalkToCoordinates] Failed to initiate walk to (" .. X .. ", " .. Y .. ", " .. Z .. ")")
         return false
@@ -4469,7 +4469,7 @@ function Slib:Dive(X, Y, Z)
     end
     
     -- Create target point
-    local TargetPoint = WPOINT.new(X, Y, Z)
+    local TargetPoint = FFPOINT.new(X, Y, Z)
     
     -- Try Bladed Dive first
     if BladedDiveReady then
@@ -4918,7 +4918,7 @@ function Slib:MemoryStrandTeleport()
 
     local MemStrandSlot = nil
     for I = 1, #self.Interfaces.CurrencyPouch do
-        local Interface = API.ScanForInterfaceTest2Get(true, self.Interfaces.CurrencyPouch[I])
+        local Interface = API.ScanForInterfaceTest2Get2(true, self.Interfaces.CurrencyPouch[I])
         if Interface and (type(Interface) == "table" or type(Interface) == "userdata") then
             for _, Item in pairs(Interface) do
                 if Item and Item.itemid1 and Item.itemid1 == 39486 then
@@ -4970,7 +4970,7 @@ function Slib:RechargeSilverhawkBoots(MinQuantity)
     end
     
     -- Check for regular silverhawk feathers
-    local HasFeathers = API.CheckInvStuff0(30915)
+    local HasFeathers = Inventory:CheckInvStuffCheckAll({ 30915 })
     if HasFeathers then
         self:Info("[RechargeSilverhawkBoots] Using regular silverhawk feathers")
         API.DoAction_Inventory1(30915,0,1,API.OFF_ACT_GeneralInterface_route)
@@ -4978,7 +4978,7 @@ function Slib:RechargeSilverhawkBoots(MinQuantity)
     end
 
     -- Check for silverhawk down
-    local HasDown = API.CheckInvStuff0(34823)
+    local HasDown = Inventory:CheckInvStuffCheckAll({ 34823 })
     if HasDown then
         self:Info("[RechargeSilverhawkBoots] Using silverhawk down")
         API.DoAction_Inventory1(34823,0,1,API.OFF_ACT_GeneralInterface_route)

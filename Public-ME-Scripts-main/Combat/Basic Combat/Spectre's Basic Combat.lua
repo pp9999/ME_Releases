@@ -409,7 +409,7 @@ local function ScanNearbyNpcs()
 
     local PlayerPos = API.PlayerCoordfloat()
     for _, Mob in ipairs(All) do
-        Mob.Distance = API.Math_DistanceF(Mob.Tile_XYZ, PlayerPos)
+        Mob.Distance = API.Math_Distance(Mob.Tile_XYZ, PlayerPos)
         if IsValidNpc(Mob) and Mob.Distance <= Config.ScanRange then
             table.insert(Result, Mob)
         end
@@ -752,7 +752,7 @@ local function InvestigateMound(WyrmName)
     -- Interact matches by name and every mound is called "Mound", so the tile of
     -- the mound we identified by id is what pins down the right type. The range
     -- is measured against the player, so it matches the normal attack range.
-    local MoundTile = WPOINT.new(math.floor(Mound.Tile_XYZ.x), math.floor(Mound.Tile_XYZ.y), Mound.Floor)
+    local MoundTile = FFPOINT.new(math.floor(Mound.Tile_XYZ.x), math.floor(Mound.Tile_XYZ.y), Mound.Floor)
 
     if Interact:NPC(MoundName, MoundAction, MoundTile, Config.AttackRange) then
         Slib:RandomSleep(Config.MoundMinSleep, Config.MoundMaxSleep, "ms")
@@ -795,7 +795,7 @@ local function AttackByPriority()
     for _, Mob in ipairs(OrderTargets(Candidates)) do
         Slib:Info(string.format("[Combat] Attacking %s (Id=%s, uid=%s, dist=%.1f)",
             Mob.Name, tostring(Mob.Id), tostring(Mob.Unique_Id), Mob.Distance))
-        local TargetTile = WPOINT.new(math.floor(Mob.Tile_XYZ.x), math.floor(Mob.Tile_XYZ.y), Mob.Floor)
+        local TargetTile = FFPOINT.new(math.floor(Mob.Tile_XYZ.x), math.floor(Mob.Tile_XYZ.y), Mob.Floor)
 
         -- Interact resolves the action from the NPC definition looked up by
         -- name. For some NPCs that lookup yields no action offset and the call

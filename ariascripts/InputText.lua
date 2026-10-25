@@ -11,7 +11,7 @@ local function typeString(inputString)
 end
 
 local function getInputText()
-    local inputTextIc = API.ScanForInterfaceTest2Get(false, {
+    local inputTextIc = API.ScanForInterfaceTest2Get2(false, {
         {1469,0,-1,-1,0},
         {1469,1,-1,0,0},
         {1469,4,-1,1,0}

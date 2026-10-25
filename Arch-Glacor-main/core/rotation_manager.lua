@@ -246,8 +246,8 @@ function RotationManager:execute()
     return false
 end
 local function checkBloated()
-    if API.ReadTargetInfo(false).Hitpoints ~= 0 then
-        Buff_stack = API.ReadTargetInfo(true).Buff_stack
+    if API.ReadTargetInfo99(false).Hitpoints ~= 0 then
+        Buff_stack = API.ReadTargetInfo99(true).Buff_stack
         for _ , buff in ipairs(Buff_stack) do
             if buff == 30098 then
                 return true
@@ -257,7 +257,7 @@ local function checkBloated()
     end
 end
 function RotationManager:_improvise(spend)
-    local targetInfo = API.ReadTargetInfo(true)
+    local targetInfo = API.ReadTargetInfo99(true)
     local targetHealth = (targetInfo and targetInfo.Hitpoints) or 0
     local adrenaline = tonumber(API.GetAdrenalineFromInterface()) or 0
     local health = tonumber(API.GetHP_) or 0

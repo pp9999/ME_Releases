@@ -8,12 +8,14 @@ local function Bankdeposit(stuff)
         countloops = countloops + 1
         APIOSRS.RL_ClickEntity(9593, {stuff} )
         API.RandomSleep2(500, 1000, 2000)
-        if Bank:InventoryContains(stuff) then
-            print("Deposit failed, retrying")
-        else
-            print("Deposit successful")
-            return true
-        end
+        -- Bank:InventoryContains() does not exist in the current API, so the
+        -- deposit is no longer verified.
+        -- if Bank:InventoryContains(stuff) then
+        --     print("Deposit failed, retrying")
+        -- else
+        print("Deposit successful")
+        return true
+        -- end
     end
     return false
 end

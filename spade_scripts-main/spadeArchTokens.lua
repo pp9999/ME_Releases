@@ -50,20 +50,20 @@ local redeemArtifacts = (API.ScriptDialogWindow2("Redeem Artifacts?", {"Yes", "N
 local clickedSpotTile = nil
 
 local function artifactFoundInterfacePresent()
-    return #API.ScanForInterfaceTest2Get(true, {{ 1189, 2, -1, 0 }}) > 0
+    return #API.ScanForInterfaceTest2Get2(true, {{ 1189, 2, -1, 0 }}) > 0
 end
 
 -- Credit Higgins for this function
 local function lodestoneInterfaceOpen()
-    return (#API.ScanForInterfaceTest2Get(true, {{ 1092, 1, -1, -1, 0 }, { 1092, 54, -1, 1, 0 } }) > 0) or API.VB_FindPSettinOrder(2874, 1).state == 30 or API.Compare2874Status(30)
+    return (#API.ScanForInterfaceTest2Get2(true, {{ 1092, 1, -1, -1, 0 }, { 1092, 54, -1, 1, 0 } }) > 0) or API.VB_FindPSettinOrder(2874, 1).state == 30 or API.Compare2874Status(30)
 end
 
 local function workInterfaceOpen()
-    return #API.ScanForInterfaceTest2Get(true, {{ 1371, 7, -1, 0 }}) > 0
+    return #API.ScanForInterfaceTest2Get2(true, {{ 1371, 7, -1, 0 }}) > 0
 end
 
 local function sharriganInterfaceOpen()
-    return #API.ScanForInterfaceTest2Get(true, {{ 656, 3, -1, 0 }}) > 0
+    return #API.ScanForInterfaceTest2Get2(true, {{ 656, 3, -1, 0 }}) > 0
 end
 
 local function waitForStillness()
@@ -79,9 +79,9 @@ local function getSpriteSpot(spots, maxDistance)
     local shortestDist = maxDistance
     for _, r in ipairs(spots) do
         for _, hl in ipairs(API.GetAllObjArray1({ ARCH_FOCUS }, maxDistance, {4})) do
-            if API.Math_DistanceF(r.Tile_XYZ, hl.Tile_XYZ) < shortestDist then
+            if API.Math_Distance(r.Tile_XYZ, hl.Tile_XYZ) < shortestDist then
                 spriteSpot = r
-                shortestDist = API.Math_DistanceF(r.Tile_XYZ, hl.Tile_XYZ)
+                shortestDist = API.Math_Distance(r.Tile_XYZ, hl.Tile_XYZ)
             end
         end
     end
@@ -171,7 +171,7 @@ local function excavate()
 
     local spriteSpot = getSpriteSpot(spots, 50)
     if spriteSpot then
-        if not clickedSpotTile or API.Math_DistanceF(clickedSpotTile, spriteSpot.Tile_XYZ) ~= 0 then
+        if not clickedSpotTile or API.Math_Distance(clickedSpotTile, spriteSpot.Tile_XYZ) ~= 0 then
             API.RandomSleep2(1000, 1000, 1500)
             API.DoAction_Object_Direct(0x2, API.OFF_ACT_GeneralObject_route0, spriteSpot)
             clickedSpotTile = spriteSpot.Tile_XYZ
@@ -183,7 +183,7 @@ local function excavate()
                 targetSpotTile = spots[math.random(1, #spots)].Tile_XYZ
             end
 
-            API.DoAction_Object2(0x2, API.OFF_ACT_GeneralObject_route0, { SPOTS[spotIdx] }, 50, WPOINT.new(targetSpotTile.x, targetSpotTile.y, 0))
+            API.DoAction_Object2(0x2, API.OFF_ACT_GeneralObject_route0, { SPOTS[spotIdx] }, 50, FFPOINT.new(targetSpotTile.x, targetSpotTile.y, 0))
             clickedSpotTile = targetSpotTile
         end
     end

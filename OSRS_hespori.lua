@@ -1,6 +1,36 @@
 local API = require("api")
+local APIOSRS = require("apiosrs")
 
 print("Run Lua")
+
+-- Replacements for the removed API.OSRS_* engine helpers.
+local PRAY_POT_IDS = { 139, 141, 143, 2434 }
+local FOOD_IDS     = { 13441, 385, 7946 }
+local PRAYER_TAB   = 541  -- OSRS prayer tab widget group
+local QUICK_PRAY_ORB = { 160, 27 }  -- OSRS quick-prayer orb (minimap orb group)
+
+local function drinkPrayPot()
+    return APIOSRS.RL_ClickEntity(93, PRAY_POT_IDS)
+end
+
+local function eatFood()
+    return APIOSRS.RL_ClickEntity(93, FOOD_IDS)
+end
+
+local function quickPrayOn()
+    if APIOSRS.RL_IsQuickPrayerActive() then
+        return true
+    end
+    return APIOSRS.RL_ClickWig(QUICK_PRAY_ORB[1], QUICK_PRAY_ORB[2])
+end
+
+local function protectPrayer(prayer)
+    if prayer <= 0 then
+        return false
+    end
+    APIOSRS.RL_OpenTab(5)
+    return APIOSRS.RL_ClickWig(PRAYER_TAB, prayer)
+end
 
 ImGui_Pro = API.CreateIG_answer()
 ImGui_Pro.box_name = "ImGui_Pro"
@@ -261,18 +291,18 @@ if (foundPR_types == 2) then
     current_pray_2 = 37
 end
 
-if (API.OSRS_GetPrayPoints() > 0 and not API.OSRS_GetQuickPrayStatus()) then
+if (API.GetPray_() > 0 and not APIOSRS.RL_IsQuickPrayerActive()) then
     print("Quickpray")
-    API.OSRS_DoQuickPray()
-    API.OSRS_SleepTick(4)
+    quickPrayOn()
+    API.Sleep_tick(4)
 end
 
-if (API.OSRS_GetPrayPoints() > 0) then
+if (API.GetPray_() > 0) then
     local picked = false
     if (current_pray_1 > 0)  then
         if (API.SystemTime() - PrayMagiccooldown_block > 0)  then
                 print("pray on 1 " .. ":" .. tostring(current_pray_1))
-                API.OSRS_DoPrayProtect(current_pray_1)
+                protectPrayer(current_pray_1)
                 picked = true
                 PrayMagiccooldown_block = API.SystemTime() + 200
         end
@@ -280,23 +310,23 @@ if (API.OSRS_GetPrayPoints() > 0) then
     if (current_pray_2 > 0 and not picked)  then
         if (API.SystemTime() - PrayRangecooldown_block > 0)  then
                 print("pray on 2 " .. ":" .. tostring(current_pray_2))
-                API.OSRS_DoPrayProtect(current_pray_2)
+                protectPrayer(current_pray_2)
                 PrayRangecooldown_block = API.SystemTime() + 200
         end
     end
 end
 
 if (API.SystemTime() - Potcooldown_block > 0) then
-    if (API.OSRS_GetPrayPointsPerc() < 50) then
+    if (API.GetPrayPrecent() < 50) then
         --contains pray pots
         if (API.Container_Check_Items( 93, {139,141,143,2434})) then
-            if (API.OSRS_DoDrinkpot(3)) then
+            if (drinkPrayPot()) then
                 Potcooldown_block = API.SystemTime() + 600
                 print("Drink pray1")
                 if (API.SystemTime() - Eatcooldown_block > 0) then
-                    if (API.OSRS_GetHPointPerc() < 90) then
+                    if (API.GetHPrecent() < 90) then
                         if (API.Container_Check_Items( 93, {13441,385,7946})) then
-                            if (API.OSRS_DoEatFoods()) then
+                            if (eatFood()) then
                                 print("Eat foods1")
                                 Eatcooldown_block = API.SystemTime() + 1800
                             end
@@ -304,7 +334,7 @@ if (API.SystemTime() - Potcooldown_block > 0) then
                     end
                 end
                 if (current.KeepOnPrayerTab) then
-                    API.OSRS_OpenMenu(5)
+                    APIOSRS.RL_OpenTab(5)
                 end
             end
         end
@@ -315,25 +345,25 @@ if (API.SystemTime() - Potcooldown_block > 0) then
     Eatcooldown_block = API.SystemTime()
     if (API.SystemTime() - currentEat_block > current.Eat_block) then
         currentEat_block = API.SystemTime()
-        if (API.OSRS_GetHPointPerc() < 60) then
+        if (API.GetHPrecent() < 60) then
             --contains certain foods
             if (API.Container_Check_Items( 93, {13441,385,7946})) then
-                if (API.OSRS_GetPrayPointsPerc() < 72) then
+                if (API.GetPrayPrecent() < 72) then
                     if (API.Container_Check_Items( 93, {139,141,143,2434})) then
-                        if (API.OSRS_DoDrinkpot(3)) then
+                        if (drinkPrayPot()) then
                             Potcooldown_block = API.SystemTime() + 600
                             print("Drink pray2") 
                         end 
                     end
                 end
                 if (API.SystemTime() - Eatcooldown_block > 0) then
-                    if (API.OSRS_DoEatFoods()) then             
+                    if (eatFood()) then             
                         print("Eat foods2")
                         Eatcooldown_block = API.SystemTime() + 1800
                     end
                 end
                 if (current.KeepOnPrayerTab) then
-                    API.OSRS_OpenMenu(5)
+                    APIOSRS.RL_OpenTab(5)
                 end
             end
         end

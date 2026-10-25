@@ -293,7 +293,7 @@ local function watchForHorror()
         API.RandomSleep2(400, 600, 900)
         local glint = waitForCondition(findGlint, 12, 100)
         if glint then
-            local glintTile = WPOINT.new(math.floor(glint.TileX / 512), math.floor(glint.TileY / 512), 0)
+            local glintTile = FFPOINT.new(math.floor(glint.TileX / 512), math.floor(glint.TileY / 512), 0)
             if processGlintTile(glintTile) then
                 return true
             end

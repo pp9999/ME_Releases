@@ -40,17 +40,17 @@ end
 
 local function interactDarkPortal()
     print("Interact with Dark Portal")
-    API.DoAction_Object_r(0x39, 0, { darkPortal }, 50, WPOINT.new(1163, 1819, 0), 5)
+    API.DoAction_Object_r(0x39, 0, { darkPortal }, 50, FFPOINT.new(1163, 1819, 0), 5)
     API.RandomSleep2(1200,900,900)
 end
 
 local function surgeToAltar(runeName)
     print("Surge")
     local altarPositions = {
-        spirit = WPOINT.new(1313,1969,0),
-        bone = WPOINT.new(1296,1962,0),
-        flesh = WPOINT.new(1315,1934,0),
-        miasma = WPOINT.new(1325,1950,0)
+        spirit = FFPOINT.new(1313,1969,0),
+        bone = FFPOINT.new(1296,1962,0),
+        flesh = FFPOINT.new(1315,1934,0),
+        miasma = FFPOINT.new(1325,1950,0)
     }
     
     local altar = altarPositions[runeName]
@@ -58,7 +58,7 @@ local function surgeToAltar(runeName)
         error("Invalid rune name")
     end
 
-    API.DoAction_Surge_Tile(altar, 5)
+    API.DoAction_Surge_Tile2(altar, 5)
     API.WaitUntilMovingEnds()
     API.RandomSleep2(600, 600, 600)
 end
@@ -78,10 +78,10 @@ local function craftRunes(runeName)
     end
 
     local altarPositions = {
-        spirit = WPOINT.new(1313, 1969, 0),
-        bone = WPOINT.new(1296, 1962, 0),
-        flesh = WPOINT.new(1315, 1934, 0),
-        miasma = WPOINT.new(1325, 1950, 0)
+        spirit = FFPOINT.new(1313, 1969, 0),
+        bone = FFPOINT.new(1296, 1962, 0),
+        flesh = FFPOINT.new(1315, 1934, 0),
+        miasma = FFPOINT.new(1325, 1950, 0)
     }
 
     local altarPosition = altarPositions[runeName]
@@ -103,7 +103,7 @@ end
 
 local function loadLastPreset()
     print("Load Last Preset")
-    API.DoAction_Object_r(0x33, 240, { bankChest }, 50, WPOINT.new(1150, 1804, 0), 5)
+    API.DoAction_Object_r(0x33, 240, { bankChest }, 50, FFPOINT.new(1150, 1804, 0), 5)
     API.RandomSleep2(1200,1200,1200)
     API.WaitUntilMovingEnds()
 end
@@ -122,7 +122,7 @@ local function canUsePowerburst()
 end
 
 local function findPowerburst()
-    local powerbursts = API.CheckInvStuff3(powerburstIds)
+    local powerbursts = Inventory:CheckInvStuffCheckAll(powerburstIds)
     local foundIdx = -1
     for i, value in ipairs(powerbursts) do
         if tostring(value) == '1' then
@@ -315,7 +315,7 @@ while API.Read_LoopyLoop() do
             print ("Go to portal")
             API.RandomSleep2(2000, 300, 300)
             interactDarkPortal()
-            API.DoAction_Surge_Tile(WPOINT.new(1163,1819,0),5)
+            API.DoAction_Surge_Tile2(FFPOINT.new(1163,1819,0),5)
             API.RandomSleep2(600, 300, 300)
             interactDarkPortal()
             API.RandomSleep2(1400, 300, 300)

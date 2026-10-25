@@ -649,7 +649,7 @@ local function selectItem(bar, choice)
             table.insert(combined, element)
         end
 
-        local opt = API.ScanForInterfaceTest2Get(true, combined)
+        local opt = API.ScanForInterfaceTest2Get2(true, combined)
         for _, v in ipairs(opt) do
             if v.itemid1 == choice.OUTPUT then
                 API.DoAction_Interface(0xffffffff, string.format("0x%X", choice.OUTPUT), 1, v.id1, v.id2, v.id3,
@@ -670,7 +670,7 @@ local function openSmithingInterface()
 end
 
 local function hasOption()
-    local option = API.ScanForInterfaceTest2Get(false,
+    local option = API.ScanForInterfaceTest2Get2(false,
         { { 1188, 5, -1, -1, 0 }, { 1188, 3, -1, 5, 0 }, { 1188, 3, 14, 3, 0 } })
     if #option > 0 then
         if #option[1].textids > 0 then
@@ -681,12 +681,12 @@ local function hasOption()
 end
 
 local function hasUnfinishedItems()
-    return API.CheckInvStuff0(ID.UNFINISHED_SMITHING_ITEM)
+    return Inventory:CheckInvStuffCheckAll({ ID.UNFINISHED_SMITHING_ITEM })
 end
 
 local function invContains(item)
     if type(item) == "number" then
-        return API.InvItemFound1(item)
+        return Inventory:InvItemFound(item)
     elseif type(item) == "table" then
         local items = API.ReadInvArrays33()
         for _, tableItem in ipairs(item) do

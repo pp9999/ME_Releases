@@ -54,14 +54,14 @@ local function bank()
 end
 
 local function invCheck()
-    if API.InvItemcount_1(Boneid) == 0 then
+    if Inventory:InvItemcount(Boneid) == 0 then
         print("No bones, banking.")
         bank()
     end
 end
 
 local function offer()
-    if API.InvItemcount_1(Boneid) > 0 and not API.CheckAnim(100) then
+    if Inventory:InvItemcount(Boneid) > 0 and not API.CheckAnim(100) then
         API.DoAction_Object1(0x29, 80, { 122374 }, 50);
         API.RandomSleep2(1200, 600, 600)
         API.WaitUntilMovingEnds()

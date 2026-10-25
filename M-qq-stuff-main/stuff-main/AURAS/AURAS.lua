@@ -46,7 +46,6 @@ AURAS.interfacesOpened = false    	-- flag to track if equipment/aura interfaces
 AURAS.nextReadyCheckTime = 0      	-- when to next check for ready auras
 AURAS.lastFoundReadyAura = nil    	-- cache the last aura found ready by isAnyAuraReady
 
-API.Write_fake_mouse_do(false)  	-- can remove if you call this in your script
 
 -- new param: cd = cooldown of the aura (in seconds), includes active time + cooldown
 AURAS.auraActions = {
@@ -255,8 +254,8 @@ function AURAS.getAuraCD(auraName)
         return 86400 
     end
 
-    local statusText = API.ScanForInterfaceTest2Get(false, statusBox)[1].textids
-    local timeText = API.ScanForInterfaceTest2Get(false, timeBox)[1].textids
+    local statusText = API.ScanForInterfaceTest2Get2(false, statusBox)[1].textids
+    local timeText = API.ScanForInterfaceTest2Get2(false, timeBox)[1].textids
     
     if statusText == "Ready to use" and timeText == "" then
         print("[DEBUG] Aura is ready to use, no cooldown remaining")
@@ -288,8 +287,8 @@ function AURAS.getAuraCD(auraName)
                 return 86400 
             end
             
-            statusText = API.ScanForInterfaceTest2Get(false, statusBox)[1].textids
-            timeText = API.ScanForInterfaceTest2Get(false, timeBox)[1].textids
+            statusText = API.ScanForInterfaceTest2Get2(false, statusBox)[1].textids
+            timeText = API.ScanForInterfaceTest2Get2(false, timeBox)[1].textids
             print("[DEBUG] Status after refresh: " .. tostring(statusText))
             print("[DEBUG] Time display after refresh: " .. tostring(timeText))
             
@@ -358,7 +357,7 @@ end
 
 function AURAS.isAuraManagementOpen()
     local inter = {{1929,0,-1,0},{1929,2,-1,0},{1929,2,14,0}}
-    local iface = API.ScanForInterfaceTest2Get(false, inter)[1]
+    local iface = API.ScanForInterfaceTest2Get2(false, inter)[1]
     return iface.textids == "Aura Management"
 end
 
@@ -435,7 +434,7 @@ function AURAS.selectAura(auraName)
             return false
         end
         
-        local iface = API.ScanForInterfaceTest2Get(false, inter)[1]
+        local iface = API.ScanForInterfaceTest2Get2(false, inter)[1]
         local cleaned = iface.textids:lower():gsub("%-", " ")
         if (cleaned == auraName) then
             print(string.format("[AURA] '%s' selected", auraName))
@@ -466,7 +465,7 @@ function AURAS.parseAvailableVis()
         {1929,0,-1,0}, {1929,3,-1,0}, {1929,4,-1,0},
         {1929,30,-1,0}, {1929,53,-1,0}, {1929,56,-1,0},
     }
-    local raw = API.ScanForInterfaceTest2Get(false, inter)[1].textids
+    local raw = API.ScanForInterfaceTest2Get2(false, inter)[1].textids
     local avail = AURAS.parseVisCost(raw)
     if not avail then
         print("[AURA] ERROR: Unable to parse available Vis -> aborting extension")
@@ -500,7 +499,7 @@ function AURAS.getResetCounts()
 
     local resetCounts = {}
     for _, scan in ipairs(scans) do
-        local iface = API.ScanForInterfaceTest2Get(false, scan.pattern)[1]
+        local iface = API.ScanForInterfaceTest2Get2(false, scan.pattern)[1]
         if iface and iface.itemid1 == scan.expected then
             resetCounts[scan.key] = iface.itemid1_size
         else
@@ -714,7 +713,7 @@ function AURAS.isAuraAvailable(auraName)
         {1929,6,-1,0}, {1929,11,-1,0}, {1929,18,-1,0},
         {1929,19,-1,0}
     }
-    local ownedStatus = API.ScanForInterfaceTest2Get(false, ownedBox)[1].textids
+    local ownedStatus = API.ScanForInterfaceTest2Get2(false, ownedBox)[1].textids
     
     if ownedStatus == "Buy" then
         print(string.format("[SEQUENCE] Aura '%s' not owned", auraName))
@@ -722,7 +721,7 @@ function AURAS.isAuraAvailable(auraName)
     end
     
     local interStatus = {{1929,0,-1,0}, {1929,3,-1,0}, {1929,4,-1,0}, {1929,74,-1,0}}
-    local status = API.ScanForInterfaceTest2Get(false, interStatus)[1].textids
+    local status = API.ScanForInterfaceTest2Get2(false, interStatus)[1].textids
     
     if status == "Currently active" then
         print(string.format("[SEQUENCE] Aura '%s' is currently active, skipping", auraName))
@@ -735,7 +734,7 @@ function AURAS.isAuraAvailable(auraName)
     local interfaceCooldown = AURAS.getAuraCD(auraName)
     
     if interfaceCooldown == 0 then
-        status = API.ScanForInterfaceTest2Get(false, interStatus)[1].textids
+        status = API.ScanForInterfaceTest2Get2(false, interStatus)[1].textids
         if status == "Ready to use" then
             print(string.format("[SEQUENCE] Aura '%s' is available (after refresh)", auraName))
             AURAS.auraCooldownCache[normalizedName] = nil
@@ -987,7 +986,7 @@ function AURAS.extensionLogic()
     if not avail then return end
 
     local interLong  = {{1929,0,-1,0}, {1929,3,-1,0}, {1929,4,-1,0}, {1929,30,-1,0}, {1929,32,-1,0}, {1929,51,-1,0}}
-    local rawLong    = API.ScanForInterfaceTest2Get(false, interLong)[1].textids
+    local rawLong    = API.ScanForInterfaceTest2Get2(false, interLong)[1].textids
     local costLong   = AURAS.parseVisCost(rawLong)
     if not costLong then
         print("[AURA] ERROR: Unable to parse long-extension cost -> skipping")
@@ -995,7 +994,7 @@ function AURAS.extensionLogic()
     end
 
     local interShort = {{1929,0,-1,0}, {1929,3,-1,0}, {1929,4,-1,0}, {1929,30,-1,0}, {1929,32,-1,0}, {1929,52,-1,0}}
-    local rawShort   = API.ScanForInterfaceTest2Get(false, interShort)[1].textids
+    local rawShort   = API.ScanForInterfaceTest2Get2(false, interShort)[1].textids
     local costShort  = AURAS.parseVisCost(rawShort)
     if not costShort then
         print("[AURA] ERROR: Unable to parse short-extension cost -> skipping")
@@ -1209,7 +1208,7 @@ function AURAS.manageAura(rawInput, autoExtend, autoReset)
         {1929,6,-1,0}, {1929,11,-1,0}, {1929,18,-1,0},
         {1929,19,-1,0}
     }
-    local ownedStatus = API.ScanForInterfaceTest2Get(false, ownedBox)[1].textids
+    local ownedStatus = API.ScanForInterfaceTest2Get2(false, ownedBox)[1].textids
     print(string.format("[AURA] Owned status: %s", ownedStatus))
 
     if ownedStatus == "Buy" then
@@ -1224,7 +1223,7 @@ function AURAS.manageAura(rawInput, autoExtend, autoReset)
     end
 
     local interStatus = {{1929,0,-1,0}, {1929,3,-1,0}, {1929,4,-1,0}, {1929,74,-1,0}}
-    local status = API.ScanForInterfaceTest2Get(false, interStatus)[1].textids
+    local status = API.ScanForInterfaceTest2Get2(false, interStatus)[1].textids
 
     if status == "Currently active" then
         print(string.format("[AURA] '%s' already active", auraName))

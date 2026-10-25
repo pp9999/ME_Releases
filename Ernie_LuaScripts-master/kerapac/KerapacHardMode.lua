@@ -8,9 +8,9 @@ local Combat = require("kerapac/KerapacCombat")
 local KerapacHardMode = {}
 
 function KerapacHardMode:SetupEchoLocations()
-    State.kerapacEcho1 = WPOINT.new(math.floor(State.centerOfArenaPosition.x), math.floor(State.centerOfArenaPosition.y + 9), 1)
-    State.kerapacEcho2 = WPOINT.new(math.floor(State.centerOfArenaPosition.x), math.floor(State.centerOfArenaPosition.y - 9), 1)
-    State.kerapacEcho3 = WPOINT.new(math.floor(State.centerOfArenaPosition.x-9), math.floor(State.centerOfArenaPosition.y), 1)
+    State.kerapacEcho1 = FFPOINT.new(math.floor(State.centerOfArenaPosition.x), math.floor(State.centerOfArenaPosition.y + 9), 1)
+    State.kerapacEcho2 = FFPOINT.new(math.floor(State.centerOfArenaPosition.x), math.floor(State.centerOfArenaPosition.y - 9), 1)
+    State.kerapacEcho3 = FFPOINT.new(math.floor(State.centerOfArenaPosition.x-9), math.floor(State.centerOfArenaPosition.y), 1)
     Logger:Debug("Echo locations set up")
 end
 
@@ -81,9 +81,9 @@ function KerapacHardMode:HandlePhase4()
     
     local targetInfo = API.ReadLpInteracting()
 
-    local northEcho = API.GetAllObjArray2({Data.kerapacClones}, 100, {1}, WPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.northEcho.echoSpot.x, State.centerOfArenaPosition.y + Data.echoAreasMap.northEcho.echoSpot.y, 1))
-    local westEcho = API.GetAllObjArray2({Data.kerapacClones}, 100, {1}, WPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.westEcho.echoSpot.x, State.centerOfArenaPosition.y + Data.echoAreasMap.westEcho.echoSpot.y, 1))
-    local southEcho = API.GetAllObjArray2({Data.kerapacClones}, 100, {1}, WPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.southEcho.echoSpot.x, State.centerOfArenaPosition.y + Data.echoAreasMap.southEcho.echoSpot.y, 1))
+    local northEcho = API.GetAllObjArray2({Data.kerapacClones}, 100, {1}, FFPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.northEcho.echoSpot.x, State.centerOfArenaPosition.y + Data.echoAreasMap.northEcho.echoSpot.y, 1))
+    local westEcho = API.GetAllObjArray2({Data.kerapacClones}, 100, {1}, FFPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.westEcho.echoSpot.x, State.centerOfArenaPosition.y + Data.echoAreasMap.westEcho.echoSpot.y, 1))
+    local southEcho = API.GetAllObjArray2({Data.kerapacClones}, 100, {1}, FFPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.southEcho.echoSpot.x, State.centerOfArenaPosition.y + Data.echoAreasMap.southEcho.echoSpot.y, 1))
     if not printed then
         Logger:Info(#northEcho .. " North")
         Logger:Info(#westEcho .. " West")
@@ -112,31 +112,31 @@ function KerapacHardMode:HandlePhase4()
     end
 
     if not State.isWestEchoDead then
-        if API.Math_DistanceW(API.PlayerCoord(), State.kerapacEcho3) > 2 then
+        if API.Math_Distance(API.PlayerCoord(), State.kerapacEcho3) > 2 then
             API.DoAction_Dive_Tile(State.kerapacEcho3)
             Utils:SleepTickRandom(0)
             API.DoAction_Tile(State.kerapacEcho3)
             Utils:SleepTickRandom(3)
-            self:AttackEchoInArea(WPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.westEcho.bottomLeft.x, State.centerOfArenaPosition.y + Data.echoAreasMap.westEcho.bottomLeft.y, 1), 
-                                    WPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.westEcho.topRight.x, State.centerOfArenaPosition.y + Data.echoAreasMap.westEcho.topRight.y, 1))
+            self:AttackEchoInArea(FFPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.westEcho.bottomLeft.x, State.centerOfArenaPosition.y + Data.echoAreasMap.westEcho.bottomLeft.y, 1), 
+                                    FFPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.westEcho.topRight.x, State.centerOfArenaPosition.y + Data.echoAreasMap.westEcho.topRight.y, 1))
         end
     elseif not State.isSouthEchoDead then
-        if API.Math_DistanceW(API.PlayerCoord(), State.kerapacEcho2) > 2 then
+        if API.Math_Distance(API.PlayerCoord(), State.kerapacEcho2) > 2 then
             API.DoAction_Dive_Tile(State.kerapacEcho2)
             Utils:SleepTickRandom(0)
             API.DoAction_Tile(State.kerapacEcho2)
             Utils:SleepTickRandom(3)
-            self:AttackEchoInArea(WPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.southEcho.bottomLeft.x, State.centerOfArenaPosition.y + Data.echoAreasMap.southEcho.bottomLeft.y, 1), 
-                                    WPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.southEcho.topRight.x, State.centerOfArenaPosition.y + Data.echoAreasMap.southEcho.topRight.y, 1))
+            self:AttackEchoInArea(FFPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.southEcho.bottomLeft.x, State.centerOfArenaPosition.y + Data.echoAreasMap.southEcho.bottomLeft.y, 1), 
+                                    FFPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.southEcho.topRight.x, State.centerOfArenaPosition.y + Data.echoAreasMap.southEcho.topRight.y, 1))
         end
     elseif not State.isNorthEchoDead then
-        if API.Math_DistanceW(API.PlayerCoord(), State.kerapacEcho1) > 2 then
+        if API.Math_Distance(API.PlayerCoord(), State.kerapacEcho1) > 2 then
             API.DoAction_Dive_Tile(State.kerapacEcho1)
             Utils:SleepTickRandom(0)
             API.DoAction_Tile(State.kerapacEcho1)
             Utils:SleepTickRandom(3)
-            self:AttackEchoInArea(WPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.northEcho.bottomLeft.x, State.centerOfArenaPosition.y + Data.echoAreasMap.northEcho.bottomLeft.y, 1), 
-                                    WPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.northEcho.topRight.x, State.centerOfArenaPosition.y + Data.echoAreasMap.northEcho.topRight.y, 1))
+            self:AttackEchoInArea(FFPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.northEcho.bottomLeft.x, State.centerOfArenaPosition.y + Data.echoAreasMap.northEcho.bottomLeft.y, 1), 
+                                    FFPOINT.new(State.centerOfArenaPosition.x + Data.echoAreasMap.northEcho.topRight.x, State.centerOfArenaPosition.y + Data.echoAreasMap.northEcho.topRight.y, 1))
         end
     else
         if not State.isEchoesDead then

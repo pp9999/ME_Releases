@@ -2,7 +2,6 @@
 --- @version 1.0.1
 
 local API = require("api")
-API.Write_fake_mouse_do(false)
 
 local Boner = {
     constants = {

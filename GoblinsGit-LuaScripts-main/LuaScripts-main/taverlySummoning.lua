@@ -33,17 +33,17 @@ local bank_area = {
     y2 = 3456
 }
 
-local middleTile1 = WPOINT.new(2894, 3415, 0)
-local middleTile2 = WPOINT.new(2911, 3421, 0)
-local obelisk_tile = WPOINT.new(2931, 3448, 0)
-local bank_tile = WPOINT.new(2878, 3417, 0)
+local middleTile1 = FFPOINT.new(2894, 3415, 0)
+local middleTile2 = FFPOINT.new(2911, 3421, 0)
+local obelisk_tile = FFPOINT.new(2931, 3448, 0)
+local bank_tile = FFPOINT.new(2878, 3417, 0)
 
 function UTILS.inArea(coords)
     return API.PInArea22(coords['x1'], coords['x2'], coords['y1'], coords['y2'])
 end
 
 function UTILS.isInterfaceVisible(interface_components)
-    return API.ScanForInterfaceTest2Get(false, interface_components)[1].x ~= 0
+    return API.ScanForInterfaceTest2Get2(false, interface_components)[1].x ~= 0
 end
 
 function UTILS.distance(tile)
@@ -77,7 +77,7 @@ function UTILS.walkPath(path, dist, condition)
 
         rand1 = math.floor(math.random() * dist * .75) * sign
         rand2 = math.floor(math.random() * dist * .75) * sign
-        local t = WPOINT.new(tile.x + rand1, tile.y + rand2, tile.z)
+        local t = FFPOINT.new(tile.x + rand1, tile.y + rand2, tile.z)
         prev = curr
         curr = tile
         if not API.DoAction_Tile(t) then
@@ -124,7 +124,7 @@ local function makeAll()
         API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1370, 30, -1, 4512)
         API.RandomSleep2(3000, 200, 200)
         UTILS.waitUntil(function()
-            return not API.InvItemFound2(UTILS.ids['summoning_primaries']) and not API.IsPlayerAnimating_()
+            return not Inventory:InvItemFounds(UTILS.ids['summoning_primaries']) and not API.IsPlayerAnimating_()
         end, 3)
         return
     end
@@ -151,7 +151,7 @@ while API.Read_LoopyLoop() do
     idle_timeout(last_action)
 
     if UTILS.inArea(bank_area) then
-        if not API.BankOpen2() and not API.InvItemFound2(UTILS.ids['summoning_primaries']) then
+        if not API.BankOpen2() and not Inventory:InvItemFounds(UTILS.ids['summoning_primaries']) then
             print("Opening bank")
             if UTILS.distance(bank_tile) > 30 then
                 UTILS.walkPath({middleTile2, middleTile1, bank_tile}, 1, nil)
@@ -167,21 +167,21 @@ while API.Read_LoopyLoop() do
             loadPreset()
         end
 
-        if API.InvItemFound2(UTILS.ids['summoning_primaries']) and API.InvItemFound2(UTILS.CHARMS) then
+        if Inventory:InvItemFounds(UTILS.ids['summoning_primaries']) and Inventory:InvItemFounds(UTILS.CHARMS) then
             print("Walking to obelisk")
             UTILS.walkPath({middleTile1, middleTile2, obelisk_tile}, 5, nil)
         end
     end
 
     if UTILS.inArea(obelisk_area) then
-        if API.InvItemFound2(UTILS.ids['summoning_primaries']) and
-            UTILS.isInterfaceVisible(MAKE_ALL_INTERFACE_COMPONENTS) and API.GetGameState() == 3 then
+        if Inventory:InvItemFounds(UTILS.ids['summoning_primaries']) and
+            UTILS.isInterfaceVisible(MAKE_ALL_INTERFACE_COMPONENTS) and API.GetGameState2() == 3 then
             print("Making pouches")
             makeAll()
             last_action = os.time()
         end
 
-        if API.InvItemFound2(UTILS.ids['summoning_primaries']) and API.InvItemFound2(UTILS.CHARMS) then
+        if Inventory:InvItemFounds(UTILS.ids['summoning_primaries']) and Inventory:InvItemFounds(UTILS.CHARMS) then
             print("Opening obelisk interface")
             API.DoAction_Object1(0x29, 0, {67036}, 50)
             UTILS.waitUntil(function()
@@ -189,14 +189,14 @@ while API.Read_LoopyLoop() do
             end, 5)
         end
 
-        if not API.InvItemFound2(UTILS.ids['summoning_primaries']) then
+        if not Inventory:InvItemFounds(UTILS.ids['summoning_primaries']) then
             print("Walking to bank")
             UTILS.walkPath({middleTile2, middleTile1, bank_tile}, 5, nil)
 
         end
     end
 
-    if API.GetGameState() == 2 or API.GetGameState() == 1 then
+    if API.GetGameState2() == 2 or API.GetGameState2() == 1 then
         API.Write_LoopyLoop(false)
     end
 end

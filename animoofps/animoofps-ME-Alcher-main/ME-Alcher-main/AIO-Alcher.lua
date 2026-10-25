@@ -91,7 +91,7 @@ while (API.Read_LoopyLoop()) do ------------------------------------------------
     end
     local itemToAlch = inventoryItems[ChosenItem]
     if ChosenItem ~= -1 and itemToAlch then
-        if API.InvItemcountStack_String(itemToAlch.itemid1) > 0 or API.InvItemcountStack_String("Nature rune") > 0 then
+        if Inventory:InvItemcountStack_Strings({ itemToAlch.itemid1 }) > 0 or Inventory:InvItemcountStack_Strings({ "Nature rune" }) > 0 then
             Alching(itemToAlch)
         else
             print("No more stuff in the inventory, shutting down")

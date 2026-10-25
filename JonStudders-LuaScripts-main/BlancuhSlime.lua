@@ -18,14 +18,14 @@ while (API.Read_LoopyLoop()) do
     -- Check in area
     local pCoord = API.PlayerCoordfloat()
     local doorCoord = API.CreateFFPOINT(3654, 3519, 0)
-    local distance = API.Math_DistanceF(pCoord, doorCoord)
+    local distance = API.Math_Distance(pCoord, doorCoord)
     if (distance > 10) then
       print ("Not In tower.")
       API.RandomSleep2(400, 300, 800)
     end
     if (distance > 1 and distance < 10) then 
       print ("Walking to door")
-      API.DoAction_WalkerF(doorCoord)
+      API.DoAction_Walker(doorCoord)
       API.DoAction_Object1(0x35,API.OFF_ACT_GeneralObject_route0,{ ids },50)
       API.WaitUntilMovingEnds()
     end

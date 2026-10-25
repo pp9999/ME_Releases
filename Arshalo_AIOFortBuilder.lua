@@ -80,7 +80,7 @@ local framesUsed = 0
 --@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ END OF INTRO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 local function activate_dive(x, y, z)
-    local tile = WPOINT.new(x, y, z)
+    local tile = FFPOINT.new(x, y, z)
     API.DoAction_SpecialWalk(tile)
     API.RandomSleep2(45, 60, 60)
 end
@@ -129,20 +129,20 @@ local mainVariable = {
     end,
     walkToLocation = function()
         if API.PInArea(3288, 1, 3555, 1, 0) then 
-            API.DoAction_Tile(WPOINT.new(3291,3555,0))
+            API.DoAction_Tile(FFPOINT.new(3291,3555,0))
             UTILS.countTicks(1)
             UTILS.surge()
             --activate_dive(3303,3563,0)
         end
-        API.DoAction_Tile(WPOINT.new(3303,3563,0))
+        API.DoAction_Tile(FFPOINT.new(3303,3563,0))
         UTILS.SleepUntil(function() return API.PInArea(3303, 2, 3563, 2, 0) end, 10, "Arrived at Townhall")
         Task = 2
     end,
     walkToBlueprintTable = function()
-        API.DoAction_Tile(WPOINT.new(3302,3559,0))
+        API.DoAction_Tile(FFPOINT.new(3302,3559,0))
         UTILS.SleepUntil(function() return API.PInArea(3302, 2, 3559, 2, 0) end, 10, "Surge spot")
         UTILS.surge()
-        API.DoAction_Tile(WPOINT.new(3288,3555,0))
+        API.DoAction_Tile(FFPOINT.new(3288,3555,0))
         UTILS.SleepUntil(function() return API.PInArea(3288, 1, 3555, 1, 0) end, 10, "Arrived at Blueprint")
         Task = 0
     end
@@ -157,20 +157,20 @@ local mainVariable = {
     end,
     walkToLocation = function()
         if API.PInArea(3288, 1, 3555, 1, 0) then 
-            API.DoAction_Tile(WPOINT.new(3291,3555,0))
+            API.DoAction_Tile(FFPOINT.new(3291,3555,0))
             UTILS.countTicks(1)
             UTILS.surge()
             --activate_dive(3303,3563,0)
         end
-        API.DoAction_Tile(WPOINT.new(3303,3563,0))
+        API.DoAction_Tile(FFPOINT.new(3303,3563,0))
         UTILS.SleepUntil(function() return API.PInArea(3303, 2, 3563, 2, 0) end, 10, "Arrived at Townhall")
         Task = 2
     end,
     walkToBlueprintTable = function()
-        API.DoAction_Tile(WPOINT.new(3302,3559,0))
+        API.DoAction_Tile(FFPOINT.new(3302,3559,0))
         UTILS.SleepUntil(function() return API.PInArea(3302, 2, 3559, 2, 0) end, 10, "Surge spot")
         UTILS.surge()
-        API.DoAction_Tile(WPOINT.new(3288,3555,0))
+        API.DoAction_Tile(FFPOINT.new(3288,3555,0))
         UTILS.SleepUntil(function() return API.PInArea(3288, 1, 3555, 1, 0) end, 10, "Arrived at Blueprint")
         Task = 0
     end
@@ -184,20 +184,20 @@ local mainVariable = {
     end,
     walkToLocation = function()
         if API.PInArea(3288, 1, 3555, 1, 0) then 
-            API.DoAction_Tile(WPOINT.new(3291,3555,0))
+            API.DoAction_Tile(FFPOINT.new(3291,3555,0))
             UTILS.countTicks(1)
             UTILS.surge()
             --activate_dive(3303,3563,0)
         end
-        API.DoAction_Tile(WPOINT.new(3303,3563,0))
+        API.DoAction_Tile(FFPOINT.new(3303,3563,0))
         UTILS.SleepUntil(function() return API.PInArea(3303, 2, 3563, 2, 0) end, 10, "Arrived at Townhall")
         Task = 2
     end,
     walkToBlueprintTable = function()
-        API.DoAction_Tile(WPOINT.new(3302,3559,0))
+        API.DoAction_Tile(FFPOINT.new(3302,3559,0))
         UTILS.SleepUntil(function() return API.PInArea(3302, 2, 3559, 2, 0) end, 10, "Surge spot")
         UTILS.surge()
-        API.DoAction_Tile(WPOINT.new(3288,3555,0))
+        API.DoAction_Tile(FFPOINT.new(3288,3555,0))
         UTILS.SleepUntil(function() return API.PInArea(3288, 1, 3555, 1, 0) end, 10, "Arrived at Blueprint")
         Task = 0
     end
@@ -213,7 +213,7 @@ local mainVariable = {
         Task = 2
     end,
     walkToBlueprintTable = function()
-        API.DoAction_Tile(WPOINT.new(3286,3555,0)) -- API.DoAction_Tile(WPOINT.fromLocal(22,35,0))
+        API.DoAction_Tile(FFPOINT.new(3286,3555,0)) -- API.DoAction_Tile(FFPOINT.fromLocal(22,35,0))
         UTILS.SleepUntil(function() return API.PInArea(3286, 1, 3555, 1, 0) end, 10, "Arrived at Blueprint")
         Task = 0
     end
@@ -297,7 +297,7 @@ local function clickHotspot()
     if not hotspot then return false end
     local x = hotspot.CalcX
     local y = hotspot.CalcY
-    local tile = WPOINT.new(x, y, 0)
+    local tile = FFPOINT.new(x, y, 0)
     API.DoAction_Object2(0x29, API.OFF_ACT_GeneralObject_route0, {125061}, 30, tile)
     -- stores the last hotspot
     lastHotspotX = x
@@ -315,7 +315,7 @@ end
 
 local function aminexttoahotspot() 
     hotspot = findobjtile()
-    tile = WPOINT.new(hotspot.CalcX, hotspot.CalcY, 0)
+    tile = FFPOINT.new(hotspot.CalcX, hotspot.CalcY, 0)
     if round(hotspot.Distance, 0) <= 1.5 then
         return true
     end
@@ -387,7 +387,7 @@ local function handleElidinisEvents()
     while #eventObjs > 0 and API.Read_LoopyLoop() do
         if eventObjs[1].Id == mimickingSoul then
            -- API.DoAction_Dive_Tile(eventObjs[1].Tile_XYZ) 
-            API.DoAction_TileF(eventObjs[1].Tile_XYZ)
+            API.DoAction_Tile(eventObjs[1].Tile_XYZ)
         elseif eventObjs[1].Id == unstableSoul or eventObjs[1].Id == lostSoul then
             -- API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, { eventObjs[1].Id }, 50)
             API.DoAction_NPC__Direct(0x29, API.OFF_ACT_InteractNPC_route, eventObjs[1])
@@ -397,7 +397,7 @@ local function handleElidinisEvents()
         eventObjs = API.GetAllObjArray1(eventIDs, 50, { 1 })
     end
 
-    if found then API.DoAction_TileF(originTile) end
+    if found then API.DoAction_Tile(originTile) end
 end
 
 ----------------------------------------------------------------------

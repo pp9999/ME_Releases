@@ -205,7 +205,7 @@ end
 
 --- Function to wait for a player to reach a coords within a threshold, upto defined seconds
 ---comment
----@param coords WPOINT
+---@param coords FFPOINT
 ---@param threshold number
 ---@param maxWaitInSeconds number
 ---@return boolean
@@ -219,7 +219,7 @@ function UTILS.waitForPlayerAtCoords(coords, threshold, maxWaitInSeconds)
       exitLoop = true
       return false
     end
-    if (API.PInAreaW(coords, variance)) then
+    if (API.PInAreaF2(coords, variance)) then
       exitLoop = true
       return true
     end
@@ -323,7 +323,7 @@ function UTILS.DO_RandomEvents()
   if (F_Obj) ~= nil then
     print("Random event object detected: trying to click")
     UTILS.randomSleep(1000)
-    if API.DoAction_NPC__Direct(0x29, API.InteractNPC_route, F_obj[1]) then
+    if API.DoAction_NPC__Direct(0x29, API.OFF_ACT_InteractNPC_route, F_obj[1]) then
       UTILS.randomSleep(1000)
       return true
     end
@@ -611,7 +611,7 @@ function UTILS.surge()
 end
 
 --- Casts `Dive`.
----@param destinationTile WPOINT -- the tile to `Dive` to
+---@param destinationTile FFPOINT -- the tile to `Dive` to
 ---@return boolean
 function UTILS.dive(destinationTile)
   local diveAB = UTILS.getSkillOnBar("Dive")
@@ -738,7 +738,7 @@ function UTILS.hasChronicleAttraction()
   end
   local chronicleInterface = { { 1458, 4, -1, -1, 0 }, { 1458, 6, -1, 4, 0 }, { 1458, 8, -1, 6, 0 }, { 1458, 40, -1, 8, 0 }, { 1458, 40, 30, 40, 0 } }
 
-  local inter = API.ScanForInterfaceTest2Get(false, chronicleInterface)
+  local inter = API.ScanForInterfaceTest2Get2(false, chronicleInterface)
   local hasPrayer = false
   if (#inter > 0) then
     hasPrayer = inter[1].xs > 0
@@ -752,8 +752,8 @@ end
 --- Checks if the player is within a specified area.<br>
 -- This function can handle both rectangular and polygonal areas.<br>
 -- For a rectangle, the area is defined by two opposite corners as four numbers `{x1, y1, x2, y2}`.<br>
--- For a polygon, the area is defined as a table of `WPOINT`.<br>
----@param area table The area definition. Can be either `{x1, y1, x2, y2}` for a rectangle, or an array of `WPOINT` for a polygon.<br>
+-- For a polygon, the area is defined as a table of `FFPOINT`.<br>
+---@param area table The area definition. Can be either `{x1, y1, x2, y2}` for a rectangle, or an array of `FFPOINT` for a polygon.<br>
 ---@return boolean -- True if the player is within the specified area, False otherwise.
 ---@usage
 --
@@ -763,12 +763,12 @@ end
 --        print("Player is in rectangle area: ", inRectangle)
 --
 --      -- Example for a polygon:
---        local point = WPOINT.new(3021,3233,0)
+--        local point = FFPOINT.new(3021,3233,0)
 --        local polygonArea = {
---          WPOINT.new(3020,3234,0),
---          WPOINT.new(3022,3234,0),
---          WPOINT.new(3022,3239,0),
---          WPOINT.new(3020,3239,0),
+--          FFPOINT.new(3020,3234,0),
+--          FFPOINT.new(3022,3234,0),
+--          FFPOINT.new(3022,3239,0),
+--          FFPOINT.new(3020,3239,0),
 --        }
 --     local inPolygon = UTILS.playerInArea(polygonArea)
 --     print("Player is in polygon area: ", inPolygon)
@@ -779,24 +779,24 @@ end
 --- Checks if the coordinate is within a specified area.<br>
 -- This function can handle both rectangular and polygonal areas.<br>
 -- For a rectangle, the area is defined by two opposite corners as four numbers `{x1, y1, x2, y2}`.<br>
--- For a polygon, the area is defined as a table of `WPOINT`.<br>
----@param area table The area definition. Can be either `{x1, y1, x2, y2}` for a rectangle, or an array of `WPOINT` for a polygon.<br>
+-- For a polygon, the area is defined as a table of `FFPOINT`.<br>
+---@param area table The area definition. Can be either `{x1, y1, x2, y2}` for a rectangle, or an array of `FFPOINT` for a polygon.<br>
 ---@return boolean -- True if the player is within the specified area, False otherwise.
 ---@usage
 --
 --      -- Example for a rectangle:
---        local point = WPOINT.new(3021,3233,0)
+--        local point = FFPOINT.new(3021,3233,0)
 --        local rectangleArea = {3020, 3234, 3022, 3239}
 --        local inRectangle = UTILS.isCoordInArea(point, rectangleArea)
 --        print("Point is in rectangle area: ", inRectangle)
 --
 --      -- Example for a polygon:
---        local point = WPOINT.new(3021,3233,0)
+--        local point = FFPOINT.new(3021,3233,0)
 --        local polygonArea = {
---          WPOINT.new(3020,3234,0),
---          WPOINT.new(3022,3234,0),
---          WPOINT.new(3022,3239,0),
---          WPOINT.new(3020,3239,0),
+--          FFPOINT.new(3020,3234,0),
+--          FFPOINT.new(3022,3234,0),
+--          FFPOINT.new(3022,3239,0),
+--          FFPOINT.new(3020,3239,0),
 --        }
 --        local inPolygon = UTILS.isCoordInArea(point,polygonArea)
 --        print("Point is in polygon area: ", inPolygon)
@@ -816,7 +816,7 @@ function UTILS.isCoordInArea(coord, area)
       { x = x1, y = y2 }
     }
   elseif type(area[1]) == "table" and #area[1] == 2 then
-    -- Array of WPOINT format: {WPOINT,WPOINT, ...}
+    -- Array of FFPOINT format: {FFPOINT,FFPOINT, ...}
     for i, point in ipairs(area) do
       area[i] = { x = point.x, y = point.y }
     end

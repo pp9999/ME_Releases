@@ -66,12 +66,12 @@ end
 local function dropFungus()
     print("droping items")
     repeat
-        if API.InvItemcount_1(fungus.normal) > 0 then
+        if Inventory:InvItemcount(fungus.normal) > 0 then
             API.KeyboardPress31(fungusDropKey, 3000,1000) 
-        elseif API.InvItemcount_1(fungus.enriched) > 0 then
+        elseif Inventory:InvItemcount(fungus.enriched) > 0 then
             API.KeyboardPress31(enrichedDropKey, 3000,1000) 
         end
-    until API.InvItemcount_1(fungus.enriched) == 0 and API.InvItemcount_1(fungus.normal) == 0
+    until Inventory:InvItemcount(fungus.enriched) == 0 and Inventory:InvItemcount(fungus.normal) == 0
 end
 
 local function findEnrich()
@@ -99,10 +99,10 @@ end
 local torstolID = 47715
 local function applyBoosts()
     local torstol = API.Buffbar_GetIDstatus(torstolID, false)
-    if not torstol.found and API.InvStackSize(torstolID) >= 10 then
+    if not torstol.found and Inventory:InvStackSize(torstolID) >= 10 then
         API.DoAction_Inventory1(torstolID, 0, 2, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(600, 500, 500)
-    elseif torstol.found and torstol.conv_text > 0 and torstol.conv_text == 10 and API.InvStackSize(torstolID) >= 1 then
+    elseif torstol.found and torstol.conv_text > 0 and torstol.conv_text == 10 and Inventory:InvStackSize(torstolID) >= 1 then
         API.DoAction_Inventory1(torstolID, 0, 1, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(600, 500, 500)
     end
@@ -123,7 +123,7 @@ end
 local function verifyHunterPot()
     if not API.Buffbar_GetIDstatus(44127).found then
         for _, pot in ipairs(extremePots) do
-            if API.InvItemcount_1(pot) > 0 then
+            if Inventory:InvItemcount(pot) > 0 then
                 print("Drinking Extreme Hunter Pot!")
                 API.DoAction_Inventory1(pot, 0, 1, API.OFF_ACT_GeneralInterface_route)
                 break
@@ -140,7 +140,7 @@ while (API.Read_LoopyLoop()) do
     idleCheck()
     applyBoosts()
     verifyHunterPot()
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         API.RandomSleep2(2000, 100, 2000)
         dropFungus()
     end

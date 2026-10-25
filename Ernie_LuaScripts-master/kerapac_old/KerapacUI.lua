@@ -153,12 +153,12 @@ end
 
 function KerapacUI:HandleHardMode()
     if State.isHardMode then
-        if API.ScanForInterfaceTest2Get(false, { { 1591, 15, -1, 0 }, { 1591, 17, -1, 0 }, { 1591, 41, -1, 0 }, { 1591, 12, -1, 0 } })[1].textids == "Kerapac" then
+        if API.ScanForInterfaceTest2Get2(false, { { 1591, 15, -1, 0 }, { 1591, 17, -1, 0 }, { 1591, 41, -1, 0 }, { 1591, 12, -1, 0 } })[1].textids == "Kerapac" then
             Logger:Info("Enabling Hard Mode")
             API.DoAction_Interface(0x24, 0xffffffff, 1, 1591, 4, -1, API.OFF_ACT_GeneralInterface_route)
         end
     else
-        if API.ScanForInterfaceTest2Get(false, { { 1591, 15, -1, 0 }, { 1591, 17, -1, 0 }, { 1591, 41, -1, 0 }, { 1591, 12, -1, 0 } })[1].textids ~= "Kerapac" then
+        if API.ScanForInterfaceTest2Get2(false, { { 1591, 15, -1, 0 }, { 1591, 17, -1, 0 }, { 1591, 41, -1, 0 }, { 1591, 12, -1, 0 } })[1].textids ~= "Kerapac" then
             Logger:Info("Disabling Hard Mode")
             API.DoAction_Interface(0x24, 0xffffffff, 1, 1591, 4, -1, API.OFF_ACT_GeneralInterface_route)
         end

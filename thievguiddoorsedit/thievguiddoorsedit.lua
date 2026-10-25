@@ -40,7 +40,7 @@ local specialChars = {
 }
 
 local function getCursorState()
-    cursor_box = tostring(API.VB_GetBits(CURSOR_LOCATION_VARBIT_ID))
+    cursor_box = tostring(API.ReadVarbit(CURSOR_LOCATION_VARBIT_ID))
     if cursor_box == USERNAME_BOX_VARBIT_STR then
         print("USERNAME_BOX")
         USERNAME = true
@@ -56,7 +56,7 @@ end
 local function TypeStringOnKeyboard(inputString)
     for i = 1, #inputString do
         local char = inputString:sub(i, i)
-        API.KeyPress_(char)
+        API.TypeOnkeyboard(char)
 
         if specialChars[char] or char:match("%u") then
             API.RandomSleep2(200, 0, 0)
@@ -65,14 +65,14 @@ local function TypeStringOnKeyboard(inputString)
 end
 
 local function getUsernameInterfaceText()
-    return API.ScanForInterfaceTest2Get(false,
+    return API.ScanForInterfaceTest2Get2(false,
         {{744, 0, -1, -1, 0}, {744, 26, -1, 0, 0}, {744, 39, -1, 26, 0}, {744, 52, -1, 39, 0},
             {744, 93, -1, 52, 0}, {744, 94, -1, 93, 0}, {744, 96, -1, 94, 0}, {744, 110, -1, 96, 0},
             {744, 111, -1, 110, 0}})[1].textids
 end
 
 local function isInvalidDetailsInterfaceVisible()
-    local text = API.ScanForInterfaceTest2Get(false,
+    local text = API.ScanForInterfaceTest2Get2(false,
         {{744, 0, -1, -1, 0}, {744, 197, -1, 0, 0}, {744, 338, -1, 197, 0}, {744, 340, -1, 338, 0},
             {744, 342, -1, 340, 0}, {744, 345, -1, 342, 0}})[1].textids
 
@@ -82,7 +82,7 @@ end
 local function clearPass()
     if (API.GetGameState2() == 3) then
         if USERNAME then
-            API.KeyPress_("\t")
+            API.KeyboardPress(0x09, 40, 60)
             API.RandomSleep2(600, 200, 200)
         end
 
@@ -274,23 +274,23 @@ local function findNpc(npcid, distance)
     return #API.GetAllObjArrayInteract({ npcid }, distance, {1}) > 0
 end
 
--- Define the WPOINT objects for all doors in a table
+-- Define the FFPOINT objects for all doors in a table
 local doors = {
-    { tile = WPOINT.new(4648, 5788, 0), status = false },
-    { tile = WPOINT.new(4650, 5788, 0), status = false },
-    { tile = WPOINT.new(4652, 5788, 0), status = false },
-    { tile = WPOINT.new(4648, 5787, 0), status = false },
-    { tile = WPOINT.new(4650, 5787, 0), status = false },
-    { tile = WPOINT.new(4652, 5787, 0), status = false },
+    { tile = FFPOINT.new(4648, 5788, 0), status = false },
+    { tile = FFPOINT.new(4650, 5788, 0), status = false },
+    { tile = FFPOINT.new(4652, 5788, 0), status = false },
+    { tile = FFPOINT.new(4648, 5787, 0), status = false },
+    { tile = FFPOINT.new(4650, 5787, 0), status = false },
+    { tile = FFPOINT.new(4652, 5787, 0), status = false },
 }
 
 local doorstruetile = {
-    { tile = WPOINT.new(4648, 5789, 0)},
-    { tile = WPOINT.new(4650, 5789, 0)},
-    { tile = WPOINT.new(4652, 5789, 0)},
-    { tile = WPOINT.new(4648, 5786, 0)},
-    { tile = WPOINT.new(4650, 5786, 0)},
-    { tile = WPOINT.new(4652, 5786, 0)},
+    { tile = FFPOINT.new(4648, 5789, 0)},
+    { tile = FFPOINT.new(4650, 5789, 0)},
+    { tile = FFPOINT.new(4652, 5789, 0)},
+    { tile = FFPOINT.new(4648, 5786, 0)},
+    { tile = FFPOINT.new(4650, 5786, 0)},
+    { tile = FFPOINT.new(4652, 5786, 0)},
 }
 
 function checkalldoors()

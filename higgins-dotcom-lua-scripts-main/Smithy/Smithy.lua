@@ -186,7 +186,7 @@ local function loadJsonData()
 end
 
 local function getItemText()
-    return API.ScanForInterfaceTest2Get(false,
+    return API.ScanForInterfaceTest2Get2(false,
         { { 37, 17, -1, -1, 0 }, { 37, 19, -1, 17, 0 }, { 37, 29, -1, 19, 0 }, { 37, 40, -1, 29, 0 } })[1].textids
 end
 
@@ -238,7 +238,7 @@ local function selectItem(bar, choice)
             table.insert(combined, element)
         end
 
-        local opt = API.ScanForInterfaceTest2Get(true, combined)
+        local opt = API.ScanForInterfaceTest2Get2(true, combined)
         for _, v in ipairs(opt) do
             if v.itemid1 == choice.OUTPUT then
                 API.DoAction_Interface(0xffffffff, string.format("0x%X", choice.OUTPUT), 1, v.id1, v.id2, v.id3,
@@ -268,7 +268,7 @@ local function openSmithingInterface(area, choice)
 end
 
 local function hasOption()
-    local option = API.ScanForInterfaceTest2Get(false,
+    local option = API.ScanForInterfaceTest2Get2(false,
         { { 1188, 5, -1, -1, 0 }, { 1188, 3, -1, 5, 0 }, { 1188, 3, 14, 3, 0 } })
     if #option > 0 then
         if #option[1].textids > 0 then

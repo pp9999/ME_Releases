@@ -41,7 +41,7 @@ end
 
 local function clickRock(rock)
     if not rock then return end
-    API.DoAction_Object2(0x3a, API.OFF_ACT_GeneralObject_route0, { rock.Id }, 25, WPOINT.new(rock.Tile_XYZ.x, rock.Tile_XYZ.y, rock.Tile_XYZ.z))
+    API.DoAction_Object2(0x3a, API.OFF_ACT_GeneralObject_route0, { rock.Id }, 25, FFPOINT.new(rock.Tile_XYZ.x, rock.Tile_XYZ.y, rock.Tile_XYZ.z))
     API.RandomSleep2(200, 400, 600)
 end
 

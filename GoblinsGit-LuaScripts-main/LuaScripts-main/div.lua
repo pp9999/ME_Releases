@@ -23,13 +23,13 @@ while API.Read_LoopyLoop() do
         API.DoAction_Interface(0xc2,0xffffffff,1,1431,0,9,5392)
     end
 
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         API.DoAction_Object1(0xc8,0,{ 93489 },50)
         API.DoAction_Object1(0xc8,0,{ 87306 },50)
         timeout = os.time() + 300
     end
 
-    if not API.IsPlayerAnimating_(player, 100) and (not API.InvFull_()) then
+    if not API.IsPlayerAnimating_(player, 100) and (not Inventory:IsFull()) then
         print("Harvest")
         API.DoAction_NPC(0xc8, 3120, npcs, 50)
     end

@@ -146,7 +146,7 @@ local function isDoItemToolInterfaceOpen()
     return API.CheckDoItemOpen()
         or API.CheckDoToolOpen()
         or API.Compare2874Status(12, false)
-        or API.FindChooseOptionOpen()
+        -- or API.FindChooseOptionOpen()  -- minimenu (MM) check, not implemented in the current API
 end
 
 local function isCreationInterfaceOpen()

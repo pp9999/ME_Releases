@@ -31,13 +31,13 @@ local function bank()
         API.RandomSleep2(1500,1200, 2000)
 
         if API.BankGetItemStack1(crayfish) > 0 then
-            API.BankClickItem(crayfish)  
+            Bank:Withdraw(crayfish, 1)  
             print("crayfish")
         elseif API.BankGetItemStack1(trout) > 0 then
-            API.BankClickItem(trout)  
+            Bank:Withdraw(trout, 1)  
             print("trout")
         elseif API.BankGetItemStack1(salmon) > 0 then
-            API.BankClickItem(salmon)
+            Bank:Withdraw(salmon, 1)
             print("salmon") 
         else 
             API.Write_LoopyLoop(false)
@@ -49,10 +49,10 @@ local function bank()
 end
 
 function cooker()
-  -- while API.InvItemcount_1(cowhideId) > 0 do
+  -- while Inventory:InvItemcount(cowhideId) > 0 do
        -- Go to the tanner
        print("Going to the cooker...")
-       API.DoAction_Object_r(0x40,0,cookerid,50, WPOINT.new(0, 0, 0),5)
+       API.DoAction_Object_r(0x40,0,cookerid,50, FFPOINT.new(0, 0, 0),5)
        API.RandomSleep2(800,1200, 1500) -- Random sleep between 200ms to 500ms
 
        -- Wait for player movement to stop and dialog to open
@@ -90,7 +90,7 @@ while API.Read_LoopyLoop() do
     API.RandomSleep2(1500, 1500, 1800)
     if not API.Read_LoopyLoop() then return end
   
-    if API.Invfreecount_() == 28 then API.Write_LoopyLoop(false) return  end
+    if Inventory:Invfreecount() == 28 then API.Write_LoopyLoop(false) return  end
     cooker()
     API.RandomSleep2(1500, 1800)
 end

@@ -31,7 +31,7 @@ local STATES = {
     {
         desc = "Infusing Pouches",
         callback = function() API.KeyboardPress32(0x20, 0) end,
-        post = function() return #API.ScanForInterfaceTest2Get(true, obeliskInterface) <= 0 end
+        post = function() return #API.ScanForInterfaceTest2Get2(true, obeliskInterface) <= 0 end
     }
 }
 

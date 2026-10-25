@@ -367,7 +367,7 @@ function WarsRetreat:_initializeData()
         -- Location data
         LOCATION = {
             name = "War's Retreat",
-            coords = WPOINT.new(3295, 10137, 0),
+            coords = FFPOINT.new(3295, 10137, 0),
             range = 30
         },
         -- Object data
@@ -396,14 +396,14 @@ function WarsRetreat:_initializeData()
         },
         -- Key tiles for navigation
         TILES = {
-            POSITIONING = WPOINT.new(3299, 10131, 0),
-            ALTAR = WPOINT.new(3304, 10129, 0),
-            STAIRS = WPOINT.new(3294, 10136, 0),
-            EXIT_PORTAL = WPOINT.new(3294, 10127, 9),
-            CRYSTAL_WEST = WPOINT.new(3290, 10148, 0),
-            CRYSTAL_EAST = WPOINT.new(3298, 10148, 0),
-            PORTAL_WEST = WPOINT.new(3290, 10153, 0),
-            PORTAL_EAST = WPOINT.new(3298, 10153, 0)
+            POSITIONING = FFPOINT.new(3299, 10131, 0),
+            ALTAR = FFPOINT.new(3304, 10129, 0),
+            STAIRS = FFPOINT.new(3294, 10136, 0),
+            EXIT_PORTAL = FFPOINT.new(3294, 10127, 9),
+            CRYSTAL_WEST = FFPOINT.new(3290, 10148, 0),
+            CRYSTAL_EAST = FFPOINT.new(3298, 10148, 0),
+            PORTAL_WEST = FFPOINT.new(3290, 10153, 0),
+            PORTAL_EAST = FFPOINT.new(3298, 10153, 0)
         },
         -- Relevant IDs
         IDS = {
@@ -427,9 +427,9 @@ function WarsRetreat:_initializeData()
         conjureAttempts = 0,
         portalSide = nil,
         ---@diagnostic disable-next-line: undefined-global
-        crystalDiveCoords = WPOINT.new(0, 0, 0),
+        crystalDiveCoords = FFPOINT.new(0, 0, 0),
         ---@diagnostic disable-next-line: undefined-global
-        portalDiveCoords = WPOINT.new(0, 0, 0),
+        portalDiveCoords = FFPOINT.new(0, 0, 0),
         -- Cached advanced movement decision for this reset cycle
         useAdvMovement = false,
         -- True when player is walking to positioning tile for surge/dive combo
@@ -517,7 +517,7 @@ end
 --- Moves player to bank chest position
 --- @return boolean: True if movement was initiated
 function WarsRetreat:standAtBankChest()
-    return API.DoAction_WalkerW(self.constants.TILES.POSITIONING)
+    return API.DoAction_Walker(self.constants.TILES.POSITIONING)
 end
 
 --- Performs prayer action at altar
@@ -844,7 +844,7 @@ end
 --- @private
 function WarsRetreat:_checkLoadPresetCondition()
     if not self:_inventoryMatchCheck() or
-        (self.userSettings.bankIfInvFull and API.InvFull_()) then
+        (self.userSettings.bankIfInvFull and Inventory:IsFull()) then
         -- Validate preset items once after successful load
         if not self.variables._presetValidated and
             self.variables.bankAttempts > 0 then
@@ -986,7 +986,7 @@ end
 ------------------------------------------
 
 --- Generic proximity check against a tile
---- @param tile WPOINT Target tile to check distance against
+--- @param tile FFPOINT Target tile to check distance against
 --- @param range number Maximum distance from tile
 --- @return boolean: True if player is within range of tile
 --- @private
@@ -1176,7 +1176,7 @@ end
 ------------------------------------------
 
 --- Surge + Dive combo to a specific location
---- @param tile? WPOINT Target coordinates for dive
+--- @param tile? FFPOINT Target coordinates for dive
 --- @return boolean: True if abilities were used
 --- @private
 function WarsRetreat:_doDiveAndSurge(tile)
@@ -1200,7 +1200,7 @@ function WarsRetreat:_canDive()
 end
 
 --- Executes Dive or Bladed Dive to a target tile
---- @param tile WPOINT Target tile to dive to
+--- @param tile FFPOINT Target tile to dive to
 --- @return boolean: True if dive was initiated
 --- @private
 function WarsRetreat:_diveToTile(tile)
@@ -1228,14 +1228,14 @@ end
 
 --- Ensures the player is within interaction range of a target tile.
 --- If farther than the specified range, initiates walking navigation.
---- @param targetTile WPOINT The tile to check distance against
+--- @param targetTile FFPOINT The tile to check distance against
 --- @param range? number Maximum interaction range (default 30)
 --- @return boolean: True if navigation was started (not yet in range), false if already in range
 --- @private
 function WarsRetreat:_ensureInRange(targetTile, range)
     if self:_isPlayerNear(targetTile, range or 30) then return false end
     if not Player:isMoving() and not Player:isAnimating() then
-        API.DoAction_WalkerW(targetTile)
+        API.DoAction_Walker(targetTile)
     end
     return true
 end
@@ -1243,7 +1243,7 @@ end
 --- Attempts advanced movement patterns 3.A and 3.B toward the crystals/portal area.
 --- 3.A: From altar area, position at positioning tile then surge+dive combo.
 --- 3.B: From stairs area facing North, surge toward target.
---- @param targetCoords WPOINT The dive target (crystal or portal coords)
+--- @param targetCoords FFPOINT The dive target (crystal or portal coords)
 --- @param step string The current navigation step
 --- @return boolean|nil: True if movement/positioning is active, nil if no pattern matched (fall through to standard nav)
 --- @private
@@ -1265,7 +1265,7 @@ function WarsRetreat:_tryAdvancedMoveNorth(targetCoords, step)
         self.variables.positioning = true
         if not Player:isMoving() then
             self.lastAction = "Positioning for surge/dive combo"
-            return API.DoAction_WalkerW(self.constants.TILES.POSITIONING)
+            return API.DoAction_Walker(self.constants.TILES.POSITIONING)
         end
         return true
     end
@@ -1274,7 +1274,7 @@ function WarsRetreat:_tryAdvancedMoveNorth(targetCoords, step)
     if self.variables.positioning and not self:_isPlayerByBankChest(2) then
         if Player:isMoving() then return true end
         self.lastAction = "Re-positioning for surge/dive combo"
-        return API.DoAction_WalkerW(self.constants.TILES.POSITIONING)
+        return API.DoAction_Walker(self.constants.TILES.POSITIONING)
     end
 
     -- 3.A: At positioning tile → execute surge+dive combo if facing correctly
@@ -1335,7 +1335,7 @@ end
 
 --- Navigates northward to a target tile using advanced movement or standard walking.
 --- Shared logic for crystal and portal navigation (patterns 3.A and 3.B).
---- @param targetCoords WPOINT Destination tile
+--- @param targetCoords FFPOINT Destination tile
 --- @param step string Current navigation step
 --- @param fallbackRange number Standard navigation range
 --- @param fallbackMsg string lastAction message for standard walking

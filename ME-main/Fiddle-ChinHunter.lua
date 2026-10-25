@@ -16,26 +16,26 @@ local hunterLvl = API.XPLevelTable(API.GetSkillXP("HUNTER"));
 if Ccheck == "Red chinchompa" then
     shakingBox = 19190
     tileWPoints = {
-        WPOINT.new(2504, 2898, 0), --1
-        WPOINT.new(2504, 2900, 0), --2
-        WPOINT.new(2506, 2898, 0), --3 
-        WPOINT.new(2506, 2900, 0) --4
+        FFPOINT.new(2504, 2898, 0), --1
+        FFPOINT.new(2504, 2900, 0), --2
+        FFPOINT.new(2506, 2898, 0), --3 
+        FFPOINT.new(2506, 2900, 0) --4
     }
     if hunterLvl >= 80 then
-        table.insert(tileWPoints, WPOINT.new(2505, 2899, 0))
+        table.insert(tileWPoints, FFPOINT.new(2505, 2899, 0))
         print("Hunter lvl is 80+ so 5 boxes")
     end
 end
 if Ccheck == "Azure skillchompa" then
     shakingBox = 91232
     tileWPoints = {
-        WPOINT.new(2728, 3857, 0),
-        WPOINT.new(2728, 3859, 0),
-        WPOINT.new(2730, 3857, 0),
-        WPOINT.new(2730, 3859, 0)
+        FFPOINT.new(2728, 3857, 0),
+        FFPOINT.new(2728, 3859, 0),
+        FFPOINT.new(2730, 3857, 0),
+        FFPOINT.new(2730, 3859, 0)
     }
     if hunterLvl >= 80 then
-        table.insert(tileWPoints,WPOINT.new(2729, 3858, 0))
+        table.insert(tileWPoints,FFPOINT.new(2729, 3858, 0))
         print("Hunter lvl is 80+ so 5 boxes")
     end
 end

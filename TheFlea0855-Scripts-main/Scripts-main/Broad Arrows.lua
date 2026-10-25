@@ -51,7 +51,7 @@ local function idleCheck()
 end
 
 local function haveSupplies()
-    if API.InvStackSize(broadArrowHeads) >= 15 and API.InvStackSize(headlessArrows) >= 15 then
+    if Inventory:InvStackSize(broadArrowHeads) >= 15 and Inventory:InvStackSize(headlessArrows) >= 15 then
         return true
     else
         return false
@@ -121,7 +121,7 @@ local function handleElidinisEvents()
     while #eventObjs > 0 and API.Read_LoopyLoop() do
         if eventObjs[1].Id == mimickingSoul then
            -- API.DoAction_Dive_Tile(eventObjs[1].Tile_XYZ) 
-            API.DoAction_TileF(eventObjs[1].Tile_XYZ)
+            API.DoAction_Tile(eventObjs[1].Tile_XYZ)
         elseif eventObjs[1].Id == unstableSoul or eventObjs[1].Id == lostSoul then
             -- API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, { eventObjs[1].Id }, 50)
             API.DoAction_NPC__Direct(0x29, API.OFF_ACT_InteractNPC_route, eventObjs[1])
@@ -131,7 +131,7 @@ local function handleElidinisEvents()
         eventObjs = API.GetAllObjArray1(eventIDs, 50, { 1 })
     end
 
-    if found then API.DoAction_TileF(originTile) end
+    if found then API.DoAction_Tile(originTile) end
 end
 
 local function inFletchingWorkRoom()
@@ -142,21 +142,21 @@ local function inFletchingWorkRoom()
     end
 end
 
-local theSpot = WPOINT.new(3289, 3536, 0)
+local theSpot = FFPOINT.new(3289, 3536, 0)
 local function returnToSpot()
     if not inFletchingWorkRoom() then
         print("not in the workroom returning to the spot")
-        API.DoAction_WalkerW(theSpot)
+        API.DoAction_Walker(theSpot)
         API.WaitUntilMovingEnds(10,2)
     end
 end
 
 local function applyBoosts()
     local torstol = API.Buffbar_GetIDstatus(torstolID, false)
-    if not torstol.found and API.InvStackSize(torstolID) >= 10 then
+    if not torstol.found and Inventory:InvStackSize(torstolID) >= 10 then
         API.DoAction_Inventory1(torstolID, 0, 2, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(600, 500, 500)
-    elseif torstol.found and torstol.conv_text > 0 and torstol.conv_text < 3 and API.InvStackSize(torstolID) >= 1 then
+    elseif torstol.found and torstol.conv_text > 0 and torstol.conv_text < 3 and Inventory:InvStackSize(torstolID) >= 1 then
         API.DoAction_Inventory1(torstolID, 0, 1, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(600, 500, 500)
     end
@@ -174,7 +174,7 @@ while (API.Read_LoopyLoop()) do
     UTILS:gameStateChecks()
     applyBoosts()
     doFletching()
-    if not API.OpenInventoryInterface2() then
+    if not Inventory:IsOpen() then
         API.KeyboardPress2(inventoryKey, 50, 200)
     end
     handleElidinisEvents()

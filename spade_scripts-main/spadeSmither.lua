@@ -42,7 +42,7 @@ local SMITHING_IFACE = {
 }
 
 local function smithingInterfacePresent()
-    return #API.ScanForInterfaceTest2Get(true, SMITHING_IFACE) > 0
+    return #API.ScanForInterfaceTest2Get2(true, SMITHING_IFACE) > 0
 end
 
 local function takePots()

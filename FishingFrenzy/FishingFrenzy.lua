@@ -75,7 +75,7 @@ end
 local function useTorstolSticks()
     local id = 47715;
     local cd = API.Buffbar_GetIDstatus(id, false)
-    if API.InventoryInterfaceCheckvarbit() and cd.found and cd.conv_text < 10 and API.InvItemFound2({id}) then
+    if API.InventoryInterfaceCheckvarbit() and cd.found and cd.conv_text < 10 and Inventory:InvItemFounds({id}) then
         print("using torstol sticks")
         API.DoAction_Inventory2({id}, 0, 1, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(1200, 200, 100)

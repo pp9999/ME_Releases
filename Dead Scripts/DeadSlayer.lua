@@ -277,7 +277,7 @@ local function populateDropdown()
     local mobs = {}
     if #allNPCS > 0 then
         for _, a in pairs(allNPCS) do
-            local distance = API.Math_DistanceF(a.Tile_XYZ, API.PlayerCoordfloat())
+            local distance = API.Math_Distance(a.Tile_XYZ, API.PlayerCoordfloat())
             a.Distance = distance;
             if a.Id ~= 0 and a.Life > 1 and distance < 50 then
                 table.insert(mobs, a.Name)

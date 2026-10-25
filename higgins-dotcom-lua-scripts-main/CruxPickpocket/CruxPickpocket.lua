@@ -137,14 +137,14 @@ end
 local function healthCheck()
     local prayer = API.GetPrayPrecent()
     local excalCD = API.DeBuffbar_GetIDstatus(ID.EXCALIBUR, false)
-    local excalFound = API.InvItemcount_1(ID.EXCALIBUR_AUGMENTED)
+    local excalFound = Inventory:InvItemcount(ID.EXCALIBUR_AUGMENTED)
     local elvenCD = API.DeBuffbar_GetIDstatus(ID.ELVEN_SHARD, false)
 
     local crystalMask = API.Buffbar_GetIDstatus(25938)
     local lightForm = API.Buffbar_GetIDstatus(26048)
     local fiveFingers = API.Buffbar_GetIDstatus(26098)
 
-    local elvenFound = API.InvItemcount_1(ID.ELVEN_SHARD)
+    local elvenFound = Inventory:InvItemcount(ID.ELVEN_SHARD)
     
     if not excalCD.found and excalFound > 0 then
         API.DoAction_Inventory1(ID.EXCALIBUR_AUGMENTED, 0, 1, API.OFF_ACT_GeneralInterface_route)
@@ -196,7 +196,7 @@ while API.Read_LoopyLoop() do
                 teleportToWar()
             end
         else
-            if API.InvItemFound1(52825) then
+            if Inventory:InvItemFound(52825) then
                 API.DoAction_Ability("Holy scarab pouch", 1, API.OFF_ACT_GeneralInterface_route)
                 API.RandomSleep2(800, 600, 600)
             end

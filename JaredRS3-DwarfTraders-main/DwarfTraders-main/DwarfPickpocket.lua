@@ -73,7 +73,7 @@ local function doesStringInclude(input, searchValue)
 end
 
 local function getInterfaceText(interface)
-    local inter = API.ScanForInterfaceTest2Get(false, interface)
+    local inter = API.ScanForInterfaceTest2Get2(false, interface)
     return (#inter > 0) and inter[1].textids or nil
 end
 
@@ -191,8 +191,8 @@ local function resetAura()
     API.RandomSleep2(1200,0,0)
     API.DoAction_Interface(0xffffffff,0xa6a5,1,1929,22,-1,API.OFF_ACT_GeneralInterface_route) --requires a general reset aura scroll
     API.RandomSleep2(1800,0,0)
-    refreshStatus = API.ScanForInterfaceTest2Get(false, refreshInterface)
-    auraRefreshes = API.ScanForInterfaceTest2Get(false, auraRefreshInterface2)
+    refreshStatus = API.ScanForInterfaceTest2Get2(false, refreshInterface)
+    auraRefreshes = API.ScanForInterfaceTest2Get2(false, auraRefreshInterface2)
     if #refreshStatus > 0 and auraRefreshes[1].itemid1_size > 0 then
         API.DoAction_Interface(0xffffffff,0xffffffff,0,1188,8,-1,API.OFF_ACT_GeneralInterface_Choose_option)
         return true  -- Reset was successful
@@ -320,14 +320,14 @@ end
 local function healthCheck()
     local prayer = API.GetPrayPrecent()
     local excalCD = API.DeBuffbar_GetIDstatus(ID.EXCALIBUR, false)
-    local excalFound = API.InvItemcount_1(ID.EXCALIBUR_AUGMENTED)
+    local excalFound = Inventory:InvItemcount(ID.EXCALIBUR_AUGMENTED)
     local elvenCD = API.DeBuffbar_GetIDstatus(ID.ELVEN_SHARD, false)
     local health = API.GetHPrecent()
     local crystalMask = API.Buffbar_GetIDstatus(25938)
     local lightForm = API.Buffbar_GetIDstatus(26048)
     local fiveFingers = API.Buffbar_GetIDstatus(26098)
     local adren = API.GetAddreline_()
-    local elvenFound = API.InvItemcount_1(ID.ELVEN_SHARD)
+    local elvenFound = Inventory:InvItemcount(ID.ELVEN_SHARD)
     
     if not excalCD.found and excalFound > 0 then
         API.DoAction_Inventory1(ID.EXCALIBUR_AUGMENTED, 0, 1, API.OFF_ACT_GeneralInterface_route)

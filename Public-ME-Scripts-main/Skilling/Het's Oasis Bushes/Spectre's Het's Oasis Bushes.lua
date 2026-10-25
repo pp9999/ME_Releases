@@ -528,7 +528,6 @@ local function ExecuteStage(StageID)
     end
 end
 
-API.Write_fake_mouse_do(false)
 while API.Read_LoopyLoop() do
     if API.CacheEnabled == false then
         Slib:Info("Cache is disabled. Exiting...")

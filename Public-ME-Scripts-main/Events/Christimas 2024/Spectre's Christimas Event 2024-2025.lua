@@ -212,7 +212,7 @@ local stageFunctions = {
     [1] = function()
         print("Fletching Snowballs")
         if not API.PInArea21(5195, 5210, 9772, 9780) then
-            API.DoAction_WalkerW(WPOINT.new(5206 + math.random(-2, 2), 9775 + math.random(-2, 2), 0))
+            API.DoAction_Walker(FFPOINT.new(5206 + math.random(-2, 2), 9775 + math.random(-2, 2), 0))
         end
         if Inventory:FreeSpaces() == 0 then
             if not Inventory:Contains(importantObjects.snowball) then
@@ -244,7 +244,7 @@ local stageFunctions = {
     [2] = function()
         print("Ice Fishing")
         if not API.PInArea21(5194, 5205, 9776, 9794) then
-            API.DoAction_WalkerW(WPOINT.new(5201 + math.random(-1, 1), 9783 + math.random(-1, 1), 0))
+            API.DoAction_Walker(FFPOINT.new(5201 + math.random(-1, 1), 9783 + math.random(-1, 1), 0))
         end
         if Inventory:FreeSpaces() == 0 then
             if not Inventory:Contains(importantObjects.frozenTrout) and not Inventory:Contains(importantObjects.frozenSalmon) and not Inventory:Contains(importantObjects.frozenBass) then   
@@ -268,7 +268,7 @@ local stageFunctions = {
     [3] = function()
         print("Decoration Making")
         if not API.PInArea21(5250, 5253, 9778, 9781) then
-            API.DoAction_WalkerW(WPOINT.new(5252 + math.random(-1, 1), 9780 + math.random(-1, 1), 0))
+            API.DoAction_Walker(FFPOINT.new(5252 + math.random(-1, 1), 9780 + math.random(-1, 1), 0))
         end
         if Inventory:FreeSpaces() == 0 then
             if not Inventory:Contains(importantObjects.unfDecor) and not Inventory:Contains(importantObjects.WIPDecor) and not Inventory:Contains(importantObjects.finishedDecor) then
@@ -302,7 +302,7 @@ local stageFunctions = {
     [4] = function()
         print("Fir Woodcutting")
         if not API.PInArea21(5223, 5243, 9770, 9790) then
-            API.DoAction_WalkerW(WPOINT.new(5233 + math.random(-2, 2), 9780 + math.random(-2, 2), 0))
+            API.DoAction_Walker(FFPOINT.new(5233 + math.random(-2, 2), 9780 + math.random(-2, 2), 0))
         end
         if Inventory:FreeSpaces() == 0 then
             if not Inventory:Contains(importantObjects.firLog) or Inventory:Contains(importantObjects.splitFirLogs) then
@@ -357,7 +357,7 @@ local stageFunctions = {
             return nil
         end
         if not API.PInArea21(5242, 5247, 9769, 9774) then
-            API.DoAction_WalkerW(WPOINT.new(5246 + math.random(-1, 1), 9771 + math.random(-1, 1), 0))
+            API.DoAction_Walker(FFPOINT.new(5246 + math.random(-1, 1), 9771 + math.random(-1, 1), 0))
         end
         if Inventory:FreeSpaces() == 0 then
             print("No free spaces in inventory for the ingredients!!")
@@ -399,7 +399,7 @@ local stageFunctions = {
             end
         end
         if not API.PInArea21(5245, 5253, 9782, 9789) then
-            API.DoAction_WalkerW(WPOINT.new(5248 + math.random(-1, 1), 9787 + math.random(-1, 1), 0))
+            API.DoAction_Walker(FFPOINT.new(5248 + math.random(-1, 1), 9787 + math.random(-1, 1), 0))
         end
         freeInvSpaces = Inventory:FreeSpaces()
         if (freeInvSpaces + Inventory:GetItemAmount(importantObjects.dryFirWood)) < 5 then
@@ -447,7 +447,6 @@ local function executeStage(stageID)
     end
 end
 
-Write_fake_mouse_do(false)
 API.SetDrawTrackedSkills(true)
 
 while (API.Read_LoopyLoop()) do

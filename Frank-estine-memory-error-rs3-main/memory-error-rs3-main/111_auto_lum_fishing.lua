@@ -29,8 +29,8 @@ local fish_bool = 0
 
 
 
-API.Write_ScripCuRunning1(player)
-API.Write_ScripCuRunning2("fishing f2p")
+API.Write_ScripCuRunning0(player)
+API.Write_ScripCuRunning0("fishing f2p")
 
 
 -- Assign the fish ID based on the user's selection
@@ -59,7 +59,7 @@ local function check()
             API.RandomSleep2(1500,2500, 2500) -- Adjust sleep time as needed
             
             API.DoRandomEvents()
-       until not API.CheckAnim(50) or API.InvFull_() or not API.Read_LoopyLoop()
+       until not API.CheckAnim(50) or Inventory:IsFull() or not API.Read_LoopyLoop()
        print("over check")
     end
 end
@@ -87,7 +87,7 @@ local function fish()
                     local z = 0        
                 if not API.PInArea(x,10,y,10,0) then
                     print("go to fishing spot crayfish....")
-                    API.DoAction_WalkerW(WPOINT.new(x, y, z))
+                    API.DoAction_Walker(FFPOINT.new(x, y, z))
                 end
             else
                 local x = 3239 + math.random(-2, 2)
@@ -95,7 +95,7 @@ local function fish()
                 local z = 0
                 if not API.PInArea(x,30,y,30,0) then
                     print("go to fishing spot trout....")
-                    API.DoAction_WalkerW(WPOINT.new(x, y, z))
+                    API.DoAction_Walker(FFPOINT.new(x, y, z))
                 end
             end
 
@@ -120,7 +120,7 @@ local function bank1()
     local y = 3257 + math.random(-2, 2)
     local z = 0
 
-    API.DoAction_WalkerW(WPOINT.new(x, y, z))
+    API.DoAction_Walker(FFPOINT.new(x, y, z))
 
  print ("finish walk to bank")
  check()
@@ -155,7 +155,7 @@ while(API.Read_LoopyLoop()) do
             API.RandomSleep2(1500, 1800, 1200)
         else
             if not API.IsPlayerAnimating_(player,3) then
-                if API.Invfreecount_() == 0 then
+                if Inventory:Invfreecount() == 0 then
                     print("Dropping fish")
                     if API.Check_continue_Open() then
                         API.KeyboardPress31(32, 500, 1200)
@@ -167,7 +167,7 @@ while(API.Read_LoopyLoop()) do
 
                     bank1()
                     
-                    until API.Invfreecount_() >= math.random(20, 25) or not API.Read_LoopyLoop() -- Added loop protection
+                    until Inventory:Invfreecount() >= math.random(20, 25) or not API.Read_LoopyLoop() -- Added loop protection
                 else
                     fish()
                 end

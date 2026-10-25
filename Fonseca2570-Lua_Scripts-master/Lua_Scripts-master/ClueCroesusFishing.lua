@@ -84,20 +84,20 @@ local function dropFungus()
     print("droping items")
     API.KeyboardPress31(0x20, 0, 50) -- space bar
     repeat
-        if API.InvItemcount_1(fungus.normal) > 0 then
+        if Inventory:InvItemcount(fungus.normal) > 0 then
             API.KeyboardPress31(0x36, 3000,1000) -- key '6'
             --API.DoAction_Ability_Direct(Abilities.NormalFungus, 1, API.OFF_ACT_GeneralInterface_route)
-        elseif API.InvItemcount_1(fungus.enriched) > 0 then
+        elseif Inventory:InvItemcount(fungus.enriched) > 0 then
             API.KeyboardPress31(0x37, 3000,1000) -- key '7'
         end
-    until API.InvItemcount_1(fungus.enriched) == 0 and API.InvItemcount_1(fungus.normal) == 0
+    until Inventory:InvItemcount(fungus.enriched) == 0 and Inventory:InvItemcount(fungus.normal) == 0
 end
 
 while (API.Read_LoopyLoop()) do
     API.DoRandomEvents()
     idleCheck()
     local level = API.GetSkillByName("FISHING").level
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         dropFungus()
     else
         if level >= 92 then 

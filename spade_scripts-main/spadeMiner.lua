@@ -96,9 +96,9 @@ local function getShinyRock(rocks, maxDistance)
     local shortestDist = maxDistance
     for _, rock in ipairs(rocks) do
         for _, hl in ipairs(API.GetAllObjArray1(HIGHLIGHTS, maxDistance, {4})) do
-            if API.Math_DistanceF(rock.Tile_XYZ, hl.Tile_XYZ) < shortestDist then
+            if API.Math_Distance(rock.Tile_XYZ, hl.Tile_XYZ) < shortestDist then
                 shinyRock = rock
-                shortestDist = API.Math_DistanceF(rock.Tile_XYZ, hl.Tile_XYZ)
+                shortestDist = API.Math_Distance(rock.Tile_XYZ, hl.Tile_XYZ)
             end
         end
     end
@@ -147,7 +147,7 @@ while API.Read_LoopyLoop() do
         local rocks = API.GetAllObjArrayInteract_str({ selectedRock }, 50, { 0, 12 })
         local shinyRock = getShinyRock(rocks, 50)
         if shinyRock then
-            if not clickedRockTile or API.Math_DistanceF(clickedRockTile, shinyRock.Tile_XYZ) ~= 0 then
+            if not clickedRockTile or API.Math_Distance(clickedRockTile, shinyRock.Tile_XYZ) ~= 0 then
                 API.RandomSleep2(500, 1000, 1500)
                 API.DoAction_Object_Direct(0x3a, API.OFF_ACT_GeneralObject_route0, shinyRock)
                 clickedRockId = shinyRock.Id
@@ -156,7 +156,7 @@ while API.Read_LoopyLoop() do
         else
             -- Click rock again to refresh stamina
             if selectedRock ~= "Seren stone" and clickedRockTile and clickedRockId and getProgress(5) < math.random(145, 165) then
-                API.DoAction_Object2(0x3a, API.OFF_ACT_GeneralObject_route0, { clickedRockId }, 50, WPOINT.new(clickedRockTile.x, clickedRockTile.y, 0))
+                API.DoAction_Object2(0x3a, API.OFF_ACT_GeneralObject_route0, { clickedRockId }, 50, FFPOINT.new(clickedRockTile.x, clickedRockTile.y, 0))
             end
 
             if not API.CheckAnim(25) and #rocks > 0 then

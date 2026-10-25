@@ -4,7 +4,6 @@ local isOoglogLodeUnlocked = true
 local isCanafisLodeUnlocked = true
 
 local API = require("api")
-API.Write_fake_mouse_do(false)
 local UTILS = require("utils")
 local LODESTONES = require("lodestones")
 
@@ -25,13 +24,13 @@ local function run_to_tile(x, y, z)
 
     local rand1 = math.random(-2, 2)
     local rand2 = math.random(-2, 2)
-    local tile = WPOINT.new(x + rand1, y + rand2, z)
+    local tile = FFPOINT.new(x + rand1, y + rand2, z)
 
-    API.DoAction_WalkerW(tile)
+    API.DoAction_Walker(tile)
 
 
     local threshold = math.random(4, 6)
-    while API.Read_LoopyLoop() and API.Math_DistanceW(API.PlayerCoord(), tile) > threshold do
+    while API.Read_LoopyLoop() and API.Math_Distance(API.PlayerCoord(), tile) > threshold do
         API.RandomSleep2(200, 200, 200)
     end
 end
@@ -55,7 +54,7 @@ local function harvest()
         if i >= 10 then
             if API.GetAllObjArray1({87306, 93489}, 1, {12})[1] ~= nil or not API.ReadPlayerMovin2() then
                 math.randomseed(os.time())
-                API.DoAction_Tile(WPOINT.new(API.PlayerCoord().x + math.random(-2, 2), API.PlayerCoord().y + math.random(-2, 2), API.PlayerCoord().z))
+                API.DoAction_Tile(FFPOINT.new(API.PlayerCoord().x + math.random(-2, 2), API.PlayerCoord().y + math.random(-2, 2), API.PlayerCoord().z))
                 API.RandomSleep2(600, 100, 200)
             end
             break
@@ -74,8 +73,8 @@ local function getDivinationLevel()
 end
 
 local function isInterfaceVisible(interface_components)
-    return API.ScanForInterfaceTest2Get(false, interface_components)[1].x ~= nil
-        and API.ScanForInterfaceTest2Get(false, interface_components)[1].x ~= 0
+    return API.ScanForInterfaceTest2Get2(false, interface_components)[1].x ~= nil
+        and API.ScanForInterfaceTest2Get2(false, interface_components)[1].x ~= 0
 end
 
 local function divDiv()
@@ -114,7 +113,7 @@ local function divDiv()
             if i >= 6 and memoryCount == Inventory:InvItemcount_String("memory") then
                 i = 0
                 math.randomseed(os.time())
-                API.DoAction_Tile(WPOINT.new(API.PlayerCoord().x + math.random(-2, 2), API.PlayerCoord().y + math.random(-2, 2), API.PlayerCoord().z))
+                API.DoAction_Tile(FFPOINT.new(API.PlayerCoord().x + math.random(-2, 2), API.PlayerCoord().y + math.random(-2, 2), API.PlayerCoord().z))
                 API.RandomSleep2(600, 100, 200)
                 break
             else
@@ -135,7 +134,7 @@ local function divDiv()
             if x >= 10 and not API.ReadPlayerMovin2() then
                 x = 0
                 math.randomseed(os.time())
-                API.DoAction_Tile(WPOINT.new(API.PlayerCoord().x + math.random(-2, 2), API.PlayerCoord().y + math.random(-2, 2), API.PlayerCoord().z))
+                API.DoAction_Tile(FFPOINT.new(API.PlayerCoord().x + math.random(-2, 2), API.PlayerCoord().y + math.random(-2, 2), API.PlayerCoord().z))
                 API.RandomSleep2(600, 100, 200)
                 break
             end

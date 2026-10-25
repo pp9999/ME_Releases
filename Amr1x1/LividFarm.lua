@@ -20,7 +20,7 @@ local IDS = {
 } 
 
 local function checkRunes()
-    if API.InvStackSize(IDS.NATURE_RUNE) < 100 or API.InvStackSize(IDS.ASTRAL_RUNE) < 100 or not API.Read_LoopyLoop() or not API.PlayerLoggedIn() or API.GetAllObjArray1({IDS.LOG_PILE}, 30, {12})[1] == nil then
+    if Inventory:InvStackSize(IDS.NATURE_RUNE) < 100 or Inventory:InvStackSize(IDS.ASTRAL_RUNE) < 100 or not API.Read_LoopyLoop() or not API.PlayerLoggedIn() or API.GetAllObjArray1({IDS.LOG_PILE}, 30, {12})[1] == nil then
         return false
     else
         return true
@@ -33,7 +33,7 @@ local function dive(destinationTile)
     math.randomseed(os.time())
     if abilityAB ~= nil and abilityAB.cooldown_timer == 0 then
         local random = math.random(-1,1)
-        local randomizedDest = WPOINT.new(destinationTile.x + random, destinationTile.y + random, destinationTile.z)
+        local randomizedDest = FFPOINT.new(destinationTile.x + random, destinationTile.y + random, destinationTile.z)
         API.DoAction_Dive_Tile(randomizedDest)
         API.RandomSleep2(600, 600, 600)
     end
@@ -54,7 +54,7 @@ local function moveNearPlants()
     if not API.PInArea21(2098, 2109, 3942, 3950) then
         math.randomseed(os.time())
         local random = math.random(-2, 2)
-        API.DoAction_Tile(WPOINT.new(2103 + random,3946 + random,0))
+        API.DoAction_Tile(FFPOINT.new(2103 + random,3946 + random,0))
         while API.Read_LoopyLoop() and not API.PInArea21(2098, 2109, 3942, 3950) do
             API.RandomSleep2(600, 100, 200)
         end
@@ -102,16 +102,16 @@ end
 
 local function getFenceLogs()
     if not checkRunes() then return end
-    if API.InvStackSize(IDS.LUNAR_FENCEPOST) >= 1 then
+    if Inventory:InvStackSize(IDS.LUNAR_FENCEPOST) >= 1 then
         return 
-    elseif API.InvStackSize(IDS.LUNAR_LUMBER) >= 1 then
+    elseif Inventory:InvStackSize(IDS.LUNAR_LUMBER) >= 1 then
         convertLogs()
     else
         if API.GetAllObjArray1({IDS.LOG_PILE}, 30, {12})[1].Distance >= 8 then
-            dive(WPOINT.new(2113,3949,0))
+            dive(FFPOINT.new(2113,3949,0))
         end
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route1,{ IDS.LOG_PILE },50)
-        while API.Read_LoopyLoop() and API.InvStackSize(IDS.LUNAR_LUMBER) < 2 do
+        while API.Read_LoopyLoop() and Inventory:InvStackSize(IDS.LUNAR_LUMBER) < 2 do
             API.RandomSleep2(600, 600, 600)
             if not API.InventoryInterfaceCheckvarbit() then
                 print("Open inventory")
@@ -150,10 +150,10 @@ end
 local function produce()
     if not checkRunes() then return end
     local produce = API.GetAllObjArrayInteract_str({"Produce pile (full)"}, 30, {0})
-    if #produce > 0 and API.InvStackSize(IDS.LIVID_PLANT) < 10 then
+    if #produce > 0 and Inventory:InvStackSize(IDS.LIVID_PLANT) < 10 then
         API.RandomSleep2(100, 100, 100)
         API.DoAction_Object1(0x2d,API.OFF_ACT_GeneralObject_route0,{ IDS.PRODUCE_PILE },50)
-        while API.Read_LoopyLoop() and API.InvStackSize(IDS.LIVID_PLANT) < 10 do
+        while API.Read_LoopyLoop() and Inventory:InvStackSize(IDS.LIVID_PLANT) < 10 do
             API.RandomSleep2(600, 600, 600)
             if not API.InventoryInterfaceCheckvarbit() then
                 print("Open inventory")
@@ -165,7 +165,7 @@ local function produce()
         API.RandomSleep2(100, 100, 100)
     end  
 
-    if API.InvStackSize(IDS.LIVID_PLANT) > 0 then
+    if Inventory:InvStackSize(IDS.LIVID_PLANT) > 0 then
         if not API.InventoryInterfaceCheckvarbit() then
             print("Open inventory")
             API.RandomSleep2(100, 100, 100)
@@ -177,7 +177,7 @@ local function produce()
         API.DoAction_Inventory1(20704,0,1,API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(600, 600, 600)
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,{ IDS.TRADE_WAGON },50)
-        while API.Read_LoopyLoop() and API.InvStackSize(IDS.LIVID_PLANT_BUNCH) > 0 do
+        while API.Read_LoopyLoop() and Inventory:InvStackSize(IDS.LIVID_PLANT_BUNCH) > 0 do
             API.RandomSleep2(600, 600, 600)
         end
         print("Livid bunch traded")

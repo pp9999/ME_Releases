@@ -82,8 +82,8 @@ local function followTimeSprite(objects)
     local sprite = FindHl(IDS.OBJ.ARCH, 60, { 7307 })
     if not API.ReadPlayerMovin2() then
         if sprite.Id ~= nil then
-            local spritePos = WPOINT.new(sprite.TileX / 512, sprite.TileY / 512, sprite.TileZ / 512)
-            local distanceF = API.Math_DistanceF(API.PlayerCoordfloat(), sprite.Tile_XYZ)
+            local spritePos = FFPOINT.new(sprite.TileX / 512, sprite.TileY / 512, sprite.TileZ / 512)
+            local distanceF = API.Math_Distance(API.PlayerCoordfloat(), sprite.Tile_XYZ)
             if distanceF > 1.6 then
                 UTILS.randomSleep(400)
                 if not API.CheckAnim(20) and #foundObjects > 0 then
@@ -97,7 +97,7 @@ local function followTimeSprite(objects)
                 return
             end
         end
-        if not API.CheckAnim(40) and not API.InvFull_() and #foundObjects > 0 then
+        if not API.CheckAnim(40) and not Inventory:IsFull() and #foundObjects > 0 then
             API.logInfo("Excavating " .. 'Mystery remains')
             API.DoAction_Object1(0x2, API.OFF_ACT_GeneralObject_route0, IDS.OBJ.ARCH, 60)
             UTILS.randomSleep(800)
@@ -110,7 +110,7 @@ local destroyInterface = {
 }
 
 local function destroyInterfaceFound()
-    local result = API.ScanForInterfaceTest2Get(true, destroyInterface)
+    local result = API.ScanForInterfaceTest2Get2(true, destroyInterface)
     if #result > 0 then
         return true
     else
@@ -136,7 +136,7 @@ local function destroyTome()
 end
 
 local function handInCollection()
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         API.DoAction_NPC(0x29,API.OFF_ACT_InteractNPC_route2,IDS.NPC.EEP,50)
         API.WaitUntilMovingEnds(10,3)
         API.DoAction_Interface(0x24,0xffffffff,1,656,25,0,API.OFF_ACT_GeneralInterface_route)
@@ -147,7 +147,7 @@ local function handInCollection()
         API.RandomSleep2(600,200,200)
         API.DoAction_Interface(0x24,0xffffffff,1,656,25,0,API.OFF_ACT_GeneralInterface_route)   
         API.RandomSleep2(600,1200,600)
-        if API.InvFull_() then
+        if Inventory:IsFull() then
             API.Write_LoopyLoop(false)
         end
     end

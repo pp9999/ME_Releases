@@ -482,7 +482,7 @@ function ClueUtils.IncreasePrayerPoints()
     local pray = API.GetPrayPrecent()
     print(pray)
     local elvenCD = API.DeBuffbar_GetIDstatus(ClueUtils.DeBuffBar.ElvenShard, false)
-    local elvenFound = API.InvItemcount_1(ClueUtils.DeBuffBar.ElvenShard)
+    local elvenFound = Inventory:InvItemcount(ClueUtils.DeBuffBar.ElvenShard)
     if pray < 50 then 
         if not elvenCD.found and elvenFound > 0 then 
             API.DoAction_Inventory1(ClueUtils.DeBuffBar.ElvenShard, 43358, 1, API.OFF_ACT_GeneralInterface_route)
@@ -496,7 +496,7 @@ function ClueUtils.IncreasePrayerPoints2()
     local pray = API.GetPray_()
     print(pray)
     local elvenCD = API.DeBuffbar_GetIDstatus(ClueUtils.DeBuffBar.ElvenShard, false)
-    local elvenFound = API.InvItemcount_1(ClueUtils.DeBuffBar.ElvenShard)
+    local elvenFound = Inventory:InvItemcount(ClueUtils.DeBuffBar.ElvenShard)
     if pray < 200 then 
         if not elvenCD.found and elvenFound > 0 then 
             API.DoAction_Inventory1(ClueUtils.DeBuffBar.ElvenShard, 43358, 1, API.OFF_ACT_GeneralInterface_route)
@@ -597,7 +597,7 @@ function ClueUtils.RenewFamiliar(pouch)
         API.RandomSleep2(1000, 500, 1000)
     end
 
-    if API.InvStackSize(pouch) < 1 then 
+    if Inventory:InvStackSize(pouch) < 1 then 
         return false
     end
 
@@ -810,7 +810,7 @@ end
 ---@return boolean
 function ClueUtils.HighAlch(items) 
     for _, item in pairs(items) do
-        if API.InvItemcount_1(item) > 0 then 
+        if Inventory:InvItemcount(item) > 0 then 
             if ClueUtils.DoSpecialAbility(ClueUtils.Abilities.HighAlch) then 
                 if API.DoAction_Inventory2({item}, 0, 0, API.OFF_ACT_GeneralInterface_route1) then 
                     return true
@@ -828,7 +828,7 @@ function ClueUtils.CheckItems(inventoryItems)
     for _, obj in pairs(inventoryItems) do 
         local count = obj.count
         for _, item in pairs(obj.items) do 
-            local c = API.InvItemcount_1(item)
+            local c = Inventory:InvItemcount(item)
             count = count - c
         end
         if count ~= 0 then 
@@ -877,7 +877,7 @@ function ClueUtils.WarRetreatPreBoss(inventoryItems, renewFamiliar, pouch)
     end
 
     --for _, obj in pairs(inventoryItems) do 
-    --    local count = API.InvItemcount_1(obj.item)
+    --    local count = Inventory:InvItemcount(obj.item)
     --    if not (count == obj.count) then 
     --        API.DoAction_Object_string1(0x33,API.OFF_ACT_GeneralObject_route3,{ "Bank chest" }, 50, true) -- load last preset
     --        API.RandomSleep2(1200,0,200) -- 
@@ -907,7 +907,7 @@ end
 ---@return boolean
 function ClueUtils.Disassemble(items)
     for _, item in pairs(items) do
-        if API.InvItemcount_1(item) > 0 then 
+        if Inventory:InvItemcount(item) > 0 then 
             if ClueUtils.DoSpecialAbility(ClueUtils.Abilities.Disassemble) then 
                 if API.DoAction_Inventory2({item}, 0, 0, API.OFF_ACT_GeneralInterface_route1) then 
                     return true
@@ -1087,4 +1087,4 @@ end
 
 return ClueUtils
 
--- walk with multiple steps use API.DoAction_WalkerW(normal_tile)
+-- walk with multiple steps use API.DoAction_Walker(normal_tile)

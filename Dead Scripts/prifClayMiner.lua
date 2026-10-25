@@ -80,7 +80,7 @@ imguiLastRunTime.colour = ImColor.new(255, 255, 255);
 local function calculateMetrics()
     lastRunTime = os.difftime(os.time(), runStartTime)
     runs = runs + 1
-    clayMined = clayMined + API.InvItemcount_1(1761)
+    clayMined = clayMined + Inventory:InvItemcount(1761)
     avgRunTime = math.floor(os.difftime(os.time(), scriptStartTime) / runs)
     runStartTime = os.time()
     print()
@@ -122,7 +122,7 @@ end
 
 -- Checks if you're not ingame. These are reduntant checks, but they're here to show that there's multiple ways to check if you're logged in.
 local function gameStateChecks()
-    local gameState = API.GetGameState()
+    local gameState = API.GetGameState2()
     if (gameState ~= 3) then
         print('Not ingame with state:', gameState)
         API.Write_LoopyLoop(false)
@@ -139,7 +139,7 @@ local function onStart()
     print('on start')
     local priffLodestone = LODESTONES.LODESTONE.PRIFDDINAS.loc
     local playerXYZ = API.PlayerCoord()
-    if not API.PInArea21(clayArea[1], clayArea[2], clayArea[3], clayArea[4]) and (API.Math_DistanceW(priffLodestone, playerXYZ) > 50) then
+    if not API.PInArea21(clayArea[1], clayArea[2], clayArea[3], clayArea[4]) and (API.Math_Distance(priffLodestone, playerXYZ) > 50) then
         print('Not at clay area or in PRIFDDINAS')
         STATE = STATES.GOTO_PRIFF
     else
@@ -155,7 +155,7 @@ end
 
 local function gotoClay()
     if not API.PInArea21(clayArea[1], clayArea[2], clayArea[3], clayArea[4]) then
-        API.DoAction_WalkerW(WPOINT.new(2154, 3340, 1))
+        API.DoAction_Walker(FFPOINT.new(2154, 3340, 1))
     end
 end
 
@@ -185,7 +185,7 @@ local function checkStates()
     antiIdleTask()
     if not API.PInArea21(clayArea[1], clayArea[2], clayArea[3], clayArea[4]) then
         STATE = STATES.GOTO_CLAY
-    elseif API.InvFull_() then
+    elseif Inventory:IsFull() then
         local bankOpen = API.BankOpen2()
         if bankOpen then
             STATE = STATES.EMPTY_BAGS

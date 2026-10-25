@@ -320,7 +320,7 @@ local BankpinInterface = {
 }
 
 local function isBankpinInterfacePresent()
-    local result = API.ScanForInterfaceTest2Get(true, BankpinInterface)
+    local result = API.ScanForInterfaceTest2Get2(true, BankpinInterface)
     if #result > 0 then
         API.logDebug("Info: Bankpin interface found!")
         API.logInfo("Bankpin interface found!")
@@ -330,7 +330,7 @@ end
 --------------------FUNCTIONS-------------------
 --------------------TELEPORTS-------------------
 local function isLodestoneInterfaceUp()
-    return (#API.ScanForInterfaceTest2Get(true, { { 1092, 1, -1, -1, 0 }, { 1092, 54, -1, 1, 0 } }) > 0) or API.Compare2874Status(30)
+    return (#API.ScanForInterfaceTest2Get2(true, { { 1092, 1, -1, -1, 0 }, { 1092, 54, -1, 1, 0 } }) > 0) or API.Compare2874Status(30)
 end
 
 local function isTeleportOptionsUp()
@@ -467,52 +467,43 @@ local function renewSummoningPoints()
 end
 
 function ChechGameMessage()
-    local chatTexts = API.ChatGetMessages()
-    if chatTexts then
-        for k, v in pairs(chatTexts) do
-            if k > 2 then break end
-            if string.find(v.text, "<col=EB2F2F>You can't load a preset whilst you have some objects that you cannot bank with you.") then
-                API.logDebug("Can not load preset stopping script.")
-                API.logError("Can not load preset stopping script.")
-                return true
-            end
+    local msg = API.GatherEvents_chat_check()
+    if msg and msg.text then
+        if string.find(msg.text, "You can't load a preset whilst you have some objects that you cannot bank with you.") then
+            API.logDebug("Can not load preset stopping script.")
+            API.logError("Can not load preset stopping script.")
+            return true
         end
     end
     return false
 end
 
 local function checkForVanishesMessage()
-    local chatTexts = API.ChatGetMessages()
-    if chatTexts then
-        for k, v in pairs(chatTexts) do
-            if k > 2 then break end
-            if string.find(v.text, "<col=EB2F2F>You have 1 minute before your familiar vanishes.") then
-                API.logDebug("Info: 1 minute left!")
-                API.logInfo("Familiar has 1 minute left!")
-                familiarrenew = 1
-                return true
-            end
-            if string.find(v.text, "<col=EB2F2F>You have 30 seconds before your familliar vanishes.") then
-                API.logDebug("Info: 30 seconds left!")
-                API.logInfo("Familiar has 30 seconds left!")
-                familiarrenew = 1
-                return true
-            end
+    local msg = API.GatherEvents_chat_check()
+    if msg and msg.text then
+        if string.find(msg.text, "You have 1 minute before your familiar vanishes.") then
+            API.logDebug("Info: 1 minute left!")
+            API.logInfo("Familiar has 1 minute left!")
+            familiarrenew = 1
+            return true
+        end
+        if string.find(msg.text, "You have 30 seconds before your familliar vanishes.") then
+            API.logDebug("Info: 30 seconds left!")
+            API.logInfo("Familiar has 30 seconds left!")
+            familiarrenew = 1
+            return true
         end
     end
     return false
 end
 
 local function checkForswordMessage()
-    local chatTexts = API.ChatGetMessages()
-    if chatTexts then
-        for k, v in pairs(chatTexts) do
-            if k > 2 then break end
-            if string.find(v.text, "The effects of your Wilderness sword teleport you closer to the abyssal rift.") then
-                API.logDebug("Info: A shortcut is taken")
-                API.logInfo("A shortcut is taken")
-                return true
-            end
+    local msg = API.GatherEvents_chat_check()
+    if msg and msg.text then
+        if string.find(msg.text, "The effects of your Wilderness sword teleport you closer to the abyssal rift.") then
+            API.logDebug("Info: A shortcut is taken")
+            API.logInfo("A shortcut is taken")
+            return true
         end
     end
     return false
@@ -660,7 +651,7 @@ local WildernissInterface = {
 }
 
 local function isWildernissInterfacePresent()
-    local result = API.ScanForInterfaceTest2Get(true, WildernissInterface)
+    local result = API.ScanForInterfaceTest2Get2(true, WildernissInterface)
     if #result > 0 then
         API.logDebug("Info: Wildy interface seen!")
         API.logInfo("Found wilderniss warning interface!")
@@ -672,9 +663,9 @@ end
 
 local function Goback()
     API.logWarn("Running back and logging out, been PKed!")
-    API.DoAction_Dive_Tile(WPOINT.new(3101 + math.random(-2, 2), 3523 + math.random(-2, 2), 0))
+    API.DoAction_Dive_Tile(FFPOINT.new(3101 + math.random(-2, 2), 3523 + math.random(-2, 2), 0))
     UTILS.randomSleep(150)
-    API.DoAction_WalkerW(WPOINT.new(3101, 3523, 0))
+    API.DoAction_Walker(FFPOINT.new(3101, 3523, 0))
     UTILS.randomSleep(50)
     UTILS.randomSleep(100)
     API.DoAction_Object1(0xb5,0,{ 65082 },50)
@@ -749,7 +740,7 @@ end
 -----------------NORMAL FUNCTIONS---------------
 local function WalkToMage()
     if not (API.ReadPlayerAnim() == ID_Anim.WildyWall) and not API.ReadPlayerMovin2() then
-        API.DoAction_Tile(WPOINT.new(3107 + math.random(-4, 4), 3559 + math.random(-4, 4), 0))
+        API.DoAction_Tile(FFPOINT.new(3107 + math.random(-4, 4), 3559 + math.random(-4, 4), 0))
         API.logDebug("Walk To: Mage of Zamorak")
     end
 end
@@ -759,12 +750,12 @@ local function SurgeToMage()
         API.DoAction_Ability("Surge", 1, API.OFF_ACT_GeneralInterface_route)
         API.logDebug("Doaction: Surge ")
         UTILS.countTicks(2)
-        API.DoAction_Surge_Tile(WPOINT.new(3107 + math.random(-4, 4), 3559 + math.random(-4, 4), 0))
+        API.DoAction_Surge_Tile2(FFPOINT.new(3107 + math.random(-4, 4), 3559 + math.random(-4, 4), 0))
         API.RandomSleep2(680, 500, 1000)
         local Mage = API.GetAllObjArray1({ID_NPC.MAGE}, 100, {1})
         if Mage and #Mage > 0 then
-            local MageCoord = WPOINT.new(Mage[1].TileX/512,Mage[1].TileY/512,0)
-            if API.Math_DistanceW(MageCoord,API.PlayerCoord()) > 15 then
+            local MageCoord = FFPOINT.new(Mage[1].TileX/512,Mage[1].TileY/512,0)
+            if API.Math_Distance(MageCoord,API.PlayerCoord()) > 15 then
                 API.DoAction_Dive_Tile(MageCoord)
                 API.logDebug("Doaction: Dive to mage")
                 API.logInfo("Mage was found")
@@ -883,7 +874,7 @@ end
 local function Lodestone()
     if not API.ReadPlayerMovin2() then
         API.RandomSleep2(1000, 150, 150)
-        API.DoAction_Tile(WPOINT.new(1146 + math.random(-4, 4), 1800 + math.random(-4, 4), 1))
+        API.DoAction_Tile(FFPOINT.new(1146 + math.random(-4, 4), 1800 + math.random(-4, 4), 1))
     end
 end
 
@@ -909,13 +900,13 @@ end
 
 local function surge()
     if (aioSelectR.string_value == "(Necro) Spirit rune") then
-        API.DoAction_Dive_Tile(WPOINT.new(1313 + math.random(-2, 2), 1969 + math.random(-2, 2), 0))
+        API.DoAction_Dive_Tile(FFPOINT.new(1313 + math.random(-2, 2), 1969 + math.random(-2, 2), 0))
     elseif(aioSelectR.string_value == "(Necro) Bone rune") then
-        API.DoAction_Dive_Tile( WPOINT.new(1296 + math.random(-2, 2), 1962 + math.random(-2, 2), 0))
+        API.DoAction_Dive_Tile( FFPOINT.new(1296 + math.random(-2, 2), 1962 + math.random(-2, 2), 0))
     elseif (aioSelectR.string_value == "(Necro) Flesh rune") then
-        API.DoAction_Dive_Tile(WPOINT.new(1315 + math.random(-2, 2), 1934 + math.random(-2, 2), 0))
+        API.DoAction_Dive_Tile(FFPOINT.new(1315 + math.random(-2, 2), 1934 + math.random(-2, 2), 0))
     elseif (aioSelectR.string_value == "(Necro) Miasma rune") then
-        API.DoAction_Dive_Tile(WPOINT.new(1325 + math.random(-2, 2), 1950 + math.random(-2, 2), 0))
+        API.DoAction_Dive_Tile(FFPOINT.new(1325 + math.random(-2, 2), 1950 + math.random(-2, 2), 0))
     end
 end
 

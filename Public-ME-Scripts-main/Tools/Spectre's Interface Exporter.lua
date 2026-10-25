@@ -475,7 +475,7 @@ local function ScanAllInterfaces(CurrentPath, VisitedPaths, AllInterfaces, Depth
     if Depth == 0 then
         API.RandomSleep2(Config.ScanDelayMs, 0, 0)
         local ExactSuccess, ExactInterface = pcall(function()
-            return API.ScanForInterfaceTest2Get(false, CurrentPath)
+            return API.ScanForInterfaceTest2Get2(false, CurrentPath)
         end)
         if ExactSuccess and ExactInterface and #ExactInterface > 0 then
             RecordInterface(ExactInterface[1], "", CurrentIDString, 0, AllInterfaces, SeenMemlocs)
@@ -487,7 +487,7 @@ local function ScanAllInterfaces(CurrentPath, VisitedPaths, AllInterfaces, Depth
     -- return the PREVIOUS query's results
     API.RandomSleep2(Config.ScanDelayMs, 0, 0)
     local Success, Interfaces = pcall(function()
-        return API.ScanForInterfaceTest2Get(true, CurrentPath)
+        return API.ScanForInterfaceTest2Get2(true, CurrentPath)
     end)
 
     if not Success or not Interfaces then

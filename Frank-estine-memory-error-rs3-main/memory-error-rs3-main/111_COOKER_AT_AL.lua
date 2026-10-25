@@ -7,8 +7,8 @@ local albanknpc = {496}
 local crayfish =13435
 local salmon = 331
 local trout = 335
-API.Write_ScripCuRunning1(player)
-API.Write_ScripCuRunning2("al kharid cooking.........")
+API.Write_ScripCuRunning0(player)
+API.Write_ScripCuRunning0("al kharid cooking.........")
 
 local function bank()
     print("Going to the bank NPC...")
@@ -27,11 +27,11 @@ local function bank()
     API.KeyboardPress('3', 60, 100)
 
     if API.BankGetItemStack1(crayfish) > 0 then
-        API.BankClickItem(crayfish)  
+        Bank:Withdraw(crayfish, 1)  
     elseif API.BankGetItemStack1(trout) > 0 then
-        API.BankClickItem(trout)  
+        Bank:Withdraw(trout, 1)  
     elseif API.BankGetItemStack1(salmon) > 0 then
-        API.BankClickItem(salmon) 
+        Bank:Withdraw(salmon, 1) 
     else 
         API.Write_LoopyLoop(false)
         return
@@ -63,7 +63,7 @@ end
 
 API.Write_LoopyLoop(true)
 while API.Read_LoopyLoop() do
-    if API.Invfreecount_() < 28 then
+    if Inventory:Invfreecount() < 28 then
         bank()
         API.RandomSleep2(1200, 2000) 
         cook()

@@ -6,7 +6,6 @@
 
 local API = require("api")
 API.SetDrawLogs(true)
-API.Write_fake_mouse_do(false)
 API.SetDrawTrackedSkills(true)
 
 -- Config
@@ -18,7 +17,7 @@ local last_hotspot_key = nil
 
 local function playerToObjDistance(obj)
     local p = API.PlayerCoordfloat()
-    local dist = API.Math_DistanceF(p, obj.Tile_XYZ)
+    local dist = API.Math_Distance(p, obj.Tile_XYZ)
     return dist
 end
 
@@ -48,7 +47,7 @@ end
 -- Route-and-interact to the exact tile of the hotspot
 local function routeAndInteractHotspot(obj, label)
     label = label or "hotspot"
-    local tile = WPOINT.new(obj.CalcX, obj.CalcY, 0)
+    local tile = FFPOINT.new(obj.CalcX, obj.CalcY, 0)
 
     API.DoAction_Object2(0x29, API.OFF_ACT_GeneralObject_route0, { obj.Id }, 50, tile)
 

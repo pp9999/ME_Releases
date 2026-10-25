@@ -31,7 +31,7 @@ local Locations = {
     OutsideDarkMeyer = {x1 = 3500, x2 = 3622, y1 = 3300, y2 = 3400}
 }
 
-local Position = WPOINT.new(3606,3356,0)
+local Position = FFPOINT.new(3606,3356,0)
 
 local Configs = {
     HighAlch = true,
@@ -129,7 +129,7 @@ end
 
 -- migrate this to ClueUtils
 local function HighAlch() 
-    if API.InvItemcount_1(IDS.SplitBarkBody) > 0 then 
+    if Inventory:InvItemcount(IDS.SplitBarkBody) > 0 then 
         if ClueUtils.DoSpecialAbility(Abilities.HighAlch) then 
             API.RandomSleep2(600,50,100)
             -- press item
@@ -138,7 +138,7 @@ local function HighAlch()
         end
     end
 
-    if API.InvItemcount_1(IDS.SplitBarkHelm) > 0 then 
+    if Inventory:InvItemcount(IDS.SplitBarkHelm) > 0 then 
         if ClueUtils.DoSpecialAbility(Abilities.HighAlch) then 
             API.RandomSleep2(600,50,100)
             -- press item
@@ -147,7 +147,7 @@ local function HighAlch()
         end
     end
 
-    if API.InvItemcount_1(IDS.DragonSpear) > 0 then 
+    if Inventory:InvItemcount(IDS.DragonSpear) > 0 then 
         if ClueUtils.DoSpecialAbility(Abilities.HighAlch) then 
             API.RandomSleep2(600,50,100)
             -- press item
@@ -221,7 +221,7 @@ while API.Read_LoopyLoop() do
 
         if ClueUtils.AtLocation(Locations.InsideDarkMeyer) then 
             -- press the door
-            API.DoAction_Object2(0x31,0,{ IDS.DarkmeyerDoor },50, WPOINT.new(3622,3364,0));
+            API.DoAction_Object2(0x31,0,{ IDS.DarkmeyerDoor },50, FFPOINT.new(3622,3364,0));
             API.RandomSleep2(1200,100,200)
             API.WaitUntilMovingEnds()
             API.RandomSleep2(1200,100,200)

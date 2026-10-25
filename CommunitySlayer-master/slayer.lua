@@ -171,24 +171,24 @@ end
 ---@param task SlayerTask
 ---@return boolean
 function Slayer:isAtTaskLocation(task)
-    return API.PInAreaW(task.location, task.range)
+    return API.PInAreaF2(task.location, task.range)
 end
 
 ---@param slayerMaster SlayerMaster
 ---@return boolean
 function Slayer:isAtSlayerMasterLocation(slayerMaster)
-    return API.PInAreaW(slayerMaster.location, 5)
+    return API.PInAreaF2(slayerMaster.location, 5)
 end
 
 ---@param slayerMaster SlayerMaster
 ---@return boolean
 function Slayer:walkToSlayerMaster(slayerMaster)
-    local randomLocation = WPOINT.new(
+    local randomLocation = FFPOINT.new(
         slayerMaster.location.x + math.random(-5, 5),
         slayerMaster.location.y + math.random(-5, 5),
         slayerMaster.location.z
     )
-    return API.DoAction_WalkerW(randomLocation)
+    return API.DoAction_Walker(randomLocation)
 end
 
 ---@param slayerMaster SlayerMaster
@@ -215,7 +215,7 @@ end
 ---@param slayerMaster SlayerMaster
 function Slayer:skipTask(slayerMaster)
     if Slayer:isAtSlayerMasterLocation(slayerMaster) then
-        local rewardsInterface = API.ScanForInterfaceTest2Get(true, self.rewardsInterfaceIds)
+        local rewardsInterface = API.ScanForInterfaceTest2Get2(true, self.rewardsInterfaceIds)
         if #rewardsInterface > 0 then
             API.logDebug("Rewards interface found, skipping task")
             ---@diagnostic disable-next-line: missing-parameter
@@ -246,6 +246,9 @@ while API.Read_LoopyLoop() do
     Slayer.currentSlayerMaster = SlayerMasters[Slayer.config.SELECTED_SLAYER_MASTER]
     Slayer.currentTask = Tasks[Slayer:getCurrentTaskId()]
 
+    -- declared here so the `goto continue` jumps do not enter its scope
+    local slayerPoints
+
     if not Slayer.currentSlayerMaster then
         API.logError("Slayer master not found")
     end
@@ -273,7 +276,7 @@ while API.Read_LoopyLoop() do
     end
 
     -- check if we should skip the task
-    local slayerPoints = Slayer:getSlayerPoints()
+    slayerPoints = Slayer:getSlayerPoints()
     if Slayer.config.SKIP_LIST[Slayer.currentTask.name] and slayerPoints >= Slayer.config.MINIMUM_POINTS_TO_SKIP_TASK then
         API.logDebug("Skipping task: " .. Slayer.currentTask.name)
         Slayer:skipTask(Slayer.currentSlayerMaster)

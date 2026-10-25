@@ -111,7 +111,7 @@ local function hasFam()
 end
 
 local function hasPouches()
-    return API.InvItemcount_1(ID.BEAVER_POUCH) > 0
+    return Inventory:InvItemcount(ID.BEAVER_POUCH) > 0
 end
 
 local function findCrystallise()
@@ -128,7 +128,7 @@ local function findTree()
     local trees = API.ReadAllObjectsArray({0, 12}, ID.TREE, {})
     local crystallise = findCrystallise()
     if crystallise then
-        local crystalliseTile = WPOINT.new(math.floor(crystallise.TileX / 512), math.floor(crystallise.TileY / 512), 0)
+        local crystalliseTile = FFPOINT.new(math.floor(crystallise.TileX / 512), math.floor(crystallise.TileY / 512), 0)
         for _, treeObj in ipairs(trees) do
             if treeObj.Bool1 == 0 then
                 if math.floor(treeObj.TileX / 512) == crystalliseTile.x and math.floor(treeObj.TileY / 512) == crystalliseTile.y then
@@ -146,7 +146,7 @@ local function healthCheck()
     local elvenCD = API.DeBuffbar_GetIDstatus(ID.ELVEN_SHARD, false)
     local lightForm = API.Buffbar_GetIDstatus(26048, false)
     local lumberjackAura = API.Buffbar_GetIDstatus(26098, false)
-    local elvenFound = API.InvItemcount_1(ID.ELVEN_SHARD)
+    local elvenFound = Inventory:InvItemcount(ID.ELVEN_SHARD)
     local torstol = API.Buffbar_GetIDstatus(ID.TORSTOL, false)
     local perfectPlus = API.Buffbar_GetIDstatus(33234, false)
     local perfectJuJu = API.Buffbar_GetIDstatus(32757, false)
@@ -161,22 +161,22 @@ local function healthCheck()
         local lf = API.GetABs_name1("Light Form")
         API.DoAction_Ability_Direct(lf, 1, API.OFF_ACT_GeneralInterface_route)
         doneAction = true
-    elseif not perfectPlus.found and API.InvItemFound2(ID.PERFECT_PLUS) then
+    elseif not perfectPlus.found and Inventory:InvItemFound(ID.PERFECT_PLUS) then
         API.DoAction_Inventory2(ID.PERFECT_PLUS, 0, 1, API.OFF_ACT_GeneralInterface_route)
         doneAction = true
-    elseif not perfectPlus.found and not perfectJuJu.found and API.InvItemFound2(ID.PERFECT_JUJU) then
+    elseif not perfectPlus.found and not perfectJuJu.found and Inventory:InvItemFound(ID.PERFECT_JUJU) then
         API.DoAction_Inventory2(ID.PERFECT_JUJU, 0, 1, API.OFF_ACT_GeneralInterface_route)
         doneAction = true
     -- elseif not lumberjackAura.found then
         -- API.DoAction_Interface(0xffffffff, 0xffffffff, 5, 1464, 15, 14, API.OFF_ACT_GeneralInterface_route)
-    elseif not torstol.found and API.InvStackSize(ID.TORSTOL) >= 10 then
+    elseif not torstol.found and Inventory:InvStackSize(ID.TORSTOL) >= 10 then
         API.DoAction_Inventory1(ID.TORSTOL, 0, 2, API.OFF_ACT_GeneralInterface_route)
         doneAction = true
-    elseif torstol.found and torstol.conv_text > 0 and torstol.conv_text == 50 and API.InvStackSize(ID.TORSTOL) >= 1 then
+    elseif torstol.found and torstol.conv_text > 0 and torstol.conv_text == 50 and Inventory:InvStackSize(ID.TORSTOL) >= 1 then
         API.DoAction_Inventory1(ID.TORSTOL, 0, 1, API.OFF_ACT_GeneralInterface_route)
         doneAction = true
     elseif not hasFam() and hasPouches() then
-        if API.GetSummoningPoints_() < 40 and API.InvItemFound2(ID.POTIONS) then
+        if API.GetSummoningPoints_() < 40 and Inventory:InvItemFounds(ID.POTIONS) then
             API.DoAction_Inventory2(ID.POTIONS, 0, 1, API.OFF_ACT_GeneralInterface_route)
             doneAction = true
         elseif API.GetSummoningPoints_() > 40 then

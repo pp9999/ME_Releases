@@ -85,9 +85,9 @@ local function findNpcOrObject(npcid, distance, objType)
 end
 
 local function run_to_tile(x, y, z)
-    local tile = WPOINT.new(x, y, z)
+    local tile = FFPOINT.new(x, y, z)
     API.DoAction_Tile(tile)
-    while API.Read_LoopyLoop() and API.Math_DistanceW(API.PlayerCoord(), tile) > 5 do
+    while API.Read_LoopyLoop() and API.Math_Distance(API.PlayerCoord(), tile) > 5 do
         API.RandomSleep2(100, 200, 200)
     end
 end
@@ -177,7 +177,7 @@ local function catchWhirls()
         API.DoAction_NPC(0x29,1488,{ whirlieNPCS[i] }, 50)
         UTILS.randomSleep(1000)
         if flowerBasket then
-            if API.InvItemcount_1(52808) > 0 then
+            if Inventory:InvItemcount(52808) > 0 then
                 fillRoses()
             else
                 print("No more flowers")
@@ -202,7 +202,7 @@ end
 
 while API.Read_LoopyLoop() do
     idleCheck()
-    if flowerBasket and API.InvItemcount_1(52808) < 1 then
+    if flowerBasket and Inventory:InvItemcount(52808) < 1 then
         print("No more flowers")
         break
     end

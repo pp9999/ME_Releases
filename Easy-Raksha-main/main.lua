@@ -963,7 +963,7 @@ local PREBUILD_DIVE_TILE = {x = 3296, y = 10143}
 
 --- Targeted movement toward a tile. Dive/Bladed Dive both take a destination, so
 --- unlike Surge they always travel the right way.
---- @param tile WPOINT
+--- @param tile FFPOINT
 --- @return boolean
 local function diveToward(tile)
     if Utils:canUseAbility("Dive") then
@@ -1022,7 +1022,7 @@ for _ = 1, PREBUILD_DIVE_ATTEMPTS do
             end
 
             ---@diagnostic disable-next-line: undefined-global
-            local landed = diveToward(WPOINT.new(tx, ty, z))
+            local landed = diveToward(FFPOINT.new(tx, ty, z))
             Utils:log(string.format(
                           "Prebuild dive -> (%d, %d, %d), %.0f tiles out: %s", tx,
                           ty, z, distance, landed and "sent" or "failed"))
@@ -1576,7 +1576,7 @@ local FIGHT_ROTATION = {
             mechanics:setHome(hx, hy, hz)
 
             ---@diagnostic disable-next-line: undefined-global
-            --return API.DoAction_WalkerW(WPOINT.new(hx, hy, hz))
+            --return API.DoAction_Walker(FFPOINT.new(hx, hy, hz))
         end,
         wait = 0,
         useTicks = true
@@ -2020,7 +2020,7 @@ local function specialActionVisible()
     lastSpecialScanTick = tick
     lastSpecialScanResult = false
 
-    -- API.ScanForInterfaceTest2Get IS GONE as of the interface API update, and
+    -- API.ScanForInterfaceTest2Get2 IS GONE as of the interface API update, and
     -- calling it here is why this scan never once returned true. It was not in
     -- api.lua at all, so the pcall was catching "attempt to call a nil value"
     -- every single check — which reads exactly like "the button was never on

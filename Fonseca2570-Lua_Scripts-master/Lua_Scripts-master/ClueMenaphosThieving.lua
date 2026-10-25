@@ -85,7 +85,7 @@ end
 local function healBank() 
     if API.GetHPrecent() < 25 then 
         API.logDebug("going to bank for healing")
-        API.DoAction_Tile(WPOINT.new(3236 + math.random(0,1),2761+ math.random(0,1),0))
+        API.DoAction_Tile(FFPOINT.new(3236 + math.random(0,1),2761+ math.random(0,1),0))
 
         API.RandomSleep2(5000,500,1000)
 

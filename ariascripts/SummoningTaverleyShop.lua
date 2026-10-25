@@ -7,7 +7,7 @@
 local API = require("api")
 local Shop = require("Shop")
 
-local SUMMONING_SHOP = WPOINT.new(2931, 3448, 0)
+local SUMMONING_SHOP = FFPOINT.new(2931, 3448, 0)
 
 local familiars = {
     {
@@ -86,7 +86,7 @@ end
 
 API.Write_LoopyLoop(true)
 while API.Read_LoopyLoop() do
-    if API.InvItemcount_1(curr.pouch_id) > 0 then
+    if Inventory:InvItemcount(curr.pouch_id) > 0 then
         --[[local boxes = getDepositBoxes()
         if #boxes > 0 then
             if API.Compare2874Status(69, false) then
@@ -123,7 +123,7 @@ while API.Read_LoopyLoop() do
         print("Walking next to obelisk")
         API.DoAction_Tile(SUMMONING_SHOP)
         API.RandomSleep2(600, 100, 100)
-    elseif API.InvItemcount_1(curr.secondary_unnoted) >= 20 then
+    elseif Inventory:InvItemcount(curr.secondary_unnoted) >= 20 then
         if isCreationInterfaceOpen() then
             API.KeyboardPress32(0x20, 0) --press Space
             API.RandomSleep2(300, 300, 300)

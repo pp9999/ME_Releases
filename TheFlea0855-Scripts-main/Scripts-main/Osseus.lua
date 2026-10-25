@@ -23,8 +23,8 @@ local pouchID = 52825 -- Holy scarab
 
 --AREAS
 -- The X1,X2,Y1,Y2 coords of the rectangle that we consider to be the area
-local warsRetreat = WPOINT.new(3296,10127,0)
-local entrance = WPOINT.new(3930,9867,0)
+local warsRetreat = FFPOINT.new(3296,10127,0)
+local entrance = FFPOINT.new(3930,9867,0)
 
 
 
@@ -47,7 +47,7 @@ end
 local function verifyOVL()
     if not API.Buffbar_GetIDstatus(49039).found then
         for _, pot in ipairs(elderOverloads) do
-            if API.InvItemcount_1(pot) > 0 then
+            if Inventory:InvItemcount(pot) > 0 then
                 print("Drinking Overload!")
                 API.DoAction_Inventory1(pot, 0, 1, API.OFF_ACT_GeneralInterface_route)
                 break
@@ -83,7 +83,7 @@ local function verifyDarkness()
 end
 
 local function hasElvenRitualShard()
-    return API.InvItemcount_1(ELVEN_SHARD) > 0
+    return Inventory:InvItemcount(ELVEN_SHARD) > 0
 end
 
 local function useElvenRitualShard()
@@ -104,7 +104,7 @@ local function useElvenRitualShard()
 end
 
 local function hasExcalibur()
-    return API.InvItemcount_1(excaliburID) > 0
+    return Inventory:InvItemcount(excaliburID) > 0
 end
 
 local function useExcalibur()
@@ -126,7 +126,7 @@ local function useExcalibur()
 end
 
 local function hasPenancePowder()
-    return API.InvItemcount_1(penancePowderID) > 0
+    return Inventory:InvItemcount(penancePowderID) > 0
 end
 
 local function usePenancePowder()
@@ -144,7 +144,7 @@ local function hasLoot()
 end
 
 local function performLooting()
-    if not API.InvFull_() then
+    if not Inventory:IsFull() then
         local lootWindowOpen = API.LootWindowOpen_2()
         if not lootWindowOpen then
             print("Loot interface not open. Opening now.")
@@ -194,7 +194,7 @@ end
 
 local instanceTimer = { { 861,0,-1,-1,0 }, { 861,2,-1,0,0 }, { 861,4,-1,2,0 }, { 861,8,-1,4,0 } }
 local function hasInstanceEnded()
-    local result = API.ScanForInterfaceTest2Get(false, instanceTimer)
+    local result = API.ScanForInterfaceTest2Get2(false, instanceTimer)
     if #result > 0 then
         local inter = result[1]
         if inter.textids == "00:00" then
@@ -238,7 +238,7 @@ end
 
 local function summonFamiliar()
     if not API.CheckFamiliar() then
-        if API.InvItemcount_1(pouchID) > 0 then
+        if Inventory:InvItemcount(pouchID) > 0 then
             print("summoning familiar")
             API.DoAction_Inventory2({pouchID}, 0, 1, API.OFF_ACT_GeneralInterface_route)
             UTILS.countTicks(math.random(1,3))
@@ -251,7 +251,7 @@ local function banking()
         API.DoAction_Interface(0xffffffff,0xffffffff,1,1461,1,205,API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(4000,1000,3000) -- teleport to wars retreat from spellbook
     end
-    if API.PInAreaW(warsRetreat, 30) then
+    if API.PInAreaF2(warsRetreat, 30) then
         print("At wars")
         API.RandomSleep2(1500,300,900)  
         API.DoAction_Object1(0x33,API.OFF_ACT_GeneralObject_route3,{ warRetreatBank },50); -- load last preset
@@ -260,12 +260,12 @@ local function banking()
         API.DoAction_Object1(0x3d,API.OFF_ACT_GeneralObject_route0,{ warAltar },50); -- use war altar
         API.WaitUntilMovingEnds()  
         UTILS.countTicks(math.random(1,3))
-        API.DoAction_Tile(WPOINT.new(3293 + math.random(1,3),10141 + math.random(1,3) ,0)) -- walk near portal
+        API.DoAction_Tile(FFPOINT.new(3293 + math.random(1,3),10141 + math.random(1,3) ,0)) -- walk near portal
         API.RandomSleep2(1000,400,1200)
         API.DoAction_Object1(0x39,API.OFF_ACT_GeneralObject_route0,{ portal },50); -- use the portal
         API.WaitUntilMovingEnds()       
     end
-    if API.PInAreaW(entrance, 10) then
+    if API.PInAreaF2(entrance, 10) then
         print("Instanced encounter")
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route2,{ 119688 },50); -- instanced encounter
         API.RandomSleep2(1500,100,500)
@@ -288,7 +288,7 @@ local function banking()
         local combatPosY = entryPosition.y + 9
         local combatPosZ = entryPosition.z 
         API.RandomSleep2(500,100,500)
-        API.DoAction_Tile(WPOINT.new(combatPosX, combatPosY, combatPosZ))
+        API.DoAction_Tile(FFPOINT.new(combatPosX, combatPosY, combatPosZ))
         API.WaitUntilMovingEnds()  
     end
 end
@@ -322,15 +322,15 @@ while API.Read_LoopyLoop() do
         if hasInstanceEnded() then
             banking()
         end
-        if API.InvItemFound2(dinoBoneID) and API.InvItemFound2(notePaperID) then
+        if Inventory:InvItemFound(dinoBoneID) and Inventory:InvItemFound(notePaperID) then
             UTILS.NoteItem(dinoBoneID)
             API.RandomSleep2(1400,200,2000)                
         end
-        if API.InvItemFound2(damagedDinoBoneID) and API.InvItemFound2(notePaperID) then
+        if Inventory:InvItemFound(damagedDinoBoneID) and Inventory:InvItemFound(notePaperID) then
             UTILS.NoteItem(damagedDinoBoneID)
             API.RandomSleep2(1400,200,2000)                
         end
-        if API.InvItemFound2(1631) and API.InvItemFound2(notePaperID) then --notes uncut dragonstones to remove inventory clutter
+        if Inventory:InvItemFound(1631) and Inventory:InvItemFound(notePaperID) then --notes uncut dragonstones to remove inventory clutter
             UTILS.NoteItem(1631)
             API.RandomSleep2(1400,200,2000)                
         end 

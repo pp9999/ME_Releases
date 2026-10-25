@@ -287,7 +287,7 @@ function Utils.changeConversionMode(targetMode)
     Interact:Object(riftName, "Configure", 50)
 
     local interfaceOpened = waitForCondition(function()
-        local result = API.ScanForInterfaceTest2Get(false, DATA.INTERFACES.RIFT_CONFIGURE)
+        local result = API.ScanForInterfaceTest2Get2(false, DATA.INTERFACES.RIFT_CONFIGURE)
         if result and result[1] and result[1].textids then
             local text = result[1].textids
             return text == "Memory Conversion:" or text == "Memory Conversion"

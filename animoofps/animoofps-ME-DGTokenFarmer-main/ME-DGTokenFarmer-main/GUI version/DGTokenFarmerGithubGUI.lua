@@ -95,7 +95,7 @@ local function DiveCheck()
             local newTileX = DiveChk.Tile_XYZ.x + 12 + randomNumber
             local newTileY = DiveChk.Tile_XYZ.y + 20
             local newTileZ = DiveChk.Tile_XYZ.z
-            UTILS.dive(WPOINT.new(newTileX, newTileY, newTileZ))
+            UTILS.dive(FFPOINT.new(newTileX, newTileY, newTileZ))
             print("Random number: " .. randomNumber)
         end
     end
@@ -115,7 +115,7 @@ local function monstercheck1() -- path after the combo 1
 
             if not API.PInArea(newTileX, 1, newTileY, 1, newTileZ) then
                 --    print("Walking to dog1")
-                API.DoAction_WalkerW(WPOINT.new(newTileX, newTileY, newTileZ))
+                API.DoAction_Walker(FFPOINT.new(newTileX, newTileY, newTileZ))
                 print("Random number: " .. randomNumber)
                 API.RandomSleep2(1200, 800, 1000)
             end
@@ -136,7 +136,7 @@ local function monstercheck2() -- path after the combo 2
 
             if not API.PInArea(newTileXdog, 1, newTileYdog, 1, newTileZdog) then
                 --    print("Walking to dog2")
-                API.DoAction_WalkerW(WPOINT.new(newTileXdog, newTileYdog, newTileZdog))
+                API.DoAction_Walker(FFPOINT.new(newTileXdog, newTileYdog, newTileZdog))
                 API.RandomSleep2(1200, 600, 400)
 
                 if not UTILS.isDeflectMelee() then
@@ -165,13 +165,13 @@ local function knightcheck1() -- initial walking before the combo 1
             newTileX = knight.Tile_XYZ.x - 4
             newTileY = knight.Tile_XYZ.y + randomNumber
             newTileZ = knight.Tile_XYZ.z
-            local SpotCheck = WPOINT.new(newTileX, newTileY, newTileZ)
+            local SpotCheck = FFPOINT.new(newTileX, newTileY, newTileZ)
             if findNpcOrObject(124355, 5, 12) then
-                API.DoAction_WalkerW(WPOINT.new(newTileX, newTileY, newTileZ))
+                API.DoAction_Walker(FFPOINT.new(newTileX, newTileY, newTileZ))
                 print("Random number: " .. randomNumber)
                 repeat
                     API.RandomSleep2(100, 10, 10)
-                until API.PInAreaW(SpotCheck, 1) or not API.Read_LoopyLoop()
+                until API.PInAreaF2(SpotCheck, 1) or not API.Read_LoopyLoop()
             end
         end
     end
@@ -196,12 +196,12 @@ local function knightcheck2() -- initial walking before the combo 2
             local newTileXD = Knight.Tile_XYZ.x - 4
             local newTileYD = Knight.Tile_XYZ.y + 13
             local newTileZD = Knight.Tile_XYZ.z
-            local SpotCheck2 = WPOINT.new(newTileXD, newTileYD, newTileZD)
+            local SpotCheck2 = FFPOINT.new(newTileXD, newTileYD, newTileZD)
             if API.PInArea(newTileX, 1, newTileY, 1, newTileZ) then
-                API.DoAction_WalkerW(WPOINT.new(newTileXD, newTileYD, newTileZD))
+                API.DoAction_Walker(FFPOINT.new(newTileXD, newTileYD, newTileZD))
                 repeat
                     API.RandomSleep2(10, 10, 10)
-                until API.PInAreaW(SpotCheck2, 1) or not API.Read_LoopyLoop()
+                until API.PInAreaF2(SpotCheck2, 1) or not API.Read_LoopyLoop()
                 API.RandomSleep2(200, 300, 400)
                 combo()
             end
@@ -210,7 +210,7 @@ local function knightcheck2() -- initial walking before the combo 2
 end
 
 local function needBank()
-    return API.InvItemcount_String(foodName) < foodAmount
+    return Inventory:InvItemcount_String(foodName) < foodAmount
 end
 
 local function MaxGuildBanking()

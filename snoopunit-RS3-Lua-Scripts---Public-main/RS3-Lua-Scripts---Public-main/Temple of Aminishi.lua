@@ -69,90 +69,90 @@ local combatState = 0
 local API = require("api")
 local UTILS = require("utils")
 
-local START = WPOINT:new(0, 0, 0)
+local START = FFPOINT:new(0, 0, 0)
 local ZONES = {
-    FIRST_CHECKPOINT = WPOINT:new(),
-    CATHEDRAL_LEADER_CHECKPOINT = WPOINT.new(),
-    CATHEDRAL_FOLLOWER_CHECKPOINT = WPOINT.new(),
+    FIRST_CHECKPOINT = FFPOINT.new(0, 0, 0),
+    CATHEDRAL_LEADER_CHECKPOINT = FFPOINT.new(0, 0, 0),
+    CATHEDRAL_FOLLOWER_CHECKPOINT = FFPOINT.new(0, 0, 0),
     FIRST_STAIRS_FIGHT = {
         NAME = "First Stairwell",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     RIGHT_SIDE_FIGHT = {
         NAME = "Right Side",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     LEFT_SIDE_FIGHT = {
         NAME = "Left Side",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     SECOND_STAIRS_FIGHT = {
         NAME = "Bottom Stairwell",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     CATHEDRAL_OUTSIDE = {
         NAME = "Cathedral Outside",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     CATHEDRAL_INSIDE = {             
         NAME = "Cathedral Inside",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     SARKHAN_MINIBOSS = {
         NAME = "Sarkhan Miniboss",
-        TOP_LEFT = WPOINT.new(),
-        BOT_RIGHT = WPOINT.new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     XIANG_MINIBOSS = {
         NAME = "Xiang Miniboss",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     OLIVIA_MINIBOSS = {
         NAME = "Olivia Miniboss",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     TRAINING_GROUP = {
         NAME = "Training Group",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     CATHEDRAL_OUTSIDE_TWO = {
         NAME = "Cathedral Outside Back",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     OYU_MINIBOSS = {
         NAME = "Oyu Miniboss",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     KITCHEN_OUTSIDE = {
         NAME = "Outside Kitchen",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     AHOEITU_MINIBOSS = {
         NAME = "Ahoeitu Miniboss",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     KITCHEN_OUTSIDE_TWO = {
         NAME = "Outside Kitchen Far",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     },
     LAST_GROUP = {
         NAME = "Bottom Stairwell Last",
-        TOP_LEFT = WPOINT:new(),
-        BOT_RIGHT = WPOINT:new()
+        TOP_LEFT = FFPOINT.new(0, 0, 0),
+        BOT_RIGHT = FFPOINT.new(0, 0, 0)
     }
 }
 local ENEMIES = {
@@ -290,7 +290,7 @@ function hasDeBuff(debuff)
     end
 end
 function hasItem(item, count)
-    invitems = API.InvItemcount_String()
+    invitems = Inventory:InvItemcount_String()
     if count then return invitems end
     if invitems > 0 then
         return true
@@ -429,7 +429,7 @@ function findEnemyNearLeader()
 
 end
 function dialogText()
-    local dialogInterface = API.ScanForInterfaceTest2Get(false, { { 1188, 5, -1, -1, 0 }, { 1188, 3, -1, 5, 0 }, { 1188, 3, 14, 3, 0 } })
+    local dialogInterface = API.ScanForInterfaceTest2Get2(false, { { 1188, 5, -1, -1, 0 }, { 1188, 3, -1, 5, 0 }, { 1188, 3, 14, 3, 0 } })
 
     if #dialogInterface > 0 and #dialogInterface[1].textids > 0 then
         return dialogInterface[1].textids
@@ -479,20 +479,20 @@ end
 
 --PLAYERCHECKS
 function buffCheck()    
-    if API.InvItemcount_String("Ancient elven ritual shard") > 0 then
+    if Inventory:InvItemcount_String("Ancient elven ritual shard") > 0 then
         if not hasDeBuff(DEBUFFS.Elven_Shard) and (API.GetPrayPrecent() <= 63) then
             --API.DoAction_Interface(0x2e,0xa95e,1,1670,110,-1,API.OFF_ACT_GeneralInterface_route)
             activateAbility("Ancient elven ritual shard")
             API.RandomSleep2(600, 50, 300)
         end 
     end
-    if API.InvItemcount_String("Enhanced Excalibur") > 0 then
+    if Inventory:InvItemcount_String("Enhanced Excalibur") > 0 then
         if not hasDeBuff(DEBUFFS.Enh_Excalibur) and (API.GetHPrecent() <= 80) then
             activateAbility("Enhanced Excalibur")
             API.RandomSleep2(600, 50, 300)
         end 
     end
-    if API.InvItemcount_String("Overload") > 0 then
+    if Inventory:InvItemcount_String("Overload") > 0 then
         if not hasBuff(BUFFS.Overload) then
             print("Using Overloads")
             activateAbility("Overload potion")
@@ -679,7 +679,7 @@ function waitForParty()
             local leader = findLeader(true)
             if leader.Distance > 0 then
                 print("Moving to leader")
-                API.DoAction_WalkerF(leader.Tile_XYZ)
+                API.DoAction_Walker(leader.Tile_XYZ)
                 API.RandomSleep2(650, 0, 250)
             end
         end
@@ -708,45 +708,45 @@ function setupCoordOffset()
     START.x = coords.x
     START.y = coords.y 
    
-    ZONES.FIRST_CHECKPOINT = WPOINT.new(START.x + 20, START.y + 4, 0)
-    ZONES.FIRST_STAIRS_FIGHT.TOP_LEFT = WPOINT:new(START.x + 24, START.y + 8, 0)
-    ZONES.FIRST_STAIRS_FIGHT.BOT_RIGHT = WPOINT:new(START.x + 30, START.y, 0)
-    ZONES.RIGHT_SIDE_FIGHT.TOP_LEFT = WPOINT:new(START.x + 25, START.y - 0, 0)
-    ZONES.RIGHT_SIDE_FIGHT.BOT_RIGHT = WPOINT:new(START.x + 40, START.y - 11, 0)
-    ZONES.LEFT_SIDE_FIGHT.TOP_LEFT = WPOINT:new(START.x + 26, START.y + 19, 0)
-    ZONES.LEFT_SIDE_FIGHT.BOT_RIGHT = WPOINT:new(START.x + 40, START.y + 12, 0)
-    ZONES.SECOND_STAIRS_FIGHT.TOP_LEFT = WPOINT:new(START.x + 48, START.y + 14, 0)
-    ZONES.SECOND_STAIRS_FIGHT.BOT_RIGHT = WPOINT:new(START.x + 57, START.y + 2, 0)
-    ZONES.CATHEDRAL_OUTSIDE.TOP_LEFT = WPOINT:new(START.x + 62, START.y + 19, 0)
-    ZONES.CATHEDRAL_OUTSIDE.BOT_RIGHT = WPOINT:new(START.x + 76, START.y + 11, 0)
-    ZONES.CATHEDRAL_LEADER_CHECKPOINT = WPOINT.new(START.x + 63, START.y + 26, 0)
-    ZONES.CATHEDRAL_FOLLOWER_CHECKPOINT = WPOINT.new(START.x + 60, START.y + 26, 0)
-    ZONES.CATHEDRAL_INSIDE.TOP_LEFT = WPOINT.new(START.x + 58, START.y + 36, 0)
-    ZONES.CATHEDRAL_INSIDE.BOT_RIGHT = WPOINT.new(START.x + 75, START.y + 24, 0)
-    ZONES.SARKHAN_MINIBOSS.TOP_LEFT = WPOINT.new(START.x + 63, START.y + 43, 0)
-    ZONES.SARKHAN_MINIBOSS.BOT_RIGHT = WPOINT.new(START.x +70, START.y + 39, 0)
-    ZONES.XIANG_MINIBOSS.TOP_LEFT = WPOINT:new(START.x + 81, START.y + 10, 0)
-    ZONES.XIANG_MINIBOSS.BOT_RIGHT = WPOINT:new(START.x + 85, START.y + 7, 0)
-    ZONES.OLIVIA_MINIBOSS.TOP_LEFT = WPOINT:new(START.x + 94, START.y + 9, 0)
-    ZONES.OLIVIA_MINIBOSS.BOT_RIGHT = WPOINT:new(START.x + 101, START.y - 1, 0)
-    ZONES.TRAINING_GROUP.TOP_LEFT = WPOINT:new(START.x + 80, START.y + 27, 0)
-    ZONES.TRAINING_GROUP.BOT_RIGHT = WPOINT:new(START.x + 98, START.y + 8, 0)
-    ZONES.CATHEDRAL_OUTSIDE_TWO.TOP_LEFT = WPOINT:new(START.x + 77, START.y + 35, 0)
-    ZONES.CATHEDRAL_OUTSIDE_TWO.BOT_RIGHT = WPOINT:new(START.x + 89, START.y + 25, 0)
-    ZONES.OYU_MINIBOSS.TOP_LEFT = WPOINT:new(START.x + 90, START.y + 37, 0)
-    ZONES.OYU_MINIBOSS.BOT_RIGHT = WPOINT:new(START.x + 97, START.y + 33, 0)
-    ZONES.KITCHEN_OUTSIDE.TOP_LEFT = WPOINT:new(START.x + 69, START.y, 0)
-    ZONES.KITCHEN_OUTSIDE.BOT_RIGHT = WPOINT:new(START.x + 93, START.y - 11, 0)
-    ZONES.AHOEITU_MINIBOSS.TOP_LEFT = WPOINT:new(START.x + 92, START.y - 16, 0)
-    ZONES.AHOEITU_MINIBOSS.BOT_RIGHT = WPOINT:new(START.x + 104, START.y - 24, 0)
-    ZONES.KITCHEN_OUTSIDE_TWO.TOP_LEFT = WPOINT:new(START.x + 63, START.y - 11, 0)
-    ZONES.KITCHEN_OUTSIDE_TWO.BOT_RIGHT = WPOINT:new(START.x + 69, START.y - 16, 0)
-    ZONES.LAST_GROUP.TOP_LEFT = WPOINT:new(START.x + 48, START.y + 1, 0)
-    ZONES.LAST_GROUP.BOT_RIGHT = WPOINT:new(START.x + 61, START.y - 5, 0)
+    ZONES.FIRST_CHECKPOINT = FFPOINT.new(START.x + 20, START.y + 4, 0)
+    ZONES.FIRST_STAIRS_FIGHT.TOP_LEFT = FFPOINT:new(START.x + 24, START.y + 8, 0)
+    ZONES.FIRST_STAIRS_FIGHT.BOT_RIGHT = FFPOINT:new(START.x + 30, START.y, 0)
+    ZONES.RIGHT_SIDE_FIGHT.TOP_LEFT = FFPOINT:new(START.x + 25, START.y - 0, 0)
+    ZONES.RIGHT_SIDE_FIGHT.BOT_RIGHT = FFPOINT:new(START.x + 40, START.y - 11, 0)
+    ZONES.LEFT_SIDE_FIGHT.TOP_LEFT = FFPOINT:new(START.x + 26, START.y + 19, 0)
+    ZONES.LEFT_SIDE_FIGHT.BOT_RIGHT = FFPOINT:new(START.x + 40, START.y + 12, 0)
+    ZONES.SECOND_STAIRS_FIGHT.TOP_LEFT = FFPOINT:new(START.x + 48, START.y + 14, 0)
+    ZONES.SECOND_STAIRS_FIGHT.BOT_RIGHT = FFPOINT:new(START.x + 57, START.y + 2, 0)
+    ZONES.CATHEDRAL_OUTSIDE.TOP_LEFT = FFPOINT:new(START.x + 62, START.y + 19, 0)
+    ZONES.CATHEDRAL_OUTSIDE.BOT_RIGHT = FFPOINT:new(START.x + 76, START.y + 11, 0)
+    ZONES.CATHEDRAL_LEADER_CHECKPOINT = FFPOINT.new(START.x + 63, START.y + 26, 0)
+    ZONES.CATHEDRAL_FOLLOWER_CHECKPOINT = FFPOINT.new(START.x + 60, START.y + 26, 0)
+    ZONES.CATHEDRAL_INSIDE.TOP_LEFT = FFPOINT.new(START.x + 58, START.y + 36, 0)
+    ZONES.CATHEDRAL_INSIDE.BOT_RIGHT = FFPOINT.new(START.x + 75, START.y + 24, 0)
+    ZONES.SARKHAN_MINIBOSS.TOP_LEFT = FFPOINT.new(START.x + 63, START.y + 43, 0)
+    ZONES.SARKHAN_MINIBOSS.BOT_RIGHT = FFPOINT.new(START.x +70, START.y + 39, 0)
+    ZONES.XIANG_MINIBOSS.TOP_LEFT = FFPOINT:new(START.x + 81, START.y + 10, 0)
+    ZONES.XIANG_MINIBOSS.BOT_RIGHT = FFPOINT:new(START.x + 85, START.y + 7, 0)
+    ZONES.OLIVIA_MINIBOSS.TOP_LEFT = FFPOINT:new(START.x + 94, START.y + 9, 0)
+    ZONES.OLIVIA_MINIBOSS.BOT_RIGHT = FFPOINT:new(START.x + 101, START.y - 1, 0)
+    ZONES.TRAINING_GROUP.TOP_LEFT = FFPOINT:new(START.x + 80, START.y + 27, 0)
+    ZONES.TRAINING_GROUP.BOT_RIGHT = FFPOINT:new(START.x + 98, START.y + 8, 0)
+    ZONES.CATHEDRAL_OUTSIDE_TWO.TOP_LEFT = FFPOINT:new(START.x + 77, START.y + 35, 0)
+    ZONES.CATHEDRAL_OUTSIDE_TWO.BOT_RIGHT = FFPOINT:new(START.x + 89, START.y + 25, 0)
+    ZONES.OYU_MINIBOSS.TOP_LEFT = FFPOINT:new(START.x + 90, START.y + 37, 0)
+    ZONES.OYU_MINIBOSS.BOT_RIGHT = FFPOINT:new(START.x + 97, START.y + 33, 0)
+    ZONES.KITCHEN_OUTSIDE.TOP_LEFT = FFPOINT:new(START.x + 69, START.y, 0)
+    ZONES.KITCHEN_OUTSIDE.BOT_RIGHT = FFPOINT:new(START.x + 93, START.y - 11, 0)
+    ZONES.AHOEITU_MINIBOSS.TOP_LEFT = FFPOINT:new(START.x + 92, START.y - 16, 0)
+    ZONES.AHOEITU_MINIBOSS.BOT_RIGHT = FFPOINT:new(START.x + 104, START.y - 24, 0)
+    ZONES.KITCHEN_OUTSIDE_TWO.TOP_LEFT = FFPOINT:new(START.x + 63, START.y - 11, 0)
+    ZONES.KITCHEN_OUTSIDE_TWO.BOT_RIGHT = FFPOINT:new(START.x + 69, START.y - 16, 0)
+    ZONES.LAST_GROUP.TOP_LEFT = FFPOINT:new(START.x + 48, START.y + 1, 0)
+    ZONES.LAST_GROUP.BOT_RIGHT = FFPOINT:new(START.x + 61, START.y - 5, 0)
 
 end
 function dungeonStart()
-    API.DoAction_WalkerW(ZONES.FIRST_CHECKPOINT)
+    API.DoAction_Walker(ZONES.FIRST_CHECKPOINT)
     API.RandomSleep2(1200, 0, 250)
     while API.ReadPlayerMovin2() do
         antiban()
@@ -766,9 +766,9 @@ function dungeonStart()
 end
 function movetoCathedral()
     if API.GetLocalPlayerName() == Leader_Name then
-        API.DoAction_WalkerW(ZONES.CATHEDRAL_LEADER_CHECKPOINT)  
+        API.DoAction_Walker(ZONES.CATHEDRAL_LEADER_CHECKPOINT)  
     else
-        API.DoAction_WalkerW(ZONES.CATHEDRAL_FOLLOWER_CHECKPOINT)
+        API.DoAction_Walker(ZONES.CATHEDRAL_FOLLOWER_CHECKPOINT)
     end
     API.RandomSleep2(1200, 0, 250)
     while API.ReadPlayerMovin2() do
@@ -813,7 +813,7 @@ function combatZone(enemy, zone)
             local leader = findLeader(true)
             if leader.Distance > 5 then
                 print("Moving to leader")
-                API.DoAction_WalkerF(leader.Tile_XYZ)
+                API.DoAction_Walker(leader.Tile_XYZ)
                 API.RandomSleep2(650, 0, 250)
             end
         end   
@@ -827,7 +827,7 @@ function combatZone(enemy, zone)
             local leader = findLeader(true)
             if leader.Distance > 5 then
                 print("Moving to leader")
-                API.DoAction_WalkerF(leader.Tile_XYZ)
+                API.DoAction_Walker(leader.Tile_XYZ)
                 API.RandomSleep2(650, 0, 250)
             end
             print("Couldn't find any injured enemies with 10 tiles of leader!")
@@ -846,8 +846,8 @@ function combatZone(enemy, zone)
 end
 function exitDungeon()
     local offset = math.random(-2.2)
-    local randomCoords = WPOINT:new(START.x + offset, START.y + offset,0)
-    API.DoAction_WalkerW(randomCoords)
+    local randomCoords = FFPOINT:new(START.x + offset, START.y + offset,0)
+    API.DoAction_Walker(randomCoords)
     waitForParty()
     local door = API.ReadAllObjectsArray({12}, {doorID}, {})
     while door.Distance > 1 do

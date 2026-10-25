@@ -285,7 +285,7 @@ function loadLastPreset()
     local banktimer = API.SystemTime()
     Interact:NPC("Emerald Benedict", "Load Last Preset from", 20)
     API.RandomSleep2(600, 0, 250)
-    while API.Invfreecount_() > 0 do
+    while Inventory:Invfreecount() > 0 do
         if not API.Read_LoopyLoop() then return false end
         if (API.SystemTime() - banktimer) > 30000 then
             API.logDebug("Out of supplies!")

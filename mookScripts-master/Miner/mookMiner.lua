@@ -92,7 +92,7 @@ while API.Read_LoopyLoop() do
         goto mine
     end
 
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         print("Inventory full")
         if MINER:ShouldBank() == false then
             print("Banking disabled, dropping ores")
@@ -103,7 +103,7 @@ while API.Read_LoopyLoop() do
             end
 
             for _,id in ipairs(oreIds) do
-                while API.InvItemcount_1(id) > 0 and API.Read_LoopyLoop() do
+                while Inventory:InvItemcount(id) > 0 and API.Read_LoopyLoop() do
                     API.DoAction_Inventory1(id, 0, 8, API.OFF_ACT_GeneralInterface_route2)
                     API.RandomSleep2(400, 200, 800)
                 end
@@ -119,7 +119,7 @@ while API.Read_LoopyLoop() do
             print("Inventory full, checking ore box")
             MINER:FillOreBox()
 
-            if API.InvFull_() then
+            if Inventory:IsFull() then
                 print("Ore box full, banking")
                 MINER:SetStatus("Banking")
                 MINER.Selected:Bank()

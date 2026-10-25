@@ -83,7 +83,7 @@ local function antiIdleTask()
 end
 
 local function gameStateChecks()
-    local gameState = API.GetGameState()
+    local gameState = API.GetGameState2()
     if (gameState ~= 3) then
         print('Not ingame with state:', gameState)
         API.Write_LoopyLoop(false)
@@ -104,7 +104,7 @@ local function onStart()
     print('on start')
     local priffLodestone = LODESTONES.LODESTONE.PRIFDDINAS.loc
     local playerXYZ = API.PlayerCoord()
-    if not API.PInArea21(miningArea[1], miningArea[2], miningArea[3], miningArea[4]) and (API.Math_DistanceW(priffLodestone, playerXYZ) > 50) then
+    if not API.PInArea21(miningArea[1], miningArea[2], miningArea[3], miningArea[4]) and (API.Math_Distance(priffLodestone, playerXYZ) > 50) then
         print('Not at stones area or in PRIFDDINAS')
         STATE = STATES.GOTO_PRIFF
     else
@@ -120,7 +120,7 @@ end
 
 local function gotoStones()
     if not API.PInArea21(miningArea[1], miningArea[2], miningArea[3], miningArea[4]) then
-        API.DoAction_WalkerW(WPOINT.new(2232, 3310, 1))
+        API.DoAction_Walker(FFPOINT.new(2232, 3310, 1))
     end
     STATE = STATES.MINE_STONES
 end

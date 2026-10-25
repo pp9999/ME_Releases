@@ -267,11 +267,11 @@ local function dismountCurrentCycle()
     local pCoord = API.PlayerCoord()
     local offsets = { {1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1} }
     local chosen = offsets[math.random(1, #offsets)]
-    local stepTile = WPOINT.new(pCoord.x + chosen[1], pCoord.y + chosen[2], pCoord.z)
+    local stepTile = FFPOINT.new(pCoord.x + chosen[1], pCoord.y + chosen[2], pCoord.z)
 
     sleep(math.random(60, 160), 20)
     if not API.DoAction_Tile(stepTile) then
-        pcall(function() API.DoAction_WalkerW(stepTile) end)
+        pcall(function() API.DoAction_Walker(stepTile) end)
     end
     API.RandomSleep2(1200, 2000, 3500)
 end
@@ -288,7 +288,7 @@ local function pedalCycle(cycle)
 
     local xpBefore = API.GetSkillXP("AGILITY")
     if not API.DoAction_Object_Direct(0xb5, API.OFF_ACT_GeneralObject_route0, cycle.rawObj) then
-        pcall(function() Interact:Object(cycle.name, "Pedal", WPOINT.new(cycle.tile.x, cycle.tile.y, cycle.tile.z), 30) end)
+        pcall(function() Interact:Object(cycle.name, "Pedal", FFPOINT.new(cycle.tile.x, cycle.tile.y, cycle.tile.z), 30) end)
     end
 
     Stats.actionsCount = Stats.actionsCount + 1
@@ -428,7 +428,7 @@ local function checkAreaWalking(targetX, targetY, areaName)
     local p = API.PlayerCoord()
     if math.sqrt((p.x - targetX)^2 + (p.y - targetY)^2) > 20 then
         currentStatus = "Walking to " .. areaName
-        API.DoAction_WalkerW(WPOINT.new(targetX, targetY, p.z))
+        API.DoAction_Walker(FFPOINT.new(targetX, targetY, p.z))
         API.RandomSleep2(1200, 1800, 2500)
         API.WaitUntilMovingEnds()
         return true
@@ -538,7 +538,7 @@ local function stepDivination()
         if targetCrate and targetCrate.rawObj then
             sleep(math.random(100, 250), 30)
             if not API.DoAction_Object_Direct(0xb5, API.OFF_ACT_GeneralObject_route0, targetCrate.rawObj) then
-                pcall(function() Interact:Object(targetCrate.name, "Deposit", WPOINT.new(targetCrate.tile.x, targetCrate.tile.y, targetCrate.tile.z), 30) end)
+                pcall(function() Interact:Object(targetCrate.name, "Deposit", FFPOINT.new(targetCrate.tile.x, targetCrate.tile.y, targetCrate.tile.z), 30) end)
             end
             Stats.actionsCount = Stats.actionsCount + 1
 
@@ -563,7 +563,7 @@ local function stepDivination()
         if binObj then
             sleep(math.random(100, 250), 30)
             if not API.DoAction_Object_Direct(0xb5, API.OFF_ACT_GeneralObject_route0, binObj) then
-                pcall(function() Interact:Object(binObj.Name or "Crystal storage bin", "Withdraw", WPOINT.new(binObj.TileX, binObj.TileY, binObj.TileZ), 30) end)
+                pcall(function() Interact:Object(binObj.Name or "Crystal storage bin", "Withdraw", FFPOINT.new(binObj.TileX, binObj.TileY, binObj.TileZ), 30) end)
             end
             Stats.actionsCount = Stats.actionsCount + 1
 

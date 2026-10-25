@@ -27,7 +27,7 @@ local specialChars = {
 }
 
 local function getCursorState()
-    local cursor_box = tostring(API.VB_GetBits(CURSOR_LOCATION_VARBIT_ID))
+    local cursor_box = tostring(API.ReadVarbit(CURSOR_LOCATION_VARBIT_ID))
     if cursor_box == USERNAME_BOX_VARBIT_STR then
         print("USERNAME_BOX")
         USERNAME = true
@@ -52,14 +52,14 @@ local function TypeStringOnKeyboard(inputString)
 end
 
 local function getUsernameInterfaceText()
-    return API.ScanForInterfaceTest2Get(false,
+    return API.ScanForInterfaceTest2Get2(false,
         {{744, 0, -1, -1, 0}, {744, 26, -1, 0, 0}, {744, 39, -1, 26, 0}, {744, 52, -1, 39, 0},
             {744, 93, -1, 52, 0}, {744, 94, -1, 93, 0}, {744, 96, -1, 94, 0}, {744, 110, -1, 96, 0},
             {744, 111, -1, 110, 0}})[1].textids
 end
 
 local function getPasswordInterfaceText()
-    return API.ScanForInterfaceTest2Get(false,
+    return API.ScanForInterfaceTest2Get2(false,
         {{744, 0, -1, -1, 0},
         {744, 26, -1, 0, 0},
         {744, 39, -1, 26, 0},
@@ -72,7 +72,7 @@ local function getPasswordInterfaceText()
 end
 
 local function isInvalidDetailsInterfaceVisible()
-    local text = API.ScanForInterfaceTest2Get(false,
+    local text = API.ScanForInterfaceTest2Get2(false,
         {{744,0,-1,-1,0},
         {744,197,-1,0,0},
         {744,339,-1,197,0},
@@ -84,7 +84,7 @@ local function isInvalidDetailsInterfaceVisible()
 end
 
 local function isNotLoggedOutInterfaceVisible()
-    local text = API.ScanForInterfaceTest2Get(false,
+    local text = API.ScanForInterfaceTest2Get2(false,
         {{744,0,-1,-1,0},
         {744,197,-1,0,0},
         {744,339,-1,197,0},

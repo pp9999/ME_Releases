@@ -6,7 +6,6 @@ local TIMER = require("utilities.timer")
 API.Write_LoopyLoop(true)
 API.SetDrawTrackedSkills(true)
 API.SetDrawLogs(true)
-Write_fake_mouse_do(false)
 API.SetMaxIdleTime(6)
 
 ---@param adds AllObject[]
@@ -15,7 +14,7 @@ local function checkNearbyAdds(adds,osseus)
     local addsNearby = 0
     if #adds > 0 then 
         for _ , add in ipairs(adds) do
-            if API.Math_DistanceF(add.Tile_XYZ,osseus.Tile_XYZ) < 11 and add.Life > 0 then
+            if API.Math_Distance(add.Tile_XYZ,osseus.Tile_XYZ) < 11 and add.Life > 0 then
                 addsNearby = addsNearby + 1
             end
         end
@@ -56,10 +55,10 @@ while API.Read_LoopyLoop() do
                         COMBAT.doRotationNecro(true)
                     end
                 end
-            elseif checkNearbyAdds(adds,osseus) > 0 and API.GetABs_name1("Threads of Fate").cooldown_timer > 0 and API.ReadTargetInfo(false).Target_Name == "Osseus" and TIMER:shouldRun("OSSEUS_SWAP") then
+            elseif checkNearbyAdds(adds,osseus) > 0 and API.GetABs_name1("Threads of Fate").cooldown_timer > 0 and API.ReadTargetInfo99(false).Target_Name == "Osseus" and TIMER:shouldRun("OSSEUS_SWAP") then
                 API.DoAction_NPC(0x2a,API.OFF_ACT_AttackNPC_route,{ 30945 },50)
                 TIMER:createSleep("OSSEUS_SWAP",2000)
-            elseif checkNearbyAdds(adds,osseus) == 0 and API.ReadTargetInfo(false).Target_Name ~= "Osseus" and TIMER:shouldRun("OSSEUS_SWAP") then
+            elseif checkNearbyAdds(adds,osseus) == 0 and API.ReadTargetInfo99(false).Target_Name ~= "Osseus" and TIMER:shouldRun("OSSEUS_SWAP") then
                 API.DoAction_NPC(0x2a,API.OFF_ACT_AttackNPC_route,{ 30629 },50)
                 TIMER:createSleep("OSSEUS_SWAP",2000)
             else
@@ -81,7 +80,7 @@ while API.Read_LoopyLoop() do
                 TIMER:scheduleTask("OSSEUS_DIVE",7500,function ()
                     local safeTiles = API.Math_FreeTiles({osseus.Tile_XYZ},6,6,{},true)
                     if safeTiles[1] ~= nil then
-                        local safeTile = WPOINT.new(math.floor(safeTiles[1].x),math.floor(safeTiles[1].y),safeTiles[1].z)
+                        local safeTile = FFPOINT.new(math.floor(safeTiles[1].x),math.floor(safeTiles[1].y),safeTiles[1].z)
                         API.DoAction_Dive_Tile_sleep(safeTile,50)
                     end
                 end)

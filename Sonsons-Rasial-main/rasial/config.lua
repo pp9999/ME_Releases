@@ -221,7 +221,7 @@ Config.RotationManager = {
             {
                 label = "Backup Attack Rasial",
                 type = "Custom",
-                condition = function() return (API.ReadTargetInfo(true).Hitpoints <= 0) and (API.GetABs_name1("Death Skulls").cooldown_timer <= 0) end,
+                condition = function() return (API.ReadTargetInfo99(true).Hitpoints <= 0) and (API.GetABs_name1("Death Skulls").cooldown_timer <= 0) end,
                 action = function()
                     local rasial = Utils.find(30165, 1, 40)
                     if rasial then
@@ -335,7 +335,7 @@ Config.Buffs = {
         execute = function()
             local name = "Lantadyme incense sticks"
             if (API.Bbar_ConvToSeconds(API.Buffbar_GetIDstatus(47713, false)) > 0) and
-            (API.InvItemcount_String(name) > 0) and (API.InvItemcountStack_String(name) >= 6) then
+            (Inventory:InvItemcount_String(name) > 0) and (Inventory:InvItemcountStack_Strings({ name }) >= 6) then
                 return API.DoAction_Inventory3(name, 0, 1, API.OFF_ACT_GeneralInterface_route)
             else
                 return API.DoAction_Inventory3(name, 0, 2, API.OFF_ACT_GeneralInterface_route)
@@ -346,7 +346,7 @@ Config.Buffs = {
     {
         buffName = "Elder overload",
         buffId = 49039,
-        canApply = function(state) return (API.InvItemcount_String("Elder overload") > 0) and (API.Get_tick() - state.timestamp.buff > 1) end,
+        canApply = function(state) return (Inventory:InvItemcount_String("Elder overload") > 0) and (API.Get_tick() - state.timestamp.buff > 1) end,
         execute = function()
             return API.DoAction_Inventory3("Elder overload", 0, 1, API.OFF_ACT_GeneralInterface_route)
         end,
@@ -431,7 +431,7 @@ Config.Timer = {
                 local bankChest = Utils.find(114750, 12, 20)
                 if not Utils.atLocation(bankChest.Tile_XYZ.x, bankChest.Tile_XYZ.y -1, 1) then
                     ---@diagnostic disable-next-line
-                    return API.DoAction_WalkerW(WPOINT.new(bankChest.Tile_XYZ.x, bankChest.Tile_XYZ.y - 1, 0))
+                    return API.DoAction_Walker(FFPOINT.new(bankChest.Tile_XYZ.x, bankChest.Tile_XYZ.y - 1, 0))
                 end
                 return false
             end
@@ -483,7 +483,7 @@ Config.Timer = {
                 ]]
 
                 ---@diagnostic disable-next-line
-                local coords = (Config.Variables.adrenCrystalSide == "West" and WPOINT.new(3290, 10148,0)) or WPOINT.new(3298,10148, 0)
+                local coords = (Config.Variables.adrenCrystalSide == "West" and FFPOINT.new(3290, 10148,0)) or FFPOINT.new(3298,10148, 0)
                 --flexTimer.useTicks = true
 
                 if Utils.atLocation(3304, 10127, 3) then -- at altar
@@ -492,7 +492,7 @@ Config.Timer = {
                     Config.Timer.flexTimer.useTicks = false
                     -- click on tile infornt of bank chest
                     ---@diagnostic disable-next-line
-                    Config.Timer.flexTimer.action = function(state) return API.DoAction_WalkerW(WPOINT.new(3299, 10131, 0)) end
+                    Config.Timer.flexTimer.action = function(state) return API.DoAction_Walker(FFPOINT.new(3299, 10131, 0)) end
                 elseif Utils.atLocation(3299, 10132, 3) and not Utils.atLocation(3294, 10134, 2) and state.state.orientation >= 300 then -- at bank chest and not at stairs and facing nw
                     Config.Timer.flexTimer.cooldown = 1
                     Config.Timer.flexTimer.name = "Dive & Surge to adrenaline crystals"
@@ -522,7 +522,7 @@ Config.Timer = {
                 elseif Utils.playerIsIdle(state) then
                     Config.Timer.flexTimer.name = "Walking around portals and crystals"
                     ---@diagnostic disable-next-line
-                    Config.Timer.flexTimer.action = function(state) return API.DoAction_WalkerW(WPOINT.new(3293 + math.random(-2, 2), 10148 + math.random(-2, 2), 0)) end
+                    Config.Timer.flexTimer.action = function(state) return API.DoAction_Walker(FFPOINT.new(3293 + math.random(-2, 2), 10148 + math.random(-2, 2), 0)) end
                 end
 
                 local success = Config.Timer.flexTimer:execute(state)
@@ -542,7 +542,7 @@ Config.Timer = {
             condition = function(state) return Utils.playerIsIdle(state) end,
             action = function(state)
                 ---@diagnostic disable-next-line
-                local coords = (Config.Variables.adrenCrystalSide == "West" and WPOINT.new(3290, 10148,0)) or WPOINT.new(3298,10148, 0)
+                local coords = (Config.Variables.adrenCrystalSide == "West" and FFPOINT.new(3290, 10148,0)) or FFPOINT.new(3298,10148, 0)
                 return API.DoAction_Object_r(0x29, API.OFF_ACT_GeneralObject_route0, {114749}, 40, coords, 3)
             end
         }
@@ -693,7 +693,7 @@ Config.Timer = {
             condition = function(state) return not state.state.moving end,
             action = function(state)
                 ---@diagnostic disable-next-line
-                return API.DoAction_WalkerW(WPOINT.new(Config.Variables.safeSpot.x, Config.Variables.safeSpot.y, 0))
+                return API.DoAction_Walker(FFPOINT.new(Config.Variables.safeSpot.x, Config.Variables.safeSpot.y, 0))
             end
         }
     ),
@@ -751,7 +751,7 @@ Config.Timer = {
 
                     if bestTile then
                         ---@diagnostic disable-next-line
-                        return API.DoAction_WalkerW(WPOINT.new(bestTile.x, bestTile.y, 0))
+                        return API.DoAction_Walker(FFPOINT.new(bestTile.x, bestTile.y, 0))
                     end
                 end
                 return false
@@ -773,7 +773,7 @@ Config.Timer = {
             condition = function(state) return not state.state.moving end,
             action = function(state)
                 ---@diagnostic disable-next-line
-                return API.DoAction_WalkerW(WPOINT.new(Config.Variables.lootSpot.x, Config.Variables.lootSpot.y, 0))
+                return API.DoAction_Walker(FFPOINT.new(Config.Variables.lootSpot.x, Config.Variables.lootSpot.y, 0))
             end
         }
     ),
@@ -895,7 +895,7 @@ Config.playerManager = {
                     { 861, 0, -1, -1, 0 }, { 861, 2, -1, 0, 0 },
                     { 861, 4, -1, 2,  0 }, { 861, 8, -1, 4, 0 }
                 }
-                local result = API.ScanForInterfaceTest2Get(false, timer)
+                local result = API.ScanForInterfaceTest2Get2(false, timer)
                 return result and #result > 0 and #result[1].textids > 0
             end
         },

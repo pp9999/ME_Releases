@@ -166,8 +166,8 @@ local function followTimeSprite(objects)
     end
     local sprite = FindHl(targetIds, 60, { 7307 })
     if sprite.Id ~= nil then
-        local spritePos = WPOINT.new(sprite.TileX / 512, sprite.TileY / 512, sprite.TileZ / 512)
-        local distanceF = API.Math_DistanceF(API.PlayerCoordfloat(), sprite.Tile_XYZ)
+        local spritePos = FFPOINT.new(sprite.TileX / 512, sprite.TileY / 512, sprite.TileZ / 512)
+        local distanceF = API.Math_Distance(API.PlayerCoordfloat(), sprite.Tile_XYZ)
         if distanceF > 2 then
             UTILS.randomSleep(1000)
             log("Sprite has moved, chasing it")
@@ -189,7 +189,7 @@ local function followTimeSprite(objects)
 end
 
 local function dropSoil()
-    if soilBoxFull and API.InvItemcount_String(soil.label) > 0 then
+    if soilBoxFull and Inventory:InvItemcount_String(soil.label) > 0 then
         log('Dropping soil')
         API.KeyboardPress(soilKeybind, 100, 200)
     end
@@ -206,14 +206,14 @@ local function inventoryCheck()
     else
         soilBoxFull = false;
     end
-    local emptySpots = API.Invfreecount_()
-    if API.InvFull_() then
+    local emptySpots = Inventory:Invfreecount()
+    if Inventory:IsFull() then
         if not soilBoxFull then
             log('Inventory is full, trying to fill soilbox')
             API.KeyboardPress(soilboxKeybind, 100, 200)
             UTILS.randomSleep(600)
         end
-        local spotsAfterFill = API.Invfreecount_()
+        local spotsAfterFill = Inventory:Invfreecount()
         if spotsAfterFill <= emptySpots then
             log('Inventory is full after using soilbox, trying to deposit')
             local cart = API.GetAllObjArrayInteract_str({ cartName }, 60, 0)
@@ -224,7 +224,7 @@ local function inventoryCheck()
                 UTILS.randomSleep(1200)
                 API.WaitUntilMovingEnds()
                 UTILS.randomSleep(600)
-                if not API.InvFull_() then
+                if not Inventory:IsFull() then
                     depositAttempt = 0
                 end
             end

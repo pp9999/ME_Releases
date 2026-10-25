@@ -75,7 +75,7 @@ local function isAtLocation(location)
 end
 
 local function needBank() 
-    return API.InvItemcount_String(foodName) < foodAmount or API.InvFull_()
+    return Inventory:InvItemcount_String(foodName) < foodAmount or Inventory:IsFull()
 end
 
 local function retrieveLastPreset() 
@@ -114,7 +114,7 @@ local timer = {
 }
 
 local function timerHitZero()
-    local result = API.ScanForInterfaceTest2Get(false, timer)
+    local result = API.ScanForInterfaceTest2Get2(false, timer)
     if result and #result > 0 and result[1].textids then
         local textids = result[1].textids
         local startIndex, endIndex = string.find(textids, "00:00")
@@ -147,7 +147,7 @@ local function standInFrontOfArchGlacor()
             local newTileZ = portal.Tile_XYZ.z
             API.RandomSleep2(300, 300, 400)
             if not API.PInArea(newTileX, 5, newTileY, 5, newTileZ) then
-                API.DoAction_Tile(WPOINT.new(newTileX, newTileY, newTileZ))
+                API.DoAction_Tile(FFPOINT.new(newTileX, newTileY, newTileZ))
                 API.RandomSleep2(300, 300, 400)
             end
         end
@@ -156,7 +156,7 @@ end
 
 
 local function loot()
-    if not API.InvFull_() then
+    if not Inventory:IsFull() then
         API.DoAction_Loot_w(itemIdsToLoot, 5, API.PlayerCoordfloat(), 10)
         API.RandomSleep2(1000, 1000, 1000)
         API.WaitUntilMovingEnds()
@@ -181,7 +181,7 @@ while API.Read_LoopyLoop() do
     if isAtLocation(LOCATIONS.warsRetreat) and not API.ReadPlayerMovin2() then
         if needBank() then
             if API.BankOpen2() then
-                API.KeyBoardPress2(0x31, 50, 150)
+                API.KeyboardPress2(0x31, 50, 150)
                 API.RandomSleep2(600, 600, 600)
             end
             if API.VB_FindPSettinOrder(9932, 0).state == 1 then

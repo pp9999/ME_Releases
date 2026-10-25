@@ -155,7 +155,7 @@ local function withdrawPowder()
       API.RandomSleep2(1000, 1000, 1000)
       API.KeyboardPress2(0x1B, 50, 150)
       API.RandomSleep2(2000, 2000, 2000)
-      if API.InvStackSize(52805) < 1 then
+      if Inventory:InvStackSize(52805) < 1 then
         API.Write_LoopyLoop(false)
       else
       API.KeyboardPress2(0x58, 50, 150)

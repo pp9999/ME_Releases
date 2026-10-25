@@ -19,7 +19,6 @@ else
     AURAS.auraRefreshTime = 0
 end
 
-API.Write_fake_mouse_do(false)  -- can remove if you call this in your script
 
 AURAS.auraActions = {
     oddball                 = {row=0,  addr=0x51dd, id=20957, resetTypes={1}},
@@ -221,7 +220,7 @@ end
 
 function AURAS.isAuraManagementOpen()
     local inter = {{1929,0,-1,0},{1929,2,-1,0},{1929,2,14,0}}
-    local iface = API.ScanForInterfaceTest2Get(false, inter)[1]
+    local iface = API.ScanForInterfaceTest2Get2(false, inter)[1]
     return iface.textids == "Aura Management"
 end
 
@@ -249,7 +248,7 @@ function AURAS.selectAura(auraName)
 
     local inter = {{1929,0,-1,0},{1929,3,-1,0},{1929,4,-1,0},{1929,72,-1,0}}
     for i = 1, 3 do
-        local iface = API.ScanForInterfaceTest2Get(false, inter)[1]
+        local iface = API.ScanForInterfaceTest2Get2(false, inter)[1]
         local cleaned = iface.textids:lower():gsub("%-", " ")
         if cleaned == auraName then
             print(string.format("[AURA] '%s' selected", auraName))
@@ -279,7 +278,7 @@ function AURAS.parseAvailableVis()
         {1929,0,-1,0},{1929,3,-1,0},{1929,4,-1,0},
         {1929,30,-1,0},{1929,53,-1,0},{1929,56,-1,0},
     }
-    local raw = API.ScanForInterfaceTest2Get(false, inter)[1].textids
+    local raw = API.ScanForInterfaceTest2Get2(false, inter)[1].textids
     local avail = AURAS.parseVisCost(raw)
     if not avail then
         print("[AURA] ERROR: Unable to parse available Vis -> aborting extension")
@@ -313,7 +312,7 @@ function AURAS.getResetCounts()
 
     local resetCounts = {}
     for _, scan in ipairs(scans) do
-        local iface = API.ScanForInterfaceTest2Get(false, scan.pattern)[1]
+        local iface = API.ScanForInterfaceTest2Get2(false, scan.pattern)[1]
         if iface and iface.itemid1 == scan.expected then
             resetCounts[scan.key] = iface.itemid1_size
         else
@@ -385,7 +384,7 @@ function AURAS.extensionLogic()
     if not avail then return end
 
     local interLong  = {{1929,0,-1,0},{1929,3,-1,0},{1929,4,-1,0},{1929,30,-1,0},{1929,32,-1,0},{1929,51,-1,0}}
-    local rawLong    = API.ScanForInterfaceTest2Get(false, interLong)[1].textids
+    local rawLong    = API.ScanForInterfaceTest2Get2(false, interLong)[1].textids
     local costLong   = AURAS.parseVisCost(rawLong)
     if not costLong then
         print("[AURA] ERROR: Unable to parse long-extension cost -> skipping")
@@ -393,7 +392,7 @@ function AURAS.extensionLogic()
     end
 
     local interShort = {{1929,0,-1,0},{1929,3,-1,0},{1929,4,-1,0},{1929,30,-1,0},{1929,32,-1,0},{1929,52,-1,0}}
-    local rawShort   = API.ScanForInterfaceTest2Get(false, interShort)[1].textids
+    local rawShort   = API.ScanForInterfaceTest2Get2(false, interShort)[1].textids
     local costShort  = AURAS.parseVisCost(rawShort)
     if not costShort then
         print("[AURA] ERROR: Unable to parse short-extension cost -> skipping")
@@ -553,7 +552,7 @@ function AURAS.manageAura(rawInput, autoExtend)
         {1929,6,-1,0},{1929,11,-1,0},{1929,18,-1,0},
         {1929,19,-1,0}
     }
-    local ownedStatus = API.ScanForInterfaceTest2Get(false, ownedBox)[1].textids
+    local ownedStatus = API.ScanForInterfaceTest2Get2(false, ownedBox)[1].textids
     print(string.format("[AURA] Owned status: %s", ownedStatus))
 
     if ownedStatus == "Buy" then
@@ -568,7 +567,7 @@ function AURAS.manageAura(rawInput, autoExtend)
     end
 
     local interStatus = {{1929,0,-1,0},{1929,3,-1,0},{1929,4,-1,0},{1929,74,-1,0}}
-    local status = API.ScanForInterfaceTest2Get(false, interStatus)[1].textids
+    local status = API.ScanForInterfaceTest2Get2(false, interStatus)[1].textids
 
     if status == "Currently active" then
         print(string.format("[AURA] '%s' already active", auraName))

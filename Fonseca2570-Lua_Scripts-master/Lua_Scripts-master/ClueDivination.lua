@@ -139,9 +139,9 @@ while API.Read_LoopyLoop() do
     end
 
     if not API.CheckAnim(60) then 
-        if API.InvFull_() then
+        if Inventory:IsFull() then
             convertMemories()
-        elseif API.InvStackSize(chronicleIds.enhanced) >= 10 then
+        elseif Inventory:InvStackSize(chronicleIds.enhanced) >= 10 then
             if API.DoAction_Object_valid1(0x29, 160, { riftIds.normal , riftIds.cache}, 50, true) then
                 API.RandomSleep2(1200,100,300)
             end

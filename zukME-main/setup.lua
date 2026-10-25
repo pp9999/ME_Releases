@@ -92,7 +92,7 @@ local function checkSetup()
   end
 
   for _, item in ipairs(EXPECTED_INVENTORY) do
-    local count = API.InvItemcount_String(item)
+    local count = Inventory:InvItemcount_String(item)
     if count == 0 then
       table.insert(ERRORS, { "Missing from inventory", item })
     end

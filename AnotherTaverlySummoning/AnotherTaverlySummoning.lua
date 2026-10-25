@@ -110,7 +110,7 @@ setupGUI()
 
 -- Define the function to scan for interface components
 local function scanForInterface(interfaceComps)
-    return #(API.ScanForInterfaceTest2Get(true, interfaceComps)) > 0
+    return #(API.ScanForInterfaceTest2Get2(true, interfaceComps)) > 0
 end
 
 -- Variable modules
@@ -120,13 +120,13 @@ local walkedToSummoningHut = false -- Flag to track if walking to the summoning 
 
 -- Function to perform bank action
 local function Bank() -- !! EDIT LINES 123, 125 TO MATCH APPROPRIATE ITEM ID'S !!
-    if API.InvItemFound1(12123) or not API.InvItemFound1(2150) then -- checks for having pouches or not having secondary
+    if Inventory:InvItemFound(12123) or not Inventory:InvItemFound(2150) then -- checks for having pouches or not having secondary
         -- Check if not preset loaded and Swamp toad not found
-        if not presetLoaded and not API.InvItemFound1(2150) then
+        if not presetLoaded and not Inventory:InvItemFound(2150) then
             -- Walk to bank if not already walked in this loop
             if not walkedToBank then
                 print("Walking to the bank...")
-                API.DoAction_Tile(WPOINT.new(2875,3417,0))
+                API.DoAction_Tile(FFPOINT.new(2875,3417,0))
                 API.WaitUntilMovingandAnimEnds()
                 walkedToBank = true  -- Set the flag to true after successfully walking to the bank
             end
@@ -138,7 +138,7 @@ local function Bank() -- !! EDIT LINES 123, 125 TO MATCH APPROPRIATE ITEM ID'S !
                 API.WaitUntilMovingandAnimEnds() -- Wait for preset loading animation to end
                 
                 -- Check if 'Swamp toad' is now in the inventory !!EDIT LINE 141 TO HAVE SECONDARY ITEM ID!!
-                if API.InvItemFound1(2150) then
+                if Inventory:InvItemFound(2150) then
                     print("Preset loaded successfully.")
                     presetLoaded = true
                 else
@@ -164,11 +164,11 @@ end
 
 -- Function to make pouches, edit Line 167 to proper secondary and pouch checks!!! 
 local function MakePouches()
-    if API.InvItemFound1(2150) or not API.InvItemFound1(12123) then
+    if Inventory:InvItemFound(2150) or not Inventory:InvItemFound(12123) then
         -- Check if the character needs to walk to the summoning hut
         if not walkedToSummoningHut then
             print("Walking to summoning hut...")
-            API.DoAction_Tile(WPOINT.new(2931, 3448, 0))
+            API.DoAction_Tile(FFPOINT.new(2931, 3448, 0))
             API.WaitUntilMovingandAnimEnds()
             walkedToSummoningHut = true  -- Set the flag to true after successfully walking to the summoning hut
         else
@@ -180,7 +180,7 @@ local function MakePouches()
                 API.WaitUntilMovingandAnimEnds()
                 
                 -- Check if the character has the required item for creating pouches !! EDIT LINE 183 TO HAVE YOUR SECONDARY ITEM ID !!
-                if API.InvItemFound1(2150) then
+                if Inventory:InvItemFound(2150) then
                     print("Creating pouches...")
                     API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1370, 30, -1, 2912)
 		    API.RandomSleep2(650,1000,1000)

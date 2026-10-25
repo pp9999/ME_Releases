@@ -711,7 +711,7 @@ end
 local function collectEssence()
     debugPrint("Attempting to collect essence using floatingEssenceID: " .. tostring(floatingEssenceID))
     if API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, {floatingEssenceID}, 50) then
-        sleepUntil(function() return API.InvStackSize(ITEM_IDS.essence) > minimumEssenceAmount end, 10, "Gathered essence")
+        sleepUntil(function() return Inventory:InvStackSize(ITEM_IDS.essence) > minimumEssenceAmount end, 10, "Gathered essence")
     else
         debugPrint("Failed to initiate essence collection action.")
     end
@@ -720,7 +720,7 @@ end
 local function trainRC()
     local playerLevel = getRunecraftingLevel()
     local currentIsland = islands[mapNumber][islandIndex]
-    local essence = API.InvStackSize(ITEM_IDS.essence)
+    local essence = Inventory:InvStackSize(ITEM_IDS.essence)
     debugPrint("Running trainRC: Player level: " .. playerLevel .. ", Essence: " .. essence)
 
     -- Gather valid entities from both objects and NPCs
@@ -767,7 +767,7 @@ API.SetDrawTrackedSkills(true)
 API.ScriptRuntimeString()
 API.GetTrackedSkills()
 
-API.Write_ScripCuRunning1("Current Task: Runespan")
+API.Write_ScripCuRunning0("Current Task: Runespan")
 
 while API.Read_LoopyLoop() do
     API.DoRandomEvents()

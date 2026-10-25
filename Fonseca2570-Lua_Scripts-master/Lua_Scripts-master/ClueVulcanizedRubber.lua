@@ -72,7 +72,7 @@ local function Bank()
 
     print("pressing 3")
     API.KeyboardPress("3",50,100)
-    if not API.InvFull_() then
+    if not Inventory:IsFull() then
         depositAttempt = 0
     end
 end
@@ -89,7 +89,7 @@ local function depositCart()
             60, true);
         UTILS.randomSleep(800)
         API.WaitUntilMovingEnds()
-        if not API.InvFull_() then
+        if not Inventory:IsFull() then
             depositAttempt = 0
         end
     else
@@ -127,7 +127,7 @@ local function excavate()
 end
 
 local function HasAutoScreener() 
-    return API.InvItemcount_1(AutoScreener) > 0
+    return Inventory:InvItemcount(AutoScreener) > 0
 end
 
 while(API.Read_LoopyLoop()) do
@@ -136,7 +136,7 @@ while(API.Read_LoopyLoop()) do
     gameStateChecks()
 
     if not isMoving() and not API.CheckAnim(40) then 
-        if API.InvFull_() then 
+        if Inventory:IsFull() then 
             if HasAutoScreener() then 
                 depositCart()
             else

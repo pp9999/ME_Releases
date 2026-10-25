@@ -218,7 +218,7 @@ local function withdrawFletchingItems()
     end
     
     -- Deposit inventory if full
-    if API.Invfreecount_() < 28 then
+    if Inventory:Invfreecount() < 28 then
         print("Inventory full, depositing items...")
         API.DoAction_Interface(0xffffffff, 0xffffffff, 1, 517, 39, -1, API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(800, 1200, 1500)

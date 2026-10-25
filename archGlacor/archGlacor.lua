@@ -50,19 +50,19 @@ local function checkHP()
 end
 
 local function reSupplyNeeded()
-    if not API.InvItemFound1(FOOD.ROCKTAIL) then
+    if not Inventory:InvItemFound(FOOD.ROCKTAIL) then
         print("OUT OF FOOD")
         return true
     end
-    if not API.InvItemFound1(POTIONS.OVERLOAD_3) and not API.InvItemFound1(POTIONS.OVERLOAD_2) and not API.InvItemFound1(POTIONS.OVERLOAD_1) then
+    if not Inventory:InvItemFound(POTIONS.OVERLOAD_3) and not Inventory:InvItemFound(POTIONS.OVERLOAD_2) and not Inventory:InvItemFound(POTIONS.OVERLOAD_1) then
         print("OUT OF OVERLOAD")
         return true
     end
-    if not API.InvItemFound1(POTIONS.SUPER_RESTORE_4) and not API.InvItemFound1(POTIONS.SUPER_RESTORE_3) and not API.InvItemFound1(POTIONS.SUPER_RESTORE_2) and not API.InvItemFound1(POTIONS.SUPER_RESTORE_1) then
+    if not Inventory:InvItemFound(POTIONS.SUPER_RESTORE_4) and not Inventory:InvItemFound(POTIONS.SUPER_RESTORE_3) and not Inventory:InvItemFound(POTIONS.SUPER_RESTORE_2) and not Inventory:InvItemFound(POTIONS.SUPER_RESTORE_1) then
         print("OUT OF SUPER RESTORES")
         return true
     end
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         print("FULL OF LOOT")
         return true
     end
@@ -80,23 +80,23 @@ local function goToSpot()
         API.DoAction_Interface(0x24, 0xffffffff, 1, 1591, 60, -1, API.OFF_ACT_GeneralInterface_route)  -- enter instance
         UTILS.countTicks(3)
         local POS = API.PlayerCoord()                                                                  -- get player coords
-        API.DoAction_Tile(WPOINT.new(POS.x + math.random(12, 15), POS.y + math.random(3, 5), POS.z))   -- move to randomized spot
+        API.DoAction_Tile(FFPOINT.new(POS.x + math.random(12, 15), POS.y + math.random(3, 5), POS.z))   -- move to randomized spot
         UTILS.countTicks(5)
     end
     firstRun = true
 end
 
 local function checkInventory()
-    if not API.InvItemFound1(FOOD.ROCKTAIL) then
+    if not Inventory:InvItemFound(FOOD.ROCKTAIL) then
         print("OUT OF FOOD - STOPPING")
         API.Write_LoopyLoop(false)
     end
-    if not API.InvItemFound1(POTIONS.OVERLOAD_3) and not API.InvItemFound1(POTIONS.OVERLOAD_2) and not API.InvItemFound1(POTIONS.OVERLOAD_1) then
+    if not Inventory:InvItemFound(POTIONS.OVERLOAD_3) and not Inventory:InvItemFound(POTIONS.OVERLOAD_2) and not Inventory:InvItemFound(POTIONS.OVERLOAD_1) then
         print("OUT OF OVERLOAD - STOPPING")
         API.Write_LoopyLoop(false)
         return true
     end
-    if not API.InvItemFound1(POTIONS.SUPER_RESTORE_4) and not API.InvItemFound1(POTIONS.SUPER_RESTORE_3) and not API.InvItemFound1(POTIONS.SUPER_RESTORE_2) and not API.InvItemFound1(POTIONS.SUPER_RESTORE_1) then
+    if not Inventory:InvItemFound(POTIONS.SUPER_RESTORE_4) and not Inventory:InvItemFound(POTIONS.SUPER_RESTORE_3) and not Inventory:InvItemFound(POTIONS.SUPER_RESTORE_2) and not Inventory:InvItemFound(POTIONS.SUPER_RESTORE_1) then
         print("OUT OF SUPER RESTORES - STOPPING")
         API.Write_LoopyLoop(false)
         return true
@@ -118,7 +118,7 @@ local function reSupply()
 end
 
 local function lootDrops()
-    if not API.InvFull_() then
+    if not Inventory:IsFull() then
         local lootWindowOpen = API.LootWindowOpen_2()
         UTILS.countTicks(1)
         if not lootWindowOpen then

@@ -338,7 +338,7 @@ end
 -----------------------UI-----------------------
 --------------------FUNCTIONS-------------------
 local function invContains(items)
-    local loot = API.InvItemcount_2(items)
+    local loot = Inventory:InvItemcounts(items)
     for _, v in ipairs(loot) do
         if v > 0 then
             return true
@@ -399,7 +399,7 @@ end
 
 --------------------TELEPORTS-------------------
 local function isLodestoneInterfaceUp()
-    return (#API.ScanForInterfaceTest2Get(true, { { 1092, 1, -1, -1, 0 }, { 1092, 54, -1, 1, 0 } }) > 0) or API.Compare2874Status(30)
+    return (#API.ScanForInterfaceTest2Get2(true, { { 1092, 1, -1, -1, 0 }, { 1092, 54, -1, 1, 0 } }) > 0) or API.Compare2874Status(30)
 end
 
 local function isTeleportOptionsUp()
@@ -498,7 +498,7 @@ local function canUsePowerburst()
 end
 
 local function findPowerburst()
-    local powerbursts = API.CheckInvStuff3(ID_Items.POWERBURST)
+    local powerbursts = Inventory:CheckInvStuffCheckAll(ID_Items.POWERBURST)
     local foundIdx = -1
     for i, value in ipairs(powerbursts) do
         if tostring(value) == '1' then
@@ -600,7 +600,7 @@ local function RenewFamiliar()
             end
             if API.CheckBankVarp() == true then
                 API.logDebug("Bank is open!")
-                if API.Invfreecount_() < 2 then
+                if Inventory:Invfreecount() < 2 then
                     API.logDebug("Summoning: make more room in your invt.")
                     API.KeyboardPress2(0x33,0,50)
                 else
@@ -610,7 +610,7 @@ local function RenewFamiliar()
                 end
             end
         end
-        if API.InvStackSize(selectedFamiliar) < 1 then
+        if Inventory:InvStackSize(selectedFamiliar) < 1 then
             API.logError("didn't find any pouches")
             fail = fail + 1
             return
@@ -674,27 +674,27 @@ local function RuneCounters()
         runecount = runecount + 6;
         API.logDebug("Deposit body: You deposit " .. runecount .. " essence into the charger")
     end
-    if API.CheckInvStuff0(24205) then
+    if Inventory:CheckInvStuffCheckAll({ 24205 }) then
         API.logDebug("Found: Massive pouch")
         runecount = runecount + 18;
         API.logDebug("Deposit Massive pouch: You deposit " .. runecount .. " essence into the charger")
     end
-    if API.CheckInvStuff0(5514) then
+    if Inventory:CheckInvStuffCheckAll({ 5514 }) then
         API.logDebug("Found: Giant pouch")
         runecount = runecount + 12;
         API.logDebug("Deposit Giant pouch: You deposit " .. runecount .. " essence into the charger")
     end
-    if API.CheckInvStuff0(5512) then
+    if Inventory:CheckInvStuffCheckAll({ 5512 }) then
         API.logDebug("Found: Large pouch")
         runecount = runecount + 9;
         API.logDebug("Deposit Large pouch: You deposit " .. runecount .. " essence into the charger")
     end
-    if API.CheckInvStuff0(5510) then
+    if Inventory:CheckInvStuffCheckAll({ 5510 }) then
         API.logDebug("Found: Medium pouch")
         runecount = runecount + 6;
         API.logDebug("Deposit Medium pouch: You deposit " .. runecount .. " essence into the charger")
     end
-    if API.CheckInvStuff0(5509) then
+    if Inventory:CheckInvStuffCheckAll({ 5509 }) then
         API.logDebug("Found: Small pouch")
         runecount = runecount + 3;
         API.logDebug("Deposit Small pouch: You deposit " .. runecount .. " essence into the charger")
@@ -732,7 +732,7 @@ end
 --}
 
 --local function isWildernissInterfacePresent()
- --   local result = API.ScanForInterfaceTest2Get(true, WildernissInterface)
+ --   local result = API.ScanForInterfaceTest2Get2(true, WildernissInterface)
  --   if #result > 0 then
  --       API.logDebug("Info: Wildy interface seen!")
 --        API.logInfo("Found wilderniss warning interface!")
@@ -745,9 +745,9 @@ end
 
 local function Goback()
     API.logWarn("Running back and logging out, been PKed!")
-    API.DoAction_Dive_Tile(WPOINT.new(3101 + math.random(-2, 2), 3523 + math.random(-2, 2), 0))
+    API.DoAction_Dive_Tile(FFPOINT.new(3101 + math.random(-2, 2), 3523 + math.random(-2, 2), 0))
     utils.randomSleep(150)
-    API.DoAction_WalkerW(WPOINT.new(3101, 3523, 0))
+    API.DoAction_Walker(FFPOINT.new(3101, 3523, 0))
     utils.randomSleep(50)
     utils.randomSleep(100)
     API.DoAction_Object1(0xb5,0,{ 65082 },50)
@@ -820,7 +820,7 @@ end
 -----------------NORMAL FUNCTIONS---------------
 local function WalkToMage()
     if not (API.ReadPlayerAnim() == ID_Anim.WildyWall) and not API.ReadPlayerMovin2() then
-        API.DoAction_Tile(WPOINT.new(3107 + math.random(-4, 4), 3559 + math.random(-4, 4), 0))
+        API.DoAction_Tile(FFPOINT.new(3107 + math.random(-4, 4), 3559 + math.random(-4, 4), 0))
         API.logDebug("Walk To: Mage of Zamorak")
     end
 end
@@ -835,15 +835,15 @@ end
 
 local function SurgeToMage()
     if not (API.ReadPlayerAnim() == ID_Anim.WildyWall) and not API.ReadPlayerMovin2() and (not API.CheckAnim(10)) then
-        API.DoAction_Surge_Tile(WPOINT.new(3107 + math.random(-4, 4), 3559 + math.random(-4, 4), 0))
+        API.DoAction_Surge_Tile2(FFPOINT.new(3107 + math.random(-4, 4), 3559 + math.random(-4, 4), 0))
         API.DoAction_Ability("Surge", 1, API.OFF_ACT_GeneralInterface_route)
         API.logDebug("Doaction: Surge ")
 
 
         local Mage = API.GetAllObjArray1({ID_NPC.MAGE}, 100, {1})
         if Mage ~= nil and #Mage > 0 then
-            local MageCoord = WPOINT.new(Mage[1].TileX/512, Mage[1].TileY/512, 0)
-            if API.Math_DistanceW(MageCoord, API.PlayerCoord()) > 15 then
+            local MageCoord = FFPOINT.new(Mage[1].TileX/512, Mage[1].TileY/512, 0)
+            if API.Math_Distance(MageCoord, API.PlayerCoord()) > 15 then
                 API.DoAction_Dive_Tile(MageCoord)
                 API.logDebug("Doaction: Dive to mage")
                 API.logInfo("Mage was found")
@@ -864,7 +864,7 @@ end
 
 local function startcheck()
     print("start check")
-    -- if API.Invfreecount_() < 28 then
+    -- if Inventory:Invfreecount() < 28 then
      API.DoAction_Ability("Retreat Teleport", 1, API.OFF_ACT_GeneralInterface_route)
      utils.randomSleep(2500)
         if not API.BankOpen2() then
@@ -876,10 +876,12 @@ local function startcheck()
             until API.BankOpen2() or attempts > 5
     
             if API.BankOpen2() then
-                Bank:depositInventory()
-                Bank:selectEquipmentTab()
-                Bank:equip("Grace", true)
-                Bank:equip("Wicked hood", true)
+                -- These Bank: methods do not exist in the current API.
+                -- (Bank:DepositInventory() / Bank:Equip() are the real names.)
+                -- Bank:depositInventory()
+                -- Bank:selectEquipmentTab()
+                -- Bank:equip("Grace", true)
+                -- Bank:equip("Wicked hood", true)
 
                 -- Wait for preset to load before updating inventory
                 API.RandomSleep2(2000, 500, 1000)
@@ -910,7 +912,7 @@ local function InnerCircle()
 
     print(hp)
     ::retry::
-    local mage = (API.PInAreaW((WPOINT.new(3039,4834,0)),21))
+    local mage = (API.PInAreaF2((FFPOINT.new(3039,4834,0)),21))
 
     if mage then
         hp()
@@ -920,7 +922,7 @@ local function InnerCircle()
         -- If we've hit the threshold, go repair pouches with Dark Mage first
         -- if abbyRunCounter >= nextDarkMageAt then
 
-        local needrepair = (API.Invfreecount_() > 0)
+        local needrepair = (Inventory:Invfreecount() > 0)
         print("Pouches need repair :" .. tostring(needrepair))
         if needrepair then
             API.logDebug("Info: Dark Mage run triggered. Going to repair pouches before portal.")
@@ -976,7 +978,7 @@ local function InnerCircle()
     else
         repeat 
             hp()
-              local mage = (API.PInAreaW((WPOINT.new(3039,4834,0)),21))
+              local mage = (API.PInAreaF2((FFPOINT.new(3039,4834,0)),21))
              if mage then
                 break
              end
@@ -1043,7 +1045,7 @@ end
 local function Lodestone()
     if not API.ReadPlayerMovin2() then
         API.RandomSleep2(1000, 150, 150)
-        API.DoAction_Tile(WPOINT.new(1146 + math.random(-4, 4), 1800 + math.random(-4, 4), 1))
+        API.DoAction_Tile(FFPOINT.new(1146 + math.random(-4, 4), 1800 + math.random(-4, 4), 1))
         API.WaitUntilMovingandAnimEnds(2,2)
     end
 end
@@ -1075,13 +1077,13 @@ end
 
 local function surge()
     if (aioSelectR.string_value == "(Necro) Spirit rune") then
-        API.DoAction_Dive_Tile(WPOINT.new(1313 + math.random(-2, 2), 1969 + math.random(-2, 2), 0))
+        API.DoAction_Dive_Tile(FFPOINT.new(1313 + math.random(-2, 2), 1969 + math.random(-2, 2), 0))
     elseif(aioSelectR.string_value == "(Necro) Bone rune") then
-        API.DoAction_Dive_Tile( WPOINT.new(1296 + math.random(-2, 2), 1962 + math.random(-2, 2), 0))
+        API.DoAction_Dive_Tile( FFPOINT.new(1296 + math.random(-2, 2), 1962 + math.random(-2, 2), 0))
     elseif (aioSelectR.string_value == "(Necro) Flesh rune") then
-        API.DoAction_Dive_Tile(WPOINT.new(1315 + math.random(-2, 2), 1934 + math.random(-2, 2), 0))
+        API.DoAction_Dive_Tile(FFPOINT.new(1315 + math.random(-2, 2), 1934 + math.random(-2, 2), 0))
     elseif (aioSelectR.string_value == "(Necro) Miasma rune") then
-        API.DoAction_Dive_Tile(WPOINT.new(1325 + math.random(-2, 2), 1950 + math.random(-2, 2), 0))
+        API.DoAction_Dive_Tile(FFPOINT.new(1325 + math.random(-2, 2), 1950 + math.random(-2, 2), 0))
     end
 end
 
@@ -1108,8 +1110,8 @@ local function Craftnecro()
             end
         else
             if Counter == true then
-                Trips = Trips + API.InvItemcount_1(selectedRune)
-                Runes = Runes + API.InvStackSize(selectedRune)
+                Trips = Trips + Inventory:InvItemcount(selectedRune)
+                Runes = Runes + Inventory:InvStackSize(selectedRune)
                 Counter = false
             end
             if (not API.CheckAnim(15)) and not API.ReadPlayerMovin2() then
@@ -1133,7 +1135,7 @@ local function UnknownNecroLoacation()
 end
 -----------------NECRO FUNCTIONS----------------
 local function CheckforImpureEssence()
-    return API.InvItemcount_1(55667) < 16
+    return Inventory:InvItemcount(55667) < 16
 end
 
 local function InventoryCheck()
@@ -1447,8 +1449,8 @@ while API.Read_LoopyLoop() do
                     CraftRune()
                 else
                     if Counter == true then
-                        Trips = Trips + API.InvItemcount_1(selectedRune)
-                        Runes = Runes + API.InvStackSize(selectedRune)
+                        Trips = Trips + Inventory:InvItemcount(selectedRune)
+                        Runes = Runes + Inventory:InvStackSize(selectedRune)
                         Counter = false
                     end
                     if not (API.ReadPlayerAnim() == ID_Anim.Crafting) and not API.ReadPlayerMovin2() then
@@ -1463,7 +1465,7 @@ while API.Read_LoopyLoop() do
                 if runecount < 100 then
                     if invContains(ID_Items.ESSENCE) then
                         if API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,{ ID_Object.CHARGER },50) then
-                            runecount = runecount + API.InvItemcount_1(7936)
+                            runecount = runecount + Inventory:InvItemcount(7936)
                             API.logDebug("Deposit Inv.: You deposit " .. runecount .. " essence into the charger")
                             API.RandomSleep2(1000, 50, 100)
                             RuneCounters()
@@ -1527,8 +1529,8 @@ while API.Read_LoopyLoop() do
                     API.logDebug("Reset SoulRun to: " .. runecount .. "")
                     API.RandomSleep2(250, 500, 600)
                     if Counter == true then
-                        Trips = Trips + API.InvItemcount_1(selectedRune)
-                        Runes = Runes + API.InvStackSize(selectedRune)
+                        Trips = Trips + Inventory:InvItemcount(selectedRune)
+                        Runes = Runes + Inventory:InvStackSize(selectedRune)
                         Counter = false
                     end
                     API.RandomSleep2(3000, 500, 1000)

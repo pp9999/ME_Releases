@@ -149,7 +149,6 @@ local DialogOptions = {
     "Put the skull in the coffin."
 }
 
-API.Write_fake_mouse_do(false)
 while (API.Read_LoopyLoop()) do    
     step = API.VB_FindPSettinOrder(2324).state
     print("Step: "..tostring(step))

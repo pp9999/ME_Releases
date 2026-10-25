@@ -35,7 +35,7 @@ function LOGIN.getAccountsFrom(file_path)
 end
 
 function LOGIN.getCursorState()
-    cursor_box = tostring(API.VB_GetBits(CURSOR_LOCATION_VARBIT_ID))
+    cursor_box = tostring(API.ReadVarbit(CURSOR_LOCATION_VARBIT_ID))
     if cursor_box == USERNAME_BOX_VARBIT_STR then
         return USERNAME_BOX
     end
@@ -49,22 +49,22 @@ end
 
 -- Credit to Cyro and Higgins for inspiration
 function LOGIN.getUsernameInterfaceText()
-    return API.ScanForInterfaceTest2Get(false,
+    return API.ScanForInterfaceTest2Get2(false,
                {{744, 0, -1, -1, 0}, {744, 26, -1, 0, 0}, {744, 39, -1, 26, 0}, {744, 52, -1, 39, 0},
                 {744, 93, -1, 52, 0}, {744, 94, -1, 93, 0}, {744, 96, -1, 94, 0}, {744, 110, -1, 96, 0},
                 {744, 111, -1, 110, 0}})[1].textids
 end
 
 function LOGIN.isGamesSessionExpired()
-    return API.ScanForInterfaceTest2Get(false, { { 744,0,-1,-1,0 }, { 744,197,-1,0,0 }, { 744,338,-1,197,0 }, { 744,340,-1,338,0 }, { 744,342,-1,340,0 }, { 744,345,-1,342,0 } })[1].textids:match("^Your game session")
+    return API.ScanForInterfaceTest2Get2(false, { { 744,0,-1,-1,0 }, { 744,197,-1,0,0 }, { 744,338,-1,197,0 }, { 744,340,-1,338,0 }, { 744,342,-1,340,0 }, { 744,345,-1,342,0 } })[1].textids:match("^Your game session")
 end
 
 function LOGIN.isInvalidDetailsInterfaceVisible()
-    return API.ScanForInterfaceTest2Get(false, { { 744,0,-1,-1,0 }, { 744,197,-1,0,0 }, { 744,338,-1,197,0 }, { 744,340,-1,338,0 }, { 744,342,-1,340,0 }, { 744,345,-1,342,0 } })[1].textids:match("^Invalid email or password")
+    return API.ScanForInterfaceTest2Get2(false, { { 744,0,-1,-1,0 }, { 744,197,-1,0,0 }, { 744,338,-1,197,0 }, { 744,340,-1,338,0 }, { 744,342,-1,340,0 }, { 744,345,-1,342,0 } })[1].textids:match("^Invalid email or password")
 end 
 
 function LOGIN.isAlreadyLoggedInInterfaceVisible()
-    return API.ScanForInterfaceTest2Get(false, { { 744,0,-1,-1,0 }, { 744,197,-1,0,0 }, { 744,338,-1,197,0 }, { 744,340,-1,338,0 }, { 744,342,-1,340,0 }, { 744,345,-1,342,0 } })[1].textids:match("^Your account has not")
+    return API.ScanForInterfaceTest2Get2(false, { { 744,0,-1,-1,0 }, { 744,197,-1,0,0 }, { 744,338,-1,197,0 }, { 744,340,-1,338,0 }, { 744,342,-1,340,0 }, { 744,345,-1,342,0 } })[1].textids:match("^Your account has not")
 end
 
 function LOGIN.keyboardType(str)
@@ -80,14 +80,14 @@ function LOGIN.typeCreds(username, password)
     end
 
     -- Remove any characters in username field
-    cursor_offset = tostring(API.VB_GetBits(CURSOR_OFFSET_VARBIT_ID))
+    cursor_offset = tostring(API.ReadVarbit(CURSOR_OFFSET_VARBIT_ID))
     while cursor_offset ~= CURSOR_OFFSET_BY_0_VARBIT_STR
-        and API.GetGameState() == 1
+        and API.GetGameState2() == 1
         and LOGIN.getCursorState() ~= NONE
         and API.Read_LoopyLoop() do
 
         API.KeyboardPress2(BACKSPACE_KEY, .2, .1)
-        cursor_offset = tostring(API.VB_GetBits(CURSOR_OFFSET_VARBIT_ID))
+        cursor_offset = tostring(API.ReadVarbit(CURSOR_OFFSET_VARBIT_ID))
     end
 
     -- Type username then tab
@@ -105,14 +105,14 @@ function LOGIN.typeCreds(username, password)
     end
 
     -- Remove any text in password field
-    cursor_offset = tostring(API.VB_GetBits(CURSOR_OFFSET_VARBIT_ID))
+    cursor_offset = tostring(API.ReadVarbit(CURSOR_OFFSET_VARBIT_ID))
     while cursor_offset ~= CURSOR_OFFSET_BY_0_VARBIT_STR 
-        and API.GetGameState() == 1 
+        and API.GetGameState2() == 1 
         and LOGIN.getCursorState() ~= NONE 
         and API.Read_LoopyLoop() do
 
         API.KeyboardPress2(BACKSPACE_KEY, 100, 50)
-        cursor_offset = tostring(API.VB_GetBits(CURSOR_OFFSET_VARBIT_ID))
+        cursor_offset = tostring(API.ReadVarbit(CURSOR_OFFSET_VARBIT_ID))
     end
 
     -- Failsafe to avoid typing password in plainsight somewhere
@@ -138,16 +138,16 @@ function LOGIN.wait_until(x, timeout)
 end
 
 function LOGIN.login(username, password, script)
-    if API.GetGameState() == 3 then
+    if API.GetGameState2() == 3 then
         print("Already logged in")
         return false
     end
 
-    if API.GetGameState() == 2 then
+    if API.GetGameState2() == 2 then
         print("Logged into lobby... pressing space")
         API.KeyboardPress2(SPACE_KEY, .6, .2)
         return LOGIN.wait_until((function()
-            return API.GetGameState() == 3
+            return API.GetGameState2() == 3
         end), TIMEOUT)
     end
 
@@ -157,7 +157,7 @@ function LOGIN.login(username, password, script)
     while(API.Read_LoopyLoop() and not loggedIn) do
         if LOGIN.isAlreadyLoggedInInterfaceVisible()
             and LOGIN.getCursorState() == NONE
-            and API.GetGameState() == 1 then
+            and API.GetGameState2() == 1 then
 
             -- Account already logged in
             if LOGIN.isAlreadyLoggedInInterfaceVisible() then
@@ -182,7 +182,7 @@ function LOGIN.login(username, password, script)
             end), TIMEOUT)
         end
 
-        if API.GetGameState() == 1 and LOGIN.getCursorState() == NONE then
+        if API.GetGameState2() == 1 and LOGIN.getCursorState() == NONE then
             -- This should catch the settings page if it is open
             API.KeyboardPress2(ESC_KEY, .2, .1)
             LOGIN.wait_until((function()
@@ -190,12 +190,12 @@ function LOGIN.login(username, password, script)
                 end), TIMEOUT)
         end
 
-        if API.GetGameState() == 1 and LOGIN.getCursorState() ~= NONE then
+        if API.GetGameState2() == 1 and LOGIN.getCursorState() ~= NONE then
             -- Login from login screen
             if (LOGIN.typeCreds(username, password)) then
                 -- If login success, wait for up to 15 seconds until lobby appears
                 LOGIN.wait_until((function()
-                    return API.GetGameState() == 2
+                    return API.GetGameState2() == 2
                         or LOGIN.isAlreadyLoggedInInterfaceVisible()
                         or LOGIN.isInvalidDetailsInterfaceVisible()
                         or LOGIN.isGamesSessionExpired()
@@ -203,16 +203,16 @@ function LOGIN.login(username, password, script)
             end
         end
 
-        if API.GetGameState() == 2 then
+        if API.GetGameState2() == 2 then
             -- User is in the lobby, use space to login. Adding world selection from here isn't too hard.
             -- TODO: Add logic to catch f2p/p2p
             API.KeyboardPress2(SPACE_KEY, .6, .2)
             LOGIN.wait_until((function()
-                return API.GetGameState() == 3
+                return API.GetGameState2() == 3
             end), TIMEOUT)
         end
 
-        if API.GetGameState() == 3 then
+        if API.GetGameState2() == 3 then
             API.Write_LoopyLoop(false)
             loggedIn = true
         end

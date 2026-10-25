@@ -35,7 +35,7 @@ local function CompareSprite()
   local sortedSprite = API.Math_SortAODist(sprite)
   if sortedSprite.Distance > 2 then
     print ("Moving to sprite")
-    API.DoAction_WalkerF(sortedSprite.Tile_XYZ)
+    API.DoAction_Walker(sortedSprite.Tile_XYZ)
   end
 end
 

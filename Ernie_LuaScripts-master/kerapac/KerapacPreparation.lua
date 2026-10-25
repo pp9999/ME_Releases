@@ -43,12 +43,12 @@ end
 
 function KerapacPreparation:HandleHardMode()
     if State.isHardMode then
-        if API.ScanForInterfaceTest2Get(false, { { 1591, 15, -1, 0 }, { 1591, 17, -1, 0 }, { 1591, 41, -1, 0 }, { 1591, 12, -1, 0 } })[1].textids == "Kerapac" then
+        if API.ScanForInterfaceTest2Get2(false, { { 1591, 15, -1, 0 }, { 1591, 17, -1, 0 }, { 1591, 41, -1, 0 }, { 1591, 12, -1, 0 } })[1].textids == "Kerapac" then
             Logger:Info("Enabling Hard Mode")
             API.DoAction_Interface(0x24, 0xffffffff, 1, 1591, 4, -1, API.OFF_ACT_GeneralInterface_route)
         end
     else
-        if API.ScanForInterfaceTest2Get(false, { { 1591, 15, -1, 0 }, { 1591, 17, -1, 0 }, { 1591, 41, -1, 0 }, { 1591, 12, -1, 0 } })[1].textids ~= "Kerapac" then
+        if API.ScanForInterfaceTest2Get2(false, { { 1591, 15, -1, 0 }, { 1591, 17, -1, 0 }, { 1591, 41, -1, 0 }, { 1591, 12, -1, 0 } })[1].textids ~= "Kerapac" then
             Logger:Info("Disabling Hard Mode")
             API.DoAction_Interface(0x24, 0xffffffff, 1, 1591, 4, -1, API.OFF_ACT_GeneralInterface_route)
         end
@@ -683,7 +683,7 @@ function KerapacPreparation:HandleAdrenalineCrystal()
     if State.isMaxAdrenaline then return end
 
     if API.GetAddreline_() ~= 100 then
-        API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route0,{114749},50,WPOINT.new(3299,10148,0))
+        API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route0,{114749},50,FFPOINT.new(3299,10148,0))
         API.WaitUntilMovingandAnimEnds(10, 4)
         Logger:Info("Charging adrenaline")
     else
@@ -781,7 +781,7 @@ function KerapacPreparation:BeginFight()
     Logger:Info("Moving to starting position")
     local Combat = require("kerapac/KerapacCombat")
     Combat:EnableMagePray()
-    API.DoAction_TileF(State.startLocationOfArena)
+    API.DoAction_Tile(State.startLocationOfArena)
 
     if Data.extraAbilities.conjureUndeadArmyAbility.AB.enabled
        and API.VB_FindPSettinOrder(10994).state < 1
@@ -848,7 +848,7 @@ function KerapacPreparation:ReclaimItemsAtGrave()
     if #deathNPC > 0 then
         API.DoAction_NPC(0x29,API.OFF_ACT_InteractNPC_route3,{27299},50)
         Utils:SleepTickRandom(5)
-        if API.ScanForInterfaceTest2Get(false, { {1626,57,-1,0}, {1626,59,-1,0}, {1626,12,-1,0}, {1626,13,-1,0}, {1626,23,-1,0}, {1626,24,-1,0}, {1626,30,-1,0}, {1626,31,-1,0}, {1626,33,-1,0}, {1626,8,-1,0}, {1626,10,-1,0}, {1626,10,0,0} })[1].itemid1 ~= 0 then
+        if API.ScanForInterfaceTest2Get2(false, { {1626,57,-1,0}, {1626,59,-1,0}, {1626,12,-1,0}, {1626,13,-1,0}, {1626,23,-1,0}, {1626,24,-1,0}, {1626,30,-1,0}, {1626,31,-1,0}, {1626,33,-1,0}, {1626,8,-1,0}, {1626,10,-1,0}, {1626,10,0,0} })[1].itemid1 ~= 0 then
             API.DoAction_Interface(0xffffffff, 0xffffffff, 1, 1626, 47, -1, API.OFF_ACT_GeneralInterface_route)
             Utils:SleepTickRandom(5)
             API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1626, 72, -1, API.OFF_ACT_GeneralInterface_Choose_option)

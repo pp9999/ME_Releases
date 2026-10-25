@@ -33,8 +33,8 @@ local items = {
 }
 
 local function isInterfaceVisible(interface_components)
-    return API.ScanForInterfaceTest2Get(false, interface_components)[1].x ~= nil 
-        and API.ScanForInterfaceTest2Get(false, interface_components)[1].x ~= 0
+    return API.ScanForInterfaceTest2Get2(false, interface_components)[1].x ~= nil 
+        and API.ScanForInterfaceTest2Get2(false, interface_components)[1].x ~= 0
 end
 
 local function getQuestVBState()
@@ -128,7 +128,7 @@ while API.Read_LoopyLoop() do
             API.RandomSleep2(600, 0, 1200)
         end
         
-        if getQuestVBState() == 690 and API.InvItemcount_1(items['ritualCandle']) > 0 then
+        if getQuestVBState() == 690 and Inventory:InvItemcount(items['ritualCandle']) > 0 then
             print("Place candles")
             place(filterNPCsByName(npcs['ritualSites'], "Light source spot"))
         elseif getQuestVBState() == 690 and not isChatboxOpen() then
@@ -136,7 +136,7 @@ while API.Read_LoopyLoop() do
             API.RandomSleep2(1200, 600, 0)
         end
 
-        if getQuestVBState() == 946 and API.InvStackSize(items['basicGhostlyInk']) > 0 then
+        if getQuestVBState() == 946 and Inventory:InvStackSize(items['basicGhostlyInk']) > 0 then
             print("Placing glyphs")
             place(filterNPCsByName(npcs['ritualSites'], "Glyph spot"))
         elseif getQuestVBState() == 946 and not isChatboxOpen() then
@@ -144,7 +144,7 @@ while API.Read_LoopyLoop() do
             API.RandomSleep2(1200, 600, 0)
         end
 
-        if getQuestVBState() == 1074 and API.InvStackSize(items['basicGhostlyInk']) > 0 then
+        if getQuestVBState() == 1074 and Inventory:InvStackSize(items['basicGhostlyInk']) > 0 then
             print("repairing glyphs")
             repair() 
         elseif getQuestVBState() == 1074 and not isChatboxOpen() then
@@ -169,15 +169,15 @@ while API.Read_LoopyLoop() do
             API.RandomSleep2(5000, 600, 0)
         end
 
-        if getQuestVBState() == 9788 and API.InvItemcount_1(items['deathGuard']) > 0 then
+        if getQuestVBState() == 9788 and Inventory:InvItemcount(items['deathGuard']) > 0 then
             print("Putting on death guard")
-            if API.InvItemcount_1(items['deathGuard']) > 0 then
+            if Inventory:InvItemcount(items['deathGuard']) > 0 then
                 API.DoAction_Inventory1(items['deathGuard'], 1, 2, API.OFF_ACT_GeneralInterface_route)
                 API.RandomSleep2(600, 0, 600)
             end
         end
 
-        if (getQuestVBState() == 9788 or getQuestVBState() == 75324 or getQuestVBState() == 42556) and API.InvItemcount_1(items['deathGuard']) == 0 and not API.IsPlayerAnimating_(API.GetLocalPlayerName(), 100) then
+        if (getQuestVBState() == 9788 or getQuestVBState() == 75324 or getQuestVBState() == 42556) and Inventory:InvItemcount(items['deathGuard']) == 0 and not API.IsPlayerAnimating_(API.GetLocalPlayerName(), 100) then
             print("Attacking trolls")
             API.DoAction_NPC(0x2a, API.OFF_ACT_AttackNPC_route, npcs['trolls'], 50)
             API.RandomSleep2(3000, 0, 600)

@@ -10,7 +10,6 @@ local UTILS = require("utils")
 local BANK  = require("bank")
 
 API.SetDrawLogs(true)
-API.Write_fake_mouse_do(false)
 API.SetDrawTrackedSkills(true)
 
 local version = "1.3"

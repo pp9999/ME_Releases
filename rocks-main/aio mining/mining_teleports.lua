@@ -5,34 +5,34 @@ local Utils = require("aio mining/mining_utils")
 local Teleports = {}
 
 Teleports.LODESTONES = {
-    AL_KHARID = {loc = WPOINT.new(3297, 3184, 0), name = "Al Kharid", interfaceId = 11, varbit = 28},
-    ANACHRONIA = {loc = WPOINT.new(5431, 2338, 0), name = "Anachronia", interfaceId = 25, varbit = 44270},
-    ARDOUGNE = {loc = WPOINT.new(2634, 3348, 0), name = "Ardougne", interfaceId = 12, varbit = 29},
-    ASHDALE = {loc = WPOINT.new(2474, 2708, 2), name = "Ashdale", interfaceId = 34, varbit = 22430},
-    BANDIT_CAMP = {loc = WPOINT.new(3214, 2954, 0), name = "Bandit Camp", interfaceId = 9},
-    BURTHORPE = {loc = WPOINT.new(2899, 3544, 0), name = "Burthorpe", interfaceId = 13, varbit = 30},
-    CANIFIS = {loc = WPOINT.new(3517, 3515, 0), name = "Canifis", interfaceId = 27, varbit = 18523},
-    CATHERBY = {loc = WPOINT.new(2811, 3449, 0), name = "Catherby", interfaceId = 14, varbit = 31},
-    DRAYNOR_VILLAGE = {loc = WPOINT.new(3105, 3298, 0), name = "Draynor Village", interfaceId = 15, varbit = 32},
-    EAGLES_PEAK = {loc = WPOINT.new(2366, 3479, 0), name = "Eagles' Peak", interfaceId = 28, varbit = 18524},
-    EDGEVILLE = {loc = WPOINT.new(3067, 3505, 0), name = "Edgeville", interfaceId = 16, varbit = 33},
-    FALADOR = {loc = WPOINT.new(2967, 3403, 0), name = "Falador", interfaceId = 17, varbit = 34},
-    FORT_FORINTHRY = {loc = WPOINT.new(3298, 3525, 0), name = "Fort Forinthry", interfaceId = 23, varbit = 52518},
-    FREMENNIK_PROVINCE = {loc = WPOINT.new(2712, 3677, 0), name = "Fremennik Province", interfaceId = 29, varbit = 18525},
-    KARAMJA = {loc = WPOINT.new(2761, 3147, 0), name = "Karamja", interfaceId = 30, varbit = 18526},
-    LUNAR_ISLE = {loc = WPOINT.new(2085, 3914, 0), name = "Lunar Isle", interfaceId = 10},
-    LUMBRIDGE = {loc = WPOINT.new(3233, 3221, 0), name = "Lumbridge", interfaceId = 18, varbit = 35},
-    MENAPHOS = {loc = WPOINT.new(3216, 2716, 0), name = "Menaphos", interfaceId = 24, varbit = 36173},
-    OOGLOG = {loc = WPOINT.new(2532, 2871, 0), name = "Oo'glog", interfaceId = 31, varbit = 18527},
-    PORT_SARIM = {loc = WPOINT.new(3011, 3215, 0), name = "Port Sarim", interfaceId = 19, varbit = 36},
-    PRIFDDINAS = {loc = WPOINT.new(2208, 3360, 1), name = "Prifddinas", interfaceId = 35, varbit = 24967},
-    SEERS_VILLAGE = {loc = WPOINT.new(2689, 3482, 0), name = "Seers' Village", interfaceId = 20, varbit = 37},
-    TAVERLEY = {loc = WPOINT.new(2878, 3442, 0), name = "Taverley", interfaceId = 21, varbit = 38},
-    TIRANNWN = {loc = WPOINT.new(2254, 3149, 0), name = "Tirannwn", interfaceId = 32, varbit = 18528},
-    UM = {loc = WPOINT.new(1084, 1768, 1), name = "City of Um", interfaceId = 36, varbit = 53270},
-    VARROCK = {loc = WPOINT.new(3214, 3376, 0), name = "Varrock", interfaceId = 22, varbit = 39},
-    WILDERNESS = {loc = WPOINT.new(3143, 3635, 0), name = "Wilderness Crater", interfaceId = 33, varbit = 18529},
-    YANILLE = {loc = WPOINT.new(2560, 3094, 0), name = "Yanille", interfaceId = 26, varbit = 40}
+    AL_KHARID = {loc = FFPOINT.new(3297, 3184, 0), name = "Al Kharid", interfaceId = 11, varbit = 28},
+    ANACHRONIA = {loc = FFPOINT.new(5431, 2338, 0), name = "Anachronia", interfaceId = 25, varbit = 44270},
+    ARDOUGNE = {loc = FFPOINT.new(2634, 3348, 0), name = "Ardougne", interfaceId = 12, varbit = 29},
+    ASHDALE = {loc = FFPOINT.new(2474, 2708, 2), name = "Ashdale", interfaceId = 34, varbit = 22430},
+    BANDIT_CAMP = {loc = FFPOINT.new(3214, 2954, 0), name = "Bandit Camp", interfaceId = 9},
+    BURTHORPE = {loc = FFPOINT.new(2899, 3544, 0), name = "Burthorpe", interfaceId = 13, varbit = 30},
+    CANIFIS = {loc = FFPOINT.new(3517, 3515, 0), name = "Canifis", interfaceId = 27, varbit = 18523},
+    CATHERBY = {loc = FFPOINT.new(2811, 3449, 0), name = "Catherby", interfaceId = 14, varbit = 31},
+    DRAYNOR_VILLAGE = {loc = FFPOINT.new(3105, 3298, 0), name = "Draynor Village", interfaceId = 15, varbit = 32},
+    EAGLES_PEAK = {loc = FFPOINT.new(2366, 3479, 0), name = "Eagles' Peak", interfaceId = 28, varbit = 18524},
+    EDGEVILLE = {loc = FFPOINT.new(3067, 3505, 0), name = "Edgeville", interfaceId = 16, varbit = 33},
+    FALADOR = {loc = FFPOINT.new(2967, 3403, 0), name = "Falador", interfaceId = 17, varbit = 34},
+    FORT_FORINTHRY = {loc = FFPOINT.new(3298, 3525, 0), name = "Fort Forinthry", interfaceId = 23, varbit = 52518},
+    FREMENNIK_PROVINCE = {loc = FFPOINT.new(2712, 3677, 0), name = "Fremennik Province", interfaceId = 29, varbit = 18525},
+    KARAMJA = {loc = FFPOINT.new(2761, 3147, 0), name = "Karamja", interfaceId = 30, varbit = 18526},
+    LUNAR_ISLE = {loc = FFPOINT.new(2085, 3914, 0), name = "Lunar Isle", interfaceId = 10},
+    LUMBRIDGE = {loc = FFPOINT.new(3233, 3221, 0), name = "Lumbridge", interfaceId = 18, varbit = 35},
+    MENAPHOS = {loc = FFPOINT.new(3216, 2716, 0), name = "Menaphos", interfaceId = 24, varbit = 36173},
+    OOGLOG = {loc = FFPOINT.new(2532, 2871, 0), name = "Oo'glog", interfaceId = 31, varbit = 18527},
+    PORT_SARIM = {loc = FFPOINT.new(3011, 3215, 0), name = "Port Sarim", interfaceId = 19, varbit = 36},
+    PRIFDDINAS = {loc = FFPOINT.new(2208, 3360, 1), name = "Prifddinas", interfaceId = 35, varbit = 24967},
+    SEERS_VILLAGE = {loc = FFPOINT.new(2689, 3482, 0), name = "Seers' Village", interfaceId = 20, varbit = 37},
+    TAVERLEY = {loc = FFPOINT.new(2878, 3442, 0), name = "Taverley", interfaceId = 21, varbit = 38},
+    TIRANNWN = {loc = FFPOINT.new(2254, 3149, 0), name = "Tirannwn", interfaceId = 32, varbit = 18528},
+    UM = {loc = FFPOINT.new(1084, 1768, 1), name = "City of Um", interfaceId = 36, varbit = 53270},
+    VARROCK = {loc = FFPOINT.new(3214, 3376, 0), name = "Varrock", interfaceId = 22, varbit = 39},
+    WILDERNESS = {loc = FFPOINT.new(3143, 3635, 0), name = "Wilderness Crater", interfaceId = 33, varbit = 18529},
+    YANILLE = {loc = FFPOINT.new(2560, 3094, 0), name = "Yanille", interfaceId = 26, varbit = 40}
 }
 
 local function isAtLodestone(lode)
@@ -254,7 +254,7 @@ local function capeTeleport(config)
     if not Utils.waitOrTerminate(function()
         return Utils.checkInterfaceText(dest.interface, dest.name)
     end, 10, 100, dest.name .. " option not found") then
-        local result = API.ScanForInterfaceTest2Get(false, dest.interface)
+        local result = API.ScanForInterfaceTest2Get2(false, dest.interface)
         if #result > 0 then
             API.printlua("Found instead: " .. tostring(result[1].textids), 4, false)
         else

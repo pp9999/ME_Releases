@@ -3,7 +3,7 @@
 ---@field name string
 ---@field slayerLevelRequirement number
 ---@field combatLevelRequirement number
----@field location WPOINT
+---@field location FFPOINT
 ---@field otherConditions function
 
 ---@type table<string, SlayerMaster>
@@ -13,7 +13,7 @@ local SlayerMasters = {
         name = "Laniakea",
         slayerLevelRequirement = 90,
         combatLevelRequirement = 120,
-        location = WPOINT.new(5668, 2138, 0),
+        location = FFPOINT.new(5668, 2138, 0),
         otherConditions = function() return true end
     },
 }

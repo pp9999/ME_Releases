@@ -90,7 +90,7 @@ local REAPER_TASK_VARBIT = 22901
 local REAPER_INTERFACE = 1761
 local MAGISTER_REAPER_CHILD = 28
 
-local WARS_TILE = WPOINT.new(3295, 10137, 0)
+local WARS_TILE = FFPOINT.new(3295, 10137, 0)
 
 local PROTECT_MAGIC_BUFF = 25959
 local DEFLECT_MAGIC_BUFF = 26041
@@ -236,7 +236,7 @@ local function findObject(objIds, distance)
 end
 
 local function atWars()
-    return API.PInAreaW(WARS_TILE, 40)
+    return API.PInAreaF2(WARS_TILE, 40)
 end
 
 local function magisterNearby()
@@ -423,10 +423,11 @@ local function chatBlob()
         end
     end
     pcall(function() add(API.GatherEvents_chat_check()) end)
-    pcall(function() add(API.ChatGetMessages()) end)
-    pcall(function() add(API.ChatFind("Magister", 30)) end)
-    pcall(function() add(API.ChatFind("assignment", 30)) end)
-    pcall(function() add(API.ChatFind("reaper", 30)) end)
+    pcall(function() add(API.GatherEvents_chat_check()) end)
+    -- API.ChatFind() was removed; the latest chat event is already captured above.
+    -- pcall(function() add(API.ChatFind("Magister", 30)) end)
+    -- pcall(function() add(API.ChatFind("assignment", 30)) end)
+    -- pcall(function() add(API.ChatFind("reaper", 30)) end)
     return string.lower(table.concat(parts, "\n"))
 end
 

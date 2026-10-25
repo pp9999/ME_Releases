@@ -151,7 +151,7 @@ local function IsTeleportInterfaceOpen()
         InterfaceComp5.new(720, 2, -1, -1),
         InterfaceComp5.new(720, 17, -1, 2)
     }
-    local result = API.ScanForInterfaceTest2Get(true, interfaceCoords)
+    local result = API.ScanForInterfaceTest2Get2(true, interfaceCoords)
     if #result > 0 then
         return true
     else
@@ -164,7 +164,7 @@ local function DialogBoxOpen()
 end
 
 local function HasOption()
-    local option = API.ScanForInterfaceTest2Get(false, { { 1188, 5, -1, -1}, { 1188, 3, -1, 5}, { 1188, 3, 14, 3} })
+    local option = API.ScanForInterfaceTest2Get2(false, { { 1188, 5, -1, -1}, { 1188, 3, -1, 5}, { 1188, 3, 14, 3} })
 
     if #option > 0 and #option[1].textids > 0 then
         return option[1].textids
@@ -242,7 +242,6 @@ local IDS = {
     KingLathas = 364
 }
 
-Write_fake_mouse_do(false)
 while (API.Read_LoopyLoop()) do
     local questProgress = GetQuestVB()
     print("Quest Progress: ", questProgress)
@@ -269,7 +268,7 @@ while (API.Read_LoopyLoop()) do
             local doorWalkCount = 0
             while API.Read_LoopyLoop() and not SpectreUtils.IsPlayerInArea(2433, 3348, 0, 3) and doorWalkCount < 15 do
                 print(string.format("Debug: Walking to door area (attempt %d).", doorWalkCount + 1))
-                API.DoAction_Tile(WPOINT.new(2433 + math.random(-1, 1), 3348 + math.random(-1, 1), 0))
+                API.DoAction_Tile(FFPOINT.new(2433 + math.random(-1, 1), 3348 + math.random(-1, 1), 0))
                 SpectreUtils.Sleep(1)
                 doorWalkCount = doorWalkCount + 1
             end
@@ -291,13 +290,13 @@ while (API.Read_LoopyLoop()) do
             end
     
             print("Debug: Walking to target coords (2436, 3347, 0).")
-            API.DoAction_Tile(WPOINT.new(2436, 3347, 0))
+            API.DoAction_Tile(FFPOINT.new(2436, 3347, 0))
             local jorralWalkCount = 0
             while API.Read_LoopyLoop() and not SpectreUtils.IsPlayerAtCoords(2436, 3347, 0) and jorralWalkCount < 15 do
                 SpectreUtils.Sleep(1)
                 if not SpectreUtils.IsPlayerAtCoords(2436, 3347, 0) then
                     print(string.format("Debug: Retrying walk to Jorral's location (attempt %d).", jorralWalkCount + 1))
-                    API.DoAction_Tile(WPOINT.new(2436, 3347, 0))
+                    API.DoAction_Tile(FFPOINT.new(2436, 3347, 0))
                     jorralWalkCount = jorralWalkCount + 1
                 end
             end
@@ -330,7 +329,7 @@ while (API.Read_LoopyLoop()) do
         LODESTONES.ARDOUGNE.Teleport()
 
         print("Debug: Walking to Ardougne market coordinates")
-        API.DoAction_WalkerW(WPOINT.new(2663 + math.random(-4, 4), 3311 + math.random(-4, 4), 0))
+        API.DoAction_Walker(FFPOINT.new(2663 + math.random(-4, 4), 3311 + math.random(-4, 4), 0))
 
         print("Debug: Waiting for Silver Merchant object to appear")
         WaitForObjectToAppear(IDS.SilverMerchant, 1)
@@ -342,7 +341,7 @@ while (API.Read_LoopyLoop()) do
         HandleDialog()
 
         print("Debug: Walking to coordinates (2440, 3138)")
-        API.DoAction_WalkerW(WPOINT.new(2440, 3138, 0))
+        API.DoAction_Walker(FFPOINT.new(2440, 3138, 0))
 
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(2440, 3138, 0) do
             print("Debug: Waiting to reach coordinates (2440, 3138)")
@@ -373,7 +372,7 @@ while (API.Read_LoopyLoop()) do
         LODESTONES.PORT_SARIM.Teleport()
 
         print("Debug: Walking to Port Sarim market coordinates")
-        API.DoAction_WalkerW(WPOINT.new(3036, 3191, 0))
+        API.DoAction_Walker(FFPOINT.new(3036, 3191, 0))
 
         print("Debug: Waiting for Trader Crewmate object to appear")
         WaitForObjectToAppear(IDS.TraderCrewmate, 1)
@@ -394,7 +393,7 @@ while (API.Read_LoopyLoop()) do
         end
 
         print("Debug: Walking to coordinates (3659, 3468)")
-        API.DoAction_WalkerW(WPOINT.new(3659, 3468, 0))
+        API.DoAction_Walker(FFPOINT.new(3659, 3468, 0))
 
         print("Debug: Waiting for Droalak object to appear")
         WaitForObjectToAppear(IDS.Droalak, 1)
@@ -406,7 +405,7 @@ while (API.Read_LoopyLoop()) do
         HandleDialog()
 
         print("Debug: Walking to coordinates (3676, 3476)")
-        API.DoAction_Tile(WPOINT.new(3676, 3476, 0))
+        API.DoAction_Tile(FFPOINT.new(3676, 3476, 0))
 
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(3676, 3476, 0) do
             print("Debug: Waiting to reach coordinates (3676, 3476)")
@@ -414,15 +413,15 @@ while (API.Read_LoopyLoop()) do
         end
 
         print("Debug: Checking for door object at coordinates (3676, 3477)")
-        local door = #API.GetAllObjArray2({5245}, 50, {0}, WPOINT.new(3676, 3477, 0))
+        local door = #API.GetAllObjArray2({5245}, 50, {0}, FFPOINT.new(3676, 3477, 0))
         if door == 0 then
             print("Debug: Door not found, interacting with object 5244 to open")
-            API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {5244}, 50, WPOINT.new(3676, 3477, 0))
+            API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {5244}, 50, FFPOINT.new(3676, 3477, 0))
             while API.Read_LoopyLoop() and door == 0 do
                 print("Debug: Waiting for door to appear after interacting with object 5244")
                 Sleep(1)
-                door = #API.GetAllObjArray2({5245}, 50, {0}, WPOINT.new(3676, 3477, 0))
-                API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {5244}, 50, WPOINT.new(3676, 3477, 0))
+                door = #API.GetAllObjArray2({5245}, 50, {0}, FFPOINT.new(3676, 3477, 0))
+                API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {5244}, 50, FFPOINT.new(3676, 3477, 0))
             end
         end
         print("Debug: Step completed")
@@ -434,7 +433,7 @@ while (API.Read_LoopyLoop()) do
         HandleDialog()
 
         print("Walking to coordinates: (3659, 3468, 0).")
-        API.DoAction_WalkerW(WPOINT.new(3659, 3468, 0))
+        API.DoAction_Walker(FFPOINT.new(3659, 3468, 0))
         print("Waiting for object: Droalak to appear.")
         WaitForObjectToAppear(IDS.Droalak, 1)
         print("Object Droalak appeared. Interacting with NPC.")
@@ -444,7 +443,7 @@ while (API.Read_LoopyLoop()) do
         print("Teleporting to Fremennik Province lodestone.")
         LODESTONES.FREMENNIK_PROVINCE.Teleport()
         print("Walking to tile: (2668, 3669, 0).")
-        API.DoAction_Tile(WPOINT.new(2668, 3669, 0))
+        API.DoAction_Tile(FFPOINT.new(2668, 3669, 0))
         print("Waiting for object: Blanin to appear.")
         WaitForObjectToAppear(IDS.Blanin, 1)
         print("Object Blanin appeared. Interacting with NPC.")
@@ -452,7 +451,7 @@ while (API.Read_LoopyLoop()) do
         HandleDialog()
 
         print("Walking to tile: (2659, 3700, 0).")
-        API.DoAction_Tile(WPOINT.new(2659, 3700, 0))
+        API.DoAction_Tile(FFPOINT.new(2659, 3700, 0))
         print("Waiting for object: Dron to appear.")
         WaitForObjectToAppear(IDS.Dron, 1)
         print("Object Dron appeared. Interacting with NPC.")
@@ -479,7 +478,7 @@ while (API.Read_LoopyLoop()) do
             local doorWalkCount = 0
             while API.Read_LoopyLoop() and not SpectreUtils.IsPlayerInArea(2433, 3348, 0, 3) and doorWalkCount < 15 do
                 print("Walking to door area. Attempt:", doorWalkCount + 1)
-                API.DoAction_Tile(WPOINT.new(2433 + math.random(-1, 1), 3348 + math.random(-1, 1), 0))
+                API.DoAction_Tile(FFPOINT.new(2433 + math.random(-1, 1), 3348 + math.random(-1, 1), 0))
                 SpectreUtils.Sleep(1)
                 doorWalkCount = doorWalkCount + 1
             end
@@ -496,13 +495,13 @@ while (API.Read_LoopyLoop()) do
                 end
             end
             print("Walking to Jorral's location: (2436, 3347, 0).")
-            API.DoAction_Tile(WPOINT.new(2436, 3347, 0))
+            API.DoAction_Tile(FFPOINT.new(2436, 3347, 0))
             local jorralWalkCount = 0
             while API.Read_LoopyLoop() and not SpectreUtils.IsPlayerAtCoords(2436, 3347, 0) and jorralWalkCount < 15 do
                 SpectreUtils.Sleep(1)
                 if not SpectreUtils.IsPlayerAtCoords(2436, 3347, 0) then
                     print("Approaching Jorral's location. Attempt:", jorralWalkCount + 1)
-                    API.DoAction_Tile(WPOINT.new(2436, 3347, 0))
+                    API.DoAction_Tile(FFPOINT.new(2436, 3347, 0))
                     jorralWalkCount = jorralWalkCount + 1
                 end
             end
@@ -526,73 +525,73 @@ while (API.Read_LoopyLoop()) do
 
         -- Walk to the first waypoint
         print("Debug: Walking to (2580, 3297, 0)")
-        API.DoAction_WalkerW(WPOINT.new(2580, 3297, 0))
+        API.DoAction_Walker(FFPOINT.new(2580, 3297, 0))
         Sleep(1)
-        API.DoAction_WalkerW(WPOINT.new(2580, 3297, 0))
+        API.DoAction_Walker(FFPOINT.new(2580, 3297, 0))
         Sleep(1)
-        API.DoAction_WalkerW(WPOINT.new(2580, 3297, 0))
+        API.DoAction_Walker(FFPOINT.new(2580, 3297, 0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(2580, 3297, 0) do
             Sleep(0.3)
         end
 
         -- Check for the first door
-        local door = #API.GetAllObjArray2({2549}, 50, {0}, WPOINT.new(2579, 3297, 0))
+        local door = #API.GetAllObjArray2({2549}, 50, {0}, FFPOINT.new(2579, 3297, 0))
         print("Debug: Initial door check. Door count:", door)
         if door == 0 then
             print("Debug: Door not found, interacting with object")
-            API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {2548}, 50, WPOINT.new(2580, 3297, 0))
+            API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {2548}, 50, FFPOINT.new(2580, 3297, 0))
             while API.Read_LoopyLoop() and door == 0 do
                 Sleep(1)
-                door = #API.GetAllObjArray2({2549}, 50, {0}, WPOINT.new(2579, 3297, 0))
+                door = #API.GetAllObjArray2({2549}, 50, {0}, FFPOINT.new(2579, 3297, 0))
                 print("Debug: Rechecking door count:", door)
-                API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {5244}, 50, WPOINT.new(3676, 3477, 0))
+                API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {5244}, 50, FFPOINT.new(3676, 3477, 0))
             end
         end
 
         -- Walk to the second waypoint
         print("Debug: Walking to (2572, 3291, 0)")
-        API.DoAction_WalkerW(WPOINT.new(2572, 3291, 0))
+        API.DoAction_Walker(FFPOINT.new(2572, 3291, 0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(2572, 3291, 0) do
             Sleep(0.3)
         end
 
         -- Check for the second door
-        local door2 = #API.GetAllObjArray2({34808}, 50, {0}, WPOINT.new(2572, 3291, 0))
+        local door2 = #API.GetAllObjArray2({34808}, 50, {0}, FFPOINT.new(2572, 3291, 0))
         print("Debug: Initial door2 check. Door count:", door2)
         if door2 == 0 then
             print("Debug: Door2 not found, interacting with object")
-            API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {34807}, 50, WPOINT.new(2572, 3290, 0))
+            API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {34807}, 50, FFPOINT.new(2572, 3290, 0))
             while API.Read_LoopyLoop() and door2 == 0 do
                 Sleep(1)
-                door2 = #API.GetAllObjArray2({2549}, 50, {0}, WPOINT.new(2579, 3297, 0))
+                door2 = #API.GetAllObjArray2({2549}, 50, {0}, FFPOINT.new(2579, 3297, 0))
                 print("Debug: Rechecking door2 count:", door2)
-                API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {34807}, 50, WPOINT.new(2572, 3290, 0))
+                API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {34807}, 50, FFPOINT.new(2572, 3290, 0))
             end
         end
 
         -- Interact with King Lathas' room door
         print("Debug: Interacting with King Lathas' room door")
-        API.DoAction_Object2(0x34, API.OFF_ACT_GeneralObject_route0, {34871}, 50, WPOINT.new(2571, 3285, 0))
+        API.DoAction_Object2(0x34, API.OFF_ACT_GeneralObject_route0, {34871}, 50, FFPOINT.new(2571, 3285, 0))
         WaitForObjectToAppear(IDS.KingLathas, 1)
 
         -- Walk to the third waypoint
         print("Debug: Walking to (2572, 3296, 1)")
-        API.DoAction_WalkerW(WPOINT.new(2572, 3296, 0))
+        API.DoAction_Walker(FFPOINT.new(2572, 3296, 0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(2572, 3296, 1) do
             Sleep(0.3)
         end
 
         -- Check for the third door
-        local door3 = #API.GetAllObjArray2({34826}, 50, {0}, WPOINT.new(2572, 3296, 0))
+        local door3 = #API.GetAllObjArray2({34826}, 50, {0}, FFPOINT.new(2572, 3296, 0))
         print("Debug: Initial door3 check. Door count:", door3)
         if door3 == 0 then
             print("Debug: Door3 not found, interacting with object")
-            API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {34825}, 50, WPOINT.new(2573, 3296, 0))
+            API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {34825}, 50, FFPOINT.new(2573, 3296, 0))
             while API.Read_LoopyLoop() and door3 == 0 do
                 Sleep(1)
-                door3 = #API.GetAllObjArray2({34826}, 50, {0}, WPOINT.new(2572, 3296, 0))
+                door3 = #API.GetAllObjArray2({34826}, 50, {0}, FFPOINT.new(2572, 3296, 0))
                 print("Debug: Rechecking door3 count:", door3)
-                API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {34825}, 50, WPOINT.new(2573, 3296, 0))
+                API.DoAction_Object2(0x31, API.OFF_ACT_GeneralObject_route0, {34825}, 50, FFPOINT.new(2573, 3296, 0))
             end
         end
 
@@ -621,7 +620,7 @@ while (API.Read_LoopyLoop()) do
             print("Navigating towards door at (2433, 3348).")
             while API.Read_LoopyLoop() and not SpectreUtils.IsPlayerInArea(2433, 3348, 0, 3) and doorWalkCount < 15 do
                 print("Walking to door area. Attempt: " .. doorWalkCount)
-                API.DoAction_Tile(WPOINT.new(2433 + math.random(-1, 1), 3348 + math.random(-1, 1), 0))
+                API.DoAction_Tile(FFPOINT.new(2433 + math.random(-1, 1), 3348 + math.random(-1, 1), 0))
                 SpectreUtils.Sleep(1)
                 doorWalkCount = doorWalkCount + 1
             end
@@ -644,13 +643,13 @@ while (API.Read_LoopyLoop()) do
             end
         
             print("Walking to Jorral's location at (2436, 3347).")
-            API.DoAction_Tile(WPOINT.new(2436, 3347, 0))
+            API.DoAction_Tile(FFPOINT.new(2436, 3347, 0))
             local jorralWalkCount = 0
             while API.Read_LoopyLoop() and not SpectreUtils.IsPlayerAtCoords(2436, 3347, 0) and jorralWalkCount < 15 do
                 SpectreUtils.Sleep(1)
                 if not SpectreUtils.IsPlayerAtCoords(2436, 3347, 0) then
                     print("Still not at Jorral's location. Re-attempting walk. Attempt: " .. jorralWalkCount)
-                    API.DoAction_Tile(WPOINT.new(2436, 3347, 0))
+                    API.DoAction_Tile(FFPOINT.new(2436, 3347, 0))
                     jorralWalkCount = jorralWalkCount + 1
                 end
             end

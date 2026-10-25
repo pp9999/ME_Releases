@@ -387,7 +387,7 @@ Config.RotationManager = {
                         
                         Utils.debugLog("Moving to beamspot 1: (" .. spot1.x .. ", " .. spot1.y .. ") Distance: " .. string.format("%.1f", distance))
                         ---@diagnostic disable-next-line
-                        API.DoAction_WalkerW(WPOINT.new(spot1.x, spot1.y, 0))
+                        API.DoAction_Walker(FFPOINT.new(spot1.x, spot1.y, 0))
                         
                         -- If far away, wait for orientation 270° then surge
                         if distance > 3 then
@@ -397,7 +397,7 @@ Config.RotationManager = {
                                 if Utils.useAbility("Surge") then
                                     API.RandomSleep2(50, 30, 30)
                                     ---@diagnostic disable-next-line
-                                    API.DoAction_WalkerW(WPOINT.new(spot1.x, spot1.y, 0))
+                                    API.DoAction_Walker(FFPOINT.new(spot1.x, spot1.y, 0))
                                 end
                             end
                         end
@@ -479,7 +479,7 @@ Config.RotationManager = {
                         local spot3 = Config.Variables.beamspots[3]
                         Utils.debugLog("Diving to beamspot 3: (" .. spot3.x .. ", " .. spot3.y .. ")")
                         ---@diagnostic disable-next-line
-                        API.DoAction_Dive_Tile(WPOINT.new(spot3.x, spot3.y, 0))
+                        API.DoAction_Dive_Tile(FFPOINT.new(spot3.x, spot3.y, 0))
                     end
                     return true
                 end,
@@ -512,7 +512,7 @@ Config.RotationManager = {
                         local spot4 = Config.Variables.beamspots[4]
                         Utils.debugLog("Clicking beamspot 4: (" .. spot4.x .. ", " .. spot4.y .. ")")
                         ---@diagnostic disable-next-line
-                        API.DoAction_WalkerW(WPOINT.new(spot4.x, spot4.y, 0))
+                        API.DoAction_Walker(FFPOINT.new(spot4.x, spot4.y, 0))
                     end
                     return true
                 end,
@@ -629,7 +629,7 @@ Config.RotationManager = {
                             Utils.debugLog(string.format("EMERGENCY WALK INACTIVE: Beam %.1f tiles ahead (<=2) - walking forward +2 tiles", distanceToBeam))
                             local newX = playerCoords.x + 3
                             ---@diagnostic disable-next-line
-                            API.DoAction_WalkerW(WPOINT.new(newX, playerCoords.y, 0))
+                            API.DoAction_Walker(FFPOINT.new(newX, playerCoords.y, 0))
                             return false -- Keep checking
                         elseif distanceToBeam <= -2 then
                             Utils.debugLog(string.format("EMERGENCY WALK INACTIVE: Beam now %.1f tiles behind - stopping emergency walk", math.abs(distanceToBeam)))
@@ -672,7 +672,7 @@ Config.RotationManager = {
                                 Utils.debugLog("EMERGENCY WALK +2: Front beam <= tiles and further front beam >=8 tiles - walking forward 4 tiles")
                                 local newX = playerCoords.x + 2
                                 ---@diagnostic disable-next-line
-                                API.DoAction_WalkerW(WPOINT.new(newX, playerCoords.y, 0))
+                                API.DoAction_Walker(FFPOINT.new(newX, playerCoords.y, 0))
                                 return false
                             end
                             
@@ -686,7 +686,7 @@ Config.RotationManager = {
                                 Utils.debugLog("EMERGENCY WALK +2: Behind beam <=3 tiles and front beam >=6 tiles - walking forward 2 tiles")
                                 local newX = playerCoords.x + 2
                                 ---@diagnostic disable-next-line
-                                API.DoAction_WalkerW(WPOINT.new(newX, playerCoords.y, 0))
+                                API.DoAction_Walker(FFPOINT.new(newX, playerCoords.y, 0))
                                 return false
                             else
                                 Utils.debugLog("EMERGENCY WALK NOT TRIGGERED: Conditions not met")
@@ -729,7 +729,7 @@ Config.RotationManager = {
                                 Utils.debugLog("EMERGENCY WALK +2: Front beam <= tiles and further front beam >=8 tiles - walking forward 4 tiles")
                                 local newX = playerCoords.x + 2
                                 ---@diagnostic disable-next-line
-                                API.DoAction_WalkerW(WPOINT.new(newX, playerCoords.y, 0))
+                                API.DoAction_Walker(FFPOINT.new(newX, playerCoords.y, 0))
                                 return false
                             end
                             
@@ -743,7 +743,7 @@ Config.RotationManager = {
                                 Utils.debugLog("EMERGENCY WALK +2: Behind beam <=3 tiles and front beam >=6 tiles - walking forward 2 tiles")
                                 local newX = playerCoords.x + 2
                                 ---@diagnostic disable-next-line
-                                API.DoAction_WalkerW(WPOINT.new(newX, playerCoords.y, 0))
+                                API.DoAction_Walker(FFPOINT.new(newX, playerCoords.y, 0))
                                 return false
                             else
                                 Utils.debugLog("EMERGENCY WALK NOT TRIGGERED: Conditions not met")
@@ -762,7 +762,7 @@ Config.RotationManager = {
                         if Config.Variables.beamspots and Config.Variables.beamspots[5] then
                             local spot5 = Config.Variables.beamspots[5]
                             ---@diagnostic disable-next-line
-                            API.DoAction_WalkerW(WPOINT.new(spot5.x, spot5.y, 0))
+                            API.DoAction_Walker(FFPOINT.new(spot5.x, spot5.y, 0))
                         end
                         Config.Variables.beamsDetectedForSpot5 = false -- Reset
                         Config.Variables.threeBeamsDetectedTime = nil -- Reset emergency timer
@@ -778,7 +778,7 @@ Config.RotationManager = {
                             if Config.Variables.beamspots and Config.Variables.beamspots[5] then
                                 local spot5 = Config.Variables.beamspots[5]
                                 ---@diagnostic disable-next-line
-                                API.DoAction_WalkerW(WPOINT.new(spot5.x, spot5.y, 0))
+                                API.DoAction_Walker(FFPOINT.new(spot5.x, spot5.y, 0))
                             end
                             Config.Variables.beamsDetectedForSpot5 = false -- Reset
                             Config.Variables.threeBeamsDetectedTime = nil -- Reset emergency timer
@@ -793,7 +793,7 @@ Config.RotationManager = {
                         Utils.debugLog("Beam behind <=4 and front >=7, walking +2 tiles and continuing")
                         local newX = playerCoords.x + 2
                         ---@diagnostic disable-next-line
-                        API.DoAction_WalkerW(WPOINT.new(newX, playerCoords.y, 0))
+                        API.DoAction_Walker(FFPOINT.new(newX, playerCoords.y, 0))
                         -- Don't return true, keep waiting
                         return false
                         
@@ -806,7 +806,7 @@ Config.RotationManager = {
                         if Config.Variables.beamspots and Config.Variables.beamspots[5] then
                             local spot5 = Config.Variables.beamspots[5]
                             ---@diagnostic disable-next-line
-                            API.DoAction_WalkerW(WPOINT.new(spot5.x, spot5.y, 0))
+                            API.DoAction_Walker(FFPOINT.new(spot5.x, spot5.y, 0))
                         end
                         Config.Variables.beamsDetectedForSpot5 = false -- Reset
                         Config.Variables.threeBeamsDetectedTime = nil -- Reset emergency timer
@@ -836,7 +836,7 @@ Config.RotationManager = {
                             if not isMoving then
                                 Utils.debugLog("Movement stopped, re-clicking spot 5")
                                 ---@diagnostic disable-next-line
-                                API.DoAction_WalkerW(WPOINT.new(spot5.x, spot5.y, 0))
+                                API.DoAction_Walker(FFPOINT.new(spot5.x, spot5.y, 0))
                             end
                             
                             return false -- Still moving, keep waiting
@@ -863,10 +863,10 @@ Config.RotationManager = {
                                 local spot6 = Config.Variables.beamspots[6]
                                 --if API.GetABs_name1("Dive").cooldown_timer <= 1 then
                                  --   ---@diagnostic disable-next-line
-                                --    API.DoAction_Dive_Tile(WPOINT.new(spot6.x, spot6.y, 0))
+                                --    API.DoAction_Dive_Tile(FFPOINT.new(spot6.x, spot6.y, 0))
                                -- else
                                 ---@diagnostic disable-next-line
-                                API.DoAction_WalkerW(WPOINT.new(spot6.x, spot6.y, 0))
+                                API.DoAction_Walker(FFPOINT.new(spot6.x, spot6.y, 0))
                                 --end
                             end
                             return true
@@ -895,10 +895,10 @@ Config.RotationManager = {
                             local spot6 = Config.Variables.beamspots[6]
                             --if API.GetABs_name1("Dive").cooldown_timer <= 1 then
                              --   ---@diagnostic disable-next-line
-                            --    API.DoAction_Dive_Tile(WPOINT.new(spot6.x, spot6.y, 0))
+                            --    API.DoAction_Dive_Tile(FFPOINT.new(spot6.x, spot6.y, 0))
                             --else
                             ---@diagnostic disable-next-line
-                            API.DoAction_WalkerW(WPOINT.new(spot6.x, spot6.y, 0))
+                            API.DoAction_Walker(FFPOINT.new(spot6.x, spot6.y, 0))
                             --end
                         end
                         return true
@@ -927,7 +927,7 @@ Config.RotationManager = {
                             if not isMoving then
                                 Utils.debugLog("Movement stopped, re-clicking spot 6")
                                 ---@diagnostic disable-next-line
-                                API.DoAction_WalkerW(WPOINT.new(spot6.x, spot6.y, 0))
+                                API.DoAction_Walker(FFPOINT.new(spot6.x, spot6.y, 0))
                             end
                             
                             return false -- Still moving, keep waiting
@@ -953,7 +953,7 @@ Config.RotationManager = {
                             if Config.Variables.beamspots and Config.Variables.beamspots[7] then
                                 local spot7 = Config.Variables.beamspots[7]
                                 ---@diagnostic disable-next-line
-                                API.DoAction_WalkerW(WPOINT.new(spot7.x, spot7.y, 0))
+                                API.DoAction_Walker(FFPOINT.new(spot7.x, spot7.y, 0))
                             end
                             return true
                         end
@@ -980,7 +980,7 @@ Config.RotationManager = {
                         if Config.Variables.beamspots and Config.Variables.beamspots[7] then
                             local spot7 = Config.Variables.beamspots[7]
                             ---@diagnostic disable-next-line
-                            API.DoAction_WalkerW(WPOINT.new(spot7.x, spot7.y, 0))
+                            API.DoAction_Walker(FFPOINT.new(spot7.x, spot7.y, 0))
                         end
                         return true
                     else
@@ -1038,7 +1038,7 @@ Config.RotationManager = {
 
                         Utils.debugLog(string.format("Walking to armspot: (%.0f, %.0f)", Config.Variables.armspot.x, Config.Variables.armspot.y))
                         ---@diagnostic disable-next-line
-                        return API.DoAction_WalkerW(WPOINT.new(Config.Variables.armspot.x, Config.Variables.armspot.y, 0))
+                        return API.DoAction_Walker(FFPOINT.new(Config.Variables.armspot.x, Config.Variables.armspot.y, 0))
                     else
                         Utils.debugLog("Armspot coordinates invalid, cannot walk to position")
                         return false
@@ -1065,7 +1065,7 @@ Config.RotationManager = {
                     API.DoAction_NPC(0x2a,API.OFF_ACT_AttackNPC_route,{ MECHANIC_OBJECTS.ArmId },50)
 
                     -- Check if we're targeting it
-                    local targetInfo = API.ReadTargetInfo(true)
+                    local targetInfo = API.ReadTargetInfo99(true)
                     if targetInfo and targetInfo.Target_Name == "Icy Arm (left)" then
                         Utils.debugLog("Successfully targeting Icy Arm (left)")
                         return true
@@ -1131,7 +1131,7 @@ Config.RotationManager = {
                         local targetY = math.floor(Config.Variables.startspot.y - 1)
                         Utils.debugLog(string.format("Moving to post-arms position: (%d, %d)", targetX, targetY))
                         ---@diagnostic disable-next-line
-                        return API.DoAction_WalkerW(WPOINT.new(targetX, targetY, 0))
+                        return API.DoAction_Walker(FFPOINT.new(targetX, targetY, 0))
                     else
                         Utils.debugLog("Startspot coordinates invalid, cannot move to post-arms position")
                         return false
@@ -1486,7 +1486,7 @@ Config.RotationManager = {
 
                     -- Use dive if available, otherwise walk
                     ---@diagnostic disable-next-line
-                    local targetTile = WPOINT.new(targetPosition.x, targetPosition.y, 0)
+                    local targetTile = FFPOINT.new(targetPosition.x, targetPosition.y, 0)
 
                     -- DEBUG: Show all minions and their distances to the target position
                     Utils.debugLog(string.format("=== MINION POSITIONING DEBUG ==="))
@@ -1512,10 +1512,10 @@ Config.RotationManager = {
                         Utils.debugLog("Using Bladed Dive to position")
                         API.DoAction_Dive_Tile(targetTile)
                         API.RandomSleep2(200, 30, 30)
-                        API.DoAction_WalkerW(targetTile)
+                        API.DoAction_Walker(targetTile)
                     else
                         Utils.debugLog("Dive not available, walking to position")
-                        API.DoAction_WalkerW(targetTile)
+                        API.DoAction_Walker(targetTile)
                     end
 
                     return true
@@ -2162,7 +2162,7 @@ Config.Timer = {
                 local bankChest = Utils.find(114750, 12, 20)
                 if bankChest and not Utils.atLocation(bankChest.Tile_XYZ.x, bankChest.Tile_XYZ.y -1, 1) then
                     ---@diagnostic disable-next-line
-                    return API.DoAction_WalkerW(WPOINT.new(bankChest.Tile_XYZ.x, bankChest.Tile_XYZ.y - 1, 0))
+                    return API.DoAction_Walker(FFPOINT.new(bankChest.Tile_XYZ.x, bankChest.Tile_XYZ.y - 1, 0))
                 end
                 return false
             end
@@ -2297,7 +2297,7 @@ Config.Timer = {
                 ]]
 
                 ---@diagnostic disable-next-line
-                local coords = (Config.Variables.adrenCrystalSide == "West" and WPOINT.new(3290, 10148,0)) or WPOINT.new(3298,10148, 0)
+                local coords = (Config.Variables.adrenCrystalSide == "West" and FFPOINT.new(3290, 10148,0)) or FFPOINT.new(3298,10148, 0)
                 --flexTimer.useTicks = true
 
                 if Utils.atLocation(3304, 10127, 3) then -- at altar
@@ -2306,7 +2306,7 @@ Config.Timer = {
                     Config.Timer.flexTimer.useTicks = false
                     -- click on tile infornt of bank chest
                     ---@diagnostic disable-next-line
-                    Config.Timer.flexTimer.action = function(state) return API.DoAction_WalkerW(WPOINT.new(3299, 10131, 0)) end
+                    Config.Timer.flexTimer.action = function(state) return API.DoAction_Walker(FFPOINT.new(3299, 10131, 0)) end
                 elseif Utils.atLocation(3299, 10132, 3) and not Utils.atLocation(3294, 10134, 2) and state.state.orientation >= 300 then -- at bank chest and not at stairs and facing nw
                     Config.Timer.flexTimer.cooldown = 1
                     Config.Timer.flexTimer.name = "Dive & Surge to adrenaline crystals"
@@ -2336,7 +2336,7 @@ Config.Timer = {
                 elseif Utils.playerIsIdle(state) then
                     Config.Timer.flexTimer.name = "Walking around portals and crystals"
                     ---@diagnostic disable-next-line
-                    Config.Timer.flexTimer.action = function(state) return API.DoAction_WalkerW(WPOINT.new(3293 + math.random(-2, 2), 10148 + math.random(-2, 2), 0)) end
+                    Config.Timer.flexTimer.action = function(state) return API.DoAction_Walker(FFPOINT.new(3293 + math.random(-2, 2), 10148 + math.random(-2, 2), 0)) end
                 end
 
                 local success = Config.Timer.flexTimer:execute(state)
@@ -2356,7 +2356,7 @@ Config.Timer = {
             condition = function(state) return Utils.playerIsIdle(state) end,
             action = function(state)
                 ---@diagnostic disable-next-line
-                local coords = (Config.Variables.adrenCrystalSide == "West" and WPOINT.new(3290, 10148,0)) or WPOINT.new(3298,10148, 0)
+                local coords = (Config.Variables.adrenCrystalSide == "West" and FFPOINT.new(3290, 10148,0)) or FFPOINT.new(3298,10148, 0)
                 return API.DoAction_Object_r(0x29, API.OFF_ACT_GeneralObject_route0, {114749}, 40, coords, 3)
             end
         }
@@ -2435,7 +2435,7 @@ Config.Timer = {
             condition = function(state) return not state.state.moving end,
             action = function(state)
                 ---@diagnostic disable-next-line
-                return API.DoAction_WalkerW(WPOINT.new(Config.Variables.startspot.x, Config.Variables.startspot.y, 0))
+                return API.DoAction_Walker(FFPOINT.new(Config.Variables.startspot.x, Config.Variables.startspot.y, 0))
             end
         }
     ),
@@ -2740,7 +2740,7 @@ Config.Timer = {
                 -- This handles the case where one minion dies but there are multiple of the same type
                 if anyMinionsExist then
                     -- Get current target ID if available
-                    local currentTarget = API.ReadTargetInfo(true)
+                    local currentTarget = API.ReadTargetInfo99(true)
                     if currentTarget and currentTarget.Id then
                         local targetId = currentTarget.Id
                         
@@ -2788,7 +2788,7 @@ Config.Timer = {
                 local minions2 = Utils.findAll(MECHANIC_OBJECTS.MinionIds[2], 1, 30)
                 
                 -- Get current target info for debugging
-                local currentTarget = API.ReadTargetInfo(true)
+                local currentTarget = API.ReadTargetInfo99(true)
                 local currentTargetId = currentTarget and currentTarget.Id or "none"
                 local currentTargetName = currentTarget and currentTarget.Name or "none"
                 local isTargeting = API.IsTargeting()
@@ -3112,7 +3112,7 @@ Config.Timer = {
                 if moveX ~= playerX then
                     Utils.debugLog(string.format("Moving from X=%d to X=%d", math.floor(playerX), math.floor(moveX)))
                     ---@diagnostic disable-next-line
-                    return API.DoAction_WalkerW(WPOINT.new(moveX, playerY, 0))
+                    return API.DoAction_Walker(FFPOINT.new(moveX, playerY, 0))
                 end
                 
                 return false
@@ -3350,7 +3350,7 @@ Config.playerManager = {
                     { 861, 0, -1, -1, 0 }, { 861, 2, -1, 0, 0 },
                     { 861, 4, -1, 2,  0 }, { 861, 8, -1, 4, 0 }
                 }
-                local result = API.ScanForInterfaceTest2Get(false, timer)
+                local result = API.ScanForInterfaceTest2Get2(false, timer)
                 return result and #result > 0 and #result[1].textids > 0
             end
         },
@@ -3953,7 +3953,7 @@ Config.playerManager = {
                         if distanceToSpot6 > 1.5 then
                             Utils.debugLog("SAFETY: Transitioning from pillars to minions - moving to beamspot 6 to avoid beam death")
                             ---@diagnostic disable-next-line
-                            API.DoAction_WalkerW(WPOINT.new(spot6.x, spot6.y, 0))
+                            API.DoAction_Walker(FFPOINT.new(spot6.x, spot6.y, 0))
                         else
                             Utils.debugLog("SAFETY: Already at beamspot 6 during pillars->minions transition")
                         end

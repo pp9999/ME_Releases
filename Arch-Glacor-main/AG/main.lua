@@ -25,7 +25,6 @@ local PlayerManager     = require("Arch-Glacor.core.player_manager")        -- f
 local Config            = require("Arch-Glacor.AG.config")              -- file saved in Lua_Scripts\Arch-Glacor\AG
 local Utils             = require("Arch-Glacor.AG.utils")               -- file saved in Lua_Scripts\Arch-Glacor\AG
 
-API.Write_fake_mouse_do(false)
 local scriptStartTime = os.time()
 local playerManager, prayerFlicker = PlayerManager.new(Config.playerManager), Config.Instances.prayerFlicker
 ---@param number number

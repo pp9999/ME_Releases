@@ -634,7 +634,7 @@ function PotionMixer:handleIdle()
                     local interfaceReady = false
                     repeat
                         self:sleepWithRandomVariation(0)
-                        local interfaceElements = API.ScanForInterfaceTest2Get(false, { { 1370,0,-1,0 }, { 1370,2,-1,0 }, { 1370,4,-1,0 }, { 1370,5,-1,0 }, { 1370,13,-1,0 } })
+                        local interfaceElements = API.ScanForInterfaceTest2Get2(false, { { 1370,0,-1,0 }, { 1370,2,-1,0 }, { 1370,4,-1,0 }, { 1370,5,-1,0 }, { 1370,13,-1,0 } })
                         for i = 1, #interfaceElements do
                             local cleanTextids = interfaceElements[i].textids
                             if cleanTextids then
@@ -672,7 +672,7 @@ function PotionMixer:handleIdle()
 end
 
 function PotionMixer:handleMixing()
-    if API.ScanForInterfaceTest2Get(false, { { 1251,8,-1,0 }, { 1251,36,-1,0 }, { 1251,0,-1,0 } })[1].itemid1 == 0 then
+    if API.ScanForInterfaceTest2Get2(false, { { 1251,8,-1,0 }, { 1251,36,-1,0 }, { 1251,0,-1,0 } })[1].itemid1 == 0 then
         print("Banking")
         if self.amountOfPotionsToMake > 0 then
             self.Data.totalPotionsMixed = self.Data.totalPotionsMixed + self.amountOfPotionsToMake

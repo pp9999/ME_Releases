@@ -185,7 +185,7 @@ end
 -- Checks if the accept quest interface is open
 ---@return boolean
 local function IsAcceptQuestInterfaceOpen()
-    if #API.ScanForInterfaceTest2Get(true, AdventureInterface) > 0 then
+    if #API.ScanForInterfaceTest2Get2(true, AdventureInterface) > 0 then
         return true
     else 
         return false 
@@ -199,7 +199,6 @@ local function IsItemOnGround(itemID)
     return #API.GetAllObjArray1({itemID}, 15, {3}) > 0
 end
 
-API.Write_fake_mouse_do(false)
 API.SetMaxIdleTime(5)
 while API.Read_LoopyLoop() do
     QuestProgress = Quest:Get("The Blood Pact"):getProgress()
@@ -277,7 +276,7 @@ while API.Read_LoopyLoop() do
         goto continue
 
     elseif QuestProgress == 12 then -- After cutscene
-        API.DoAction_Tile(WPOINT.new(API.PlayerCoord().x,API.PlayerCoord().y + 10,0))
+        API.DoAction_Tile(FFPOINT.new(API.PlayerCoord().x,API.PlayerCoord().y + 10,0))
         IdleTicks = 2
         goto continue
 

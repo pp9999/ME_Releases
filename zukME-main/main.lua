@@ -52,9 +52,9 @@ local TIMERS = {
 ---------------------------------------------------------------------
 --# SECTION: Constants used throughout the script
 ---------------------------------------------------------------------
---- @type WPOINT | nil
+--- @type FFPOINT | nil
 SAFESPOT_JAD = nil
---- @type WPOINT | nil
+--- @type FFPOINT | nil
 SAFESPOT_NORMAL = nil
 ARENA_MIN_X = math.mininteger
 ARENA_MAX_X = math.maxinteger
@@ -257,7 +257,7 @@ end
 
 local function needsTarget()
   local target = API.ReadLpInteracting()
-  local targetInfo = API.ReadTargetInfo(false)
+  local targetInfo = API.ReadTargetInfo99(false)
   return (target == nil or
         target.Id == 0)
       and
@@ -301,7 +301,7 @@ end
 
 local function currentlyTargeting(targetId, targetName)
   local currentTarget = API.ReadLpInteracting().Id or nil
-  local currentTargetName = API.ReadTargetInfo(false).Target_Name or nil
+  local currentTargetName = API.ReadTargetInfo99(false).Target_Name or nil
   return currentTarget == targetId or currentTargetName == targetName
 end
 
@@ -403,9 +403,9 @@ local function moveWithinAreaOfTarget(target)
       FIGHT_STATE.lastClickedTarget.Unique_Id == target.Unique_Id then
     return
   end
-  --- @type WPOINT
-  local targetTile = WPOINT.new(math.floor(target.Tile_XYZ.x), math.floor(target.Tile_XYZ.y), 0)
-  local tile = WPOINT.new(targetTile.x + math.random(-2, 2), targetTile.y + math.random(-2, 2), 0)
+  --- @type FFPOINT
+  local targetTile = FFPOINT.new(math.floor(target.Tile_XYZ.x), math.floor(target.Tile_XYZ.y), 0)
+  local tile = FFPOINT.new(targetTile.x + math.random(-2, 2), targetTile.y + math.random(-2, 2), 0)
   if target.Distance > 10 then
     if API.DoAction_NPC__Direct(0x2a, API.OFF_ACT_AttackNPC_route, target) then
       API.RandomSleep2(1000, 200, 200)
@@ -733,7 +733,7 @@ end
 
 local function waveClearRotation()
   if not targetDeathMarked() and not invokeDeathActive() and
-      API.ReadTargetInfo(false).Hitpoints >= 20000 then
+      API.ReadTargetInfo99(false).Hitpoints >= 20000 then
     if useAbility("Invoke Death") then return end
   end
 
@@ -799,7 +799,7 @@ end
 
 local function stunRotation()
   if not targetDeathMarked() and not invokeDeathActive() and
-      API.ReadTargetInfo(false).Hitpoints >= 20000 then
+      API.ReadTargetInfo99(false).Hitpoints >= 20000 then
     if useAbility("Invoke Death") then return end
   end
 
@@ -831,7 +831,7 @@ end
 
 local function thresholdRotation()
   if not targetDeathMarked() and not invokeDeathActive() and
-      API.ReadTargetInfo(false).Hitpoints >= 20000 then
+      API.ReadTargetInfo99(false).Hitpoints >= 20000 then
     if useAbility("Invoke Death") then return end
   end
 
@@ -1312,8 +1312,8 @@ local function findArenaCoords()
     local zukX = math.floor(zuk.Tile_XYZ.x)
     local zukY = math.floor(zuk.Tile_XYZ.y)
     print("Finding arena coords for " .. tostring(zukX) .. ", " .. tostring(zukY))
-    SAFESPOT_JAD = WPOINT.new(zukX - 8, zukY - 14, 0)
-    SAFESPOT_NORMAL = WPOINT.new(zukX + 9, zukY - 21, 0)
+    SAFESPOT_JAD = FFPOINT.new(zukX - 8, zukY - 14, 0)
+    SAFESPOT_NORMAL = FFPOINT.new(zukX + 9, zukY - 21, 0)
     ARENA_MIN_X = zukX - 15
     ARENA_MAX_X = zukX + 15
     ARENA_MAX_Y = zukY - 4
@@ -1323,7 +1323,7 @@ local function findArenaCoords()
   return false
 end
 
---- @param safespot WPOINT
+--- @param safespot FFPOINT
 local function goToSafespot(safespot)
   local playerPos = API.PlayerCoord()
   if playerPos.x == safespot.x and playerPos.y == safespot.y then
@@ -1331,7 +1331,7 @@ local function goToSafespot(safespot)
   end
   if API.DoAction_Tile(safespot) then
     API.RandomSleep2(600, 200, 200)
-    if API.Dist_FLPW(safespot) > 12 then
+    if API.Dist_FLP(safespot) > 12 then
       if API.DoAction_Ability_check("Surge", 1, API.OFF_ACT_GeneralInterface_route, true, true, true) then
         API.RandomSleep2(600, 200, 200)
         API.DoAction_Tile(safespot)
@@ -1418,7 +1418,7 @@ local function updateFightState()
   end
   FIGHT_STATE.wave = currWave
   FIGHT_STATE.target = API.ReadLpInteracting()
-  FIGHT_STATE.targetInfo = API.ReadTargetInfo(false)
+  FIGHT_STATE.targetInfo = API.ReadTargetInfo99(false)
   FIGHT_STATE.isNormalWave = REGULAR_WAVES[currWave] or false
   FIGHT_STATE.isIgneousWave = IGNEOUS_WAVES[currWave] or false
   FIGHT_STATE.isJadWave = JAD_WAVES[currWave] or false
@@ -1431,7 +1431,6 @@ end
 ---------------------------------------------------------------------
 
 -- Main loop and initialization
-API.Write_fake_mouse_do(false)
 API.SetDrawLogs(true)
 local prayerFlicker = PrayerFlicker.new(PRAYER_CONFIG)
 API.SetMaxIdleTime(9)
@@ -1478,7 +1477,7 @@ while API.Read_LoopyLoop() do
           API.RandomSleep2(600, 200, 100)
         end
       elseif searDebuff.remaining < 15 and not API.ReadPlayerMovin2() then
-        if API.DoAction_TileF(FFPOINT.new(zuk.Tile_XYZ.x, zuk.Tile_XYZ.y + (searDebuff.remaining / 2), 0)) then
+        if API.DoAction_Tile(FFPOINT.new(zuk.Tile_XYZ.x, zuk.Tile_XYZ.y + (searDebuff.remaining / 2), 0)) then
           API.logWarn("[SEAR] Moving to remove sear debuff")
           API.Sleep_tick(1)
         end
@@ -1488,7 +1487,7 @@ while API.Read_LoopyLoop() do
       if API.DoAction_Ability_check("Surge", 1, API.OFF_ACT_GeneralInterface_route, true, true, true) then
         API.logWarn("[QUAKE] Surged away from quake spot " .. avoidQuakeTile.x .. ", " .. avoidQuakeTile.y)
       else
-        if API.DoAction_TileF(avoidQuakeTile) then
+        if API.DoAction_Tile(avoidQuakeTile) then
           API.logWarn("[QUAKE] Moving away from quake tile")
         end
       end
@@ -1500,7 +1499,7 @@ while API.Read_LoopyLoop() do
   if FIGHT_STATE.wave == 17 then
     local avoidBlobTile = standingOnLavaBlob()
     if avoidBlobTile ~= nil then
-      if API.DoAction_TileF(avoidBlobTile) then
+      if API.DoAction_Tile(avoidBlobTile) then
         API.logInfo("Avoiding lava blob")
         API.Sleep_tick(2)
       end

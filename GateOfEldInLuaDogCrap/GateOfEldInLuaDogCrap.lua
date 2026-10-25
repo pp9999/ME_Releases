@@ -1,7 +1,6 @@
 local API = require("api")
 print("Run Lua script GateOfEld.")
 
-API.Write_fake_mouse_do(false)
 API.SetDrawTrackedSkills(true)
 
 local CurrentTick = API.Get_tick()
@@ -157,17 +156,17 @@ function GetObjectFromTableStringArea(All_obj_table, Type, Name, tileinfo, maxdi
     if (objects ~= nil and tileinfo ~= nil) then
         for _, obj in pairs(objects) do
             if (blocktype == 0) then--ignore 
-                if (API.Math_DistanceF(tileinfo,obj.Tile_XYZ) < maxdistance) then
+                if (API.Math_Distance(tileinfo,obj.Tile_XYZ) < maxdistance) then
                     return obj
                 end
             end
             if (blocktype == 1) then--block this tile object
-                if (API.Math_DistanceF(tileinfo,obj.Tile_XYZ) < maxdistance and blocktile.x ~= obj.Tile_XYZ.x and blocktile.y ~= obj.Tile_XYZ.y) then
+                if (API.Math_Distance(tileinfo,obj.Tile_XYZ) < maxdistance and blocktile.x ~= obj.Tile_XYZ.x and blocktile.y ~= obj.Tile_XYZ.y) then
                     return obj
                 end
             end
             if (blocktype == 2) then--only this tile object
-                if (API.Math_DistanceF(tileinfo,obj.Tile_XYZ) < maxdistance and blocktile.x == obj.Tile_XYZ.x and blocktile.y == obj.Tile_XYZ.y) then
+                if (API.Math_Distance(tileinfo,obj.Tile_XYZ) < maxdistance and blocktile.x == obj.Tile_XYZ.x and blocktile.y == obj.Tile_XYZ.y) then
                     return obj
                 end
             end
@@ -374,7 +373,7 @@ if (FightStatus_status == 1) then
         local IchtlarinData_copy = FFPOINT.new(IchtlarinData.Tile_XYZ.x,IchtlarinData.Tile_XYZ.y,0)
         IchtlarinData_copy.x = IchtlarinData_copy.x - 2 + API.Math_RandomNumber(3)
         IchtlarinData_copy.y = IchtlarinData_copy.y - 2 + API.Math_RandomNumber(3)
-        API.DoAction_TileF(FFPOINT.new(IchtlarinData_copy.x + 8,IchtlarinData_copy.y, 0))
+        API.DoAction_Tile(FFPOINT.new(IchtlarinData_copy.x + 8,IchtlarinData_copy.y, 0))
         SleepTickRandom(3)
         API.KeyboardPress31(0x26, 100, 500)
         Report("Moving to spot")
@@ -425,7 +424,7 @@ if (FightStatus_status == 2) then
             local IchtlarinData_copy = FFPOINT.new(IchtlarinData.Tile_XYZ.x,IchtlarinData.Tile_XYZ.y,0)
             IchtlarinData_copy.x = IchtlarinData_copy.x - 2 + API.Math_RandomNumber(3)
             IchtlarinData_copy.y = IchtlarinData_copy.y - 2 + API.Math_RandomNumber(4)
-            API.DoAction_TileF(FFPOINT.new(IchtlarinData_copy.x ,IchtlarinData_copy.y + 5, 0))
+            API.DoAction_Tile(FFPOINT.new(IchtlarinData_copy.x ,IchtlarinData_copy.y + 5, 0))
             SleepTickRandom(5)
             if (API.VB_FindPSett(10937).state < 1) then
                 SpecialButtonEventsafe = false
@@ -437,10 +436,10 @@ if (FightStatus_status == 2) then
                 SleepTickRandom(8)
                 goto top
             end
-            --API.DoAction_Surge_TileF(FFPOINT.new(IchtlarinData_copy.x ,IchtlarinData_copy.y + 5, 0))
-            API.DoAction_BDive_Tile(WPOINT.new(IchtlarinData_copy.x ,IchtlarinData_copy.y + 5, 0))
+            --API.DoAction_Surge_Tile2(FFPOINT.new(IchtlarinData_copy.x ,IchtlarinData_copy.y + 5, 0))
+            API.DoAction_BDive_Tile(FFPOINT.new(IchtlarinData_copy.x ,IchtlarinData_copy.y + 5, 0))
             SleepTickRandom(1)
-            API.DoAction_TileF(FFPOINT.new(IchtlarinData_copy.x ,IchtlarinData_copy.y + 5, 0))
+            API.DoAction_Tile(FFPOINT.new(IchtlarinData_copy.x ,IchtlarinData_copy.y + 5, 0))
             SleepTickRandom(6)
             local staysafe = API.SystemTime()           
             while(API.SystemTime() - staysafe < 5000) do
@@ -551,7 +550,7 @@ if (FightStatus_status == 2) then
                 API.DoAction_Interface(0x2e,0xffffffff,1,743,1,-1,API.OFF_ACT_GeneralInterface_route)
                 local IchtlarinData_copy = FFPOINT.new(IchtlarinData.Tile_XYZ.x,IchtlarinData.Tile_XYZ.y,0)
                 IchtlarinData_copy.x = IchtlarinData_copy.x - 3 + API.Math_RandomNumber(4)
-                API.DoAction_TileF(FFPOINT.new(IchtlarinData_copy.x + 2,IchtlarinData_copy.y + 19, 0))
+                API.DoAction_Tile(FFPOINT.new(IchtlarinData_copy.x + 2,IchtlarinData_copy.y + 19, 0))
                 Report("Go to wait for platforms")
                 SleepTickRandom(4)
                 goto top
@@ -564,7 +563,7 @@ if (FightStatus_status == 2) then
         local FT = API.Math_FreeTiles(Aoe_3x3,2,10,{})
         if (#FT > 0)  then
             Report("Aoe_3x3 " .. FT[1].x .. ":" .. FT[1].y)
-            API.DoAction_TileF(FT[1])
+            API.DoAction_Tile(FT[1])
             AvoidAOE_global_cooldown = API.Get_tick()
         end
     end
@@ -585,8 +584,8 @@ if (FightStatus_status == 2) then
             end
             if (#betterFreeTiles > 0) then
                 Report("Aoe_7x7 " .. betterFreeTiles[1].x .. ":" .. betterFreeTiles[1].y)
-                if not API.DoAction_BDive_Tile(WPOINT.new(betterFreeTiles[1].x, betterFreeTiles[1].y, 0)) then
-                API.DoAction_BDive_Tile(WPOINT.new(betterFreeTiles[1].x, betterFreeTiles[1].y, 0))
+                if not API.DoAction_BDive_Tile(FFPOINT.new(betterFreeTiles[1].x, betterFreeTiles[1].y, 0)) then
+                API.DoAction_BDive_Tile(FFPOINT.new(betterFreeTiles[1].x, betterFreeTiles[1].y, 0))
                 end
                 AvoidAOE_global_cooldown = API.Get_tick()
             end
@@ -594,8 +593,8 @@ if (FightStatus_status == 2) then
     else
         if (#FT > 0)  then
             Report("Aoe_7x7 " .. FT[1].x .. ":" .. FT[1].y)
-            if not API.DoAction_BDive_Tile(WPOINT.new(FT[1].x, FT[1].y, 0)) then
-                API.DoAction_BDive_Tile(WPOINT.new(FT[1].x, FT[1].y, 0))
+            if not API.DoAction_BDive_Tile(FFPOINT.new(FT[1].x, FT[1].y, 0)) then
+                API.DoAction_BDive_Tile(FFPOINT.new(FT[1].x, FT[1].y, 0))
             end
             AvoidAOE_global_cooldown = API.Get_tick()
         end

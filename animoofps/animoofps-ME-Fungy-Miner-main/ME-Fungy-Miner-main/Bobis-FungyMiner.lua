@@ -33,18 +33,18 @@ local function emptyBags()
     local Regular = "Calcified fungus"
     print("Emptying fungy")
     repeat
-        if (API.InvItemcount_String(Regular) >= 1) then
+        if (Inventory:InvItemcount_String(Regular) >= 1) then
             API.DoAction_Inventory1(52317, 0, 8, API.OFF_ACT_GeneralInterface_route2)
         end
-        if (API.InvItemcount_String(Enriched) >= 1) then
+        if (Inventory:InvItemcount_String(Enriched) >= 1) then
             API.DoAction_Inventory1(52319, 0, 8, API.OFF_ACT_GeneralInterface_route2)
         end
-    until (API.InvItemcount_String(Enriched) == 0) and (API.InvItemcount_String(Regular) == 0)
+    until (Inventory:InvItemcount_String(Enriched) == 0) and (Inventory:InvItemcount_String(Regular) == 0)
     STATE = STATES.MINE
 end
 
 local function InvyCheck()
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         emptyBags()
     end
 end
@@ -80,7 +80,7 @@ end
 
 local function checkStates()
     UTILS:gameStateChecks()
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         STATE = STATES.EMPTY_BAGS
     else
         STATE = STATES.MINE

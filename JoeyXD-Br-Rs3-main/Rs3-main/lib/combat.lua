@@ -54,21 +54,21 @@ local oldNecklace = 0
 function COMBAT.prayerCheck()
     local prayer = API.GetPrayPrecent()
     local elvenCD = API.DeBuffbar_GetIDstatus(43358, false)
-    local elvenFound = API.InvItemcount_1(43358)
-    local dragontoothFound = API.InvItemcount_1(19887)
+    local elvenFound = Inventory:InvItemcount(43358)
+    local dragontoothFound = Inventory:InvItemcount(19887)
     if TIMER:shouldRun("ELVEN") and prayer < 70 and not elvenCD.found and elvenFound > 0 then
         API.logDebug("[COMBAT] Using Elven Shard")
         API.DoAction_Inventory1(43358, 0, 1, API.OFF_ACT_GeneralInterface_route)
         TIMER:randomThreadedSleep("ELVEN",800,1000)
-    elseif TIMER:shouldRun("PRAYERPOT") and prayer < 50 and (API.InvItemcount_String("Prayer renewal") > 0) and not API.Buffbar_GetIDstatus(14695,false).found then
+    elseif TIMER:shouldRun("PRAYERPOT") and prayer < 50 and (Inventory:InvItemcount_String("Prayer renewal") > 0) and not API.Buffbar_GetIDstatus(14695,false).found then
         API.logDebug("[COMBAT] Using Prayer renewal")
         API.DoAction_Ability("Prayer renewal potion", 1, API.OFF_ACT_GeneralInterface_route,true)
         TIMER:randomThreadedSleep("PRAYERPOT",800,1000)
-    elseif TIMER:shouldRun("PRAYERPOT") and prayer < 20 and (API.InvItemcount_String("Super restore") > 0) and not API.Buffbar_GetIDstatus(14695,false).found then
+    elseif TIMER:shouldRun("PRAYERPOT") and prayer < 20 and (Inventory:InvItemcount_String("Super restore") > 0) and not API.Buffbar_GetIDstatus(14695,false).found then
         API.logDebug("[COMBAT] Using Super restore")
         API.DoAction_Ability("Super restore potion", 1, API.OFF_ACT_GeneralInterface_route,true)
         TIMER:randomThreadedSleep("PRAYERPOT",800,1000)
-    elseif TIMER:shouldRun("PRAYERPOT") and prayer < 20 and (API.InvItemcount_String("Prayer potion") > 0) then
+    elseif TIMER:shouldRun("PRAYERPOT") and prayer < 20 and (Inventory:InvItemcount_String("Prayer potion") > 0) then
         API.logDebug("[COMBAT] Using Prayer Potion")
         API.DoAction_Ability("Prayer potion", 1, API.OFF_ACT_GeneralInterface_route,true)
         TIMER:randomThreadedSleep("PRAYERPOT",800,1000)
@@ -147,7 +147,7 @@ function COMBAT.praySoulSplit()
 end
 
 function COMBAT.quickPray()
-    local qp = API.ScanForInterfaceTest2Get(false, { {1430,0,-1,0}, {1430,4,-1,0}, {1430,12,-1,0}, {1430,13,-1,0} })[1]
+    local qp = API.ScanForInterfaceTest2Get2(false, { {1430,0,-1,0}, {1430,4,-1,0}, {1430,12,-1,0}, {1430,13,-1,0} })[1]
     if API.Mem_Read_int(qp.memloc + I_slides) == 18619 and TIMER:shouldRun("COMBAT_QUICKPRAY") and API.GetPray_() > 50 then -- Checks if Quick Prayer is enabled
         API.logDebug("Enabling QuickPray")
         API.DoAction_Interface(0xffffffff,0xffffffff,1,1430,16,-1,API.OFF_ACT_GeneralInterface_route)
@@ -161,7 +161,7 @@ function COMBAT.disablePrayer(keepQuickPray)
     if TIMER:shouldRun("DISABLE_PRAYER") then
         API.logDebug("[COMBAT] Disabling Prayer")
         TIMER:createSleep("DISABLE_PRAYER",4000)
-        local qp = API.ScanForInterfaceTest2Get(false, { {1430,0,-1,0}, {1430,4,-1,0}, {1430,12,-1,0}, {1430,13,-1,0} })[1]
+        local qp = API.ScanForInterfaceTest2Get2(false, { {1430,0,-1,0}, {1430,4,-1,0}, {1430,12,-1,0}, {1430,13,-1,0} })[1]
         if not quick and API.Mem_Read_int(qp.memloc + I_slides) == 18620 then -- Checks if Quick Prayer is enabled
             API.logDebug("[COMBAT] Disabling QuickPray")
             API.DoAction_Interface(0xffffffff,0xffffffff,1,1430,16,-1,API.OFF_ACT_GeneralInterface_route)
@@ -288,8 +288,8 @@ end
 
 
 local function checkBloated()
-    if API.ReadTargetInfo(false).Hitpoints ~= 0 then
-        Buff_stack = API.ReadTargetInfo(true).Buff_stack
+    if API.ReadTargetInfo99(false).Hitpoints ~= 0 then
+        Buff_stack = API.ReadTargetInfo99(true).Buff_stack
         for _ , buff in ipairs(Buff_stack) do
             if buff == 30098 then
                 return true
@@ -366,10 +366,10 @@ function COMBAT.doRotationNecro()
     ------------------------------ OFF-GCD Stuff --------------------------------
     if API.Buffbar_GetIDstatus(30078).found and COMBAT.shouldAddrenaline then -- Living Death rotation
         if not API.DeBuffbar_GetIDstatus(26094).found and TIMER:shouldRun("ADRENALINE") then
-            if API.InvItemcount_String("Adrenaline potion") > 0 then
+            if Inventory:InvItemcount_String("Adrenaline potion") > 0 then
                 API.logDebug("[COMBAT] Adrenaline Potion")
                 API.DoAction_Inventory3("Adrenaline potion",0,1,API.OFF_ACT_GeneralInterface_route)
-            elseif API.InvItemcount_String("Replenishment potion") > 0 then
+            elseif Inventory:InvItemcount_String("Replenishment potion") > 0 then
                 API.logDebug("[COMBAT] Replenishment Potion")
                 API.DoAction_Inventory3("Replenishment potion",0,1,API.OFF_ACT_GeneralInterface_route)
             end
@@ -379,7 +379,7 @@ function COMBAT.doRotationNecro()
 
     ------------------------------ GCD Stuff --------------------------------
 
-    if TIMER:shouldRunStartsWith("GCD") and API.LocalPlayer_IsInCombat_() and (API.ReadTargetInfo(true).Hitpoints > 0 or #API.ReadAllObjectsArray({1},{22454,30165},{}) > 0) then
+    if TIMER:shouldRunStartsWith("GCD") and API.LocalPlayer_IsInCombat_() and (API.ReadTargetInfo99(true).Hitpoints > 0 or #API.ReadAllObjectsArray({1},{22454,30165},{}) > 0) then
         TIMER:scheduleTask("COMBAT_ANIMADJUST",800, function() lastPlayerAnim = -1 end)
         if API.Buffbar_GetIDstatus(30129,false).found then -- Threads Rotation
             if souls >= 5 and volley.enabled and volley.id ~= 0 then
@@ -397,7 +397,7 @@ function COMBAT.doRotationNecro()
             elseif specialAttack.enabled and specialAttack.id ~= 0 and (not API.DeBuffbar_GetIDstatus(55524,false).found and not API.DeBuffbar_GetIDstatus(55480,false).found) then
                 API.logDebug("[COMBAT] Special Weapon Attack")
                 API.DoAction_Ability_Direct(specialAttack, 1, API.OFF_ACT_GeneralInterface_route)
-            elseif COMBAT.shouldBloat and not checkBloated() and (API.ReadTargetInfo(false).Hitpoints > 20000 or #API.ReadAllObjectsArray({1},{22454,30165},{}) > 0) and bloat.id ~= 0 and bloat.enabled then
+            elseif COMBAT.shouldBloat and not checkBloated() and (API.ReadTargetInfo99(false).Hitpoints > 20000 or #API.ReadAllObjectsArray({1},{22454,30165},{}) > 0) and bloat.id ~= 0 and bloat.enabled then
                 API.logDebug("[COMBAT] Bloated")
                 API.DoAction_Ability_Direct(bloat, 1, API.OFF_ACT_GeneralInterface_route)
             elseif touch.cooldown_timer < 2 and touch.enabled then
@@ -449,19 +449,19 @@ function COMBAT.doRotationNecro()
             if COMBAT.shouldAttack and COMBAT.shouldUseThresholds and COMBAT.shouldUseSkull and skull.cooldown_timer <= 1 and skull.enabled and adrenaline >= 60 then -- Death Skulls
                 API.logDebug("[COMBAT] Death Skulls")
                 API.DoAction_Ability_Direct(skull, 1, API.OFF_ACT_GeneralInterface_route)
-            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and COMBAT.shouldUseLivingDeath and (API.ReadTargetInfo(false).Hitpoints > 20000 or (#API.ReadAllObjectsArray({1},{22454,30165},{}) > 0 and API.ReadTargetInfo(false).Cmb_lv > 0)) and death.cooldown_timer <= 1 and death.enabled and adrenaline >= 100 then
+            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and COMBAT.shouldUseLivingDeath and (API.ReadTargetInfo99(false).Hitpoints > 20000 or (#API.ReadAllObjectsArray({1},{22454,30165},{}) > 0 and API.ReadTargetInfo99(false).Cmb_lv > 0)) and death.cooldown_timer <= 1 and death.enabled and adrenaline >= 100 then
                 API.logDebug("[COMBAT] Living Death")
                 API.DoAction_Ability_Direct(death, 1, API.OFF_ACT_GeneralInterface_route)
             elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and souls >= 4 and volley.enabled and volley.id ~= 0 then -- Volley
                 API.logDebug("[COMBAT] Volley of Souls")
                 API.DoAction_Ability_Direct(volley, 1, API.OFF_ACT_GeneralInterface_route)
-            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and COMBAT.shouldBloat and TIMER:shouldRun("BLOAT") and (death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull) and not checkBloated() and (API.ReadTargetInfo(false).Hitpoints > 20000 or (#API.ReadAllObjectsArray({1},{22454,30165},{}) > 0)) and bloat.id ~= 0 and bloat.enabled then
+            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and COMBAT.shouldBloat and TIMER:shouldRun("BLOAT") and (death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull) and not checkBloated() and (API.ReadTargetInfo99(false).Hitpoints > 20000 or (#API.ReadAllObjectsArray({1},{22454,30165},{}) > 0)) and bloat.id ~= 0 and bloat.enabled then
                 API.logDebug("[COMBAT] Bloated")
                 API.DoAction_Ability_Direct(bloat, 1, API.OFF_ACT_GeneralInterface_route)
                 TIMER:createSleep("BLOAT",18000)
-            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and (API.GetEquipSlot(2).itemid1 == 50467 or API.InvItemFound1(50467)) and necrosis >= 8 and adrenaline > 25 and (((death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull)) or (API.ReadTargetInfo(false).Hitpoints < 40000 and API.ReadTargetInfo(false).Hitpoints > 10000)) and not API.DeBuffbar_GetIDstatus(55524,false).found then
+            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and (API.GetEquipSlot(2).itemid1 == 50467 or Inventory:InvItemFound(50467)) and necrosis >= 8 and adrenaline > 25 and (((death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull)) or (API.ReadTargetInfo99(false).Hitpoints < 40000 and API.ReadTargetInfo99(false).Hitpoints > 10000)) and not API.DeBuffbar_GetIDstatus(55524,false).found then
                 local previousNecklace = API.GetEquipSlot(2).itemid1
-                if API.InvItemFound1(50467) then -- Need to equip before using
+                if Inventory:InvItemFound(50467) then -- Need to equip before using
                     API.logDebug("[COMBAT] Equipping Essence of Finality")
                     API.DoAction_Inventory1(50467,0,2,API.OFF_ACT_GeneralInterface_route)
                     API.RandomSleep2(100,100,200)
@@ -469,9 +469,9 @@ function COMBAT.doRotationNecro()
                 end
                 API.logDebug("[COMBAT] Death Guard EoF with " .. necrosis .. " stacks") 
                 API.DoAction_Ability("Essence of Finality", 1, API.OFF_ACT_GeneralInterface_route,true)
-            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and (API.GetEquipSlot(3).itemid1 == 55540 or API.GetEquipSlot(3).itemid1 == 55544 or API.InvItemFound1(55540) or API.InvItemFound1(55544)) and ((death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull) or (API.ReadTargetInfo(false).Hitpoints < 40000 and API.ReadTargetInfo(false).Hitpoints > 10000)) and necrosis >= 8 and adrenaline > 25 and not API.DeBuffbar_GetIDstatus(55524,false).found then
+            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and (API.GetEquipSlot(3).itemid1 == 55540 or API.GetEquipSlot(3).itemid1 == 55544 or Inventory:InvItemFound(55540) or Inventory:InvItemFound(55544)) and ((death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull) or (API.ReadTargetInfo99(false).Hitpoints < 40000 and API.ReadTargetInfo99(false).Hitpoints > 10000)) and necrosis >= 8 and adrenaline > 25 and not API.DeBuffbar_GetIDstatus(55524,false).found then
                 local previousMainhand = API.GetEquipSlot(3).itemid1
-                if API.InvItemFound1(55540) or API.InvItemFound1(55544) then -- Need to equip before using
+                if Inventory:InvItemFound(55540) or Inventory:InvItemFound(55544) then -- Need to equip before using
                     API.logDebug("[COMBAT] Equipping Death Guard")
                     API.DoAction_Inventory1(55540,0,2,API.OFF_ACT_GeneralInterface_route)
                     API.RandomSleep2(100,100,200)
@@ -479,7 +479,7 @@ function COMBAT.doRotationNecro()
                 end
                 API.logDebug("[COMBAT] Death Guard Special Weapon Attack") 
                 API.DoAction_Ability_Direct(specialAttack, 1, API.OFF_ACT_GeneralInterface_route)
-            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and (API.GetEquipSlot(3).itemid1 == 55480 or API.GetEquipSlot(3).itemid1 == 55484) and (((death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull)) or (API.ReadTargetInfo(false).Hitpoints < 40000 and API.ReadTargetInfo(false).Hitpoints > 10000)) and adrenaline > 30 and specialAttack.enabled and specialAttack.id ~= 0 and not API.DeBuffbar_GetIDstatus(55480,false).found then
+            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and (API.GetEquipSlot(3).itemid1 == 55480 or API.GetEquipSlot(3).itemid1 == 55484) and (((death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull)) or (API.ReadTargetInfo99(false).Hitpoints < 40000 and API.ReadTargetInfo99(false).Hitpoints > 10000)) and adrenaline > 30 and specialAttack.enabled and specialAttack.id ~= 0 and not API.DeBuffbar_GetIDstatus(55480,false).found then
                 API.logDebug("[COMBAT] Omni Guard Special Weapon Attack") 
                 API.DoAction_Ability_Direct(specialAttack, 1, API.OFF_ACT_GeneralInterface_route)
             elseif COMBAT.shouldAttack and soulsap.cooldown_timer < 2 and soulsap.enabled and souls < 5 and necrosis == 12 then
@@ -503,7 +503,7 @@ function COMBAT.doRotationNecro()
             if COMBAT.shouldAttack and COMBAT.shouldUseThresholds and COMBAT.shouldUseSkull and skull.cooldown_timer <= 1 and skull.enabled and adrenaline >= 60 then -- Death Skulls
                 API.logDebug("[COMBAT] Death Skulls")
                 API.DoAction_Ability_Direct(skull, 1, API.OFF_ACT_GeneralInterface_route)
-            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and COMBAT.shouldUseLivingDeath and (API.ReadTargetInfo(false).Hitpoints > 20000 or (#API.ReadAllObjectsArray({1},{22454,30165},{}) > 0 and API.ReadTargetInfo(false).Cmb_lv > 0)) and death.cooldown_timer <= 1 and death.enabled and adrenaline >= 100 then
+            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and COMBAT.shouldUseLivingDeath and (API.ReadTargetInfo99(false).Hitpoints > 20000 or (#API.ReadAllObjectsArray({1},{22454,30165},{}) > 0 and API.ReadTargetInfo99(false).Cmb_lv > 0)) and death.cooldown_timer <= 1 and death.enabled and adrenaline >= 100 then
                 API.logDebug("[COMBAT] Living Death")
                 API.DoAction_Ability_Direct(death, 1, API.OFF_ACT_GeneralInterface_route)
             elseif not (API.Buffbar_GetIDstatus(34177,false).found or API.Buffbar_GetIDstatus(34178,false).found or API.Buffbar_GetIDstatus(34179,false).found) and army.cooldown_timer < 2 and army.enabled then
@@ -521,16 +521,16 @@ function COMBAT.doRotationNecro()
             elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and souls >= 5 and volley.enabled and volley.id ~= 0 and soulsap.cooldown_timer < 2 then -- Volley
                 API.logDebug("[COMBAT] Volley of Souls")
                 API.DoAction_Ability_Direct(volley, 1, API.OFF_ACT_GeneralInterface_route)
-            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and necrosis == 12 and API.DeBuffbar_GetIDstatus(55524,false).found and finger.enabled and finger.id ~= 0 and API.ReadTargetInfo(false).Hitpoints < 30000 then
+            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and necrosis == 12 and API.DeBuffbar_GetIDstatus(55524,false).found and finger.enabled and finger.id ~= 0 and API.ReadTargetInfo99(false).Hitpoints < 30000 then
                 API.logDebug("[COMBAT] Finger of Death")
                 API.DoAction_Ability_Direct(finger, 1, API.OFF_ACT_GeneralInterface_route)
-            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and COMBAT.shouldBloat and TIMER:shouldRun("BLOAT") and (death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull) and not checkBloated() and (API.ReadTargetInfo(false).Hitpoints > 20000 or (#API.ReadAllObjectsArray({1},{22454,30165},{}) > 0)) and bloat.id ~= 0 and bloat.enabled then
+            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and COMBAT.shouldBloat and TIMER:shouldRun("BLOAT") and (death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull) and not checkBloated() and (API.ReadTargetInfo99(false).Hitpoints > 20000 or (#API.ReadAllObjectsArray({1},{22454,30165},{}) > 0)) and bloat.id ~= 0 and bloat.enabled then
                 API.logDebug("[COMBAT] Bloated")
                 API.DoAction_Ability_Direct(bloat, 1, API.OFF_ACT_GeneralInterface_route)
                 TIMER:createSleep("BLOAT",18000)
-            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and (API.GetEquipSlot(2).itemid1 == 50467 or API.InvItemFound1(50467)) and necrosis >= 8 and adrenaline > 25 and (((death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull)) or (API.ReadTargetInfo(false).Hitpoints < 40000 and API.ReadTargetInfo(false).Hitpoints > 10000)) and not API.DeBuffbar_GetIDstatus(55524,false).found then
+            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and (API.GetEquipSlot(2).itemid1 == 50467 or Inventory:InvItemFound(50467)) and necrosis >= 8 and adrenaline > 25 and (((death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull)) or (API.ReadTargetInfo99(false).Hitpoints < 40000 and API.ReadTargetInfo99(false).Hitpoints > 10000)) and not API.DeBuffbar_GetIDstatus(55524,false).found then
                 local previousNecklace = API.GetEquipSlot(2).itemid1
-                if API.InvItemFound1(50467) then -- Need to equip before using
+                if Inventory:InvItemFound(50467) then -- Need to equip before using
                     API.logDebug("[COMBAT] Equipping Essence of Finality")
                     API.DoAction_Inventory1(50467,0,2,API.OFF_ACT_GeneralInterface_route)
                     API.RandomSleep2(100,100,200)
@@ -538,9 +538,9 @@ function COMBAT.doRotationNecro()
                 end
                 API.logDebug("[COMBAT] Death Guard EoF with " .. necrosis .. " stacks") 
                 API.DoAction_Ability("Essence of Finality", 1, API.OFF_ACT_GeneralInterface_route,true)
-            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and (API.GetEquipSlot(3).itemid1 == 55540 or API.GetEquipSlot(3).itemid1 == 55544 or API.InvItemFound1(55540) or API.InvItemFound1(55544)) and ((death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull) or (API.ReadTargetInfo(false).Hitpoints < 40000 and API.ReadTargetInfo(false).Hitpoints > 10000)) and necrosis >= 8 and adrenaline > 25 and not API.DeBuffbar_GetIDstatus(55524,false).found then
+            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and (API.GetEquipSlot(3).itemid1 == 55540 or API.GetEquipSlot(3).itemid1 == 55544 or Inventory:InvItemFound(55540) or Inventory:InvItemFound(55544)) and ((death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull) or (API.ReadTargetInfo99(false).Hitpoints < 40000 and API.ReadTargetInfo99(false).Hitpoints > 10000)) and necrosis >= 8 and adrenaline > 25 and not API.DeBuffbar_GetIDstatus(55524,false).found then
                 local previousMainhand = API.GetEquipSlot(3).itemid1
-                if API.InvItemFound1(55540) or API.InvItemFound1(55544) then -- Need to equip before using
+                if Inventory:InvItemFound(55540) or Inventory:InvItemFound(55544) then -- Need to equip before using
                     API.logDebug("[COMBAT] Equipping Death Guard")
                     API.DoAction_Inventory1(55540,0,2,API.OFF_ACT_GeneralInterface_route)
                     API.RandomSleep2(100,100,200)
@@ -548,7 +548,7 @@ function COMBAT.doRotationNecro()
                 end
                 API.logDebug("[COMBAT] Death Guard Special Weapon Attack") 
                 API.DoAction_Ability_Direct(specialAttack, 1, API.OFF_ACT_GeneralInterface_route)
-            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and (API.GetEquipSlot(3).itemid1 == 55480 or API.GetEquipSlot(3).itemid1 == 55484) and (((death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull)) or (API.ReadTargetInfo(false).Hitpoints < 40000 and API.ReadTargetInfo(false).Hitpoints > 10000)) and adrenaline > 30 and specialAttack.enabled and specialAttack.id ~= 0 and not API.DeBuffbar_GetIDstatus(55480,false).found then
+            elseif COMBAT.shouldAttack and COMBAT.shouldUseThresholds and (API.GetEquipSlot(3).itemid1 == 55480 or API.GetEquipSlot(3).itemid1 == 55484) and (((death.cooldown_timer > 10 or adrenaline == 100 or not COMBAT.shouldUseLivingDeath) and (adrenaline > 85 or skull.cooldown_timer > 10 or not COMBAT.shouldUseSkull)) or (API.ReadTargetInfo99(false).Hitpoints < 40000 and API.ReadTargetInfo99(false).Hitpoints > 10000)) and adrenaline > 30 and specialAttack.enabled and specialAttack.id ~= 0 and not API.DeBuffbar_GetIDstatus(55480,false).found then
                 API.logDebug("[COMBAT] Omni Guard Special Weapon Attack") 
                 API.DoAction_Ability_Direct(specialAttack, 1, API.OFF_ACT_GeneralInterface_route)
             elseif COMBAT.shouldAttack and soulsap.cooldown_timer < 2 and soulsap.enabled and souls < 5 and necrosis == 12 then
@@ -582,7 +582,7 @@ end
 
 function COMBAT.excalibur()
     local excalCD = API.DeBuffbar_GetIDstatus(14632, false)
-    local excalFound = API.InvItemcount_1(14632)
+    local excalFound = Inventory:InvItemcount(14632)
     if not excalCD.found and excalFound > 0 then
         print("[COMBAT] Using Excalibur")
         API.DoAction_Ability("Enhanced Excalibur", 1, API.OFF_ACT_GeneralInterface_route,true)
@@ -772,7 +772,7 @@ function COMBAT.healthCheck(teleportOut,eatThreshold)
     local eatThreshold = eatThreshold or 40
     local teleport = teleportOut or false
     local excalCD = API.DeBuffbar_GetIDstatus(14632, false)
-    local excalFound = API.InvItemcount_1(14632)
+    local excalFound = Inventory:InvItemcount(14632)
     local hp = API.GetHPrecent()
     local eatFoodAB = API.GetABs_name1("Eat Food")
     local brew = API.GetABs_name1("Saradomin brew")
@@ -798,12 +798,12 @@ end
 
 ----------------------------------------------------------------- WAR'S RETREAT STUFF --------------------------------------------------------------------
 function COMBAT.resetMinions()
-    if API.GetEquipSlot(5).itemid1 == 55542 and not API.InvFull_() then
+    if API.GetEquipSlot(5).itemid1 == 55542 and not Inventory:IsFull() then
         API.DoAction_Interface(0xffffffff,0xd8f6,1,1464,15,5,API.OFF_ACT_GeneralInterface_route) -- Remove lantern
         API.RandomSleep2(1200,100,200)
         API.DoAction_Inventory1(55542,0,2,API.OFF_ACT_GeneralInterface_route)
         API.RandomSleep2(1200,100,200)
-    elseif API.GetEquipSlot(5).itemid1 == 55482 and not API.InvFull_() then
+    elseif API.GetEquipSlot(5).itemid1 == 55482 and not Inventory:IsFull() then
         API.DoAction_Interface(0xffffffff,0xd8ba,1,1464,15,5,API.OFF_ACT_GeneralInterface_route) -- Remove lantern
         API.RandomSleep2(1200,100,200)
         API.DoAction_Inventory1(55482,0,2,API.OFF_ACT_GeneralInterface_route)
@@ -909,7 +909,7 @@ end
 --     while start + 10 > os.time() and API.Read_LoopyLoop() and #API.ReadAllObjectsArray({3}, itemstoLoot,{}) == 0 do
 --         API.RandomSleep2(50,0,0)
 --     end
---     while API.Read_LoopyLoop() and #API.ReadAllObjectsArray({3}, itemstoLoot,{}) > 0 and not API.InvFull_() do
+--     while API.Read_LoopyLoop() and #API.ReadAllObjectsArray({3}, itemstoLoot,{}) > 0 and not Inventory:IsFull() do
 --         API.RandomSleep2(50,0,0)
 --         looter:lootSelectedItemsAndBasedOnPrice(itemstoLoot,100000,30)
 --     end
@@ -920,7 +920,7 @@ end
 --         while start + 10 > os.time() and API.Read_LoopyLoop() and #API.ReadAllObjectsArray({3}, {-1},{}) == 0 do
 --             API.RandomSleep2(50,0,0)
 --         end
---         while API.Read_LoopyLoop() and #API.ReadAllObjectsArray({3}, {-1},{}) > 0 and not API.InvFull_() do
+--         while API.Read_LoopyLoop() and #API.ReadAllObjectsArray({3}, {-1},{}) > 0 and not Inventory:IsFull() do
 --             API.RandomSleep2(50,0,0)
 --             API.DoAction_G_Items1(0x29, {API.ReadAllObjectsArray({3}, {-1},{})[1].Id}, 30)
 --             API.RandomSleep2(500,100,100)
@@ -936,7 +936,7 @@ end
 
 function COMBAT.maintainAgressionPot()
     if not API.Buffbar_GetIDstatus(37969,false).found and TIMER:shouldRun("AGGROPOT") then
-        if API.InvItemcount_String("Aggression potion") > 0 then
+        if Inventory:InvItemcount_String("Aggression potion") > 0 then
             TIMER:createSleep("AGGROPOT",2000)
             API.DoAction_Inventory3("Aggression potion",0,1,API.OFF_ACT_GeneralInterface_route)
             return true
@@ -950,7 +950,7 @@ function COMBAT.maintainAgressionPot()
 end
 
 function COMBAT.antiPoison()
-    if API.InvItemcount_String("Antipoison") > 0 and API.DeBuffbar_GetIDstatus(30097,false).found and TIMER:shouldRun("COMBAT_ANTIPOISON") then
+    if Inventory:InvItemcount_String("Antipoison") > 0 and API.DeBuffbar_GetIDstatus(30097,false).found and TIMER:shouldRun("COMBAT_ANTIPOISON") then
         API.DoAction_Inventory3("Antipoison",0,1,API.OFF_ACT_GeneralInterface_route)
         TIMER:createSleep("COMBAT_ANTIPOISON",2000)
         return true
@@ -960,7 +960,7 @@ function COMBAT.antiPoison()
 end
 
 function COMBAT.vitalityPowerburst()
-    if API.InvItemcount_String("Powerburst of vitality") > 0 and not API.DeBuffbar_GetIDstatus(38075,false).found and TIMER:shouldRun("COMBAT_POWERBURSTVITALITY") then
+    if Inventory:InvItemcount_String("Powerburst of vitality") > 0 and not API.DeBuffbar_GetIDstatus(38075,false).found and TIMER:shouldRun("COMBAT_POWERBURSTVITALITY") then
         API.DoAction_Inventory3("Powerburst of vitality",0,1,API.OFF_ACT_GeneralInterface_route)
         TIMER:createSleep("COMBAT_POWERBURSTVITALITY",1200)
         return true
@@ -972,11 +972,11 @@ end
 
 function COMBAT.maintainOverload()
     if (not API.Buffbar_GetIDstatus(26093,false).found and not API.Buffbar_GetIDstatus(33210,false).found and not API.Buffbar_GetIDstatus(49039,false).found) and TIMER:shouldRun("OVERLOAD") then
-        if API.InvItemcount_String("overload salve") > 0 then
+        if Inventory:InvItemcount_String("overload salve") > 0 then
             TIMER:createSleep("OVERLOAD",2000)
             API.DoAction_Inventory3("overload salve",0,1,API.OFF_ACT_GeneralInterface_route)
             return true
-        elseif API.InvItemcount_String("overload potion") > 0 then
+        elseif Inventory:InvItemcount_String("overload potion") > 0 then
             TIMER:createSleep("OVERLOAD",2000)
             API.DoAction_Inventory3("overload potion",0,1,API.OFF_ACT_GeneralInterface_route)
             return true

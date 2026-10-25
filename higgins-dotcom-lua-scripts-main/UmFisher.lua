@@ -143,7 +143,7 @@ end
 
 local function bank()
     if API.BankOpen2() then
-        sole = sole + API.InvItemcount_1(ID.SOLE)
+        sole = sole + Inventory:InvItemcount(ID.SOLE)
 
         if API.VB_FindPSett(8958, -1, -1).state ~= 7 then
             API.DoAction_Interface(0x2e, 0xffffffff, 1, 517, 103, -1, API.OFF_ACT_GeneralInterface_route)
@@ -169,7 +169,7 @@ local function fish()
 end
 
 local function checkBait()
-    if NEED_BAIT and API.InvStackSize(ID.BAIT) == 0 then
+    if NEED_BAIT and Inventory:InvStackSize(ID.BAIT) == 0 then
         print("No more bait")
         return false
     end
@@ -201,11 +201,11 @@ local function walkToTile(tile)
 end
 
 local function walk()
-    if isAtBank() and not API.InvFull_() then
-        walkToTile(WPOINT.new(AREAS.FISHING_SPOT.x + math.random(-2, 2), AREAS.FISHING_SPOT.y + math.random(-2, 2),
+    if isAtBank() and not Inventory:IsFull() then
+        walkToTile(FFPOINT.new(AREAS.FISHING_SPOT.x + math.random(-2, 2), AREAS.FISHING_SPOT.y + math.random(-2, 2),
             0))
     elseif isAtFishing() then
-        walkToTile(WPOINT.new(AREAS.BANK.x + math.random(-2, 2), AREAS.BANK.y + math.random(-2, 2), 0))
+        walkToTile(FFPOINT.new(AREAS.BANK.x + math.random(-2, 2), AREAS.BANK.y + math.random(-2, 2), 0))
     end
     API.RandomSleep2(300, 500, 500)
 end
@@ -238,7 +238,7 @@ while API.Read_LoopyLoop() do
         end
     end
 
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         if isAtBank() then
             bank()
         else

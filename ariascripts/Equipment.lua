@@ -104,7 +104,7 @@ function Equipment.isOpen()
 end
 
 function Equipment.open()
-    return API.OpenEquipInterface2()
+    return Equipment:OpenInterface()
 end
 
 local function getId(slot) return API.GetEquipSlot(slot.slot).itemid1 end

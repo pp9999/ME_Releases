@@ -74,11 +74,13 @@ while(API.Read_LoopyLoop()) do
     gameStateChecks()
 
     if not API.CheckAnim(80) and not isMoving() then 
-        if not API.InvFull_() then 
+        if not Inventory:IsFull() then 
             API.DoAction_NPC_str(0x33, API.OFF_ACT_InteractNPC_route4, {Names.Banker}, 50 )
             API.RandomSleep2(600,200,400)
             API.WaitUntilMovingEnds()
-            if not API.InvFull_ then 
+            -- stop if the deposit did not go through (this was a bare
+            -- API.InvFull_ reference check that never fired before the API change)
+            if Inventory:IsFull() then
                 API.Write_LoopyLoop(false)
             end
         else

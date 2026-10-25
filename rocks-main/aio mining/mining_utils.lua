@@ -91,19 +91,19 @@ function Utils.clearTable(t)
 end
 
 function Utils.checkInterfaceText(interfacePath, expectedText)
-    local result = API.ScanForInterfaceTest2Get(false, interfacePath)
+    local result = API.ScanForInterfaceTest2Get2(false, interfacePath)
     return #result > 0 and result[1].textids == expectedText
 end
 
 local chatDialogPath = DATA.RESOURCE_LOCATOR.INTERFACES.CHAT_DIALOG
 
 function Utils.dismissChatDialog()
-    local result = API.ScanForInterfaceTest2Get(false, chatDialogPath)
+    local result = API.ScanForInterfaceTest2Get2(false, chatDialogPath)
     if #result > 0 and result[1].textids and result[1].textids:find("You found entry") then
         API.printlua("Dismissing dialog...", 0, false)
         API.KeyboardPress2(0x20, 60, 100)
         waitForCondition(function()
-            return #API.ScanForInterfaceTest2Get(false, chatDialogPath) == 0
+            return #API.ScanForInterfaceTest2Get2(false, chatDialogPath) == 0
         end, 5, 100)
     end
 end
@@ -128,7 +128,7 @@ local function walkToWaypoint(waypoint, threshold, waypointIndex)
     local randomX = waypoint.x + math.random(-2, 2)
     local randomY = waypoint.y + math.random(-2, 2)
 
-    API.DoAction_WalkerW(WPOINT.new(randomX, randomY, 0))
+    API.DoAction_Walker(FFPOINT.new(randomX, randomY, 0))
 
     local absoluteStart = os.clock()
     local lastMovementTime = os.clock()
@@ -859,7 +859,7 @@ function Utils.forceIdle()
         return
     end
     local coord = API.PlayerCoord()
-    API.DoAction_WalkerW(WPOINT.new(coord.x, coord.y, 0))
+    API.DoAction_Walker(FFPOINT.new(coord.x, coord.y, 0))
     waitForCondition(function()
         return API.ReadPlayerAnim() == 0 and not API.ReadPlayerMovin2()
     end, 5, 100)
@@ -867,7 +867,7 @@ function Utils.forceIdle()
 end
 
 function Utils.getSummoningPoints()
-    local result = API.ScanForInterfaceTest2Get(false, DATA.INTERFACES.SUMMONING_POINTS)
+    local result = API.ScanForInterfaceTest2Get2(false, DATA.INTERFACES.SUMMONING_POINTS)
     if result and result[1] and result[1].textids then
         local current, max = result[1].textids:match("^(%d+)/(%d+)$")
         if current then
@@ -878,7 +878,7 @@ function Utils.getSummoningPoints()
 end
 
 function Utils.isFamiliarActive(familiarDef)
-    local result = API.ScanForInterfaceTest2Get(false, DATA.INTERFACES.SUMMONING_FAMILIAR)
+    local result = API.ScanForInterfaceTest2Get2(false, DATA.INTERFACES.SUMMONING_FAMILIAR)
     if result and result[1] and result[1].textids then
         return result[1].textids:lower() == familiarDef.name:lower()
     end
@@ -917,7 +917,7 @@ function Utils.summonFamiliar(familiarDef)
 
     local expectedName = familiarDef.name:lower()
     if not waitForCondition(function()
-        local result = API.ScanForInterfaceTest2Get(false, DATA.INTERFACES.SUMMONING_FAMILIAR)
+        local result = API.ScanForInterfaceTest2Get2(false, DATA.INTERFACES.SUMMONING_FAMILIAR)
         return result and result[1] and result[1].textids and result[1].textids:lower() == expectedName
     end, 10, 100) then
         API.printlua("Failed to confirm familiar was summoned", 4, false)
@@ -1070,7 +1070,7 @@ end
 local RL = DATA.RESOURCE_LOCATOR
 
 local function isRechargeDialogOpen()
-    local result = API.ScanForInterfaceTest2Get(false, RL.INTERFACES.RECHARGE_DIALOG)
+    local result = API.ScanForInterfaceTest2Get2(false, RL.INTERFACES.RECHARGE_DIALOG)
     if #result > 0 and result[1].textids then
         return result[1].textids:find("how many charges do you wish to add") ~= nil, result[1].textids
     end
@@ -1140,7 +1140,7 @@ function Utils.doRechargeDialog(locator, isEquipped)
     API.RandomSleep2(600, 300, 300)
 
     if not waitForCondition(function()
-        local result = API.ScanForInterfaceTest2Get(false, RL.INTERFACES.RECHARGE_CONFIRM)
+        local result = API.ScanForInterfaceTest2Get2(false, RL.INTERFACES.RECHARGE_CONFIRM)
         return #result > 0 and result[1].textids and result[1].textids:find("This will add")
     end, 10, 100) then
         API.printlua("Recharge confirmation dialog did not appear", 4, false)
@@ -1150,7 +1150,7 @@ function Utils.doRechargeDialog(locator, isEquipped)
     API.RandomSleep2(600, 300, 300)
 
     if not waitForCondition(function()
-        local result = API.ScanForInterfaceTest2Get(false, RL.INTERFACES.RECHARGE_CONFIRM2)
+        local result = API.ScanForInterfaceTest2Get2(false, RL.INTERFACES.RECHARGE_CONFIRM2)
         return #result > 0 and result[1].textids and result[1].textids:find("energy to add")
     end, 10, 100) then
         API.printlua("Second recharge confirmation did not appear", 4, false)
@@ -1250,7 +1250,7 @@ function Utils.mineRockertunity(oreConfig, rockTarget, state)
 
     API.RandomSleep2(600, 400, 200)
 
-    local tile = WPOINT.new(rockTarget.x, rockTarget.y, 0)
+    local tile = FFPOINT.new(rockTarget.x, rockTarget.y, 0)
     API.DoAction_Object2(0x3a, API.OFF_ACT_GeneralObject_route0, {rockTarget.id}, 40, tile)
     state.lastInteractTime = os.clock()
 
@@ -1288,7 +1288,7 @@ function Utils.mineRock(oreConfig, state)
     local tile = nil
     if not oreConfig.interactClosest and not state.hasInteracted and cachedRocks and #cachedRocks > 0 then
         local rock = cachedRocks[math.random(#cachedRocks)]
-        tile = WPOINT.new(rock.x, rock.y, 0)
+        tile = FFPOINT.new(rock.x, rock.y, 0)
     end
     Interact:Object(oreConfig.name, oreConfig.action, tile, 35)
     if not Utils.waitOrTerminate(function() return Utils.isMiningActive(state) or Inventory:IsFull() end, 30, 50, "Failed to start mining") then

@@ -148,7 +148,7 @@ while (API.Read_LoopyLoop()) do ------------------------------------------------
     API.DoRandomEvents()
     idleCheck()
     if not API.ReadPlayerMovin() then
-        if not API.InvFull_() then 
+        if not Inventory:IsFull() then 
             if (FishTypeCombo.string_value == "Green blubber jellyfish" and API.PlayerInterActingWith_2(API.GetLocalPlayerAddress()) ~= "Green blubber jellyfish") or (FishTypeCombo.string_value == "Blue blubber jellyfish" and API.PlayerInterActingWith_2(API.GetLocalPlayerAddress()) ~= "Blue blubber jellyfish") then
                 fish()
             end

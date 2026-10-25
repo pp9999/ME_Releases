@@ -15,9 +15,9 @@ local ID = {
 
 local function invContains(item)
     if type(item) == "number" then
-        return API.InvItemFound1(item)
+        return Inventory:InvItemFound(item)
     elseif type(item) == "table" then
-        local items = API.InvItemcount_2(item)
+        local items = Inventory:InvItemcount(item)
         for _, v in ipairs(items) do
             if v > 0 then
                 return true

@@ -5,7 +5,7 @@ CreationInterface = {}
 local COMBO_BOX = 916 --this changes quite often
 
 local function getItemIC(container_index)
-    return API.ScanForInterfaceTest2Get(false, {
+    return API.ScanForInterfaceTest2Get2(false, {
         {1371,7,-1,-1,-1},
         {1371,0,-1,7,-1},
         {1371,15,-1,0,-1},
@@ -16,7 +16,7 @@ local function getItemIC(container_index)
 end
 
 local function getDropdownIC(index)
-    return API.ScanForInterfaceTest2Get(false, {
+    return API.ScanForInterfaceTest2Get2(false, {
         {1477,887,-1,-1,-1},
         {1477,890,-1,887,-1},
         {1477,892,-1,890,-1},
@@ -51,7 +51,7 @@ end
 
 ---@return string|nil
 function CreationInterface.getCurrentCategory()
-    local ic = API.ScanForInterfaceTest2Get(false, {
+    local ic = API.ScanForInterfaceTest2Get2(false, {
         {1371,7,-1,-1,-1},
         {1371,0,-1,7,-1},
         {1371,15,-1,0,-1},

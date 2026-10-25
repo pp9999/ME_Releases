@@ -173,7 +173,7 @@ end
 
 local function collectCoreMemoryFrag()
     if collectMemoryFrags then
-        if foundNPC(IDS.NPCS.coreMemoryFragment) and API.InvFull_() and not API.InvItemFound1(IDS.ITEMS.coreMemoryFragment) then
+        if foundNPC(IDS.NPCS.coreMemoryFragment) and Inventory:IsFull() and not Inventory:InvItemFound(IDS.ITEMS.coreMemoryFragment) then
             API.DoAction_Inventory1(42898,0,8,API.OFF_ACT_GeneralInterface_route2)
             API.RandomSleep2(1000, 300, 200)
             API.KeyboardPress2(0x59, 40, 60)
@@ -198,7 +198,7 @@ local function collectKnowledgeFrag()
 end
 
 local function collectEmptyJars()
-    if not API.InvItemFound1(IDS.ITEMS.partialJar) and not API.InvItemFound1(IDS.ITEMS.fullJar) and API.Invfreecount_() >= 5 then
+    if not Inventory:InvItemFound(IDS.ITEMS.partialJar) and not Inventory:InvItemFound(IDS.ITEMS.fullJar) and Inventory:Invfreecount() >= 5 then
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,IDS.OBJECTS.jarDepot,50)
         API.WaitUntilMovingandAnimEnds()
     end
@@ -208,12 +208,12 @@ local function fillJars()
     if API.CheckAnim(25) then return end
     if API.ReadPlayerMovin2() then return end
     if twoTick then
-        if API.InvItemFound1(IDS.ITEMS.emptyJar) or API.InvItemFound1(IDS.ITEMS.partialJar) then
+        if Inventory:InvItemFound(IDS.ITEMS.emptyJar) or Inventory:InvItemFound(IDS.ITEMS.partialJar) then
             API.DoAction_NPC(0xc8, API.OFF_ACT_InteractNPC_route, returnCurrentLevelMemory(), 50)
             API.WaitUntilMovingEnds(5,2)
         end
     else
-        if API.InvItemFound1(IDS.ITEMS.emptyJar) or API.InvItemFound1(IDS.ITEMS.partialJar) then
+        if Inventory:InvItemFound(IDS.ITEMS.emptyJar) or Inventory:InvItemFound(IDS.ITEMS.partialJar) then
             API.DoAction_NPC(0xc8, API.OFF_ACT_InteractNPC_route, returnCurrentLevelMemory(), 50)
             API.WaitUntilMovingandAnimEnds()
         end
@@ -221,7 +221,7 @@ local function fillJars()
 end
 
 local function depositJars()
-    if API.InvItemFound1(IDS.ITEMS.fullJar) and not API.InvItemFound1(IDS.ITEMS.emptyJar) and not API.InvItemFound1(IDS.ITEMS.partialJar) then
+    if Inventory:InvItemFound(IDS.ITEMS.fullJar) and not Inventory:InvItemFound(IDS.ITEMS.emptyJar) and not Inventory:InvItemFound(IDS.ITEMS.partialJar) then
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,IDS.OBJECTS.unstableRift,50)
         API.WaitUntilMovingEnds()
     end
@@ -280,7 +280,7 @@ while (API.Read_LoopyLoop()) do
     collectCoreMemoryFrag()
 
     ::core::
-    if dumpCore and not centerActive() and API.InvStackSize(IDS.ITEMS.coreMemoryFragment) > 0 then
+    if dumpCore and not centerActive() and Inventory:InvStackSize(IDS.ITEMS.coreMemoryFragment) > 0 then
         API.DoAction_Object_valid1(0x29,API.OFF_ACT_GeneralObject_route0,IDS.OBJECTS.plinth,50,true) 
         API.RandomSleep2(2400,1800,1800)
         API.WaitUntilMovingEnds(20,2)

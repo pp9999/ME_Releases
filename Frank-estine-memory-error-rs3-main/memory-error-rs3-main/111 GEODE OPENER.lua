@@ -30,7 +30,7 @@ function bank()
         
     API.KeyboardPress('1', 1250, 500)
 
-    if API.Invfreecount_()==28 then
+    if Inventory:Invfreecount()==28 then
         API.Write_LoopyLoop(false)
          return 
     end
@@ -43,22 +43,21 @@ local freecount1 = 0
 
 API.Write_LoopyLoop(true)
 while(API.Read_LoopyLoop()) do
-    while(API.Read_LoopyLoop()) do
-        if API.Invfreecount_() == 0 then
+    repeat
+        if Inventory:Invfreecount() == 0 then
             bank()
         else
-            freecount = API.Invfreecount_()
+            freecount = Inventory:Invfreecount()
              API.DoAction_Interface(0x31,0xaf10,1,1473,5,0,5392)
             API.RandomSleep2(250, 500,250) 
-            freecount1 = API.Invfreecount_()
+            freecount1 = Inventory:Invfreecount()
             if freecount == freecount1 then break end
         end
-    end
 
 
 
    
-   until API.InvFull_() or not API.Read_LoopyLoop() or not API.PlayerLoggedIn()
+   until Inventory:IsFull() or not API.Read_LoopyLoop() or not API.PlayerLoggedIn()
 
    
 

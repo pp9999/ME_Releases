@@ -56,9 +56,9 @@ local function findNpcOrObject(npcid, distance, objType)
 end
 
 local function run_to_tile(x, y, z)
-    local tile = WPOINT.new(x, y, z)
+    local tile = FFPOINT.new(x, y, z)
     API.DoAction_Tile(tile)
-    while API.Read_LoopyLoop() and API.Math_DistanceW(API.PlayerCoord(), tile) > 5 do
+    while API.Read_LoopyLoop() and API.Math_Distance(API.PlayerCoord(), tile) > 5 do
         API.RandomSleep2(100, 200, 200)
     end
 end
@@ -331,7 +331,7 @@ local function handleElidinisEvents()
     local originTile = API.PlayerCoordfloat()
     while #eventObjs > 0 and API.Read_LoopyLoop() do
         if eventObjs[1].Id == mimickingSoul then
-            API.DoAction_TileF(eventObjs[1].Tile_XYZ)
+            API.DoAction_Tile(eventObjs[1].Tile_XYZ)
         elseif eventObjs[1].Id == unstableSoul or eventObjs[1].Id == lostSoul then
             -- API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, { eventObjs[1].Id }, 50)
             API.DoAction_NPC__Direct(0x29, API.OFF_ACT_InteractNPC_route, eventObjs[1])
@@ -341,7 +341,7 @@ local function handleElidinisEvents()
         eventObjs = API.GetAllObjArray1(eventIDs, 50, { 1 })
     end
 
-    if found then API.DoAction_TileF(originTile) end
+    if found then API.DoAction_Tile(originTile) end
 end
 
 if Cselect == "Cultivate Flowers" then

@@ -24,7 +24,7 @@ local IDs = {
 local shopInterface = {InterfaceComp5.new( 1265,7,-1,0 )}
 local BankpinInterface = {InterfaceComp5.new(759,5,-1,-1)}
 
-local chestPosition = WPOINT.new(2917, 3451, 0)
+local chestPosition = FFPOINT.new(2917, 3451, 0)
 
 local totalLoot = 0
 local keysUsed = 0
@@ -53,7 +53,7 @@ function formatNumber(num)
 end
 
 local function isInterfacePresent(INTERFACENAME)
-    local result = API.ScanForInterfaceTest2Get(true, INTERFACENAME)
+    local result = API.ScanForInterfaceTest2Get2(true, INTERFACENAME)
     if #result > 0 then
         return true
     else return false end
@@ -132,7 +132,7 @@ API.Write_LoopyLoop(true)
 while (API.Read_LoopyLoop()) do
     API.DoRandomEvents()
 
-    if API.Compare2874Status(18) and API.PInAreaW(chestPosition, 1) then
+    if API.Compare2874Status(18) and API.PInAreaF2(chestPosition, 1) then
         local totalLootValue = getTotalLootValue()
         totalLoot = totalLoot + totalLootValue
         print("Total Loot Value: " .. totalLootValue)
@@ -144,7 +144,7 @@ while (API.Read_LoopyLoop()) do
         if findThing(IDs.crystalChest, 20, 12) then
             print("Have crystal key in inventory. Opening chest.")
             Interact:Object("Crystal chest", "Open", 20)
-            if not API.PInAreaW(chestPosition, 1) then
+            if not API.PInAreaF2(chestPosition, 1) then
                 print("Not infront of chest")
                 API.RandomSleep2(1200,300,600)
             end

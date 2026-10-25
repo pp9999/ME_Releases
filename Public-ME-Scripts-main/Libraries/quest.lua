@@ -34,7 +34,7 @@ end
 -- Is the option dialog box open
 ---@return boolean
 function QUEST:HasOption()
-    local option = API.ScanForInterfaceTest2Get(false, self.Interfaces.ChatOptions)
+    local option = API.ScanForInterfaceTest2Get2(false, self.Interfaces.ChatOptions)
 
     if #option > 0 and #option[1].textids > 0 then
         return option[1].textids
@@ -121,7 +121,7 @@ function QUEST:MoveTo(X, Y, Z, Tolerance)
     while API.Read_LoopyLoop() and not QUEST:IsPlayerInArea(X, Y, Z, Tolerance + 2) do
         if not API.IsPlayerMoving_(API.GetLocalPlayerName()) then
             print("Not moving. Walking...")
-            API.DoAction_WalkerW(WPOINT.new(X + math.random(-Tolerance, Tolerance),Y + math.random(-Tolerance, Tolerance),Z))
+            API.DoAction_Walker(FFPOINT.new(X + math.random(-Tolerance, Tolerance),Y + math.random(-Tolerance, Tolerance),Z))
         end
         QUEST:Sleep(0.6)
     end

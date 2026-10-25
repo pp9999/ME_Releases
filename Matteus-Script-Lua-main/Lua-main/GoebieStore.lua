@@ -34,7 +34,7 @@ end
 local function clickRandomTile(baseX, baseY, range)
     local offsetX = math.random(-range, range)
     local offsetY = math.random(-range, range)
-    local randomTile = WPOINT.new(baseX + offsetX, baseY + offsetY, 0)
+    local randomTile = FFPOINT.new(baseX + offsetX, baseY + offsetY, 0)
     API.DoAction_Tile(randomTile)
 end
 
@@ -114,7 +114,7 @@ local function getEscapeTile(player, soul, distance)
     if mag == 0 then return nil end 
     dx = dx / mag * distance
     dy = dy / mag * distance
-    return WPOINT.new(math.floor(player.x + dx), math.floor(player.y + dy), player.z)
+    return FFPOINT.new(math.floor(player.x + dx), math.floor(player.y + dy), player.z)
 end
 
 local function DO_ElidinisSouls()
@@ -154,7 +154,7 @@ local function DO_ElidinisSouls()
         if canDive() then
             print("Dive is ready — executing dive.")
             local tile = mimicSoul.Tile_XYZ
-            API.DoAction_Dive_Tile(WPOINT.new(tile.x, tile.y, tile.z))
+            API.DoAction_Dive_Tile(FFPOINT.new(tile.x, tile.y, tile.z))
             API.RandomSleep2(3200, 550, 650)
             triedDive = true
         end
@@ -166,7 +166,7 @@ local function DO_ElidinisSouls()
             local distance = math.sqrt(dx * dx + dy * dy)
             if (not triedDive) or (distance > 1.5) then
                  print("Walking to Mimicking.")
-                 API.DoAction_WalkerF(FFPOINT.new(tile.x, tile.y, tile.z))
+                 API.DoAction_Walker(FFPOINT.new(tile.x, tile.y, tile.z))
                  API.RandomSleep2(600, 400, 200)
                 end
 
@@ -189,7 +189,7 @@ local function DO_ElidinisSouls()
             if escapeTile then
                 API.DoAction_Tile(escapeTile)
             else
-                local fallbackTile = WPOINT.new(player.x + math.random(-20, 20), player.y + math.random(-20, 20), player.z)
+                local fallbackTile = FFPOINT.new(player.x + math.random(-20, 20), player.y + math.random(-20, 20), player.z)
                 API.DoAction_Tile(fallbackTile)
             end
             API.RandomSleep2(1200, 100, 100)
@@ -586,7 +586,7 @@ local function performCraftingAction()
             API.Write_LoopyLoop(false)
             return
         end
-        if not API.InvItemcount_String("necklace") or API.InvItemcount_String("necklace") < 1 then
+        if not Inventory:InvItemcount_String("necklace") or Inventory:InvItemcount_String("necklace") < 1 then
             print("No necklace found in inventory, stopping.")
             API.Write_LoopyLoop(false)
             return

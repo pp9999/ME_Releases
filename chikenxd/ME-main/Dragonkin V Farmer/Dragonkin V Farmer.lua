@@ -851,17 +851,17 @@ end
 
 local function lodestoneInterfaceOpen()
     local lodestoneState = API.VB_FindPSettinOrder and API.VB_FindPSettinOrder(2874, 1)
-    return (#API.ScanForInterfaceTest2Get(true, { { 1092, 1, -1, -1, 0 }, { 1092, 54, -1, 1, 0 } }) > 0)
+    return (#API.ScanForInterfaceTest2Get2(true, { { 1092, 1, -1, -1, 0 }, { 1092, 54, -1, 1, 0 } }) > 0)
         or (lodestoneState and lodestoneState.state == 30)
         or (API.Compare2874Status and API.Compare2874Status(30))
 end
 
 local function workInterfaceOpen()
-    return #API.ScanForInterfaceTest2Get(true, { { 1371, 7, -1, 0 } }) > 0
+    return #API.ScanForInterfaceTest2Get2(true, { { 1371, 7, -1, 0 } }) > 0
 end
 
 local function sharriganInterfaceOpen()
-    return #API.ScanForInterfaceTest2Get(true, { { 656, 3, -1, 0 } }) > 0
+    return #API.ScanForInterfaceTest2Get2(true, { { 656, 3, -1, 0 } }) > 0
 end
 
 local function worldHopBlockReason()
@@ -1112,7 +1112,7 @@ local function runtimeLabel()
 end
 
 local function artifactFoundInterfacePresent()
-    return #API.ScanForInterfaceTest2Get(true, { { 1189, 2, -1, 0 } }) > 0
+    return #API.ScanForInterfaceTest2Get2(true, { { 1189, 2, -1, 0 } }) > 0
 end
 
 local function getPorter()
@@ -1338,7 +1338,7 @@ local function tomeDestroyInterfaceOpen()
     if API.Compare2874Status and API.Compare2874Status(28) == true then
         return true
     end
-    return #API.ScanForInterfaceTest2Get(true, {
+    return #API.ScanForInterfaceTest2Get2(true, {
         { 1183, 11, -1, 0 },
     }) > 0
 end
@@ -1397,7 +1397,7 @@ local function getSpriteSpot(spots, maxDistance)
 
     for _, spot in ipairs(spots) do
         for _, highlight in ipairs(highlights) do
-            local distance = API.Math_DistanceF(spot.Tile_XYZ, highlight.Tile_XYZ)
+            local distance = API.Math_Distance(spot.Tile_XYZ, highlight.Tile_XYZ)
             if distance < shortestDistance then
                 shortestDistance = distance
                 spriteSpot = spot
@@ -1451,7 +1451,7 @@ local function clickExcavationSpot(spot, actionLabel, requireStartConfirm)
 
     local spotId = getSpotObjectId(spot) or SPOT_IDS[RUNTIME.spotIndex]
     local shouldConfirmStart = requireStartConfirm == true
-    local target = WPOINT.new(tile.x, tile.y, tile.z or 0)
+    local target = FFPOINT.new(tile.x, tile.y, tile.z or 0)
 
     setAction(actionLabel)
 
@@ -1867,13 +1867,14 @@ local function openRepairBank()
 end
 
 local function closeBankForRepair()
-    if Bank and type(Bank.Close) == "function" then
-        pcall(function()
-            Bank:Close()
-        end)
-    else
-        API.KeyboardPress32(0x1B, 0)
-    end
+    -- Bank:Close() does not exist in the current API; use the Escape fallback.
+    -- if Bank and type(Bank.Close) == "function" then
+    --     pcall(function()
+    --         Bank:Close()
+    --     end)
+    -- else
+    API.KeyboardPress32(0x1B, 0)
+    -- end
     delay(350, 120, 0)
     return waitUntil(function()
         return Bank:IsOpen() ~= true
@@ -2611,11 +2612,12 @@ local function runRedeemOnlyTick()
         end
     end
 
-    if Bank and type(Bank.Close) == "function" then
-        pcall(function() Bank:Close() end)
-    else
-        API.KeyboardPress32(0x1B, 0)
-    end
+    -- Bank:Close() does not exist in the current API; use the Escape fallback.
+    -- if Bank and type(Bank.Close) == "function" then
+    --     pcall(function() Bank:Close() end)
+    -- else
+    API.KeyboardPress32(0x1B, 0)
+    -- end
     delay(350, 120, 0)
     waitUntil(function() return not Bank:IsOpen() end, 3, 120)
 

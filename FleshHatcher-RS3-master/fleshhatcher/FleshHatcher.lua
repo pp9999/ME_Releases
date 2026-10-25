@@ -410,12 +410,12 @@ function Mechanics:moveToTile(tile)
 
     local dive = API.GetABs_name("Dive", true)
     if dive.enabled and dive.cooldown_timer <= 0 then
-        API.DoAction_Dive_Tile(WPOINT.new(tile.x, tile.y, 0))
+        API.DoAction_Dive_Tile(FFPOINT.new(tile.x, tile.y, 0))
         self.lastDodgeTick = currentTick
         return true
     end
 
-    API.DoAction_Tile(WPOINT.new(tile.x, tile.y, 0))
+    API.DoAction_Tile(FFPOINT.new(tile.x, tile.y, 0))
     self.lastDodgeTick = currentTick
     return true
 end
@@ -743,7 +743,6 @@ local function runKillCycle()
 end
 
 
-Write_fake_mouse_do(false)
 
 if not waitForGUIStart() then return end
 

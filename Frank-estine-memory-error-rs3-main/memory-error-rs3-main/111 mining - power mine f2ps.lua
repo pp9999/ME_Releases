@@ -77,8 +77,8 @@ local function depositItems()
     local maxDepositAttempts = math.random(2, 3)
     
     API.Write_ScripCuRunning0("Depositing")
-    if API.Invfreecount_() < math.random(5, 10) and not oreBoxFull then
-        local prevInvCount = API.Invfreecount_()
+    if Inventory:Invfreecount() < math.random(5, 10) and not oreBoxFull then
+        local prevInvCount = Inventory:Invfreecount()
         local retryAttempts = 0
         local depositSuccess = false
         repeat
@@ -86,7 +86,7 @@ local function depositItems()
             API.KeyboardPress('s', 60, 100)
             API.RandomSleep2(math.random(200, 500), math.random(500, 1000),1500)
 
-            if prevInvCount == API.Invfreecount_() then
+            if prevInvCount == Inventory:Invfreecount() then
                 retryAttempts = retryAttempts + 1
                 print("Retrying deposit attempt #" .. retryAttempts)
             else
@@ -111,13 +111,13 @@ end
 
 function drop_ore()
     
-    if API.Invfreecount_() < math.random(5,10) and API.Read_LoopyLoop() then
+    if Inventory:Invfreecount() < math.random(5,10) and API.Read_LoopyLoop() then
             
         repeat
             API.KeyboardPress('a', 60, 1000) 
             API.RandomSleep2(150, 500, 200)
-            print(API.Invfreecount_())
-        until API.Invfreecount_() > math.random(5,10) or not API.Read_LoopyLoop() or not API.PlayerLoggedIn()
+            print(Inventory:Invfreecount())
+        until Inventory:Invfreecount() > math.random(5,10) or not API.Read_LoopyLoop() or not API.PlayerLoggedIn()
     end
 
 end
@@ -126,7 +126,7 @@ end
 local function mining()
 
 
-    if API.Invfreecount_() > 0 and API.Read_LoopyLoop() then
+    if Inventory:Invfreecount() > 0 and API.Read_LoopyLoop() then
     repeat
         
       if not API.IsPlayerAnimating_(player, 3) then
@@ -152,7 +152,7 @@ local function mining()
                 API.RandomSleep2(2500, 3050, 12000)
             end
         end
-    until API.Invfreecount_() == 0 or not API.Read_LoopyLoop() or not API.PlayerLoggedIn()
+    until Inventory:Invfreecount() == 0 or not API.Read_LoopyLoop() or not API.PlayerLoggedIn()
 
 
         if oreBoxFull then
@@ -193,7 +193,7 @@ API.Write_LoopyLoop(true)
 while(API.Read_LoopyLoop()) do
 
     if API.PlayerLoggedIn () then
-        if API.Invfreecount_() > 0 then
+        if Inventory:Invfreecount() > 0 then
             mining()
         end
     else

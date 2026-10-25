@@ -39,42 +39,42 @@ function PROC:HandleMovingToNextBrother()
         
     elseif Location == "ABOVE_BARROWS" then
         if NextBrother == "VERAC" or NextBrother == "AKRISAE" then
-            Interact:Object("Spade", "Dig-with", WPOINT.new(3557, 3298, 5))
+            Interact:Object("Spade", "Dig-with", FFPOINT.new(3557, 3298, 5))
             Slib:SleepUntil(function()
                 return not API.IsPlayerMoving_(API.GetLocalPlayerName()) and Slib:FindObj(DATA.Sarcophaguses, 10, 12) ~= false
             end, 6, 100)
             Slib:RandomSleep(100, 200, "ms")
 
         elseif NextBrother == "AHRIM" or NextBrother == "LINZA" then
-            Interact:Object("Spades", "Dig-with", WPOINT.new(3567, 3288, 5))
+            Interact:Object("Spades", "Dig-with", FFPOINT.new(3567, 3288, 5))
             Slib:SleepUntil(function()
                 return not API.IsPlayerMoving_(API.GetLocalPlayerName()) and Slib:FindObj(DATA.Sarcophaguses, 10, 12) ~= false
             end, 6, 100)
             Slib:RandomSleep(100, 200, "ms")
 
         elseif NextBrother == "DHAROK" then
-            Interact:Object("Spades", "Dig-with", WPOINT.new(3575, 3298, 5))
+            Interact:Object("Spades", "Dig-with", FFPOINT.new(3575, 3298, 5))
             Slib:SleepUntil(function()
                 return not API.IsPlayerMoving_(API.GetLocalPlayerName()) and Slib:FindObj(DATA.Sarcophaguses, 10, 12) ~= false
             end, 6, 100)
             Slib:RandomSleep(100, 200, "ms")
 
         elseif NextBrother == "TORAG" then
-            Interact:Object("Spades", "Dig-with", WPOINT.new(3554, 3282, 5))
+            Interact:Object("Spades", "Dig-with", FFPOINT.new(3554, 3282, 5))
             Slib:SleepUntil(function()
                 return not API.IsPlayerMoving_(API.GetLocalPlayerName()) and Slib:FindObj(DATA.Sarcophaguses, 10, 12) ~= false
             end, 6, 100)
             Slib:RandomSleep(100, 200, "ms")
 
         elseif NextBrother == "KARIL" then
-            Interact:Object("Spade", "Dig-with", WPOINT.new(3564, 3277, 5))
+            Interact:Object("Spade", "Dig-with", FFPOINT.new(3564, 3277, 5))
             Slib:SleepUntil(function()
                 return not API.IsPlayerMoving_(API.GetLocalPlayerName()) and Slib:FindObj(DATA.Sarcophaguses, 10, 12) ~= false
             end, 6, 100)
             Slib:RandomSleep(100, 200, "ms")
 
         elseif NextBrother == "GUTHAN" then
-            Interact:Object("Spade", "Dig-with", WPOINT.new(3576, 3281, 5))
+            Interact:Object("Spade", "Dig-with", FFPOINT.new(3576, 3281, 5))
             Slib:SleepUntil(function()
                 return not API.IsPlayerMoving_(API.GetLocalPlayerName()) and Slib:FindObj(DATA.Sarcophaguses, 10, 12) ~= false
             end, 6, 100)
@@ -108,32 +108,32 @@ function PROC:HandleOpenSarcophagus()
     end
 
     if NextBrother == "VERAC" then
-        if not Interact:Object("Sarcophagus", "Search", WPOINT.new(3574, 9642, 1), 10) then
-            Interact:Object("Sarcophagus", "Search", WPOINT.new(4073, 5710, 2))
+        if not Interact:Object("Sarcophagus", "Search", FFPOINT.new(3574, 9642, 1), 10) then
+            Interact:Object("Sarcophagus", "Search", FFPOINT.new(4073, 5710, 2))
         end
 
     elseif NextBrother == "AHRIM" then
-        if not Interact:Object("Sarcophagus", "Search", WPOINT.new(3555, 9630, 1), 10) then
-            Interact:Object("Sarcophagus", "Search", WPOINT.new(3545, 9586, 1))
+        if not Interact:Object("Sarcophagus", "Search", FFPOINT.new(3555, 9630, 1), 10) then
+            Interact:Object("Sarcophagus", "Search", FFPOINT.new(3545, 9586, 1))
         end
 
     elseif NextBrother == "DHAROK" then
-        Interact:Object("Sarcophagus", "Search", WPOINT.new(3555, 9652, 1))
+        Interact:Object("Sarcophagus", "Search", FFPOINT.new(3555, 9652, 1))
 
     elseif NextBrother == "GUTHAN" then
-        Interact:Object("Sarcophagus", "Search", WPOINT.new(3534, 9640, 1))
+        Interact:Object("Sarcophagus", "Search", FFPOINT.new(3534, 9640, 1))
 
     elseif NextBrother == "AKRISAE" then
-        Interact:Object("Sarcophagus", "Search", WPOINT.new(4072, 5723, 2))
+        Interact:Object("Sarcophagus", "Search", FFPOINT.new(4072, 5723, 2))
 
     elseif NextBrother == "TORAG" then
-        Interact:Object("Sarcophagus", "Search", WPOINT.new(3568, 9613, 1))
+        Interact:Object("Sarcophagus", "Search", FFPOINT.new(3568, 9613, 1))
 
     elseif NextBrother == "KARIL" then
-        Interact:Object("Sarcophagus", "Search", WPOINT.new(3535, 9615, 1))
+        Interact:Object("Sarcophagus", "Search", FFPOINT.new(3535, 9615, 1))
 
     elseif NextBrother == "LINZA" then
-        Interact:Object("Sarcophagus", "Search", WPOINT.new(3531, 9588, 1))
+        Interact:Object("Sarcophagus", "Search", FFPOINT.new(3531, 9588, 1))
 
     end
 

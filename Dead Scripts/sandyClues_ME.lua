@@ -15,14 +15,14 @@ local IDS = {
 }
 
 local function gotoTile(wpoint)
-    if API.Dist_FLPW(wpoint) < 20 then return end
+    if API.Dist_FLP(wpoint) < 20 then return end
     math.randomseed(os.time())
-    API.DoAction_WalkerW(WPOINT.new(wpoint.x + math.random(-5,5),wpoint.y + math.random(-5,5),wpoint.z))
+    API.DoAction_Walker(FFPOINT.new(wpoint.x + math.random(-5,5),wpoint.y + math.random(-5,5),wpoint.z))
 end
 
 local function isClueDialogOpen()
     local inter = { { 345, 9, -1, -1, 0 }, { 345, 11, -1, 9, 0 }, { 345, 4, -1, 11, 0 } }
-    local founds = API.ScanForInterfaceTest2Get(false, inter)
+    local founds = API.ScanForInterfaceTest2Get2(false, inter)
     if #founds > 0 then
         return founds[1].xs > 0
     end
@@ -31,7 +31,7 @@ end
 
 local function isNPCDialogOpen()
     local inter = { { 1184, 2, -1, -1, 0 }, { 1184, 15, -1, 2, 0 } }
-    local founds = API.ScanForInterfaceTest2Get(false, inter)
+    local founds = API.ScanForInterfaceTest2Get2(false, inter)
     if #founds > 0 then
         return founds[1].xs > 0
     end
@@ -40,7 +40,7 @@ end
 
 local function isScrollBoxDialogOpen()
     local inter = { { 1189, 2, -1, -1, 0 }, { 1189, 3, -1, 2, 0 } }
-    local founds = API.ScanForInterfaceTest2Get(false, inter)
+    local founds = API.ScanForInterfaceTest2Get2(false, inter)
     if #founds > 0 then
         return founds[1].xs > 0
     end
@@ -49,7 +49,7 @@ end
 
 local function isShopInteractDialogOpen()
     local inter = { { 1186, 2, -1, -1, 0 }, { 1186, 8, -1, 2, 0 } }
-    local founds = API.ScanForInterfaceTest2Get(false, inter)
+    local founds = API.ScanForInterfaceTest2Get2(false, inter)
     if #founds > 0 then
         return founds[1].xs > 0
     end
@@ -57,11 +57,11 @@ local function isShopInteractDialogOpen()
 end
 
 local function takeScroll()
-    gotoTile(WPOINT.new(3180,3241,0))
+    gotoTile(FFPOINT.new(3180,3241,0))
     API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route4, { 21146 }, 70)
     if UTILS.SleepUntil(isNPCDialogOpen, 10, 'take scroll') then
         UTILS.countTicks(3)
-        if not API.InvItemFound1(IDS.CLUE) then
+        if not Inventory:InvItemFound(IDS.CLUE) then
             print('no more clues, exiting')
             API.Write_LoopyLoop(false)
         end
@@ -69,7 +69,7 @@ local function takeScroll()
 end
 
 local function dungHole()
-    gotoTile(WPOINT.new(3170,3252,0))
+    gotoTile(FFPOINT.new(3170,3252,0))
     API.DoAction_Object1(0x29, API.OFF_ACT_GeneralObject_route0, { 114121 }, 70)
     if UTILS.SleepUntil(isScrollBoxDialogOpen, 20, 'scroll') then
         UTILS.countTicks(2)
@@ -77,7 +77,7 @@ local function dungHole()
 end
 
 local function sarah()
-    gotoTile(WPOINT.new(3169,3220,0))
+    gotoTile(FFPOINT.new(3169,3220,0))
     API.DoAction_NPC(0x2c, API.OFF_ACT_InteractNPC_route, { 21153 }, 70)
     if UTILS.SleepUntil(isNPCDialogOpen, 10, 'choose option') then
         API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1184, 15, -1, API.OFF_ACT_GeneralInterface_Choose_option)
@@ -86,7 +86,7 @@ local function sarah()
 end
 
 local function lifeguard()
-    gotoTile(WPOINT.new(3170,3252,0))
+    gotoTile(FFPOINT.new(3170,3252,0))
     API.DoAction_NPC(0x2c, API.OFF_ACT_InteractNPC_route, { 21158 }, 70)
     if UTILS.SleepUntil(isNPCDialogOpen, 10, 'choose option') then
         API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1184, 15, -1, API.OFF_ACT_GeneralInterface_Choose_option)
@@ -95,7 +95,7 @@ local function lifeguard()
 end
 
 local function palmer()
-    gotoTile(WPOINT.new(3154,3227,0))
+    gotoTile(FFPOINT.new(3154,3227,0))
     API.DoAction_NPC(0x2c, API.OFF_ACT_InteractNPC_route, { 21152 }, 70)
     if UTILS.SleepUntil(isNPCDialogOpen, 10, 'choose option') then
         API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1184, 15, -1, API.OFF_ACT_GeneralInterface_Choose_option)
@@ -104,7 +104,7 @@ local function palmer()
 end
 
 local function foreman()
-    gotoTile(WPOINT.new(3158,3227,0))
+    gotoTile(FFPOINT.new(3158,3227,0))
     API.DoAction_NPC(0x2c, API.OFF_ACT_InteractNPC_route, { 21163 }, 70)
     if UTILS.SleepUntil(isNPCDialogOpen, 10, 'choose option') then
         API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1184, 15, -1, API.OFF_ACT_GeneralInterface_Choose_option)
@@ -113,7 +113,7 @@ local function foreman()
 end
 
 local function flo()
-    gotoTile(WPOINT.new(3166,3217,0))
+    gotoTile(FFPOINT.new(3166,3217,0))
     API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, { 21148 }, 70)
     if UTILS.SleepUntil(isShopInteractDialogOpen, 20, 'shopper') then
         API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1186, 8, -1, API.OFF_ACT_GeneralInterface_Choose_option)
@@ -122,7 +122,7 @@ local function flo()
 end
 
 local function sheldon()
-    gotoTile(WPOINT.new(3170,3252,0))
+    gotoTile(FFPOINT.new(3170,3252,0))
     API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, { 21147 }, 70)
     if UTILS.SleepUntil(isShopInteractDialogOpen, 20, 'shopper') then
         API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1186, 8, -1, API.OFF_ACT_GeneralInterface_Choose_option)
@@ -131,7 +131,7 @@ local function sheldon()
 end
 
 local function wellington()
-    gotoTile(WPOINT.new(3180,3241,0))
+    gotoTile(FFPOINT.new(3180,3241,0))
     API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, { 21150 }, 70)
     if UTILS.SleepUntil(isNPCDialogOpen, 10, 'choose option') then
         API.DoAction_Interface(0xffffffff, 0xffffffff, 0, 1184, 15, -1, API.OFF_ACT_GeneralInterface_Choose_option)
@@ -140,7 +140,7 @@ local function wellington()
 end
 
 local function coconuts()
-    gotoTile(WPOINT.new(3169,3220,0))
+    gotoTile(FFPOINT.new(3169,3220,0))
     API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,{ 97332 },50)
     if UTILS.SleepUntil(isScrollBoxDialogOpen, 20, 'scroll') then
         UTILS.countTicks(3)
@@ -148,7 +148,7 @@ local function coconuts()
 end
 
 local function fishTable()
-    gotoTile(WPOINT.new(3180,3241,0))
+    gotoTile(FFPOINT.new(3180,3241,0))
     API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,{ 97277 },50)
     if UTILS.SleepUntil(isScrollBoxDialogOpen, 20, 'scroll') then
         UTILS.countTicks(3)
@@ -156,8 +156,8 @@ local function fishTable()
 end
 
 local function palmTree()
-    gotoTile(WPOINT.new(3180,3241,0))
-    API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route0,{ 117512 },50,WPOINT.new(3186,3240,0))
+    gotoTile(FFPOINT.new(3180,3241,0))
+    API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route0,{ 117512 },50,FFPOINT.new(3186,3240,0))
     if UTILS.SleepUntil(isScrollBoxDialogOpen, 20, 'scroll') then
         UTILS.countTicks(3)
     end
@@ -179,7 +179,7 @@ local MESSAGES = {
 
 local function getClueText()
     local inter = { { 345, 9, -1, -1, 0 }, { 345, 11, -1, 9, 0 }, { 345, 4, -1, 11, 0 } }
-    local texts = API.ScanForInterfaceTest2Get(false, inter)
+    local texts = API.ScanForInterfaceTest2Get2(false, inter)
     if #texts > 0 then
         return texts[1].textids
     end
@@ -222,11 +222,11 @@ local function solveClue()
 end
 
 while API.Read_LoopyLoop() do
-    if API.InvItemFound1(IDS.SCROLL_BOX) then
+    if Inventory:InvItemFound(IDS.SCROLL_BOX) then
         print('scroll')
         API.DoAction_Inventory1(IDS.SCROLL_BOX, 0, 1, API.OFF_ACT_GeneralInterface_route)
         UTILS.countTicks(3)
-    elseif API.InvItemFound1(IDS.CLUE) then
+    elseif Inventory:InvItemFound(IDS.CLUE) then
         API.DoAction_Inventory1(IDS.CLUE, 0, 1, API.OFF_ACT_GeneralInterface_route)
         UTILS.SleepUntil(isClueDialogOpen, 10, 'clue')
         UTILS.countTicks(3)

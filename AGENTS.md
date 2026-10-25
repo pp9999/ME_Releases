@@ -463,8 +463,8 @@ Draws tile highlights on the game world.
 | `thick` | Line thickness float (optional) |
 | `filled` | `boolean` — fill the tile square |
 | `square` | `boolean` — force square shape |
-| `pixelshape` | `WPOINT` — override box pixel size |
-| `pixellocation` | `WPOINT` — override pixel position |
+| `pixelshape` | `FFPOINT` — override box pixel size |
+| `pixellocation` | `FFPOINT` — override pixel position |
 
 ```lua
 -- Highlight a death mechanic tile for 5 seconds
@@ -472,7 +472,7 @@ API.MarkTiles({ obj.Tile_XYZ }, 5000)
 
 -- Highlight with red color, filled
 API.MarkTiles({ obj.Tile_XYZ }, 3000, 0xFF0000, 2, true, false,
-    WPOINT.new(0,0,0), WPOINT.new(0,0,0))
+    FFPOINT.new(0,0,0), FFPOINT.new(0,0,0))
 ```
 
 ---

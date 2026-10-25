@@ -50,13 +50,13 @@ local function idleCheck()
 end
 
 local function gameStateChecks()
-    local gameState = API.GetGameState()
+    local gameState = API.GetGameState2()
     if (gameState ~= 3) then
         print('Not ingame with state:', gameState)
         API.Write_LoopyLoop(false)
         return
     end
-    if API.InvFull_() then
+    if Inventory:IsFull() then
         print('inventory full, stopping')
         API.Write_LoopyLoop(false)
         return
@@ -129,7 +129,7 @@ local function drawGUI()
 end
 
 local function walkBack()
-    API.DoAction_WalkerW(startTile);
+    API.DoAction_Walker(startTile);
 end
 
 local function runBackIfUnderAttack()
@@ -150,13 +150,13 @@ local function CatchAButterfly()
     if not (interactingWithMoth or API.ReadPlayerAnim() ~= 0) and not API.ReadPlayerMovin2() then
         local moth = API.FindNPCbyName(entityToCatch, 30)
         if moth ~= nil and moth.Id ~= 0 then
-            if API.Math_DistanceF(moth.Tile_XYZ, API.PlayerCoordfloat()) > 50 then
+            if API.Math_Distance(moth.Tile_XYZ, API.PlayerCoordfloat()) > 50 then
             print('Too far from target, walking back')
-                API.DoAction_WalkerF(moth.Tile_XYZ)
+                API.DoAction_Walker(moth.Tile_XYZ)
             end
             API.DoAction_NPC(0x29, API.OFF_ACT_InteractNPC_route, {moth.Id}, 50)
         else
-            if API.Math_DistanceW(startTile, API.PlayerCoord()) > 50 then
+            if API.Math_Distance(startTile, API.PlayerCoord()) > 50 then
             print('Wandered off, going back')
                 walkBack()
             end

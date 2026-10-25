@@ -233,23 +233,23 @@ local function SurgeIfFacing(Orientation)
     end        
 end
 
-local function Dive(WPOINT)
+local function Dive(FFPOINT)
     local bladedDive = API.GetABs_id(30331)
     local dive = API.GetABs_id(23714)
 
     if bladedDive and bladedDive.id ~= 0 and bladedDive.cooldown_timer < 1 and bladedDive.enabled then
         print("Using Bladed Dive")
-        if not API.DoAction_BDive_Tile(WPOINT) then
+        if not API.DoAction_BDive_Tile(FFPOINT) then
             print("Failed to use Bladed Dive, attempting Dive instead.")
             if dive and dive.id ~= 0 and dive.cooldown_timer < 1 and dive.enabled then
-                API.DoAction_Dive_Tile(WPOINT)
+                API.DoAction_Dive_Tile(FFPOINT)
             else
                 print("Dive is not available.")
             end
         end
     elseif dive and dive.id ~= 0 and dive.cooldown_timer < 1 and dive.enabled then
         print("Using Dive")
-        API.DoAction_Dive_Tile(WPOINT)
+        API.DoAction_Dive_Tile(FFPOINT)
     else
         print("Neither Bladed Dive nor Dive is available.")
     end
@@ -273,9 +273,9 @@ local function WaitForObjectToAppear(ObjID, ObjType)
     end
 end
 
-local function WaitForObjectToAppear2(ObjID, ObjType, WPOINT)
+local function WaitForObjectToAppear2(ObjID, ObjType, FFPOINT)
     while API.Read_LoopyLoop() do
-        local objects = API.GetAllObjArray2({ObjID}, 75, {ObjType}, WPOINT)
+        local objects = API.GetAllObjArray2({ObjID}, 75, {ObjType}, FFPOINT)
         if objects and #objects > 0 then
             for _, object in ipairs(objects) do
                 local id = object.Id or 0
@@ -347,12 +347,12 @@ end
 ---@param Obj12ID number
 ---@return boolean
 local function OpenDoor(Obj0ID, Obj0XCoord, Obj0YCoord, Obj12ID)
-    local door = #API.GetAllObjArray2({Obj0ID}, 50, {0}, WPOINT.new(Obj0XCoord, Obj0YCoord, 0))    
+    local door = #API.GetAllObjArray2({Obj0ID}, 50, {0}, FFPOINT.new(Obj0XCoord, Obj0YCoord, 0))    
     if door == 0 then 
         API.DoAction_Object1(0x31,API.OFF_ACT_GeneralObject_route0,{Obj12ID},50) --Open door
         while API.Read_LoopyLoop() and door == 0 do
             UTILS.randomSleep(100)
-            door = #API.GetAllObjArray2({Obj0ID}, 50, {0}, WPOINT.new(Obj0XCoord, Obj0YCoord, 0))  
+            door = #API.GetAllObjArray2({Obj0ID}, 50, {0}, FFPOINT.new(Obj0XCoord, Obj0YCoord, 0))  
         end
         return true
     end
@@ -374,7 +374,7 @@ local function MoveTo(X, Y, Z, Tolerance)
     while API.Read_LoopyLoop() and not IsPlayerInArea(X, Y, Z, Tolerance + 2) do
         if not API.IsPlayerMoving_(API.GetLocalPlayerName()) then
             print("Not moving. Walking...")
-            API.DoAction_WalkerW(WPOINT.new(X + math.random(-Tolerance, Tolerance),Y + math.random(-Tolerance, Tolerance),Z))
+            API.DoAction_Walker(FFPOINT.new(X + math.random(-Tolerance, Tolerance),Y + math.random(-Tolerance, Tolerance),Z))
         end
         UTILS.randomSleep(300)
     end
@@ -393,9 +393,9 @@ end
 local function OpenDrawer2(Obj0ID, Obj12ID, X, Y, Z)
     local drawer = #API.GetAllObjArrayInteract({Obj0ID}, 50, {0})
     if drawer == 0 then
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{Obj12ID},50,WPOINT.new(X,Y,Z)) -- Open drawers
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{Obj12ID},50,FFPOINT.new(X,Y,Z)) -- Open drawers
     else
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{Obj0ID},50,WPOINT.new(X,Y,Z)) --Search drawers
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{Obj0ID},50,FFPOINT.new(X,Y,Z)) --Search drawers
     end
 end
 
@@ -472,7 +472,7 @@ local clueSteps = {
         API.DoAction_Inventory1(2677,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.LUMBRIDGE.Teleport()
-        API.DoAction_Tile(WPOINT.new(3216 + math.random(-1, 1),3210 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(3216 + math.random(-1, 1),3210 + math.random(-1, 1),0))
         UTILS.randomSleep(3000)
         SurgeIfFacing(270)
         WaitForObjectToAppear(36773, 12)
@@ -502,12 +502,12 @@ local clueSteps = {
         LODESTONES.LUMBRIDGE.Teleport()
         MoveTo(3225, 3214, 0, 2)
         WaitForObjectToAppear(36768, 12)
-        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{36768},50,WPOINT.new(3229,3213,0)) --Climb-up ladder
+        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{36768},50,FFPOINT.new(3229,3213,0)) --Climb-up ladder
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(1) do
             UTILS.randomSleep(300)
         end
         WaitForObjectToAppear(21806, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{21806},50,WPOINT.new(3228,3212,0)) --Search crate
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{21806},50,FFPOINT.new(3228,3212,0)) --Search crate
         while API.Read_LoopyLoop() and not IsPlayerInArea(3228, 3213, 1, 1) do
             UTILS.randomSleep(300)
         end
@@ -519,7 +519,7 @@ local clueSteps = {
         LODESTONES.LUMBRIDGE.Teleport()
         MoveTo(3246, 3243, 0, 2)
         WaitForObjectToAppear(46237, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{46237},50,WPOINT.new(3247,3244,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{46237},50,FFPOINT.new(3247,3244,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3246, 3244, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -531,7 +531,7 @@ local clueSteps = {
         LODESTONES.AL_KHARID.Teleport()
         MoveTo(3301, 3166, 0, 1)
         WaitForObjectToAppear(76216, 12)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{76216},50,WPOINT.new(3301,3164,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{76216},50,FFPOINT.new(3301,3164,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3301, 3165, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -559,7 +559,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.AL_KHARID.Teleport()
         MoveTo(3291, 3203, 0, 1)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{76811},50,WPOINT.new(3289,3202,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{76811},50,FFPOINT.new(3289,3202,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3289, 3203, 0, 2) do
             UTILS.randomSleep(300)
         end
@@ -588,7 +588,7 @@ local clueSteps = {
         LODESTONES.VARROCK.Teleport()
         MoveTo(3208, 3385, 0, 1)
         OpenDoor(24375, 3207, 3385, 24376)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{46236},50,WPOINT.new(3203,3384,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{46236},50,FFPOINT.new(3203,3384,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3204, 3384, 0, 2) do
             UTILS.randomSleep(300)
         end
@@ -608,7 +608,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.VARROCK.Teleport()
         MoveTo(3253, 3421, 0, 2)
-        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{24349},50,WPOINT.new(3256,3422,0))
+        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{24349},50,FFPOINT.new(3256,3422,0))
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(1) do
             UTILS.randomSleep(300)
         end
@@ -627,20 +627,20 @@ local clueSteps = {
         API.DoAction_Inventory1(2688,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.VARROCK.Teleport()
-        API.DoAction_Tile(WPOINT.new(3211 + math.random(-1, 1),3390 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(3211 + math.random(-1, 1),3390 + math.random(-1, 1),0))
         UTILS.randomSleep(2000)
         SurgeIfFacing(360)
         UTILS.randomSleep(300)
-        API.DoAction_Tile(WPOINT.new(3211 + math.random(-1, 1),3414 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(3211 + math.random(-1, 1),3414 + math.random(-1, 1),0))
         UTILS.randomSleep(7000)
-        API.DoAction_Tile(WPOINT.new(3210 + math.random(-1, 1),3435 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(3210 + math.random(-1, 1),3435 + math.random(-1, 1),0))
         UTILS.randomSleep(1000)
         SurgeIfFacing(360)
         UTILS.randomSleep(200)
-        Dive(WPOINT.new(3213 + math.random(-1, 1),3454 + math.random(-1, 1),0))
-        API.DoAction_WalkerW(WPOINT.new(3228 + math.random(-1, 1),3430 + math.random(-1, 1),0))
-        WaitForObjectToAppear2(46269, 12, WPOINT.new(3228, 3433, 0))
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{ 46269 },50,WPOINT.new(3228,3433,0))
+        Dive(FFPOINT.new(3213 + math.random(-1, 1),3454 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(3228 + math.random(-1, 1),3430 + math.random(-1, 1),0))
+        WaitForObjectToAppear2(46269, 12, FFPOINT.new(3228, 3433, 0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{ 46269 },50,FFPOINT.new(3228,3433,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3228, 3433, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -651,15 +651,15 @@ local clueSteps = {
         LODESTONES.VARROCK.Teleport()
         MoveTo(3152, 3403, 0, 1)
         OpenDoor(24375, 3152, 3404, 24376)
-        API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route0,{24379},50,WPOINT.new(3152,3405,0))
+        API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route0,{24379},50,FFPOINT.new(3152,3405,0))
         UTILS.randomSleep(2000)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{24381},50,WPOINT.new(3154,3405,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{24381},50,FFPOINT.new(3154,3405,0))
         UTILS.randomSleep(2000)
         local drawer = #API.GetAllObjArrayInteract({24295}, 50, {0})
         if drawer == 0 then
-            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{24294},50,WPOINT.new(3156,3406,0)) -- Open drawers
+            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{24294},50,FFPOINT.new(3156,3406,0)) -- Open drawers
         else
-            API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{24295},50,WPOINT.new(3156,3406,0)) -- Search drawers
+            API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{24295},50,FFPOINT.new(3156,3406,0)) -- Search drawers
         end
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(3155, 3406, 0) do
             UTILS.randomSleep(300)
@@ -671,7 +671,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.FALADOR.Teleport()
         MoveTo(3077, 3425, 0, 1)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{11600},50,WPOINT.new(3073,3430,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{11600},50,FFPOINT.new(3073,3430,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3074, 3430, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -682,7 +682,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.FALADOR.Teleport()
         MoveTo(2975, 3383, 0, 1)
-        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{11732},50,WPOINT.new(2973,3384,0))
+        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{11732},50,FFPOINT.new(2973,3384,0))
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(1) do
             UTILS.randomSleep(300)
         end
@@ -694,13 +694,13 @@ local clueSteps = {
         API.DoAction_Inventory1(2692,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.FALADOR.Teleport()
-        API.DoAction_Tile(WPOINT.new(2959 + math.random(-2, 2),3387 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(2959 + math.random(-2, 2),3387 + math.random(-2, 2),0))
         UTILS.randomSleep(2000)
         SurgeIfFacing(180)
         UTILS.randomSleep(200)
-        API.DoAction_Tile(WPOINT.new(2959 + math.random(-1, 1),3387 + math.random(-1, 1),0))
-        WaitForObjectToAppear2(11745, 12, WPOINT.new(2955,3390,0))
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{11745},50,WPOINT.new(2955,3390,0))
+        API.DoAction_Tile(FFPOINT.new(2959 + math.random(-1, 1),3387 + math.random(-1, 1),0))
+        WaitForObjectToAppear2(11745, 12, FFPOINT.new(2955,3390,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{11745},50,FFPOINT.new(2955,3390,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2955, 3390, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -709,7 +709,7 @@ local clueSteps = {
         API.DoAction_Inventory1(2693,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.FALADOR.Teleport()
-        API.DoAction_WalkerW(WPOINT.new(2972 + math.random(-1, 1),3343 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(2972 + math.random(-1, 1),3343 + math.random(-1, 1),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2972, 3343, 0, 3) do
             UTILS.randomSleep(300)
         end
@@ -722,7 +722,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.FALADOR.Teleport()
         MoveTo(2971, 3312, 0, 2)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25034},50,WPOINT.new(2969,3311,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25034},50,FFPOINT.new(2969,3311,0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(2970, 3311, 0) do
             UTILS.randomSleep(300)
         end
@@ -734,7 +734,7 @@ local clueSteps = {
         LODESTONES.PORT_SARIM.Teleport()
         MoveTo(3014, 3223, 0, 1)
         WaitForObjectToAppear(40021, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{40021},50,WPOINT.new(3012,3222,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{40021},50,FFPOINT.new(3012,3222,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3013, 3222, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -791,7 +791,7 @@ local clueSteps = {
         API.DoAction_Inventory1(2701,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.CATHERBY.Teleport()
-        API.DoAction_Tile(WPOINT.new(2801 + math.random(-2, 2),3433 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(2801 + math.random(-2, 2),3433 + math.random(-2, 2),0))
         WaitForObjectToAppear(563, 1)
         API.DoAction_NPC(0x2c,API.OFF_ACT_InteractNPC_route,{563},50)
         WaitForDialogThenPressSpacebar()
@@ -801,7 +801,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.SEERS_VILLAGE.Teleport()
         MoveTo(2752, 3478, 0, 0)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{26081},50,WPOINT.new(2757,3482,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{26081},50,FFPOINT.new(2757,3482,0))
         while API.Read_LoopyLoop() and API.PlayerCoord().y ~= 3483 do
             UTILS.randomSleep(300)
         end
@@ -815,64 +815,64 @@ local clueSteps = {
         API.DoAction_Inventory1(2703,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.SEERS_VILLAGE.Teleport()
-        API.DoAction_WalkerW(WPOINT.new(2757 + math.random(-1, 1),3479 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(2757 + math.random(-1, 1),3479 + math.random(-1, 1),0))
         WaitForObjectToAppear(26081, 12)
         API.DoAction_Object1(0x31,API.OFF_ACT_GeneralObject_route0,{26081},50) --Open gate
         while API.Read_LoopyLoop() and not IsPlayerInArea(2757, 3484, 0, 1) do
             UTILS.randomSleep(300)
         end
-        API.DoAction_WalkerW(WPOINT.new(2757 + math.random(-1, 1),3501 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(2757 + math.random(-1, 1),3501 + math.random(-1, 1),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2757, 3501, 0, 1) do
             UTILS.randomSleep(300)
         end
 
-        local door = #API.GetAllObjArray2({25639}, 50, {0}, WPOINT.new(2757, 3504, 0))    
+        local door = #API.GetAllObjArray2({25639}, 50, {0}, FFPOINT.new(2757, 3504, 0))    
         if door == 0 then 
             API.DoAction_Object1(0x31,API.OFF_ACT_GeneralObject_route0,{25638},50) --Open door
             while API.Read_LoopyLoop() and door == 0 do
                 UTILS.randomSleep(100)
-                door = #API.GetAllObjArray2({25639}, 50, {0}, WPOINT.new(2757, 3504, 0))  
+                door = #API.GetAllObjArray2({25639}, 50, {0}, FFPOINT.new(2757, 3504, 0))  
             end
         end
-        API.DoAction_WalkerW(WPOINT.new(2750 + math.random(-1, 1),3505 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(2750 + math.random(-1, 1),3505 + math.random(-1, 1),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2750, 3505, 0, 1) do
             UTILS.randomSleep(300)
         end
 
-        local door2 = #API.GetAllObjArray2({25643}, 50, {0}, WPOINT.new(2750, 3504, 0))    
+        local door2 = #API.GetAllObjArray2({25643}, 50, {0}, FFPOINT.new(2750, 3504, 0))    
         if door2 == 0 then 
-            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25642},50,WPOINT.new(2750,3503,0)) --Open door
+            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25642},50,FFPOINT.new(2750,3503,0)) --Open door
             while API.Read_LoopyLoop() and door2 == 0 do
                 UTILS.randomSleep(100)
-                door2 = #API.GetAllObjArray2({25643}, 50, {0}, WPOINT.new(2750, 3504, 0))  
+                door2 = #API.GetAllObjArray2({25643}, 50, {0}, FFPOINT.new(2750, 3504, 0))  
             end
         end
-        API.DoAction_WalkerW(WPOINT.new(2750 + math.random(-1, 1),3497 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(2750 + math.random(-1, 1),3497 + math.random(-1, 1),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2750, 3497, 0, 1) do
             UTILS.randomSleep(300)
         end
 
-        local door3 = #API.GetAllObjArray2({25643}, 50, {0}, WPOINT.new(2750, 3495, 0))    
+        local door3 = #API.GetAllObjArray2({25643}, 50, {0}, FFPOINT.new(2750, 3495, 0))    
         if door3 == 0 then 
-            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25642},50,WPOINT.new(2750,3496,0)) --Open door
+            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25642},50,FFPOINT.new(2750,3496,0)) --Open door
             while API.Read_LoopyLoop() and door3 == 0 do
                 UTILS.randomSleep(100)
-                door3 = #API.GetAllObjArray2({25643}, 50, {0}, WPOINT.new(2750, 3495, 0))   
+                door3 = #API.GetAllObjArray2({25643}, 50, {0}, FFPOINT.new(2750, 3495, 0))   
             end
         end
 
-        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{26107},50,WPOINT.new(2747,3493,0)) --Climb-up ladder
+        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{26107},50,FFPOINT.new(2747,3493,0)) --Climb-up ladder
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(1) do
             UTILS.randomSleep(300)
         end
 
-        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{26107},50,WPOINT.new(2749,3491,0)) --Climb-up ladder
+        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{26107},50,FFPOINT.new(2749,3491,0)) --Climb-up ladder
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(2) do
             UTILS.randomSleep(300)
         end
         WaitForObjectToAppear(25592, 12)
-        if not API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25592},50,WPOINT.new(2748,3495,0)) then  --Open closed Chest
-            API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route1,{25593},50,WPOINT.new(2748,3495,0)) --Search opened chest
+        if not API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25592},50,FFPOINT.new(2748,3495,0)) then  --Open closed Chest
+            API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route1,{25593},50,FFPOINT.new(2748,3495,0)) --Search opened chest
         end
         while API.Read_LoopyLoop() and not IsPlayerInArea(2748, 3494, 2, 1) do
             UTILS.randomSleep(300)
@@ -882,20 +882,20 @@ local clueSteps = {
         API.DoAction_Inventory1(2704,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.ARDOUGNE.Teleport()
-        API.DoAction_WalkerW(WPOINT.new(2659 + math.random(-1, 1),3318 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(2659 + math.random(-1, 1),3318 + math.random(-1, 1),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2659, 3318, 0, 1) do
             UTILS.randomSleep(300)
         end
-        local door = #API.GetAllObjArray2({34808}, 50, {0}, WPOINT.new(2659, 3320, 0))    
+        local door = #API.GetAllObjArray2({34808}, 50, {0}, FFPOINT.new(2659, 3320, 0))    
         if door == 0 then 
-            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{34807},50,WPOINT.new(2659,3319,0)) --Open door
+            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{34807},50,FFPOINT.new(2659,3319,0)) --Open door
             while API.Read_LoopyLoop() and door == 0 do
                 UTILS.randomSleep(100)
-                door = #API.GetAllObjArray2({34808}, 50, {0}, WPOINT.new(2659, 3320, 0)) 
+                door = #API.GetAllObjArray2({34808}, 50, {0}, FFPOINT.new(2659, 3320, 0)) 
             end
         end
         WaitForObjectToAppear(34585, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{34585},50,WPOINT.new(2658,3323,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{34585},50,FFPOINT.new(2658,3323,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2658, 3322, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -906,7 +906,7 @@ local clueSteps = {
         LODESTONES.ARDOUGNE.Teleport()
         MoveTo(2653, 3299, 0, 3)
         WaitForObjectToAppear(34586, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{34586},50,WPOINT.new(2654,3299,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{34586},50,FFPOINT.new(2654,3299,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2653, 3299, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -918,7 +918,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.ARDOUGNE.Teleport()
         MoveTo(2614, 3292, 0, 1)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{34585},50,WPOINT.new(2615,3291,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{34585},50,FFPOINT.new(2615,3291,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2615, 3292, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -930,7 +930,7 @@ local clueSteps = {
         LODESTONES.ARDOUGNE.Teleport()
         MoveTo(2616, 3338, 0, 2)
         WaitForObjectToAppear(34586, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{34586},50,WPOINT.new(2620,3336,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{34586},50,FFPOINT.new(2620,3336,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2620, 3337, 0, 2) do
             UTILS.randomSleep(300)
         end
@@ -940,17 +940,17 @@ local clueSteps = {
         API.DoAction_Inventory1(2708,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.VARROCK.Teleport()
-        API.DoAction_Tile(WPOINT.new(3211 + math.random(-1, 1),3390 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(3211 + math.random(-1, 1),3390 + math.random(-1, 1),0))
         UTILS.randomSleep(1000)
         SurgeIfFacing(360)
         UTILS.randomSleep(200)
-        API.DoAction_Tile(WPOINT.new(3206 + math.random(-1, 1),3416 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(3206 + math.random(-1, 1),3416 + math.random(-1, 1),0))
         UTILS.randomSleep(1000)
         SurgeIfFacing(360)
         UTILS.randomSleep(200)
-        API.DoAction_Tile(WPOINT.new(3206 + math.random(-1, 1),3416 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(3206 + math.random(-1, 1),3416 + math.random(-1, 1),0))
         WaitForObjectToAppear(24354, 12)
-        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{24354},50,WPOINT.new(3202,3416,0)) -- Climb Thessalia
+        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{24354},50,FFPOINT.new(3202,3416,0)) -- Climb Thessalia
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(3202, 3417, 1) do
             UTILS.randomSleep(300)
         end
@@ -969,9 +969,9 @@ local clueSteps = {
         API.DoAction_Inventory1(2709,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.VARROCK.Teleport()
-        API.DoAction_WalkerW(WPOINT.new(3223 + math.random(-1, 1),3452 + math.random(-1, 1),0))
-        WaitForObjectToAppear2(46269, 12, WPOINT.new(3226, 3452, 0))
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{46269},50,WPOINT.new(3226,3452,0)) --Search crate
+        API.DoAction_Walker(FFPOINT.new(3223 + math.random(-1, 1),3452 + math.random(-1, 1),0))
+        WaitForObjectToAppear2(46269, 12, FFPOINT.new(3226, 3452, 0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{46269},50,FFPOINT.new(3226,3452,0)) --Search crate
         while API.Read_LoopyLoop() and not IsPlayerInArea(3225, 3452, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -982,7 +982,7 @@ local clueSteps = {
         LODESTONES.ARDOUGNE.Teleport()
         MoveTo(2578, 3320, 0, 2)
         OpenDoor(34810, 2577, 3320, 34809)
-        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{34548},50,WPOINT.new(2573,3325,0))
+        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{34548},50,FFPOINT.new(2573,3325,0))
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(1) do
             print(API.PlayerCoord().z)
             UTILS.randomSleep(300)
@@ -1003,45 +1003,45 @@ local clueSteps = {
         MoveTo(2615,3301, 0, 1)
         OpenDoor(34820, 2615, 3304, 34819)
         MoveTo(2613, 3309, 0, 0)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{34811},50,WPOINT.new(2613,3309,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{34811},50,FFPOINT.new(2613,3309,0))
         UTILS.randomSleep(1500)
         MoveTo(2611, 3308, 0, 0)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{34811},50,WPOINT.new(2611,3307,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{34811},50,FFPOINT.new(2611,3307,0))
         UTILS.randomSleep(1500)
         API.DoAction_Object1(0x34,API.OFF_ACT_GeneralObject_route0,{34548},50)
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(1) do
             UTILS.randomSleep(300)
         end
         WaitForObjectToAppear(34585, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{34585},50,WPOINT.new(2612,3306,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{34585},50,FFPOINT.new(2612,3306,0))
         UTILS.randomSleep(2000)
     end,
     [2712] = function()
         API.DoAction_Inventory1(2712,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.FALADOR.Teleport()
-        API.DoAction_Tile(WPOINT.new(2974 + math.random(-2, 2),3372 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(2974 + math.random(-2, 2),3372 + math.random(-2, 2),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2974, 3372, 0, 4) do
             UTILS.randomSleep(300)
         end
-        API.DoAction_Tile(WPOINT.new(3007 + math.random(-2, 2),3361 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(3007 + math.random(-2, 2),3361 + math.random(-2, 2),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3007, 3361, 0, 4) do
             UTILS.randomSleep(300)
         end
-        API.DoAction_Tile(WPOINT.new(3028, 3356,0))
+        API.DoAction_Tile(FFPOINT.new(3028, 3356,0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(3028, 3356, 0) do
             UTILS.randomSleep(300)
         end
-        WaitForObjectToAppear2(11707, 12, WPOINT.new(3028, 3356, 0))
-        local door = #API.GetAllObjArray2({11708}, 50, {0}, WPOINT.new(3028, 3355, 0))    
+        WaitForObjectToAppear2(11707, 12, FFPOINT.new(3028, 3356, 0))
+        local door = #API.GetAllObjArray2({11708}, 50, {0}, FFPOINT.new(3028, 3355, 0))    
         if door == 0 then 
             API.DoAction_Object1(0x31,API.OFF_ACT_GeneralObject_route0,{11707},50) -- Open door
             while API.Read_LoopyLoop() and door == 0 do
                 UTILS.randomSleep(100)
-                door = #API.GetAllObjArray2({11708}, 50, {0}, WPOINT.new(3028, 3355, 0)) 
+                door = #API.GetAllObjArray2({11708}, 50, {0}, FFPOINT.new(3028, 3355, 0)) 
             end
         end
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{11745},50,WPOINT.new(3029,3355,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{11745},50,FFPOINT.new(3029,3355,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3029, 3355, 0, 1) do
             UTILS.randomSleep(300)
         end  
@@ -1050,13 +1050,13 @@ local clueSteps = {
         API.DoAction_Inventory1(2713,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.VARROCK.Teleport()
-        API.DoAction_Tile(WPOINT.new(3188 + math.random(-2, 2),3372 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(3188 + math.random(-2, 2),3372 + math.random(-2, 2),0))
         UTILS.randomSleep(2000)
         SurgeIfFacing(270)
         UTILS.randomSleep(200)
-        Dive(WPOINT.new(3173,3360,0))
+        Dive(FFPOINT.new(3173,3360,0))
         UTILS.randomSleep(200)
-        API.DoAction_WalkerW(WPOINT.new(3166, 3360, 0))
+        API.DoAction_Walker(FFPOINT.new(3166, 3360, 0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(3166, 3360, 0) do
             UTILS.randomSleep(300)
         end
@@ -1066,13 +1066,13 @@ local clueSteps = {
         API.DoAction_Inventory1(2716,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.VARROCK.Teleport()
-        API.DoAction_Tile(WPOINT.new(3248 + math.random(-2, 2),3369 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(3248 + math.random(-2, 2),3369 + math.random(-2, 2),0))
         UTILS.randomSleep(4000)
         SurgeIfFacing(90)
         UTILS.randomSleep(200)
-        Dive(WPOINT.new(3272,3366,0))
+        Dive(FFPOINT.new(3272,3366,0))
         UTILS.randomSleep(200)
-        API.DoAction_WalkerW(WPOINT.new(3290, 3374, 0))
+        API.DoAction_Walker(FFPOINT.new(3290, 3374, 0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(3290, 3374, 0) do
             UTILS.randomSleep(300)
         end
@@ -1082,15 +1082,15 @@ local clueSteps = {
         API.DoAction_Inventory1(2719,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.FALADOR.Teleport()
-        API.DoAction_Tile(WPOINT.new(2991 + math.random(-3, 3),3406 + math.random(-3, 3),0))
+        API.DoAction_Tile(FFPOINT.new(2991 + math.random(-3, 3),3406 + math.random(-3, 3),0))
         UTILS.randomSleep(3500)
         SurgeIfFacing(90)
         UTILS.randomSleep(200)
-        Dive(WPOINT.new(3034 + math.random(-2, 2),3400 + math.random(-2, 2),0))
-        API.DoAction_Tile(WPOINT.new(3042 + math.random(-1, 1),3406 + math.random(-1, 1),0))
+        Dive(FFPOINT.new(3034 + math.random(-2, 2),3400 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(3042 + math.random(-1, 1),3406 + math.random(-1, 1),0))
         UTILS.randomSleep(2000)
         SurgeIfFacing(90)
-        API.DoAction_WalkerW(WPOINT.new(3043,3398,0))
+        API.DoAction_Walker(FFPOINT.new(3043,3398,0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(3043, 3398, 0) do
             UTILS.randomSleep(300)
         end
@@ -1103,10 +1103,10 @@ local clueSteps = {
         MoveTo(2918,3524,0,1)
         OpenDoor(67139, 2916, 3524, 67138)
 
-        if #API.GetAllObjArray2({67305}, 50, {0}, WPOINT.new(2914, 3521, 0)) > 0 then
-            API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route1,{67305},50,WPOINT.new(2914,3521,0)) --Search drawer
+        if #API.GetAllObjArray2({67305}, 50, {0}, FFPOINT.new(2914, 3521, 0)) > 0 then
+            API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route1,{67305},50,FFPOINT.new(2914,3521,0)) --Search drawer
         else
-            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{67304},50,WPOINT.new(2914,3521,0)) --Open drawer
+            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{67304},50,FFPOINT.new(2914,3521,0)) --Open drawer
         end
         while API.Read_LoopyLoop() and not IsPlayerInArea(2914, 3522, 0, 1) do
             UTILS.randomSleep(300)
@@ -1119,7 +1119,7 @@ local clueSteps = {
         LODESTONES.YANILLE.Teleport()
         MoveTo(2594, 3101, 0, 1)
         OpenDoor(17090, 2594, 3103, 17089)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{24202},50,WPOINT.new(2598,3105,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{24202},50,FFPOINT.new(2598,3105,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2597, 3105, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -1132,7 +1132,7 @@ local clueSteps = {
         MoveTo(2563, 3082, 0, 0)
         OpenDoor(1534, 2564, 3082, 1533)
         MoveTo(2569, 3085, 0, 0)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{350},50,WPOINT.new(2570,3085,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{350},50,FFPOINT.new(2570,3085,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2569, 3085, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -1142,7 +1142,7 @@ local clueSteps = {
         API.DoAction_Inventory1(3493,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.FALADOR.Teleport()
-        API.DoAction_WalkerW(WPOINT.new(3015 + math.random(-2, 2),3447 + math.random(-2, 2),0))
+        API.DoAction_Walker(FFPOINT.new(3015 + math.random(-2, 2),3447 + math.random(-2, 2),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3015, 3447, 0, 5) do
             UTILS.randomSleep(300)
         end
@@ -1151,12 +1151,12 @@ local clueSteps = {
         while API.Read_LoopyLoop() and not IsPlayerInArea(3018, 9850, 0, 3) do
             UTILS.randomSleep(300)
         end
-        API.DoAction_WalkerW(WPOINT.new(3003 + math.random(-2, 2),9798 + math.random(-2, 2),0))
+        API.DoAction_Walker(FFPOINT.new(3003 + math.random(-2, 2),9798 + math.random(-2, 2),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3003, 9798, 0, 5) do
             UTILS.randomSleep(300)
         end
-        WaitForObjectToAppear2(30928, 12, WPOINT.new(3000,9798,0))
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{30928},50,WPOINT.new(3000,9798,0))
+        WaitForObjectToAppear2(30928, 12, FFPOINT.new(3000,9798,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{30928},50,FFPOINT.new(3000,9798,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3001, 9798, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -1166,19 +1166,19 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.PORT_SARIM.Teleport()
         MoveTo(2961, 3216, 0, 1)
-        if #API.GetAllObjArray2({72004}, 50, {0}, WPOINT.new(2962, 3216, 0)) > 0 then
-            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{72004},50,WPOINT.new(2962,3216,0)) --Open door
+        if #API.GetAllObjArray2({72004}, 50, {0}, FFPOINT.new(2962, 3216, 0)) > 0 then
+            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{72004},50,FFPOINT.new(2962,3216,0)) --Open door
             UTILS.randomSleep(1000)
         end 
-        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{71902},50,WPOINT.new(2966,3219,0)) --Climb-up starircase
+        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{71902},50,FFPOINT.new(2966,3219,0)) --Climb-up starircase
         while API.Read_LoopyLoop() and API.PlayerCoord().z ~= 1 do
             UTILS.randomSleep(300)
         end
         WaitForObjectToAppear(71943,12)
-        if #API.GetAllObjArray2({71944}, 50, {0}, WPOINT.new(2970, 3214, 0)) > 0 then
-            API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route1,{71944},50,WPOINT.new(2970,3214,0)) --Search drawer
+        if #API.GetAllObjArray2({71944}, 50, {0}, FFPOINT.new(2970, 3214, 0)) > 0 then
+            API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route1,{71944},50,FFPOINT.new(2970,3214,0)) --Search drawer
         else
-            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{71943},50,WPOINT.new(2970,3214,0)) --Open drawer
+            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{71943},50,FFPOINT.new(2970,3214,0)) --Open drawer
         end
         while API.Read_LoopyLoop() and not IsPlayerInArea(2969, 3214, 1, 1) do
             UTILS.randomSleep(300)
@@ -1192,11 +1192,11 @@ local clueSteps = {
         MoveTo(3018, 3206, 0, 1)
         WaitForObjectToAppear(40108, 12)
         OpenDoor(40109, 3016, 3206, 40108)
-        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{40026},50,WPOINT.new(3013,3203,0))
+        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{40026},50,FFPOINT.new(3013,3203,0))
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(1) do
             UTILS.randomSleep(300)
         end
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{40093},50,WPOINT.new(3016,3205,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{40093},50,FFPOINT.new(3016,3205,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3015, 3205, 1, 1) do
             UTILS.randomSleep(300)
         end
@@ -1214,32 +1214,32 @@ local clueSteps = {
         API.DoAction_Inventory1(3497,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.FALADOR.Teleport()
-        API.DoAction_WalkerW(WPOINT.new(2967 + math.random(-1, 1),3382 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(2967 + math.random(-1, 1),3382 + math.random(-1, 1),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2967, 3382, 0, 3) do
             UTILS.randomSleep(300)
         end
-        API.DoAction_WalkerW(WPOINT.new(3038 + math.random(-1, 1),3360 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(3038 + math.random(-1, 1),3360 + math.random(-1, 1),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3038, 3360, 0, 2) do
             UTILS.randomSleep(300)
         end
 
-        local door = #API.GetAllObjArray2({11708}, 50, {0}, WPOINT.new(3038, 3362, 2))    
+        local door = #API.GetAllObjArray2({11708}, 50, {0}, FFPOINT.new(3038, 3362, 2))    
         if door == 0 then 
-            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{11707},50,WPOINT.new(3038,3361,0)) --Open door
+            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{11707},50,FFPOINT.new(3038,3361,0)) --Open door
             while API.Read_LoopyLoop() and door == 0 do
                 UTILS.randomSleep(100)
-                door = #API.GetAllObjArray2({11708}, 50, {0}, WPOINT.new(3038, 3362, 2))
-                API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{11707},50,WPOINT.new(3038,3361,0)) --Open door
+                door = #API.GetAllObjArray2({11708}, 50, {0}, FFPOINT.new(3038, 3362, 2))
+                API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{11707},50,FFPOINT.new(3038,3361,0)) --Open door
             end
         end       
         WaitForObjectToAppear(35781, 12)
-        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{35781},50,WPOINT.new(3034,3363,0)) --Climb-up staircase
+        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{35781},50,FFPOINT.new(3034,3363,0)) --Climb-up staircase
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(1) do
             UTILS.randomSleep(300)
         end
-        WaitForObjectToAppear2(99819, 12, WPOINT.new(3041, 3364, 1))
-        if not API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{99819},50,WPOINT.new(3041,3364,1)) then --Open closed chest
-            API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route1,{99820},50,WPOINT.new(3041,3364,0)) --Search opened chest
+        WaitForObjectToAppear2(99819, 12, FFPOINT.new(3041, 3364, 1))
+        if not API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{99819},50,FFPOINT.new(3041,3364,1)) then --Open closed chest
+            API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route1,{99820},50,FFPOINT.new(3041,3364,0)) --Search opened chest
         end
         while API.Read_LoopyLoop() and not IsPlayerInArea(3040, 3364, 1, 2) do
             UTILS.randomSleep(300)
@@ -1250,7 +1250,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.FALADOR.Teleport()
         MoveTo(3059, 3336, 0, 1)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{11745},50,WPOINT.new(3060,3334,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{11745},50,FFPOINT.new(3060,3334,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3059, 3334, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -1260,12 +1260,12 @@ local clueSteps = {
         API.DoAction_Inventory1(3499,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.TAVERLEY.Teleport()
-        API.DoAction_Tile(WPOINT.new(2886,3450,0))
+        API.DoAction_Tile(FFPOINT.new(2886,3450,0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(2886, 3450, 0) do
             UTILS.randomSleep(300)
         end
-        WaitForObjectToAppear2(66875, 12, WPOINT.new(2886,3449,0))
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{66875},2,WPOINT.new(2886,3449,0))
+        WaitForObjectToAppear2(66875, 12, FFPOINT.new(2886,3449,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{66875},2,FFPOINT.new(2886,3449,0))
     end,
     [3500] = function()
         API.DoAction_Inventory1(3500,0,1,API.OFF_ACT_GeneralInterface_route)
@@ -1273,7 +1273,7 @@ local clueSteps = {
         LODESTONES.TAVERLEY.Teleport()
         MoveTo(2894, 3415, 0, 2)
         WaitForObjectToAppear(66875, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{66875},50,WPOINT.new(2894,3418,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{66875},50,FFPOINT.new(2894,3418,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2894, 3417, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -1285,7 +1285,7 @@ local clueSteps = {
         LODESTONES.AL_KHARID.Teleport()
         MoveTo(3306, 3206, 0, 2)
         WaitForObjectToAppear(76811, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{76811},50,WPOINT.new(3308,3206,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{76811},50,FFPOINT.new(3308,3206,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3307, 3206, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -1297,7 +1297,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.DRAYNOR_VILLAGE.Teleport()
         MoveTo(3108, 3350, 0, 1)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{47421},50,WPOINT.new(3108,3353,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{47421},50,FFPOINT.new(3108,3353,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3108, 3355, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -1307,12 +1307,12 @@ local clueSteps = {
             UTILS.randomSleep(300)
         end
         WaitForObjectToAppear(47574, 12)
-        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{47574},50,WPOINT.new(3105,3363,0))
+        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{47574},50,FFPOINT.new(3105,3363,0))
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(2) do
             UTILS.randomSleep(300)
         end
         WaitForObjectToAppear(47560, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{47560},50,WPOINT.new(3106,3369,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{47560},50,FFPOINT.new(3106,3369,0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(3106, 3368, 2) do
             UTILS.randomSleep(300)
         end
@@ -1324,7 +1324,7 @@ local clueSteps = {
         LODESTONES.BURTHOPE.Teleport()
         MoveTo(2911, 3530, 0, 0)
         WaitForObjectToAppear(66875, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{66875},50,WPOINT.new(2912,3530,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{66875},50,FFPOINT.new(2912,3530,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2911, 3530, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -1339,7 +1339,7 @@ local clueSteps = {
         end
         MoveTo(2661, 3152, 0, 2)
         WaitForObjectToAppear(46270, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{46270},50,WPOINT.new(2660,3149,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{46270},50,FFPOINT.new(2660,3149,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2660, 3150, 0, 2) do
             UTILS.randomSleep(300)
         end
@@ -1352,7 +1352,7 @@ local clueSteps = {
         MoveTo(2659, 3317, 0, 1)
         OpenDoor(34808, 2659, 3320, 34807)        
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(1) do
-            API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{34498},50,WPOINT.new(2663,3321,0))
+            API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{34498},50,FFPOINT.new(2663,3321,0))
             UTILS.randomSleep(1000)
         end
         UTILS.randomSleep(1000)
@@ -1369,7 +1369,7 @@ local clueSteps = {
         LODESTONES.SEERS_VILLAGE.Teleport()
         MoveTo(2641, 3452, 0, 1)
         OpenDoor(48962, 2639, 3452, 48961)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{48998},50,WPOINT.new(2636,3453,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{48998},50,FFPOINT.new(2636,3453,0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(2637, 3453, 0) do
             UTILS.randomSleep(300)
         end
@@ -1381,7 +1381,7 @@ local clueSteps = {
         LODESTONES.CATHERBY.Teleport()
         MoveTo(2827, 3447, 0, 2)
         if #API.GetAllObjArrayInteract({85010}, 50, {0}) > 0 then
-            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{85010},50,WPOINT.new(2829,3447,0)) -- Open door
+            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{85010},50,FFPOINT.new(2829,3447,0)) -- Open door
             UTILS.randomSleep(3000)
         end
         OpenDrawer(25035, 25034)
@@ -1395,11 +1395,11 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.SEERS_VILLAGE.Teleport()
         MoveTo(2717, 3472, 0, 1)
-        while API.Read_LoopyLoop() and #API.GetAllObjArray2({25819}, 50, {0}, WPOINT.new(2716, 3472, 0)) > 0 do
-            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25819},50,WPOINT.new(2716,3472,0))
+        while API.Read_LoopyLoop() and #API.GetAllObjArray2({25819}, 50, {0}, FFPOINT.new(2716, 3472, 0)) > 0 do
+            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25819},50,FFPOINT.new(2716,3472,0))
             UTILS.randomSleep(1000)
         end
-        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{25938},50,WPOINT.new(2715,3470,0))
+        API.DoAction_Object2(0x34,API.OFF_ACT_GeneralObject_route0,{25938},50,FFPOINT.new(2715,3470,0))
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(1) do
             UTILS.randomSleep(300)            
         end
@@ -1425,7 +1425,7 @@ local clueSteps = {
         API.DoAction_Inventory1(9469,0,3,API.OFF_ACT_GeneralInterface_route) -- Grand Seed Pod teleport
         WaitForObjectToAppear(69197, 12)
         UTILS.randomSleep(3000)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{69197},50,WPOINT.new(2465,3492,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{69197},50,FFPOINT.new(2465,3492,0))
         while API.Read_LoopyLoop() and API.PlayerCoord().y ~= 3491 do
             UTILS.randomSleep(300)
         end
@@ -1453,10 +1453,10 @@ local clueSteps = {
         MoveTo(2741, 3554, 0, 1)
         OpenDoor(26132, 2741, 3556, 26130)
         MoveTo(2741, 3571, 0, 1)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25750},50,WPOINT.new(2741,3572,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25750},50,FFPOINT.new(2741,3572,0))
         UTILS.randomSleep(4000)
         MoveTo(2736, 3580, 0, 0)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25718},50,WPOINT.new(2735,3580,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{25718},50,FFPOINT.new(2735,3580,0))
         UTILS.randomSleep(2000)
         API.DoAction_NPC(0x2c,API.OFF_ACT_InteractNPC_route,{809},50)
         WaitForDialogThenPressSpacebar()
@@ -1465,7 +1465,7 @@ local clueSteps = {
         API.DoAction_Inventory1(3514,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.AL_KHARID.Teleport()
-        API.DoAction_WalkerW(WPOINT.new(3372 + math.random(-1, 1),3269 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(3372 + math.random(-1, 1),3269 + math.random(-1, 1),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3372, 3269, 0, 3) do
             UTILS.randomSleep(300)
         end
@@ -1479,7 +1479,7 @@ local clueSteps = {
         LODESTONES.VARROCK.Teleport()
         MoveTo(3217, 3492, 0, 0)
         OpenDoor(15535, 3218, 3492, 15536)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{46266},50,WPOINT.new(3224,3492,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{46266},50,FFPOINT.new(3224,3492,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3223, 3492, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -1489,15 +1489,15 @@ local clueSteps = {
         API.DoAction_Inventory1(3516,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.SEERS_VILLAGE.Teleport()
-        API.DoAction_Tile(WPOINT.new(2686 + math.random(-2, 2),3503 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(2686 + math.random(-2, 2),3503 + math.random(-2, 2),0))
         UTILS.randomSleep(4000)
         SurgeIfFacing(360)
-        API.DoAction_Tile(WPOINT.new(2663 + math.random(-5, 5),3515,0))
+        API.DoAction_Tile(FFPOINT.new(2663 + math.random(-5, 5),3515,0))
         UTILS.randomSleep(5000)
         SurgeIfFacing(270)
         UTILS.randomSleep(300)
-        Dive(WPOINT.new(2633 + math.random(-5, 5),3511,0))
-        API.DoAction_WalkerW(WPOINT.new(2612,3482,0))
+        Dive(FFPOINT.new(2633 + math.random(-5, 5),3511,0))
+        API.DoAction_Walker(FFPOINT.new(2612,3482,0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(2612,3482,0) do
             UTILS.randomSleep(1000)
         end
@@ -1519,13 +1519,13 @@ local clueSteps = {
         math.randomseed(os.time())
         local iterations = math.random(1, 5)
         for i = 1, iterations do
-            API.DoAction_Tile(WPOINT.new(3104 + math.random(-2, 2),3130 + math.random(-2, 2),0))
+            API.DoAction_Tile(FFPOINT.new(3104 + math.random(-2, 2),3130 + math.random(-2, 2),0))
             UTILS.randomSleep(750)
         end   
         while API.Read_LoopyLoop() and not API.PInArea21(3087, 3117, 3119, 3149) do
             UTILS.randomSleep(300)
         end     
-        API.DoAction_Tile(WPOINT.new(3102,3134,0))
+        API.DoAction_Tile(FFPOINT.new(3102,3134,0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(3102,3134,0) do
             UTILS.randomSleep(300)
         end
@@ -1536,7 +1536,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.FALADOR.Teleport()
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(2970, 3414, 0) do
-            API.DoAction_WalkerW(WPOINT.new(2970, 3414, 0))
+            API.DoAction_Walker(FFPOINT.new(2970, 3414, 0))
             UTILS.randomSleep(3000)
         end
         API.DoAction_Inventory2({952},0,1,API.OFF_ACT_GeneralInterface_route) --Dig spade
@@ -1547,7 +1547,7 @@ local clueSteps = {
         LODESTONES.CANIFIS.Teleport()
         MoveTo(3508, 3497, 0, 0)
         UTILS.randomSleep(1000)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{24911},50,WPOINT.new(3509,3497,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{24911},50,FFPOINT.new(3509,3497,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3508, 3498, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -1557,7 +1557,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.LUMBRIDGE.Teleport()
         MoveTo(3200, 3169, 0, 1)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{118020},50,WPOINT.new(3201,3169,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{118020},50,FFPOINT.new(3201,3169,0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(3202, 3169, 0) do
             if DialogBoxOpen() then
                 API.TypeOnkeyboard("2")
@@ -1591,17 +1591,17 @@ local clueSteps = {
             UTILS.randomSleep(1000)
         end
         UTILS.randomSleep(1000)
-        API.DoAction_WalkerW(WPOINT.new(3098,3189,0))
+        API.DoAction_Walker(FFPOINT.new(3098,3189,0))
         WaitForObjectToAppear(110419, 0)
         UTILS.randomSleep(3000)
         SurgeIfFacing(360)
-        API.DoAction_WalkerW(WPOINT.new(3098,3189,0))
+        API.DoAction_Walker(FFPOINT.new(3098,3189,0))
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,{110419},50) -- Take items from hidey hole
         while API.Read_LoopyLoop() and not Inventory:Contains(1059) and not Inventory:Contains(1137) and not Inventory:Contains(1639) do
             UTILS.randomSleep(300)
         end
         EquipStuff(1059, 1137, 1639)
-        API.DoAction_Tile(WPOINT.new(3103 + math.random(-1, 1),3193 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(3103 + math.random(-1, 1),3193 + math.random(-1, 1),0))
         while API.Read_LoopyLoop() and not API.PInArea21(3102, 3104, 3192, 3194) do
             UTILS.randomSleep(300)
         end
@@ -1666,7 +1666,7 @@ local clueSteps = {
         API.DoAction_Inventory1(10188,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.ARDOUGNE.Teleport()
-        API.DoAction_WalkerW(WPOINT.new(2734 + math.random(-2, 2),3348 + math.random(-2, 2), 0))
+        API.DoAction_Walker(FFPOINT.new(2734 + math.random(-2, 2),3348 + math.random(-2, 2), 0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2734, 3348, 0, 5) do
             UTILS.randomSleep(300)
         end
@@ -1686,7 +1686,7 @@ local clueSteps = {
             UTILS.randomSleep(300)
         end
 
-        API.DoAction_WalkerW(WPOINT.new(2728 + math.random(-1, 1),3348 + math.random(-1, 1), 0))
+        API.DoAction_Walker(FFPOINT.new(2728 + math.random(-1, 1),3348 + math.random(-1, 1), 0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2728, 3348, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -1723,7 +1723,7 @@ local clueSteps = {
     end,
     [10192] = function()
         LODESTONES.PORT_SARIM.Teleport()
-        API.DoAction_WalkerW(WPOINT.new(3044 + math.random(-1, 1),3235 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(3044 + math.random(-1, 1),3235 + math.random(-1, 1),0))
         WaitForObjectToAppear(110403, 0)
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,{110403},50) -- Take items from hidey hole
         while API.Read_LoopyLoop() and not Inventory:Contains(1169) and not Inventory:Contains(45461) and not Inventory:Contains(1656) do
@@ -1738,7 +1738,7 @@ local clueSteps = {
         while API.Read_LoopyLoop() and GetIdFromEquip(0) ~= 1169 and GetIdFromEquip(6) ~= 45461 and GetIdFromEquip(2) ~= 1656 do
             UTILS.randomSleep(300)
         end
-        API.DoAction_WalkerW(WPOINT.new(3046 + math.random(-1, 1),3235 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(3046 + math.random(-1, 1),3235 + math.random(-1, 1),0))
         UTILS.randomSleep(2000)
         API.DoAction_Interface(0xffffffff,0xffffffff,1,590,11,7,API.OFF_ACT_GeneralInterface_route) --Cheer emote
         WaitForObjectToAppear(5141, 1)
@@ -1751,7 +1751,7 @@ local clueSteps = {
     end,
     [10194] = function()
         LODESTONES.AL_KHARID.Teleport()
-        API.DoAction_WalkerW(WPOINT.new(3301 + math.random(-4, 4),3277 + math.random(-4, 4),0))
+        API.DoAction_Walker(FFPOINT.new(3301 + math.random(-4, 4),3277 + math.random(-4, 4),0))
         WaitForObjectToAppear(110459, 0)
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,{110459},50) -- Take items from hidey hole
         while API.Read_LoopyLoop() and not Inventory:Contains(1059) and not Inventory:Contains(1061) and not Inventory:Contains(10065) do
@@ -1766,7 +1766,7 @@ local clueSteps = {
         while API.Read_LoopyLoop() and GetIdFromEquip(7) ~= 1059 and GetIdFromEquip(8) ~= 1061 and GetIdFromEquip(4) ~= 10065 do
             UTILS.randomSleep(300)
         end
-        API.DoAction_Tile(WPOINT.new(3298 + math.random(-1, 1),3282 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(3298 + math.random(-1, 1),3282 + math.random(-1, 1),0))
         UTILS.randomSleep(1500)
         API.DoAction_Interface(0xffffffff,0xffffffff,1,590,11,15,API.OFF_ACT_GeneralInterface_route) --Headbang
         WaitForObjectToAppear(5141, 1)
@@ -1809,8 +1809,8 @@ local clueSteps = {
         end
         EquipStuff(1656, 10067, 843)
         MoveTo(3165, 3295, 0, 0)
-        while API.Read_LoopyLoop() and #API.GetAllObjArray2({45211}, 50, {0}, WPOINT.new(3165, 3295, 0)) < 1 do
-            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{45212},50,WPOINT.new(3164,3294,0))
+        while API.Read_LoopyLoop() and #API.GetAllObjArray2({45211}, 50, {0}, FFPOINT.new(3165, 3295, 0)) < 1 do
+            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{45212},50,FFPOINT.new(3164,3294,0))
             UTILS.randomSleep(300)
         end
         UTILS.randomSleep(2000) 
@@ -1820,8 +1820,8 @@ local clueSteps = {
         API.DoAction_NPC(0x2c,API.OFF_ACT_InteractNPC_route,{5141},50) -- Talk to Uri
         WaitForDialogThenPressSpacebar()
         MoveTo(3163, 3295, 0, 0)
-        while API.Read_LoopyLoop() and #API.GetAllObjArray2({45211}, 50, {0}, WPOINT.new(3165, 3295, 0)) < 1 do
-            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{45212},50,WPOINT.new(3164,3294,0))
+        while API.Read_LoopyLoop() and #API.GetAllObjArray2({45211}, 50, {0}, FFPOINT.new(3165, 3295, 0)) < 1 do
+            API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{45212},50,FFPOINT.new(3164,3294,0))
             UTILS.randomSleep(300)
         end
         MoveTo(3166, 3301, 0, 0)
@@ -1876,34 +1876,34 @@ local clueSteps = {
         API.DoAction_Inventory1(10204,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.VARROCK.Teleport()
-        API.DoAction_Tile(WPOINT.new(3211 + math.random(-1, 1),3390 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(3211 + math.random(-1, 1),3390 + math.random(-1, 1),0))
         UTILS.randomSleep(2000)
         SurgeIfFacing(360)
         UTILS.randomSleep(300)
-        API.DoAction_Tile(WPOINT.new(3211 + math.random(-1, 1),3414 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(3211 + math.random(-1, 1),3414 + math.random(-1, 1),0))
         UTILS.randomSleep(7000)
-        API.DoAction_Tile(WPOINT.new(3210 + math.random(-1, 1),3435 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(3210 + math.random(-1, 1),3435 + math.random(-1, 1),0))
         UTILS.randomSleep(1000)
         SurgeIfFacing(360)
         UTILS.randomSleep(200)
-        Dive(WPOINT.new(3213 + math.random(-1, 1),3454 + math.random(-1, 1),0))
-        API.DoAction_WalkerW(WPOINT.new(3213 + math.random(-1, 1),3463 + math.random(-1, 1),0))
+        Dive(FFPOINT.new(3213 + math.random(-1, 1),3454 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(3213 + math.random(-1, 1),3463 + math.random(-1, 1),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3213, 3463, 0, 3) do
             UTILS.randomSleep(300)
         end
         SurgeIfFacing(360)
         UTILS.randomSleep(200)
-        API.DoAction_WalkerW(WPOINT.new(3210, 3489, 0))
+        API.DoAction_Walker(FFPOINT.new(3210, 3489, 0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3210, 3489, 0, 2) do
             UTILS.randomSleep(100)
         end    
-        WaitForObjectToAppear2(15536, 12, WPOINT.new(3210, 3490, 0))
-        local door = #API.GetAllObjArray2({15535}, 50, {0}, WPOINT.new(3210, 3489, 0))    
+        WaitForObjectToAppear2(15536, 12, FFPOINT.new(3210, 3490, 0))
+        local door = #API.GetAllObjArray2({15535}, 50, {0}, FFPOINT.new(3210, 3489, 0))    
         if door == 0 then 
             API.DoAction_Object1(0x31,API.OFF_ACT_GeneralObject_route0,{15536},50) -- Open door
             while API.Read_LoopyLoop() and door == 0 do
                 UTILS.randomSleep(100)
-                door = #API.GetAllObjArray2({15535}, 50, {0}, WPOINT.new(3210, 3489, 0))
+                door = #API.GetAllObjArray2({15535}, 50, {0}, FFPOINT.new(3210, 3489, 0))
             end
         end    
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,{110531},50) -- Take items from hidey hole
@@ -1919,7 +1919,7 @@ local clueSteps = {
         while API.Read_LoopyLoop() and GetIdFromEquip(2) ~= 1718 and GetIdFromEquip(7) ~= 1063 and GetIdFromEquip(3) ~= 1335 do
             UTILS.randomSleep(300)
         end
-        API.DoAction_Tile(WPOINT.new(3213,3495,0))
+        API.DoAction_Tile(FFPOINT.new(3213,3495,0))
         while API.Read_LoopyLoop() and not IsPlayerAtCoords(3213,3495,0) do
             UTILS.randomSleep(300)
         end
@@ -1938,7 +1938,7 @@ local clueSteps = {
         LODESTONES.ARDOUGNE.Teleport()
         MoveTo(2627, 3383, 0, 1)
         OpenDoor(45967, 2628, 3383, 45966)
-        API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route1,{112414},50,WPOINT.new(2633,3386,0))
+        API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route1,{112414},50,FFPOINT.new(2633,3386,0))
         while API.Read_LoopyLoop() and not IsPlayerAtZCoords(2) do
             UTILS.randomSleep(300)
         end
@@ -1962,20 +1962,20 @@ local clueSteps = {
         API.DoAction_Inventory1(10208,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.FALADOR.Teleport()
-        API.DoAction_Tile(WPOINT.new(2982 + math.random(-2, 2),3375 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(2982 + math.random(-2, 2),3375 + math.random(-2, 2),0))
         UTILS.randomSleep(2000)
         SurgeIfFacing(180)
         UTILS.randomSleep(200)
-        Dive(WPOINT.new(3005, 3362, 0))
-        API.DoAction_WalkerW(WPOINT.new(3022 + math.random(-1, 1),3362 + math.random(-1, 1),0))
+        Dive(FFPOINT.new(3005, 3362, 0))
+        API.DoAction_Walker(FFPOINT.new(3022 + math.random(-1, 1),3362 + math.random(-1, 1),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3022, 3362, 0, 5) do
             UTILS.randomSleep(300)
         end
-        API.DoAction_WalkerW(WPOINT.new(3044 + math.random(-1, 1),3375 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(3044 + math.random(-1, 1),3375 + math.random(-1, 1),0))
         UTILS.randomSleep(2000)
         SurgeIfFacing(90)
         UTILS.randomSleep(200)
-        API.DoAction_WalkerW(WPOINT.new(3044 + math.random(-1, 1),3375 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(3044 + math.random(-1, 1),3375 + math.random(-1, 1),0))
         WaitForObjectToAppear(110451, 0)
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,{110451},50) -- Take items from hidey hole
         while API.Read_LoopyLoop() and not Inventory:Contains(45485) and not Inventory:Contains(45462) and not Inventory:Contains(1081) do
@@ -2005,7 +2005,7 @@ local clueSteps = {
         LODESTONES.TAVERLEY.Teleport()
         MoveTo(2921, 3476, 0, 3)
         WaitForObjectToAppear(110395, 0)
-        API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route0,{110395},50,WPOINT.new(2922,3476,0)) --Take items from hidey hole
+        API.DoAction_Object2(0x29,API.OFF_ACT_GeneralObject_route0,{110395},50,FFPOINT.new(2922,3476,0)) --Take items from hidey hole
         while API.Read_LoopyLoop() and not Inventory:Contains(5527) and not Inventory:Contains(1307) and not Inventory:Contains(1692) do
             UTILS.randomSleep(300)
         end
@@ -2025,7 +2025,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.BURTHOPE.Teleport()
         MoveTo(2896, 3566, 0, 1)
-        API.DoAction_Object2(0x39,API.OFF_ACT_GeneralObject_route0,{66973},50,WPOINT.new(2893,3570,0))
+        API.DoAction_Object2(0x39,API.OFF_ACT_GeneralObject_route0,{66973},50,FFPOINT.new(2893,3570,0))
         while API.Read_LoopyLoop() and #API.GetAllObjArray1({66973}, 50, {12}) > 0 do
             if DialogBoxOpen() then
                 API.TypeOnkeyboard("1")
@@ -2034,7 +2034,7 @@ local clueSteps = {
         end
         WaitForObjectToAppear(4629, 12)
         OpenDoor(4630, 2207, 4943, 4629)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{4629},50,WPOINT.new(2208,4946,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{4629},50,FFPOINT.new(2208,4946,0))
         UTILS.randomSleep(3000)
         MoveTo(2208, 4950, 0, 1)
         API.DoAction_Interface(0xffffffff,0xffffffff,1,590,11,7,API.OFF_ACT_GeneralInterface_route) --Cheer
@@ -2047,18 +2047,18 @@ local clueSteps = {
         API.DoAction_Inventory1(10214,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.CATHERBY.Teleport()
-        Dive(WPOINT.new(2798,3432,0))
-        API.DoAction_Tile(WPOINT.new(2798 + math.random(-2, 2),3432 + math.random(-2, 2),0))
+        Dive(FFPOINT.new(2798,3432,0))
+        API.DoAction_Tile(FFPOINT.new(2798 + math.random(-2, 2),3432 + math.random(-2, 2),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2798, 3432, 0, 4) do
             UTILS.randomSleep(300)
         end
-        API.DoAction_Tile(WPOINT.new(2764 + math.random(-2, 2),3443 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(2764 + math.random(-2, 2),3443 + math.random(-2, 2),0))
         UTILS.randomSleep(2500)
         SurgeIfFacing(270)
-        API.DoAction_Tile(WPOINT.new(2764 + math.random(-2, 2),3443 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(2764 + math.random(-2, 2),3443 + math.random(-2, 2),0))
         UTILS.randomSleep(2500)
         SurgeIfFacing(270)
-        API.DoAction_Tile(WPOINT.new(2764 + math.random(-1, 1),3445 + math.random(-1, 1),0))
+        API.DoAction_Tile(FFPOINT.new(2764 + math.random(-1, 1),3445 + math.random(-1, 1),0))
         WaitForObjectToAppear(110463, 0)
         API.DoAction_Object1(0x29,API.OFF_ACT_GeneralObject_route0,{110463},50) -- Take items from hidey hole
         while API.Read_LoopyLoop() and not Inventory:Contains(4121) and not Inventory:Contains(1724) and not Inventory:Contains(1353) do
@@ -2086,14 +2086,14 @@ local clueSteps = {
         API.DoAction_Inventory1(10216,0,1,API.OFF_ACT_GeneralInterface_route)
         UTILS.randomSleep(1000)
         LODESTONES.ARDOUGNE.Teleport()
-        API.DoAction_Tile(WPOINT.new(2620 + math.random(-2, 2),3317 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(2620 + math.random(-2, 2),3317 + math.random(-2, 2),0))
         UTILS.randomSleep(2000)
         SurgeIfFacing(180)
         UTILS.randomSleep(200)
-        API.DoAction_Tile(WPOINT.new(2620 + math.random(-2, 2),3317 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(2620 + math.random(-2, 2),3317 + math.random(-2, 2),0))
         UTILS.randomSleep(3000)
         SurgeIfFacing(270)
-        API.DoAction_Tile(WPOINT.new(2597 + math.random(-2, 2),3280 + math.random(-2, 2),0))
+        API.DoAction_Tile(FFPOINT.new(2597 + math.random(-2, 2),3280 + math.random(-2, 2),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(2597, 3280, 0, 5) do
             UTILS.randomSleep(300)
         end
@@ -2226,7 +2226,7 @@ local clueSteps = {
             UTILS.randomSleep(300)
         end
         UTILS.randomSleep(3000)
-        API.DoAction_WalkerW(WPOINT.new(3353 + math.random(-1, 1),3348 + math.random(-1, 1),0))
+        API.DoAction_Walker(FFPOINT.new(3353 + math.random(-1, 1),3348 + math.random(-1, 1),0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3353, 3348, 0, 5) do
             UTILS.randomSleep(300)
         end
@@ -2296,9 +2296,9 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.PORT_SARIM.Teleport()
         MoveTo(3027, 3284, 0, 0)
-        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{85076},50,WPOINT.new(3024,3285,0))
+        API.DoAction_Object2(0x31,API.OFF_ACT_GeneralObject_route0,{85076},50,FFPOINT.new(3024,3285,0))
         UTILS.randomSleep(2000)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{85101},50,WPOINT.new(3018,3287,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{85101},50,FFPOINT.new(3018,3287,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3019, 3287, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -2310,7 +2310,7 @@ local clueSteps = {
         LODESTONES.LUMBRIDGE.Teleport()
         MoveTo(3192, 3260, 0, 2)
         WaitForObjectToAppear(79065, 12)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{79065},50,WPOINT.new(3191,3257,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{79065},50,FFPOINT.new(3191,3257,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3191, 3258, 0, 2) do
             UTILS.randomSleep(300)
         end
@@ -2341,7 +2341,7 @@ local clueSteps = {
         UTILS.randomSleep(1000)
         LODESTONES.AL_KHARID.Teleport()
         MoveTo(3418, 3160, 0, 1)
-        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{63760},50,WPOINT.new(3415,3158,0))
+        API.DoAction_Object2(0x38,API.OFF_ACT_GeneralObject_route0,{63760},50,FFPOINT.new(3415,3158,0))
         while API.Read_LoopyLoop() and not IsPlayerInArea(3416, 3158, 0, 1) do
             UTILS.randomSleep(300)
         end
@@ -2378,7 +2378,6 @@ end
 
 local clueStepId = 0
 
-API.Write_fake_mouse_do(false)
 while (API.Read_LoopyLoop()) do
     UTILS:antiIdle()
     ReqCheck()

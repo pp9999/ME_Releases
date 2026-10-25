@@ -177,7 +177,7 @@ end
 
 local function MoveTo(X, Y, Z)
     while API.Read_LoopyLoop() and not SpectreUtils.IsPlayerAtCoords(X, Y, Z) do
-        API.DoAction_WalkerW(WPOINT.new(X, Y, Z))
+        API.DoAction_Walker(FFPOINT.new(X, Y, Z))
         UTILS.randomSleep(3000)
     end
 end
@@ -187,7 +187,7 @@ local function IsTeleportInterfaceOpen()
         InterfaceComp5.new(720, 2, -1, -1),
         InterfaceComp5.new(720, 17, -1, 2)
     }
-    local result = API.ScanForInterfaceTest2Get(true, interfaceCoords)
+    local result = API.ScanForInterfaceTest2Get2(true, interfaceCoords)
     if #result > 0 then
         return true
     else
@@ -424,7 +424,6 @@ local Steps = {
     end
 }
 
-API.Write_fake_mouse_do(false)
 while (API.Read_LoopyLoop()) do
     UTILS:antiIdle()
     API.DoAction_Inventory1(6754,0,1,API.OFF_ACT_GeneralInterface_route)

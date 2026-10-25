@@ -137,7 +137,7 @@ end
 --#endregion
 
 local function gameStateChecks()
-    local gameState = API.GetGameState()
+    local gameState = API.GetGameState2()
     if (gameState ~= 3) then
         print('Not ingame with state:', gameState)
         API.Write_LoopyLoop(false)
@@ -154,14 +154,14 @@ local function onStart()
     print('on start')
     local priffLodestone = LODESTONES.LODESTONE.PRIFDDINAS.loc
     local playerXYZ = API.PlayerCoord()
-    if (API.Math_DistanceW(priffLodestone, playerXYZ) > 68) then
+    if (API.Math_Distance(priffLodestone, playerXYZ) > 68) then
         print('They are different')
         LODESTONES.Prifddinas()
         UTILS.randomSleep(6000)
     else
         print('Already near PRIFDDINAS lodestone')
     end
-    if API.Invfreecount_() < 24 then
+    if Inventory:Invfreecount() < 24 then
         STATE = STATES.BANK
     else
         STATE = STATES.GOTO_TREES
@@ -171,8 +171,8 @@ end
 local function bank()
     -- open bank
     local atBank = false
-    if not API.PInAreaW(WPOINT.new(2240, 3384, 1), 50) then
-        API.DoAction_WalkerW(WPOINT.new(2240, 3384, 1))
+    if not API.PInAreaF2(FFPOINT.new(2240, 3384, 1), 50) then
+        API.DoAction_Walker(FFPOINT.new(2240, 3384, 1))
     else
         API.DoAction_Object1(0x2e, API.OFF_ACT_GeneralObject_route1, { 92692 }, 50)
         UTILS.randomSleep(2000)
@@ -180,7 +180,7 @@ local function bank()
         -- load preset 3
         if API.BankOpen2() then
             atBank = true
-            local invLogsCount = API.InvItemcount_String(logsToCount)
+            local invLogsCount = Inventory:InvItemcount_String(logsToCount)
             logs = logs + invLogsCount
             imguiLogsChopped.string_value = "Dead's Priff Tree Chopper\n" .. logsToCount .." Chopped: " .. tostring(logs)
             API.KeyboardPress2(bankPresetKeycode,100,300)
@@ -194,10 +194,10 @@ local function bank()
 end
 
 local function gotoTrees()
-    API.DoAction_WalkerW(WPOINT.new(2246, 3367, 1))
+    API.DoAction_Walker(FFPOINT.new(2246, 3367, 1))
     UTILS.randomSleep(1200);
     API.WaitUntilMovingEnds()
-    if not API.PInAreaW(WPOINT.new(2245, 3367, 1), 30) then
+    if not API.PInAreaF2(FFPOINT.new(2245, 3367, 1), 30) then
         STATE = STATES.GOTO_TREES
     else
         STATE = STATES.CHOP
@@ -206,7 +206,7 @@ end
 
 local function CHOP(tableTree)
     if not API.InventoryInterfaceCheckvarbit() then
-        API.OpenInventoryInterface2()
+        Inventory:IsOpen()
         UTILS.randomSleep(600)
     end
     local trees = API.GetAllObjArrayInteract_str(tableTree, 50, 0)
@@ -220,7 +220,7 @@ local function CHOP(tableTree)
     end
     local tree = validTrees[math.random(1,#validTrees)]
     if not API.CheckAnim(20) or not API.WaitUntilMovingEnds() and trees[1] ~= nil then
-        API.DoAction_Object2(0x3b, 0, { tree.Id }, 50, WPOINT.new(tree.TileX / 512, tree.TileY / 512, 1));
+        API.DoAction_Object2(0x3b, 0, { tree.Id }, 50, FFPOINT.new(tree.TileX / 512, tree.TileY / 512, 1));
         UTILS.randomSleep(1200)
         API.WaitUntilMovingEnds()
         tickCount = 0
@@ -228,7 +228,7 @@ local function CHOP(tableTree)
 end
 
 local function inventoryCheck()
-    if API.Invfreecount_() == 0 then
+    if Inventory:Invfreecount() == 0 then
         STATE = STATES.BANK;
     end
 end

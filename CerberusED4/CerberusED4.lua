@@ -2,7 +2,6 @@ local API = require("api")
 local UTILS = require("utils")
 local player = API.GetLocalPlayerName()
 --API.SetDrawTrackedSkills(true)
-API.Write_fake_mouse_do(false)
 API.SetMaxIdleTime(10)
 local PRAYER_BUFF = 25959
 local Part_1_DONE = false
@@ -17,12 +16,12 @@ local function run_to_tile(x, y, z)
 
     --local rand1 = math.random(-2, 2)
     --local rand2 = math.random(-2, 2)
-    local tile = WPOINT.new(x, y, z)
+    local tile = FFPOINT.new(x, y, z)
 
-    API.DoAction_WalkerW(tile)
+    API.DoAction_Walker(tile)
 
     local threshold = math.random(3, 4)
-    while API.Read_LoopyLoop() and API.Math_DistanceW(API.PlayerCoord(), tile) > threshold do
+    while API.Read_LoopyLoop() and API.Math_Distance(API.PlayerCoord(), tile) > threshold do
         API.RandomSleep2(200, 200, 200)
     end
 end
@@ -98,7 +97,7 @@ local function Bank_At_Wars_Retreat()
         API.RandomSleep2(1200, 500, 900)
         API.DoAction_Object1(0x33, API.OFF_ACT_GeneralObject_route3, { 114750 }, 50) -- bank load last preset
         API.RandomSleep2(5000, 900, 1200)
-        if not API.InvFull_() then
+        if not Inventory:IsFull() then
             print("Ran out of supplies -- ENDING SCRIPT")
             API.Write_LoopyLoop(false)
         end
@@ -138,7 +137,7 @@ local function Move_Away_From_Cerberus()
 
             if not API.PInArea(newTileX, 1, newTileY, 1, newTileZ) then
                 print("Moving back from cerberus")
-                API.DoAction_WalkerW(WPOINT.new(newTileX, newTileY, newTileZ))
+                API.DoAction_Walker(FFPOINT.new(newTileX, newTileY, newTileZ))
                 API.RandomSleep2(1200, 300, 600)
             end
         end

@@ -39,7 +39,7 @@ local artifactFoundInterface = {
 }
 
 local function artifactFoundInterfacePresent()
-    return #API.ScanForInterfaceTest2Get(true, artifactFoundInterface) > 0
+    return #API.ScanForInterfaceTest2Get2(true, artifactFoundInterface) > 0
 end
 
 local function getFocusRemains(remains, maxDistance)
@@ -47,9 +47,9 @@ local function getFocusRemains(remains, maxDistance)
     local shortestDist = maxDistance
     for _, r in ipairs(remains) do
         for _, hl in ipairs(API.GetAllObjArray1({ ARCH_FOCUS }, maxDistance, {4})) do
-            if API.Math_DistanceF(r.Tile_XYZ, hl.Tile_XYZ) < shortestDist then
+            if API.Math_Distance(r.Tile_XYZ, hl.Tile_XYZ) < shortestDist then
                 focusRemains = r
-                shortestDist = API.Math_DistanceF(r.Tile_XYZ, hl.Tile_XYZ)
+                shortestDist = API.Math_Distance(r.Tile_XYZ, hl.Tile_XYZ)
             end
         end
     end
@@ -131,7 +131,7 @@ local function excavate()
     end
 
     if focusRemains then
-        if not clickedRemainsTile or API.Math_DistanceF(clickedRemainsTile, focusRemains.Tile_XYZ) ~= 0 then
+        if not clickedRemainsTile or API.Math_Distance(clickedRemainsTile, focusRemains.Tile_XYZ) ~= 0 then
             API.RandomSleep2(500, 1000, 1500)
             API.DoAction_Object_Direct(0x2, API.OFF_ACT_GeneralObject_route0, focusRemains)
             clickedRemainsTile = focusRemains.Tile_XYZ
@@ -143,7 +143,7 @@ local function excavate()
                 targetRemainsTile = remains[math.random(1, #remains)].Tile_XYZ
             end
 
-            API.DoAction_Object2(0x2, API.OFF_ACT_GeneralObject_route0, { MYSTERY_REMAINS }, 50, WPOINT.new(targetRemainsTile.x, targetRemainsTile.y, 0))
+            API.DoAction_Object2(0x2, API.OFF_ACT_GeneralObject_route0, { MYSTERY_REMAINS }, 50, FFPOINT.new(targetRemainsTile.x, targetRemainsTile.y, 0))
             clickedRemainsTile = targetRemainsTile
         end
     end
@@ -198,7 +198,7 @@ local function completeMaze()
 
             if API.Dist_FLP(selectedTile) < 1 then break end
             selectedTile = FFPOINT.new(math.random(xRange[1], xRange[2]), math.random(yRange[1], yRange[2]), 0)
-            API.DoAction_TileF(selectedTile)
+            API.DoAction_Tile(selectedTile)
             API.RandomSleep2(1000, 250, 500)
             print("Navigating to ", selectedTile.x, selectedTile.y)
         end
@@ -214,7 +214,7 @@ local function completeMaze()
     if not API.Read_LoopyLoop() then return false end
 
     if lookForGate then
-        if API.DoAction_Object2(0xb5, API.OFF_ACT_GeneralObject_route0, { GATE }, 50, WPOINT.new(713, 1726, 0)) then
+        if API.DoAction_Object2(0xb5, API.OFF_ACT_GeneralObject_route0, { GATE }, 50, FFPOINT.new(713, 1726, 0)) then
             print("Jumping main gate!")
             waitForStillness()
         else
@@ -229,7 +229,7 @@ local function completeMaze()
 
                     if API.Dist_FLP(selectedTile) < 1 then break end
                     selectedTile = FFPOINT.new(math.random(xRange[1], xRange[2]), math.random(yRange[1], yRange[2]), 0)
-                    API.DoAction_TileF(selectedTile)
+                    API.DoAction_Tile(selectedTile)
                     print("Navigating to ", selectedTile.x, selectedTile.y)
                 end
 
@@ -259,11 +259,11 @@ local function completeMaze()
     local bonesToKill = (getBossHealth() / 10)
     if Inventory:InvItemcount(BONE_CLUB) < bonesToKill then
         print("Going to catch remaining implings!")
-        API.DoAction_TileF(FFPOINT.new(math.random(700, 707), math.random(1726, 1727), 0))
+        API.DoAction_Tile(FFPOINT.new(math.random(700, 707), math.random(1726, 1727), 0))
         waitForStillness()
 
         while Inventory:InvItemcount(BONE_CLUB) < bonesToKill and API.Read_LoopyLoop() do
-            if API.DoAction_NPC_In_Area(0x29, API.OFF_ACT_InteractNPC_route, { ZOMBIE_IMPLING }, 5, WPOINT.new(700, 1726, 0), WPOINT.new(707, 1727, 0), true, 0) then
+            if API.DoAction_NPC_In_Area(0x29, API.OFF_ACT_InteractNPC_route, { ZOMBIE_IMPLING }, 5, FFPOINT.new(700, 1726, 0), FFPOINT.new(707, 1727, 0), true, 0) then
                 waitForStillness()
             end
     

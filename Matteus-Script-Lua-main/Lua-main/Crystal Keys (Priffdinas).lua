@@ -34,11 +34,11 @@ local SeedInterface = { InterfaceComp5.new(720, 2, -1, -1, 0) }
 local ChestInterface = { InterfaceComp5.new(168, 0, -1, -1, 0) }
 
 local function isSeedInterfaceOpen()
-    return #API.ScanForInterfaceTest2Get(true, SeedInterface) > 0
+    return #API.ScanForInterfaceTest2Get2(true, SeedInterface) > 0
 end
 
 local function isChestInterfaceOpen()
-    return #API.ScanForInterfaceTest2Get(true, ChestInterface) > 0
+    return #API.ScanForInterfaceTest2Get2(true, ChestInterface) > 0
 end
 
 local function idleCheck()
@@ -117,7 +117,7 @@ local function clickCrystalChest()
 end
 
 local function checkKeysAvailable()
-    return API.InvItemcount_1(CONFIG.KEY_ITEM_ID) >= CONFIG.REQUIRED_KEY_COUNT
+    return Inventory:InvItemcount(CONFIG.KEY_ITEM_ID) >= CONFIG.REQUIRED_KEY_COUNT
 end
 
 function API.ScriptRuntime()
@@ -135,7 +135,7 @@ end
 local function handleStates()
     if currentState == STATE_IDLE then
         idleCheck()
-        if API.InvItemcount_1(CONFIG.KEY_ITEM_ID) == 0 then
+        if Inventory:InvItemcount(CONFIG.KEY_ITEM_ID) == 0 then
             currentState = STATE_BANK
         else
             currentState = STATE_CLICK_CHEST

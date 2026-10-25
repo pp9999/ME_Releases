@@ -78,8 +78,8 @@ end
 
 local function HasItemMin(itemId, min)
     min = min or 1
-    local stack = API.InvStackSize(itemId) or 0
-    local count = API.InvItemcount_1(itemId) or 0
+    local stack = Inventory:InvStackSize(itemId) or 0
+    local count = Inventory:InvItemcount(itemId) or 0
     local amount = math.max(stack, count)
     return amount >= min
 end

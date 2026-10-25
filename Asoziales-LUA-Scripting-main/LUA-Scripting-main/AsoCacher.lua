@@ -227,7 +227,7 @@ local function porterLogic()
 
     local function findporters()
         local portersIds = {51490, 29285, 29283, 29281, 29279, 29277, 29275}
-        local porters = API.CheckInvStuff3(portersIds)
+        local porters = Inventory:CheckInvStuffCheckAll(portersIds)
         local foundIdx = -1
         for i, value in ipairs(porters) do
             if tostring(value) == '1' then
@@ -344,11 +344,11 @@ local function gameStateChecks()
 end
 
 local function hasElvenRitualShard()
-    return API.InvItemcount_1(ID.ELVEN_SHARD) > 0
+    return Inventory:InvItemcount(ID.ELVEN_SHARD) > 0
 end
 
 local function useElvenRitualShard()
-    if not (API.InvItemcount_1(ID.ELVEN_SHARD) > 0) then
+    if not (Inventory:InvItemcount(ID.ELVEN_SHARD) > 0) then
         return
     end
     local prayer = API.GetPrayPrecent()

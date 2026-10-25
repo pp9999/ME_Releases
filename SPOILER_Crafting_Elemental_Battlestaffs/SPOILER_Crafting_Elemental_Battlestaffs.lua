@@ -74,7 +74,7 @@ end
 
 local function scanInventoryForOrb(orbID)
     log("Scanning inventory for orb ID: " .. orbID)
-    local itemCount = API.InvItemcount_1(orbID)
+    local itemCount = Inventory:InvItemcount(orbID)
     log("Found " .. itemCount .. " of orb ID " .. orbID .. " in inventory.")
     return itemCount > 0
 end

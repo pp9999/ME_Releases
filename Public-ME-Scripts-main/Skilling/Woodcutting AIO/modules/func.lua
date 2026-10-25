@@ -65,7 +65,7 @@ function FUNC:GetSignOfThePorter()
 end
 
 function FUNC:GOTEInterfaceIsOpen()
-    local Interface = API.ScanForInterfaceTest2Get(true, DATA.INTERFACES.GOTE1)
+    local Interface = API.ScanForInterfaceTest2Get2(true, DATA.INTERFACES.GOTE1)
     if #Interface > 0 then
         return true
     end

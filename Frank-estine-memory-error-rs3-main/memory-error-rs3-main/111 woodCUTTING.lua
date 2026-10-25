@@ -10,8 +10,8 @@ local tree = {38787, 38785, 38760, 38783}
 local willow = {58006, 38627, 38616}
 
 API.Write_ScripCuRunning0("starting")
-API.Write_ScripCuRunning1(player)
-API.Write_ScripCuRunning2("woodcutting by Frank")
+API.Write_ScripCuRunning0(player)
+API.Write_ScripCuRunning0("woodcutting by Frank")
 
 local bankchestid_varrock = {553,2759}
 local bankchestid_draynor = {4459,4458,4457,4456}
@@ -58,7 +58,7 @@ local function check()
             API.RandomSleep2(1500,2500, 2500) -- Adjust sleep time as needed
             
             API.DoRandomEvents()
-       until not API.CheckAnim(50) or API.InvFull_() or not API.Read_LoopyLoop()
+       until not API.CheckAnim(50) or Inventory:IsFull() or not API.Read_LoopyLoop()
        print("over check")
     end
 end
@@ -69,8 +69,8 @@ local function depositItems()
     local maxDepositAttempts = math.random(2, 3)
     
     API.Write_ScripCuRunning0("Depositing")
-    if API.Invfreecount_() < math.random(5, 10) and not oreBoxFull then
-        local prevInvCount = API.Invfreecount_()
+    if Inventory:Invfreecount() < math.random(5, 10) and not oreBoxFull then
+        local prevInvCount = Inventory:Invfreecount()
         local retryAttempts = 0
         local depositSuccess = false
         repeat
@@ -78,7 +78,7 @@ local function depositItems()
             API.KeyboardPress('s', 60, 100)
             API.RandomSleep2(math.random(200, 500), math.random(500, 1000),1500)
 
-            if prevInvCount == API.Invfreecount_() then
+            if prevInvCount == Inventory:Invfreecount() then
                 retryAttempts = retryAttempts + 1
                 print("Retrying deposit attempt #" .. retryAttempts)
             else
@@ -110,21 +110,21 @@ local function cutTreesAndBankLogs() -- make ur functions local for the love of 
         local y = 3412 + math.random(-2, 2)
         local z = 0
         if not API.PInArea(x,5,y,5,0) then
-            API.DoAction_WalkerW(WPOINT.new(x, y, z))  
+            API.DoAction_Walker(FFPOINT.new(x, y, z))  
        end   
     elseif treeType == "Willow" then
         local x = 3090 + math.random(-2, 2)
         local y = 3232 + math.random(-2, 2)
         local z = 0
         if not API.PInArea(x,5,y,5,0) then
-            API.DoAction_WalkerW(WPOINT.new(x, y, z))  
+            API.DoAction_Walker(FFPOINT.new(x, y, z))  
        end 
     end
 
 
    
-    while API.Invfreecount_() > 0 and API.Read_LoopyLoop() do
-        if API.Invfreecount_() > 0 and  not API.CheckAnim(150) then
+    while Inventory:Invfreecount() > 0 and API.Read_LoopyLoop() do
+        if Inventory:Invfreecount() > 0 and  not API.CheckAnim(150) then
             local availableTrees = {} -- Store available tree IDs
 
             for i, treeId in ipairs(selectedTree) do
@@ -141,13 +141,13 @@ local function cutTreesAndBankLogs() -- make ur functions local for the love of 
             local treeIndex = math.random(1, #availableTrees)
             local treeId = availableTrees[treeIndex]
             lastCutTreeIndex = treeIndex -- Update the last cut tree index
-            if API.Invfreecount_() == 0 then
+            if Inventory:Invfreecount() == 0 then
                 break
             end
 
             print("Clicking on tree " .. treeId .. " to start cutting.")
 
-            API.DoAction_Object_r(0x3b, 0, {treeId}, 50, WPOINT.new(0, 0, 0), 5)
+            API.DoAction_Object_r(0x3b, 0, {treeId}, 50, FFPOINT.new(0, 0, 0), 5)
            
           
         end  
@@ -159,7 +159,7 @@ local function cutTreesAndBankLogs() -- make ur functions local for the love of 
 end
 
 local function bank()
-    if API.Invfreecount_() == 0 then
+    if Inventory:Invfreecount() == 0 then
         local selectedBankChestIds = nil
         
         if treeType == "Oak" or treeType == "tree" then
@@ -197,7 +197,7 @@ local function bank()
                 local x = 3186 + math.random(-2, 2)
                 local y = 3438 + math.random(-2, 2)
                 local z = 0
-                API.DoAction_WalkerW(WPOINT.new(x, y, z))    
+                API.DoAction_Walker(FFPOINT.new(x, y, z))    
                 print("banking oak or tree")
 
                 API.DoAction_NPC(0x5,3120,{ chosenBankChestId },50)

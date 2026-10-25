@@ -120,7 +120,7 @@ while API.Read_LoopyLoop() do
         API.RandomSleep2(800, 700, 600)
         API.KeyboardPress2(0x1B, 50, 150)
         API.RandomSleep2(800, 700, 600)
-        if API.Invfreecount_() > 25 then
+        if Inventory:Invfreecount() > 25 then
             print("We had no food left so wew broke the script")
             break
         end

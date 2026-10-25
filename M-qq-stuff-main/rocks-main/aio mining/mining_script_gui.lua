@@ -16,7 +16,6 @@ idleHandler.init()
 
 API.SetDrawLogs(false)
 API.SetDrawTrackedSkills(false)
-API.Write_fake_mouse_do(false)
 API.TurnOffMrHasselhoff(true)
 
 ClearRender()

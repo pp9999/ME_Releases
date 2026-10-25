@@ -119,7 +119,7 @@ while API.Read_LoopyLoop() do
             print("Inventory full, checking ore box")
             MINER:FillOreBox()
 
-            if Inventory:InvFull() then
+            if Inventory:IsFull() then
                 print("Ore box full, banking")
                 MINER:SetStatus("Banking")
                 MINER.Selected:Bank()

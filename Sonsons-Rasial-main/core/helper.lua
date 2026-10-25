@@ -158,7 +158,7 @@ end
 --- @field id         integer    -- entity ID, –1 if not found
 --- @field name       string     -- boss name or "UNKNOWN"
 --- @field animation  integer    -- current animation ID, –1 if not found
---- @field tile       WPOINT     -- map-tile coordinates
+--- @field tile       FFPOINT     -- map-tile coordinates
 
 --- Retrieves structured info about an entity
 --- @param objId integer | integer[]
@@ -174,7 +174,7 @@ function Utils:getEntityInfo(objId, type, distance)
         health    = (#entity > 0) and entity[1].Life or -1,
         animation = (#entity > 0) and entity[1].Anim or -1,
         --- @diagnostic disable-next-line: undefined-global
-        tile      = (#entity > 0) and entity[1].Tile_XYZ or WPOINT.new(0, 0, 0)
+        tile      = (#entity > 0) and entity[1].Tile_XYZ or FFPOINT.new(0, 0, 0)
     }
 end
 
@@ -309,7 +309,7 @@ function Utils:formatNumber(number)
 end
 
 function Utils:getLootWindowAmount()
-    local text = API.ScanForInterfaceTest2Get(false,
+    local text = API.ScanForInterfaceTest2Get2(false,
     ---@diagnostic disable-next-line
         { { 1622, 4, -1, 0 }, { 1622, 6, -1, 0 }, { 1622, 2, -1, 0 }, { 1622, 3, -1, 0 } })
     if text and #text > 0 and text[1].textids then
@@ -391,7 +391,7 @@ function Utils:bossTimerExists()
         { 861, 0, -1, -1, 0 }, { 861, 2, -1, 0, 0 },
         { 861, 4, -1, 2,  0 }, { 861, 8, -1, 4, 0 }
     }
-    local result = API.ScanForInterfaceTest2Get(false, instanceTimer)
+    local result = API.ScanForInterfaceTest2Get2(false, instanceTimer)
     return result and #result > 0 and #result[1].textids > 0
 end
 

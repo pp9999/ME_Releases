@@ -442,7 +442,7 @@ local stageFunctions = {
     
             local x1, y1 = (5451 + math.random(-4, 4)), (2205 + math.random(-4, 4))
             print(string.format("Moving to random intermediate point (%d, %d)...", x1, y1))
-            API.DoAction_Tile(WPOINT.new(x1, y1, 0))
+            API.DoAction_Tile(FFPOINT.new(x1, y1, 0))
     
             while API.Read_LoopyLoop() and not API.PInArea21((x1 - 3), (x1 + 3), (y1 - 3), (y1 + 3)) do
                 if API.DeBuffbar_GetIDstatus(14392).found then
@@ -486,7 +486,7 @@ local stageFunctions = {
     
             local x2, y2 = (5454 + math.random(-4, 4)), (2206 + math.random(-4, 4))
             print(string.format("Moving to random intermediate point (%d, %d)...", x2, y2))
-            API.DoAction_Tile(WPOINT.new(x2, y2, 0))
+            API.DoAction_Tile(FFPOINT.new(x2, y2, 0))
     
             while API.Read_LoopyLoop() and not API.PInArea21((x2 - 3), (x2 + 3), (y2 - 3), (y2 + 3)) do
                 if API.DeBuffbar_GetIDstatus(14392).found then
@@ -899,8 +899,8 @@ local stageFunctions = {
                 local Bdive = API.GetABs_id(30331)
                 local Dive = API.GetABs_id(23714)
                 if (Bdive.id ~= 0 and Bdive.cooldown_timer < 1) or (Dive.id ~= 0 and Dive.cooldown_timer < 1) then
-                    if not API.DoAction_BDive_Tile(WPOINT.new(X, Y, Z)) then
-                        API.DoAction_Dive_Tile(WPOINT.new(X, Y, Z))
+                    if not API.DoAction_BDive_Tile(FFPOINT.new(X, Y, Z)) then
+                        API.DoAction_Dive_Tile(FFPOINT.new(X, Y, Z))
                     end
                 end
                 UTILS.randomSleep(150)
@@ -983,21 +983,21 @@ local stageFunctions = {
             crossObstacleAnac(obstacles[3].id, obstacles[3].finalCoords[1], obstacles[3].finalCoords[2])
             if canDive() then dive(5400,2320) end
             crossObstacleAnac(obstacles[4].id, obstacles[4].finalCoords[1], obstacles[4].finalCoords[2])
-            API.DoAction_Tile(WPOINT.new(5377, 2311,0))
+            API.DoAction_Tile(FFPOINT.new(5377, 2311,0))
             sleepUntilFacing(225)
             if canSurge() then Surge() end
             crossObstacleAnac(obstacles[5].id, obstacles[5].finalCoords[1], obstacles[5].finalCoords[2])
             if canDive() then 
                 dive(5359 + math.random(-1, 1), 2296 + math.random(-1, 1)) 
             else
-                API.DoAction_Tile(WPOINT.new(5359 + math.random(-1, 1), 2296 + math.random(-1, 1),0))
+                API.DoAction_Tile(FFPOINT.new(5359 + math.random(-1, 1), 2296 + math.random(-1, 1),0))
                 UTILS.randomSleep(1500)
             end
             crossObstacleAnac(obstacles[6].id, obstacles[6].finalCoords[1], obstacles[6].finalCoords[2])
             if canDive() then
                 dive(5376, 2272)                                
             else
-                API.DoAction_Tile(WPOINT.new(5378, 2311,0))
+                API.DoAction_Tile(FFPOINT.new(5378, 2311,0))
                 UTILS.randomSleep(1000)
             end
             API.DoAction_Object1(0xb5,API.OFF_ACT_GeneralObject_route0,{obstacles[7].id},50)
@@ -1008,7 +1008,7 @@ local stageFunctions = {
             UTILS.randomSleep(1500)
             if canDive() then dive(5388, 2241) end
             crossObstacleAnac(obstacles[8].id, obstacles[8].finalCoords[1], obstacles[8].finalCoords[2])
-            API.DoAction_Tile(WPOINT.new(5418, 2231,0))
+            API.DoAction_Tile(FFPOINT.new(5418, 2231,0))
             sleepUntilFacing(135)
             if canSurge() then Surge() end
             API.DoAction_Object1(0xb5,API.OFF_ACT_GeneralObject_route0,{obstacles[9].id},50)
@@ -1017,7 +1017,7 @@ local stageFunctions = {
             crossObstacleAnac(obstacles[9].id, obstacles[9].finalCoords[1], obstacles[9].finalCoords[2])
             anticipation()
             local x1, y1 = (5451 + math.random(-4, 4)), (2205 + math.random(-4, 4))
-            API.DoAction_Tile(WPOINT.new(x1, y1, 0))
+            API.DoAction_Tile(FFPOINT.new(x1, y1, 0))
             UTILS.randomSleep(1500)
             sleepUntilFacing(135)
             if canSurge() then
@@ -1047,7 +1047,7 @@ local stageFunctions = {
             sleepUntilFacing(90)
             if canSurge() then Surge() end
             crossObstacleAnac(obstacles[14].id, obstacles[14].finalCoords[1], obstacles[14].finalCoords[2])
-            API.DoAction_Tile(WPOINT.new(5542 + math.random(-2, 2), 2193 + math.random(-2, 2), 0))
+            API.DoAction_Tile(FFPOINT.new(5542 + math.random(-2, 2), 2193 + math.random(-2, 2), 0))
             sleepUntilFacing(45)
             if canSurge() then Surge() end
             if canDive() then dive(5548, 2213) end
@@ -1065,18 +1065,18 @@ local stageFunctions = {
             crossObstacleAnac(obstacles[21].id, obstacles[21].finalCoords[1], obstacles[21].finalCoords[2])
             anticipation()
             if canDive() then dive(5605, 2287) end
-            API.DoAction_Tile(WPOINT.new(5615 + math.random(-1, 1), 2287 + math.random(-1, 1), 0))
+            API.DoAction_Tile(FFPOINT.new(5615 + math.random(-1, 1), 2287 + math.random(-1, 1), 0))
             if API.DeBuffbar_GetIDstatus(14392).found then
                 print("Stompy")
                 UTILS.randomSleep(4000)
-                API.DoAction_Tile(WPOINT.new(5615 + math.random(-1, 1), 2287 + math.random(-1, 1), 0))
+                API.DoAction_Tile(FFPOINT.new(5615 + math.random(-1, 1), 2287 + math.random(-1, 1), 0))
             end
             API.DoAction_Object1(0xb5,API.OFF_ACT_GeneralObject_route0,{22},50)
             sleepUntilFacing(90)
             UTILS.randomSleep(1500)            
             if canSurge() then Surge() end
             crossObstacleAnac(obstacles[22].id, obstacles[22].finalCoords[1], obstacles[22].finalCoords[2])
-            API.DoAction_Tile(WPOINT.new(5648 + math.random(-1, 1), 2287 + math.random(-1, 1), 0))
+            API.DoAction_Tile(FFPOINT.new(5648 + math.random(-1, 1), 2287 + math.random(-1, 1), 0))
             UTILS.randomSleep(1500)
             if canSurge() then Surge() end
             if canDive() then dive(5662, 2288) end
@@ -1086,11 +1086,11 @@ local stageFunctions = {
             if canDive() then dive(5686, 2302) end
             crossObstacleAnac(obstacles[26].id, obstacles[26].finalCoords[1], obstacles[26].finalCoords[2])
             crossObstacleAnac(obstacles[27].id, obstacles[27].finalCoords[1], obstacles[27].finalCoords[2])
-            API.DoAction_Tile(WPOINT.new(5698 + math.random(-1, 1), 2331 + math.random(-1, 1), 0))
+            API.DoAction_Tile(FFPOINT.new(5698 + math.random(-1, 1), 2331 + math.random(-1, 1), 0))
             sleepUntilFacing(0)
             if canSurge() then Surge() end
             crossObstacleAnac(obstacles[28].id, obstacles[28].finalCoords[1], obstacles[28].finalCoords[2])
-            API.DoAction_Tile(WPOINT.new(5696 + math.random(-1, 1), 2356 + math.random(-1, 1), 0))
+            API.DoAction_Tile(FFPOINT.new(5696 + math.random(-1, 1), 2356 + math.random(-1, 1), 0))
             UTILS.randomSleep(3000)
             if canDive() then dive(5688, 2361) end
             crossObstacleAnac(obstacles[29].id, obstacles[29].finalCoords[1], obstacles[29].finalCoords[2])
@@ -1118,16 +1118,16 @@ local stageFunctions = {
             crossObstacleAnac(obstacles[40].id, obstacles[40].finalCoords[1], obstacles[40].finalCoords[2])
             ----------------------------------------41 to 50----------------------------------------
             crossObstacleAnac(obstacles[41].id, obstacles[41].finalCoords[1], obstacles[41].finalCoords[2])
-            API.DoAction_Tile(WPOINT.new(5564 + math.random(-1, 1), 2467 + math.random(-1, 1), 0))
+            API.DoAction_Tile(FFPOINT.new(5564 + math.random(-1, 1), 2467 + math.random(-1, 1), 0))
             sleepUntilFacing(0)
             if canSurge() then Surge() end
-            API.DoAction_Tile(WPOINT.new(5558 + math.random(-1, 1), 2480 + math.random(-1, 1), 0))
+            API.DoAction_Tile(FFPOINT.new(5558 + math.random(-1, 1), 2480 + math.random(-1, 1), 0))
             UTILS.randomSleep(2000)
             if canDive() then dive(5557 + math.random(-1, 1), 2482 + math.random(-1, 1)) end
             crossObstacleAnac(obstacles[42].id, obstacles[42].finalCoords[1], obstacles[42].finalCoords[2])
             crossObstacleAnac(obstacles[43].id, obstacles[43].finalCoords[1], obstacles[43].finalCoords[2])
             if canSurge() then Surge() end
-            API.DoAction_Tile(WPOINT.new(5511 + math.random(-1, 1), 2485 + math.random(-1, 1), 0))
+            API.DoAction_Tile(FFPOINT.new(5511 + math.random(-1, 1), 2485 + math.random(-1, 1), 0))
             UTILS.randomSleep(2000)
             if canDive() then dive(5505, 2481) end
             crossObstacleAnac(obstacles[44].id, obstacles[44].finalCoords[1], obstacles[44].finalCoords[2])
@@ -1148,7 +1148,7 @@ local stageFunctions = {
             crossObstacleAnac(obstacles[51].id, obstacles[51].finalCoords[1], obstacles[51].finalCoords[2])
             crossObstacleAnac(obstacles[52].id, obstacles[52].finalCoords[1], obstacles[52].finalCoords[2])
             ----------------------------------------WalkBack----------------------------------------
-            API.DoAction_WalkerW(WPOINT.new(5417, 2325, 0))            
+            API.DoAction_Walker(FFPOINT.new(5417, 2325, 0))            
             while API.Read_LoopyLoop() and not IsPlayerInArea(5417, 2325, 0, 2) do
                 UTILS.randomSleep(500)
             end

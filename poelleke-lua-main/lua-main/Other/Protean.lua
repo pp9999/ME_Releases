@@ -45,7 +45,7 @@ local function creationInterfaceOpen()
 end
 
 local function invContains(items)
-    local loot = API.InvItemcount_2(items)
+    local loot = Inventory:InvItemcounts(items)
     for _, v in ipairs(loot) do
         if v > 0 then
             return true

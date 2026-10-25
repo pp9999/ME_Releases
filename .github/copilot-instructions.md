@@ -61,7 +61,7 @@ Boilerplate:
 
 - `local API = require("api")`
 - Action-loop scripts often start with `API.Write_LoopyLoop(true)` and loop on `API.Read_LoopyLoop()`
-- Long-lived AFK loops use `API.SetMaxIdleTime(n)`, `API.Write_fake_mouse_do(true)`,
+- Long-lived AFK loops use `API.SetMaxIdleTime(n)`,
   `API.DoRandomEvents()`, `API.SetDrawTrackedSkills(true)`
 
 Key helpers:

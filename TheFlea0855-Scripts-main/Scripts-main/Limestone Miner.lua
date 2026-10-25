@@ -6,8 +6,8 @@ local CreationInterface = require("CreationInterface")
 
 local inventoryKey = 0x70 -- F1 SET HOTKEY FOR OPEN INV https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 -- Areas 
-local limestoneMine = WPOINT.new(3375, 3500, 0)
-local depositBox = WPOINT.new(3361, 3480, 0 )
+local limestoneMine = FFPOINT.new(3375, 3500, 0)
+local depositBox = FFPOINT.new(3361, 3480, 0 )
 
 -- Objects
 local depositBoxID = 90261 
@@ -103,7 +103,7 @@ while (API.Read_LoopyLoop()) do
     API.DoRandomEvents()
     idleCheck()
     openInventory()
-    if API.PInAreaW(limestoneMine, 8) and Inventory:FreeSpaces() >= 1 then
+    if API.PInAreaF2(limestoneMine, 8) and Inventory:FreeSpaces() >= 1 then
         mineLimestone()
     end
     if Inventory:IsFull() and Inventory:Contains(3211) and not API.isProcessing() then
@@ -124,7 +124,7 @@ while (API.Read_LoopyLoop()) do
             stone = stone +  28
             UTILS.countTicks(math.random(1,3))
         end
-        if API.PInAreaW(depositBox, 10) then
+        if API.PInAreaF2(depositBox, 10) then
             print("select item")
             if API.DoAction_Inventory1(3420,0,0,API.OFF_ACT_Bladed_interface_route) then
                 UTILS.countTicks(math.random(1,4))
@@ -134,13 +134,13 @@ while (API.Read_LoopyLoop()) do
             end
         else
             if not API.ReadPlayerMovin() then
-                API.DoAction_WalkerW(depositBox)
+                API.DoAction_Walker(depositBox)
             end
         end
     end
-    if not Inventory:IsFull() and not API.PInAreaW(limestoneMine, 8) then
+    if not Inventory:IsFull() and not API.PInAreaF2(limestoneMine, 8) then
         if not API.ReadPlayerMovin() then
-            API.DoAction_WalkerW(limestoneMine)
+            API.DoAction_Walker(limestoneMine)
         end
     end
 end

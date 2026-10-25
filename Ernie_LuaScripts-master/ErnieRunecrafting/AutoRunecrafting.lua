@@ -679,7 +679,7 @@ ernieRuneCrafter.stateHandlers[States.USE_BRACELET] = function(erc)
         sleepTickRandom(2)
     end
 
-    local interface = API.ScanForInterfaceTest2Get(false, {{720, 2, -1, 0}, {720, 16, -1, 0}, {720, 5, -1, 0}, {720, 21, -1, 0}})
+    local interface = API.ScanForInterfaceTest2Get2(false, {{720, 2, -1, 0}, {720, 16, -1, 0}, {720, 5, -1, 0}, {720, 21, -1, 0}})
     if #interface > 0 and interface[1].textids == "2. City of Um: Haunt on the Hill" then
         erc:transitionTo(States.CHOOSE_PORTAL_OPTION)
     end
@@ -717,9 +717,9 @@ end
 ernieRuneCrafter.stateHandlers[States.ENTER_PORTAL] = function(erc)
     if not erc.stateData.enteredPortal then
         API.logInfo("Entering dark portal...")
-        if not API.DoAction_BDive_Tile(WPOINT.new(1164, 1828, 15)) then
-            if not API.DoAction_Dive_Tile(WPOINT.new(1164, 1828, 15)) then
-                API.DoAction_Tile(WPOINT.new(1164, 1828, 15))
+        if not API.DoAction_BDive_Tile(FFPOINT.new(1164, 1828, 15)) then
+            if not API.DoAction_Dive_Tile(FFPOINT.new(1164, 1828, 15)) then
+                API.DoAction_Tile(FFPOINT.new(1164, 1828, 15))
             end 
         end
         sleepTickRandom(1)
@@ -886,9 +886,9 @@ ernieRuneCrafter.stateHandlers[States.INTERACT_WILDERNESS_WALL] = function(erc)
                 API.DoAction_Ability_Direct(surgeAB, 1, API.OFF_ACT_GeneralInterface_route)
                 sleepTickRandom(0)
             end
-            if not API.DoAction_BDive_Tile(WPOINT.new(3102,3543,1)) then
-                if not API.DoAction_Dive_Tile(WPOINT.new(3102,3543,1)) then
-                    API.DoAction_Tile(WPOINT.new(3102,3543,1))
+            if not API.DoAction_BDive_Tile(FFPOINT.new(3102,3543,1)) then
+                if not API.DoAction_Dive_Tile(FFPOINT.new(3102,3543,1)) then
+                    API.DoAction_Tile(FFPOINT.new(3102,3543,1))
                 end
             end
             sleepTickRandom(0)
@@ -984,7 +984,7 @@ ernieRuneCrafter.stateHandlers[States.APPROACH_ALTAR] = function(erc)
 
             if CONFIG.soulAltarCharges == "1 charge" then
                 sleepTickRandom(2)
-                local chargeText = API.ScanForInterfaceTest2Get(false, {{1251, 8, -1, 0}, {1251, 36, -1, 0}, {1251, 2, -1, 0}, {1251, 7, -1, 0}, {1251, 22, -1, 0}, {1251, 27, -1, 0}})[1].textids
+                local chargeText = API.ScanForInterfaceTest2Get2(false, {{1251, 8, -1, 0}, {1251, 36, -1, 0}, {1251, 2, -1, 0}, {1251, 7, -1, 0}, {1251, 22, -1, 0}, {1251, 27, -1, 0}})[1].textids
                 if chargeText then
                     local currentCharges = tonumber(chargeText:match("(%d+)/"))
                     if currentCharges and currentCharges >= 1 then
@@ -1431,7 +1431,6 @@ end
 
 API.logWarn("=== Ernie's Auto Runecraft Started ===")
 API.logInfo("Rune Type: " .. RUNE_TYPE)
-API.Write_fake_mouse_do(false)
 API.Write_LoopyLoop(true)
 while API.Read_LoopyLoop() do
     idleCheck()
