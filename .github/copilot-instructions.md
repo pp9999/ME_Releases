@@ -11,8 +11,14 @@ families plus a large number of third-party contributed folders.
 | File | What it is |
 | --- | --- |
 | `AGENTS.md` | Canonical, in-depth **OSRS / RuneLite** reference: `RL_*` functions, `AllObject`, entity types, tab indexes. Read this before writing OSRS code. |
-| `api.lua` | **RS3 / MemoryError** API surface (`API.VERSION = 1.081`). Source of truth for `API.DoAction_*` and `API.OFF_ACT_*` routes. |
+| `api.lua` | **RS3 / MemoryError** API surface (`API.VERSION = 1.082`). Source of truth for `API.DoAction_*` and `API.OFF_ACT_*` routes. |
+| `usertypes.lua` | LuaLS type definitions for every engine struct (`AllObject`, `FFPOINT`, `IG_answer`, `IInfo`, `Skill`, `ItemData`, `QuestData`, `LootOptions`, `StarPath`, …). |
 | `apiosrs.lua` | **OSRS / RuneLite** wrapper (`APIOSRS.VERSION = 1.000`) exposing `APIOSRS.RL_*`. |
+
+**Always load `api.lua` and `usertypes.lua` before reading or editing any script.** They are the
+engine contract — check the real function names, argument order and struct fields there instead of
+guessing. `api.lua` is ~6.2k lines / 850+ functions, so pull the sections you need (grep for
+`function API.` plus the relevant class in `usertypes.lua`) rather than attempting a whole-file read.
 
 ---
 

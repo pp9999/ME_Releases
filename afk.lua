@@ -6,15 +6,18 @@ local loopsofnoxp_check = 0
 API.SetDrawTrackedSkills(true)
 while API.Read_LoopyLoop() do
     API.DoRandomEvents(true)
-    if (prev_xp_check ~= API.GatherEvents_xp_check()) then
-        prev_xp_check = API.GatherEvents_xp_check()
+    local current_xp_check = API.GatherEvents_xp_check()
+    if (#current_xp_check > 0 and prev_xp_check ~= current_xp_check[1].exp) then
+        prev_xp_check = current_xp_check[1].exp
         loopsofnoxp_check = 0
     else
         loopsofnoxp_check = loopsofnoxp_check + 1
     end
-    if (loopsofnoxp_check > 3) then
+    if (loopsofnoxp_check > 4) then
         API.Write_LoopyLoop(false)
     end
+
+    print(GrandExchange:IsGEWindowOpen())
 
     if not API.CheckAnim(100) then
         if Inventory:Contains(1517) then
