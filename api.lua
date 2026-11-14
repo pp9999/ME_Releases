@@ -1287,17 +1287,17 @@ end
 ---   TileX/Y/Z     number     raw unnormalized tile coords (RS3: 512 units per tile, OSRS: 128)
 ---   Tile_XYZ      FFPOINT    normalized world tile coords (x,y = tile, z = floor)
 ---   Pixel_XYZ     FFPOINT     on-screen canvas pixel coords
----   Id            number     entity/object id (item id for ground items, 1 for players)
+---   Id            number     entity/object id (item id for ground items, 1 for players); type 6/99 tiles: raw walk cell link byte (bit0 blocked, bit2 covered)
 ---   Name          string     entity name (empty for unnamed types like projectiles)
 ---   Action        string     first non-empty action/menu option text (empty when none)
 ---   Type          number     0=Object 1=NPC 2=Player 3=GroundItem 4=Highlight 5=Projectile 6=WalkTile 8=Effect/Wall 9=Chunk 10=Platform 12=Decor 13=Scenery 17=Wall 99=CombinedBlocker (13/17 are OSRS-only; 6/9/10/99 are RS3 map data)
 ---   Floor         number     plane/height level
----   Life          number     NPC life points/hitpoints (type-specific; objects store orientation here)
+---   Life          number     NPC life points/hitpoints (type-specific; objects store orientation here); type 6/99 tiles: occupancy word
 ---   Anim          number     animation id for NPCs/players, noted flag for ground items
----   Amount        number     stack amount for ground items
----   Bool1         number     per-type flag: 0 = has action text, 1 = no action available
----   Cmb_lv        number     combat level (NPCs/players)
----   Unique_Id     number     unique entity instance id (object unique id for objects)
+---   Amount        number     stack amount for ground items; type 6/99 tiles: occupancy word
+---   Bool1         number     per-type flag: 0 = has action text, 1 = no action available; type 6/99 tiles: 1 = whole tile blocked (red), 0 = standable (may still have direction cuts, see Cmb_lv)
+---   Cmb_lv        number     combat level (NPCs/players); type 99 tiles: wall cut bits, low nibble N=1 E=2 S=4 W=8, bits 4-7 diagonal corner infill NW=1 NE=2 SE=4 SW=8 (0 when no wall cut the tile; solid tiles use Bool1 = 1)
+---   Unique_Id     number     unique entity instance id (object unique id for objects); type 6/99 tiles: walk-direction mask N=1 E=2 S=4 W=8 (on type 99 the wall-cut bits from Cmb_lv are already removed, so blocked dirs = ~Unique_Id & 0xF)
 ---   CalcX/CalcY   number     integer tile coords used for action dispatch
 ---   Distance      number     distance in normal tiles from the local player
 ---   ViewP         number     render holder screen timer/on-screen value
@@ -1307,12 +1307,21 @@ end
 ---   StatusBar1    number     health bar fill 0-255, -1 when no bar is shown (players only)
 ---   StatusBar2    number     adrenaline/stamina bar fill 0-255, -1 when no bar is shown (players only)
 ---   MovingPoints  FFPOINT[]  expected walk path: x,y = normal tile coords, z = speed (stand/walk/run)
----@param types number[] -- possible types are: 0,1,2,3,5,8,12,all -1
----@param ids number[] -- if no ids are filtered then {}
----@param names string[] --leave empty with {}
+---@param types number[]|nil -- possible types are: 0,1,2,3,5,6,8,12,99,all -1 (default {-1}); 6=WalkTile 99=CombinedBlocker (RS3 map data, direction fields populated)
+---@param ids number[]|nil -- if no ids are filtered then {} (default {-1} = no filter)
+---@param names string[]|nil --leave empty with {} (default {})
+---@param startpathreach number|nil -- -1 disabled 0-16 (default -1)
+--- Note: type 6/99 map tiles are appended after the entity scan, so the ids and
+--- names filters do not apply to them (the types filter still does).
 ---@return AllObject[]
-function API.ReadAllObjectsArray(types, ids, names)
-	return ReadAllObjectsArray(types, ids, names)
+function API.ReadAllObjectsArray(types, ids, names, startpathreach)
+	-- Defaults mirror the native signature so scripts may omit any argument.
+	-- Empty types are treated as "all" because the native function returns {} otherwise.
+	if types == nil or #types == 0 then types = { -1 } end
+	ids = ids or { -1 }
+	names = names or {}
+	startpathreach = startpathreach or -1
+	return ReadAllObjectsArray(types, ids, names, startpathreach)
 end
 
 -- legacy, use Inventory class one instead
@@ -1531,6 +1540,20 @@ end
 ---@return VB
 function API.VC_FindPSett(id)
 	return VC_FindPSett(id)
+end
+
+-- Returns the masked value of a player-domain varbit by varbit id
+---@param id number
+---@return number
+function API.VP_FindPSettBit(id)
+	return VP_FindPSettBit(id)
+end
+
+-- Returns the masked value of a client-domain varbit by varbit id
+---@param id number
+---@return number
+function API.VC_FindPSettBit(id)
+	return VC_FindPSettBit(id)
 end
 
 -- use this instead VP_FindPSett. Almost same as VP_FindPSett
@@ -2362,7 +2385,7 @@ function API.DoAction_Loot_w_Close()
 	return DoAction_Loot_w_Close()
 end
 
----LootOptions table for DoAction_Loot_o (defined in usertypes.lua)
+---LootOptions table for DoAction_Loot_o / DoAction_Loot_p (defined in usertypes.lua)
 ---@type LootOptions
 
 ---Usage:
@@ -2385,6 +2408,64 @@ function API.DoAction_Loot_o(ids, maxdistance, tile, radius, opts)
 		return DoAction_Loot_o(ids, maxdistance, tile, radius, opts)
 	end
 	return DoAction_Loot_o(ids, maxdistance, tile, radius)
+end
+
+---Loot from the area loot window and from reachable ground items.
+---An item is wanted when ANY of these matches:
+---  - its item id is in ids
+---  - its name contains one of item_names (case-insensitive)
+---  - its action contains one of item_actions (case-insensitive)
+---Loot window items expose "Take" plus their cached item options (for example
+---Wear/Wield); ground items expose their pickup action. Names and actions are
+---substring matches, so {"shark"} matches "Shark". Because matching is OR,
+---putting "Take" in item_actions matches every lootable window/ground item.
+---
+---The loop stops when:
+---  - the inventory reaches the reserve limit (opts.reserve free slots left);
+---    coins and already-held stacks may still be collected
+---  - all wanted items are gone
+---  - 20 loot iterations have run
+---  - the game tick changes (the loot window only lives for about 500 ms, so the
+---    function breaks off and the next opening is handled by the next call)
+---
+---Items still listed on the loot window are looted from the interface. Items that
+---are not on the interface are looked up on the ground. Every ground candidate is
+---checked with StarPath::CanReach(tile, true, 0); an unreachable item is treated
+---as if it does not exist.
+---
+---opts is a LootOptions table (see usertypes.lua). All fields are optional:
+---  allowStackablesAlreadyHeld - also loot stackables already in the inventory
+---  allowCoins - also loot coins that are not in ids/item_names/item_actions
+---  coinMinAmount - minimum coin stack to loot (default 300)
+---  sleepOffset - extra milliseconds added to loot-all sleeps (default 500)
+---  maxItemsToLoot - stop after this many items, 0 = unlimited (default 0)
+---  reserve - leave this many inventory slots free (default 0)
+---  useLootAll - use the Loot All button when the window only has allowed
+---    non-slot items (default true)
+---  lootAmmoSlot - add the equipped ammo id to ids (default false)
+---  useKeybindToOpen - press keybindVK when the loot window is closed (default false)
+---  keybindVK - virtual key code for useKeybindToOpen
+---  lootAllWhenFull - use Loot All when the inventory is completely full (default false)
+---  debug - extra logging (default false)
+---
+---Example:
+---  API.DoAction_Loot_p({}, {"Shark", "Rocktail"}, 20, API.PlayerCoordfloat(), 20)
+---  API.DoAction_Loot_p({}, {}, 20, API.PlayerCoordfloat(), 20)
+---  API.DoAction_Loot_p({995}, {}, 20, API.PlayerCoordfloat(), 20, {allowCoins = true, reserve = 2})
+---@param ids number[] Item ids to loot
+---@param item_names string[] Item names to loot (case-insensitive substring)
+---@param maxdistance number Maximum distance from player
+---@param tile FFPOINT Center tile for ground item search
+---@param radius number Max distance from the center tile for ground items
+---@param opts LootOptions|table|nil Optional configuration
+---@return boolean true when at least one loot action was performed
+function API.DoAction_Loot_p(ids, item_names, maxdistance, tile, radius, opts)
+	ids = ids or {}
+	item_names = item_names or {}
+	if opts then
+		return DoAction_Loot_p(ids, item_names, maxdistance, tile, radius, opts)
+	end
+	return DoAction_Loot_p(ids, item_names, maxdistance, tile, radius)
 end
 
 ---@param action number
@@ -2562,6 +2643,16 @@ end
 ---@return boolean
 function API.StarPathReachable(goal, allow_map_links, tolerance)
 	return StarPathReachable(goal, allow_map_links, tolerance)
+end
+
+---Reachability check, same as API.StarPathReachable().
+---Uses the live local planner first, then the precomputed StarPath web.
+---@param goal FFPOINT
+---@param allow_map_links boolean|nil
+---@param tolerance integer|nil accept any tile within this many tiles of goal
+---@return boolean
+function API.StarPathCanReach(goal, allow_map_links, tolerance)
+	return StarPathCanReach(goal, allow_map_links, tolerance)
 end
 
 ---Walk to a tile. Local goals use the live A* planner; far goals use the

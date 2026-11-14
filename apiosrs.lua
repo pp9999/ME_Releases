@@ -228,29 +228,29 @@ end
 
 --- Returns all entities currently tracked by the engine.
 --- Filters: types 0=Object 1=NPC 2=Player 3=GroundItem 4=WorldEntity 5=Projectile
--- @param types number[]|nil   entity type filter list
--- @param names string[]|nil   entity name filter list
--- @param ids number[]|nil     entity ID filter list
+-- @param types number[]|nil   entity type filter list (default {-1} = all)
+-- @param ids number[]|nil     entity ID filter list (default {-1} = no filter)
+-- @param names string[]|nil   entity name filter list (default {})
 -- @return AllObject[]
 function APIOSRS.ReadAllObjectsArray(types, ids, names)
-	types    = types    or {-1}
+	if types == nil or #types == 0 then types = { -1 } end
 	names    = names    or {}
-	ids      = ids      or {}
-	return ReadAllObjectsArray(types, ids, names)
+	ids      = ids      or { -1 }
+	return ReadAllObjectsArray(types, ids, names, -1)
 end
 
 --- returns first found
--- @param types number[]|nil   entity type filter list
--- @param names string[]|nil   entity name filter list
--- @param ids number[]|nil     entity ID filter list
--- @param distance number  	   distance filter, only returns object if distance is less than this value, default 50
+-- @param types number[]|nil   entity type filter list (default {-1} = all)
+-- @param ids number[]|nil     entity ID filter list (default {-1} = no filter)
+-- @param names string[]|nil   entity name filter list (default {})
+-- @param distance number      distance filter, only returns object if distance is less than this value, default 50
 -- @return AllObject
 function APIOSRS.ReadAllObjectsArrayFirst(types, ids, names, distance)
-	types    = types    or {-1}
+	if types == nil or #types == 0 then types = { -1 } end
 	names    = names    or {}
-	ids      = ids      or {}
-	distance    = distance or 50
-	local object = ReadAllObjectsArray(types, ids, names)
+	ids      = ids      or { -1 }
+	distance = distance or 50
+	local object = ReadAllObjectsArray(types, ids, names, -1)
     if object ~= nil and #object > 0 and object[1].Distance < distance then
 		return object[1]
 	else

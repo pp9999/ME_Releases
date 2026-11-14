@@ -2,3 +2,5 @@ AI_test.lua
 buffs.lua
 abilities.lua
 AutoRunecraftingLiam.lua
+/node_modules
+*.7z

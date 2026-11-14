@@ -36,21 +36,21 @@
 ---@field TileX number -- raw unnormalized tile x (RS3: 512 units per tile, OSRS: 128; see Tile_XYZ)
 ---@field TileY number -- raw unnormalized tile y (RS3: 512 units per tile, OSRS: 128; see Tile_XYZ)
 ---@field TileZ number -- raw unnormalized tile z/height
----@field Id number -- entity/object id (item id for ground items, 1 for players)
----@field Life number -- NPC life points/hitpoints (type-specific; objects store orientation here)
+---@field Id number -- entity/object id (item id for ground items, 1 for players); type 6/99 tiles: raw walk cell link byte (bit0 blocked, bit2 covered)
+---@field Life number -- NPC life points/hitpoints (type-specific; objects store orientation here); type 6/99 tiles: occupancy word
 ---@field Anim number -- animation id for NPCs/players, noted flag for ground items (type-specific)
 ---@field Name string -- entity name (empty for unnamed types like projectiles)
 ---@field Action string -- first non-empty action/menu option text (empty when none)
 ---@field Floor number -- plane/height level
----@field Amount number -- stack amount for ground items
+---@field Amount number -- stack amount for ground items; type 6/99 tiles: occupancy word
 ---@field Type number -- 0=Object 1=NPC 2=Player 3=GroundItem 4=Highlight 5=Projectile 6=WalkTile 8=Effect/Wall 9=Chunk 10=Platform 12=Decor 13=Scenery 17=Wall 99=CombinedBlocker (13/17 are OSRS-only; 6/9/10/99 are RS3 map data)
----@field Bool1 number -- per-type flag: 0 = has action text, 1 = no action available
+---@field Bool1 number -- per-type flag: 0 = has action text, 1 = no action available; type 6/99 tiles: 1 = whole tile blocked (red), 0 = standable (may still have direction cuts, see Cmb_lv)
 ---@field ItemIndex number -- legacy index into Parsed_ItemsL (unused, stays 0)
 ---@field ViewP number -- render holder screen timer/on-screen value
 ---@field ViewF number -- entity orientation in degrees (0-360)
 ---@field Distance number -- distance in normal tiles from the local player
----@field Cmb_lv number -- combat level (NPCs/players)
----@field Unique_Id number -- unique entity instance id (object unique id for objects)
+---@field Cmb_lv number -- combat level (NPCs/players); type 99 tiles: wall cut bits, low nibble N=1 E=2 S=4 W=8, bits 4-7 diagonal corner infill NW=1 NE=2 SE=4 SW=8 (0 when no wall cut the tile; solid tiles use Bool1 = 1)
+---@field Unique_Id number -- unique entity instance id (object unique id for objects); type 6/99 tiles: walk-direction mask N=1 E=2 S=4 W=8 (on type 99 the wall-cut bits from Cmb_lv are already removed, so blocked dirs = ~Unique_Id & 0xF)
 ---@field CalcX number -- integer tile x used for action dispatch
 ---@field CalcY number -- integer tile y used for action dispatch
 ---@field Tile_XYZ FFPOINT -- normalized world tile coords (x,y = tile, z = floor)
@@ -329,6 +329,7 @@
 ---@field coinMinAmount number Minimum coin stack size (default: 300)
 ---@field sleepOffset number Global sleep offset in ms (default: 500)
 ---@field maxItemsToLoot number Max items to loot, 0=unlimited (default: 0)
+---@field reserve number Keep this many inventory slots free (default: 0)
 ---@field useLootAll boolean Allow loot-all optimization (default: true)
 ---@field lootAmmoSlot boolean Auto-loot items matching equipped ammo slot (default: false)
 ---@field useKeybindToOpen boolean Use keybind to attempt to open loot window (default: false)
