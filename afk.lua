@@ -13,20 +13,14 @@ while API.Read_LoopyLoop() do
     else
         loopsofnoxp_check = loopsofnoxp_check + 1
     end
-    if (loopsofnoxp_check > 4) then
+    if (loopsofnoxp_check > 10) then
         API.Write_LoopyLoop(false)
     end
 
-    print(GrandExchange:IsGEWindowOpen())
-
     if not API.CheckAnim(100) then
-        if Inventory:Contains(1517) then
-            API.DoAction_Object1(0x33,API.OFF_ACT_GeneralObject_route0,{ 134174,134175,134176,134177,134178 },50);
+        if not Inventory:IsFull() then
+            API.DoAction_Object1(0x33,API.OFF_ACT_GeneralObject_route0,{ 109001 },6);
             API.RandomSleep2(5000, 300, 400)
-        else
-            API.DoAction_Object1(0x41,API.OFF_ACT_GeneralObject_route3,{ 131378 },50);
-            API.RandomSleep2(5000, 300, 400)
-
         end
     end
 

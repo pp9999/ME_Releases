@@ -3,6 +3,8 @@ local API = {}
 --- API Version will increase with breaking changes
 API.VERSION = 1.082
 
+-- AI/MCP: call the `get_registry` BotMCP tool first (or POST {"jsonrpc":"2.0","method":"get_registry","params":[{}],"id":1} to http://127.0.0.1:18642/mcp) to list every BotMCP command + signature; run one with `invoke`. Ports: 18642 RS3, 18643 RuneLite, 18644 OSRS.
+
 --[[
 Known shortcuts
 Ctrl+shift == mark tiles
@@ -6192,6 +6194,7 @@ function WS_Stop() end
 -------------------------------------------------------------------------------
 
 ---@class GamePlugin
+if false then -- LuaDoc stubs for IDE autocompletion only; never executed at runtime
 GamePlugin = GamePlugin
 
 --- The client plugin API is defined as nested functions in GamePluginAPI.lua, e.g.:
@@ -6359,6 +6362,9 @@ function GamePlugin.config.Headbar.FromID(id) end
 ---@return GamePluginHitmarkType|nil
 function GamePlugin.config.Hitmark.FromID(id) end
 
+end -- if false (LuaDoc stubs)
 
+GamePlugin.config = GamePlugin.config or {}
+GamePlugin.id = GamePlugin.id or {}
 
 return API

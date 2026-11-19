@@ -35,13 +35,14 @@ local loadPresetKey = 0x32 --The 2 key
 local chosenPortable = -1
 --Max time to remain in the "processing" state before attempting to interact again
 --You may want to change the timeout (in seconds) depending on the skill you are training
-local processingTimeout = 250
+local processingTimeout = 2500
 
 --add the ids of the items you are processing to the table below, click "Inv" in the debug menu to view the ids of the items in the inventory
 local ID = {
     RAW_GREEN_JELLYFISH = 42256,
 
     SUPER_RANGING = 169,
+
     GRENWALL_SPIKES = 12539,
 
     UNCUT_DRAGONSTONE = 1631,
@@ -49,6 +50,8 @@ local ID = {
     ASCENSION_SHARD = 28436,
 
     PROTEAN_PLANK = 30037,
+
+    YEW_LOGS = 1515
 }
 
 --Add the items you are processing to this list
@@ -266,9 +269,9 @@ while (API.Read_LoopyLoop()) do
         printProgressReport()
         API.DoRandomEvents()
 
-        --stop script if no exp gained in the past 15s
-        if (os.time() - lastTimeGainedXp) > 15 then
-            print("No exp gained in the last 15 seconds")
+        --stop script if no exp gained in the past 25s
+        if (os.time() - lastTimeGainedXp) > 25 then
+            print("No exp gained in the last 25 seconds: " .. (os.time() - lastTimeGainedXp))
             API.Write_LoopyLoop(false)
         elseif API.isProcessing() or (PORTABLES[chosenPortable].id == SCENE_OBJECTS.BRAZIER and API.CheckAnim(200)) then
             API.RandomSleep2(600, 50, 100)

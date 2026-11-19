@@ -4,3 +4,4 @@ abilities.lua
 AutoRunecraftingLiam.lua
 /node_modules
 *.7z
+.gitignore
