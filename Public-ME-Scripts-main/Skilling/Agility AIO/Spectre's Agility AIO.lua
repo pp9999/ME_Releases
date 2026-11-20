@@ -338,6 +338,56 @@ local function AnacResources()
     end
 end
 
+local NO_FOOD_CHAT_MESSAGE = "No edible food could be found in your inventory."
+local NO_FOOD_CHAT_WINDOW_SECONDS = 60
+
+local function ChatEventContainsNoFoodMessage(event)
+    local text = event and event.text
+    if type(text) ~= "string" then
+        return false
+    end
+    return string.find(text, NO_FOOD_CHAT_MESSAGE, 1, true) ~= nil
+end
+
+local function IsChatEventWithinWindow(event)
+    -- Chat events carry an epoch-seconds timestamp; use it so old buffered
+    -- messages cannot stop the script. Fall back to the current time if absent.
+    local timestamp = event and event.timestamp
+    if type(timestamp) == "number" and timestamp > 0 then
+        return (os.time() - timestamp) <= NO_FOOD_CHAT_WINDOW_SECONDS
+    end
+    return true
+end
+
+local function CheckNoFoodChatMessage()
+    local events = API.GatherEvents_chat_check()
+    if not events then
+        return false
+    end
+
+    local function isRecentNoFoodMessage(event)
+        return ChatEventContainsNoFoodMessage(event) and IsChatEventWithinWindow(event)
+    end
+
+    local found = isRecentNoFoodMessage(events)
+    if not found and (type(events) == "table" or type(events) == "userdata") then
+        for _, event in ipairs(events) do
+            if isRecentNoFoodMessage(event) then
+                found = true
+                break
+            end
+        end
+    end
+
+    if found then
+        print("'" .. NO_FOOD_CHAT_MESSAGE .. "' found in chat. Stopping script.")
+        API.Write_LoopyLoop(false)
+        return true
+    end
+
+    return false
+end
+
 local playerInCorrectArea = nil
 local currentWildernessObstacle = 1
 local advancedGnomeObstacle = 1
@@ -539,6 +589,9 @@ local stageFunctions = {
                 while API.Read_LoopyLoop() and health < 80 do
                     UseAbilityByName("Eat Food")
                     UTILS.randomSleep(1000)
+                    if CheckNoFoodChatMessage() then
+                        return
+                    end
                     health = API.GetHPrecent()
                 end
             elseif health < 50 and canEat == false then
@@ -1412,56 +1465,6 @@ local function executeStage(stageID)
     else
         print("Invalid stage ID: " .. tostring(stageID))
     end
-end
-
-local NO_FOOD_CHAT_MESSAGE = "No edible food could be found in your inventory."
-local NO_FOOD_CHAT_WINDOW_SECONDS = 60
-
-local function ChatEventContainsNoFoodMessage(event)
-    local text = event and event.text
-    if type(text) ~= "string" then
-        return false
-    end
-    return string.find(text, NO_FOOD_CHAT_MESSAGE, 1, true) ~= nil
-end
-
-local function IsChatEventWithinWindow(event)
-    -- Chat events carry an epoch-seconds timestamp; use it so old buffered
-    -- messages cannot stop the script. Fall back to the current time if absent.
-    local timestamp = event and event.timestamp
-    if type(timestamp) == "number" and timestamp > 0 then
-        return (os.time() - timestamp) <= NO_FOOD_CHAT_WINDOW_SECONDS
-    end
-    return true
-end
-
-local function CheckNoFoodChatMessage()
-    local events = API.GatherEvents_chat_check()
-    if not events then
-        return false
-    end
-
-    local function isRecentNoFoodMessage(event)
-        return ChatEventContainsNoFoodMessage(event) and IsChatEventWithinWindow(event)
-    end
-
-    local found = isRecentNoFoodMessage(events)
-    if not found and (type(events) == "table" or type(events) == "userdata") then
-        for _, event in ipairs(events) do
-            if isRecentNoFoodMessage(event) then
-                found = true
-                break
-            end
-        end
-    end
-
-    if found then
-        print("'" .. NO_FOOD_CHAT_MESSAGE .. "' found in chat. Stopping script.")
-        API.Write_LoopyLoop(false)
-        return true
-    end
-
-    return false
 end
 
 API.SetDrawTrackedSkills(true)
