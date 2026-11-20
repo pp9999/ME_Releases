@@ -1,7 +1,7 @@
 local API = {}
 
 --- API Version will increase with breaking changes
-API.VERSION = 1.082
+API.VERSION = 1.083
 
 -- AI/MCP: call the `get_registry` BotMCP tool first (or POST {"jsonrpc":"2.0","method":"get_registry","params":[{}],"id":1} to http://127.0.0.1:18642/mcp) to list every BotMCP command + signature; run one with `invoke`. Ports: 18642 RS3, 18643 RuneLite, 18644 OSRS.
 
@@ -2477,25 +2477,28 @@ end
 ---@param tile FFPOINT
 ---@param ignore_star boolean
 ---@param health number
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_NPC(action, offset, objects, maxdistance, tile, ignore_star, health)
-	return DoAction_NPC(action, offset, objects, maxdistance, tile, ignore_star, health)
+function API.DoAction_NPC(action, offset, objects, maxdistance, tile, ignore_star, health, isreachable)
+	return DoAction_NPC(action, offset, objects, maxdistance, tile, ignore_star, health, isreachable or -1)
 end
 
 ---Do action on player, find by name, attack
 ---@param obj table player names to search for
 ---@param maxdistance number maximum distance to search
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_VS_Player_Attack(obj, maxdistance)
-	return DoAction_VS_Player_Attack(obj, maxdistance)
+function API.DoAction_VS_Player_Attack(obj, maxdistance, isreachable)
+	return DoAction_VS_Player_Attack(obj, maxdistance, isreachable or -1)
 end
 
 ---Do action on player, find by name, trade
 ---@param obj table player names to search for
 ---@param maxdistance number maximum distance to search
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_VS_Player_Trade(obj, maxdistance)
-	return DoAction_VS_Player_Trade(obj, maxdistance)
+function API.DoAction_VS_Player_Trade(obj, maxdistance, isreachable)
+	return DoAction_VS_Player_Trade(obj, maxdistance, isreachable or -1)
 end
 
 ---Do action on player, find by name, examine
@@ -2509,9 +2512,10 @@ end
 ---Do action on player, find by name, follow
 ---@param obj table player names to search for
 ---@param maxdistance number maximum distance to search
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_VS_Player_Follow(obj, maxdistance)
-	return DoAction_VS_Player_Follow(obj, maxdistance)
+function API.DoAction_VS_Player_Follow(obj, maxdistance, isreachable)
+	return DoAction_VS_Player_Follow(obj, maxdistance, isreachable or -1)
 end
 
 ---@param action number
@@ -2520,9 +2524,12 @@ end
 ---@param maxdistance number
 ---@param bottom_left FFPOINT
 ---@param top_right FFPOINT
+---@param ignore_star boolean
+---@param health number
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_NPC_In_Area(action, offset, obj, maxdistance, bottom_left, top_right, ignore_star, health)
-	return DoAction_NPC_In_Area(action, offset, obj, maxdistance, bottom_left, top_right, ignore_star, health)
+function API.DoAction_NPC_In_Area(action, offset, obj, maxdistance, bottom_left, top_right, ignore_star, health, isreachable)
+	return DoAction_NPC_In_Area(action, offset, obj, maxdistance, bottom_left, top_right, ignore_star, health, isreachable or -1)
 end
 
 ---@param action number
@@ -2531,9 +2538,10 @@ end
 ---@param maxdistance number
 ---@param ignore_star boolean
 ---@param health number
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_NPC_str(action, offset, objects, maxdistance, ignore_star, health)
-	return DoAction_NPC_str(action, offset, objects, maxdistance, ignore_star, health)
+function API.DoAction_NPC_str(action, offset, objects, maxdistance, ignore_star, health, isreachable)
+	return DoAction_NPC_str(action, offset, objects, maxdistance, ignore_star, health, isreachable or -1)
 end
 
 ---@param action number
@@ -2556,20 +2564,13 @@ end
 ---@param offset number
 ---@param obj number[]
 ---@param maxdistance number
----@return boolean
-function API.DoAction_Object_furthest(action, offset, obj, maxdistance)
-	return DoAction_Object_furthest(action, offset, obj, maxdistance)
-end
-
----@param action number
----@param offset number
----@param obj number[]
----@param maxdistance number
 ---@param tile FFPOINT
 ---@param tile_range number max distance FROM tile to found object, tile and tile_range range cant be zero
+---@param valid boolean
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_Object_r(action, offset, obj, maxdistance, tile, tile_range)
-	return DoAction_Object_r(action, offset, obj, maxdistance, tile, tile_range)
+function API.DoAction_Object_r(action, offset, obj, maxdistance, tile, tile_range, valid, isreachable)
+	return DoAction_Object_r(action, offset, obj, maxdistance, tile, tile_range, valid, isreachable or -1)
 end
 
 ---Read whether a multi-object room/group preview is selected and native placement is available.
@@ -2603,9 +2604,10 @@ function API.DoAction_PlaceFurniture(tile)
 end
 
 ---@param normal_tile FFPOINT
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_Tile(normal_tile)
-	return DoAction_Tile(normal_tile)
+function API.DoAction_Tile(normal_tile, isreachable)
+	return DoAction_Tile(normal_tile, isreachable or -1)
 end
 
 ---@param obj AllObject
@@ -2617,9 +2619,10 @@ end
 
 ---@param normal_tile FFPOINT
 ---@param sleep number --50 is ok number
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_Walker(normal_tile, sleep)
-	return DoAction_Walker(normal_tile, sleep or 50)
+function API.DoAction_Walker(normal_tile, sleep, isreachable)
+	return DoAction_Walker(normal_tile, sleep or 50, isreachable or -1)
 end
 
 ---@param start FFPOINT
@@ -3301,18 +3304,20 @@ end
 ---@param action number
 ---@param obj number[]
 ---@param maxdistance number
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_G_Items1(action, obj, maxdistance)
-	return DoAction_G_Items(action, obj, maxdistance)
+function API.DoAction_G_Items1(action, obj, maxdistance, isreachable)
+	return DoAction_G_Items(action, obj, maxdistance, isreachable or -1)
 end
 
 ---@param action number
 ---@param obj number[]
 ---@param maxdistance number
 ---@param atTile FFPOINT
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_G_Items2(action, obj, maxdistance, atTile)
-	return DoAction_G_Items(action, obj, maxdistance, atTile)
+function API.DoAction_G_Items2(action, obj, maxdistance, atTile, isreachable)
+	return DoAction_G_Items(action, obj, maxdistance, atTile, isreachable or -1)
 end
 
 ---@param action number
@@ -3320,9 +3325,10 @@ end
 ---@param maxdistance number
 ---@param tile FFPOINT
 ---@param radius number --float
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_G_Items_r1(action, obj, maxdistance, tile, radius)
-	return DoAction_G_Items_r(action, obj, maxdistance, tile, radius)
+function API.DoAction_G_Items_r1(action, obj, maxdistance, tile, radius, isreachable)
+	return DoAction_G_Items_r(action, obj, maxdistance, tile, radius, isreachable or -1)
 end
 
 ---@param action number
@@ -3331,9 +3337,10 @@ end
 ---@param maxdistance number
 ---@param tile FFPOINT
 ---@param radius number --float
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_G_Items_r2(action, action_route, obj, maxdistance, tile, radius)
-	return DoAction_G_Items_r(action, action_route, obj, maxdistance, tile, radius)
+function API.DoAction_G_Items_r2(action, action_route, obj, maxdistance, tile, radius, isreachable)
+	return DoAction_G_Items_r(action, action_route, obj, maxdistance, tile, radius, isreachable or -1)
 end
 
 ---@param id number
@@ -3367,9 +3374,10 @@ end
 ---@param offset number
 ---@param obj number[]
 ---@param maxdistance number
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_Object1(action, offset, obj, maxdistance)
-	return DoAction_Object(action, offset, obj, maxdistance)
+function API.DoAction_Object1(action, offset, obj, maxdistance, isreachable)
+	return DoAction_Object(action, offset, obj, maxdistance, isreachable or -1)
 end
 
 ---@param action number
@@ -3377,9 +3385,10 @@ end
 ---@param obj number[]
 ---@param maxdistance number
 ---@param tile FFPOINT
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_Object2(action, offset, obj, maxdistance, tile)
-	return DoAction_Object(action, offset, obj, maxdistance, tile)
+function API.DoAction_Object2(action, offset, obj, maxdistance, tile, isreachable)
+	return DoAction_Object(action, offset, obj, maxdistance, tile, isreachable or -1)
 end
 
 ---@param action number
@@ -3387,9 +3396,10 @@ end
 ---@param obj number[]
 ---@param maxdistance number
 ---@param valid boolean
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_Object_valid1(action, offset, obj, maxdistance, valid)
-	return DoAction_Object_valid(action, offset, obj, maxdistance, valid)
+function API.DoAction_Object_valid1(action, offset, obj, maxdistance, valid, isreachable)
+	return DoAction_Object_valid(action, offset, obj, maxdistance, valid, isreachable or -1)
 end
 
 ---@param action number
@@ -3398,9 +3408,10 @@ end
 ---@param maxdistance number
 ---@param tile FFPOINT
 ---@param valid boolean
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_Object_valid2(action, offset, obj, maxdistance, tile, valid)
-	return DoAction_Object_valid(action, offset, obj, maxdistance, tile, valid)
+function API.DoAction_Object_valid2(action, offset, obj, maxdistance, tile, valid, isreachable)
+	return DoAction_Object_valid(action, offset, obj, maxdistance, tile, valid, isreachable or -1)
 end
 
 ---@param action number
@@ -3408,9 +3419,10 @@ end
 ---@param obj string[]
 ---@param maxdistance number
 ---@param valid boolean
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_Object_string1(action, offset, obj, maxdistance, valid)
-	return DoAction_Object_string(action, offset, obj, maxdistance, valid)
+function API.DoAction_Object_string1(action, offset, obj, maxdistance, valid, isreachable)
+	return DoAction_Object_string(action, offset, obj, maxdistance, valid, isreachable or -1)
 end
 
 ---@param action number
@@ -3419,9 +3431,23 @@ end
 ---@param maxdistance number
 ---@param tile FFPOINT
 ---@param valid boolean
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_Object_string2(action, offset, obj, maxdistance, tile, valid)
-	return DoAction_Object_string(action, offset, obj, maxdistance, tile, valid)
+function API.DoAction_Object_string2(action, offset, obj, maxdistance, tile, valid, isreachable)
+	return DoAction_Object_string(action, offset, obj, maxdistance, tile, valid, isreachable or -1)
+end
+
+---@param action number
+---@param offset number
+---@param obj string[]
+---@param maxdistance number
+---@param tile FFPOINT
+---@param tile_range number
+---@param valid boolean
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
+---@return boolean
+function API.DoAction_Object_string_r(action, offset, obj, maxdistance, tile, tile_range, valid, isreachable)
+	return DoAction_Object_string_r(action, offset, obj, maxdistance, tile, tile_range, valid, isreachable or -1)
 end
 
 ---@param obj string[]
@@ -3431,9 +3457,10 @@ end
 ---@param xend number
 ---@param ystart number
 ---@param yend number
+---@param isreachable number|nil -- -1 disabled, 0-16 StarPath reach tolerance (default -1)
 ---@return boolean
-function API.DoAction_VS_Player_Attack2(obj, maxdistance, checkcombat, xstart, xend, ystart, yend)
-	return DoAction_VS_Player_Attack(obj, maxdistance, checkcombat, xstart, xend, ystart, yend)
+function API.DoAction_VS_Player_Attack2(obj, maxdistance, checkcombat, xstart, xend, ystart, yend, isreachable)
+	return DoAction_VS_Player_Attack(obj, maxdistance, checkcombat, xstart, xend, ystart, yend, isreachable or -1)
 end
 
 ---@param logline string
