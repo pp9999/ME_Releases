@@ -1,6 +1,12 @@
 local API = require("api")
 print("Run Lua port fish script afker.")
 
+local function scanNpcs()
+	local ok, list = pcall(API.ReadAllObjectsArray, { 1 }, {}, {}, 1)
+	if ok and list then return list end
+	return {}
+end
+
 local prev_xp_check = 0
 local loopsofnoxp_check = 0
 API.SetDrawTrackedSkills(true)
@@ -16,6 +22,13 @@ while API.Read_LoopyLoop() do
     if (loopsofnoxp_check > 10) then
         API.Write_LoopyLoop(false)
     end
+
+    local current = API.SystemTime()
+    local current_npcs = scanNpcs()
+    print("Time taken " ..  API.SystemTime() - current .. " List size " .. #current_npcs)
+        local current = API.SystemTime()
+    local current_npcs = scanNpcs()
+    print("Time taken " ..  API.SystemTime() - current .. " List size " .. #current_npcs)
 
     if not API.CheckAnim(100) then
         if not Inventory:IsFull() then
