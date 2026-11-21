@@ -581,6 +581,10 @@ local stageFunctions = {
         end
 
         local function CheckHealth()
+            -- Do not waste time eating while in the fail pit; climb out first.
+            if API.PlayerCoord().y > 10000 then
+                return
+            end
             local health = API.GetHPrecent()
             print("Health: " .. health)
             local canEat = UTILS.canUseSkill("Eat Food")
@@ -660,6 +664,7 @@ local stageFunctions = {
 
             if FellInHole() then
                 ExitHole()
+                return
             end
 
             if API.IsPlayerAnimating_(API.GetLocalPlayerName(), 3) then
@@ -672,6 +677,14 @@ local stageFunctions = {
                 UTILS.randomSleep(1000)
                 API.WaitUntilMovingEnds()
             elseif currentWildernessObstacle == 2 then
+                -- A failed ropeswing drops the player into the pit; the ladder
+                -- exits north of the swing. The swing only works from the south
+                -- side, between the pipe exit and the ropeswing.
+                if not API.PInArea21(3003, 3006, 3949, 3953) then
+                    print("Walking to the south side of the rope swing...")
+                    API.DoAction_Walker(FFPOINT.new(3005, 3952, 0))
+                    return
+                end
                 API.DoAction_Object1(0xb5,API.OFF_ACT_GeneralObject_route0,{obstacles[2].id},50)
                 UTILS.randomSleep(1000)
                 API.WaitUntilMovingEnds()
